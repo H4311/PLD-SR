@@ -15,12 +15,11 @@ static int mul(int depth)
 			if (i)
 				return i * mul(depth+1);
 			else
-				longjmp(buf, 1);
+				longjmp(buf, 1); /* correct ici, on sort de mul. */
 				return 0;
 	}
-
+	return 0;
 }
-
 
 int main()
 {
@@ -29,4 +28,5 @@ int main()
 	printf("A list of int, please\n");
 	product = mul(0);
 	printf("product = %d\n", product);
+	return 0;
 }
