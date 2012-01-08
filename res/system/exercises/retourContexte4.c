@@ -36,16 +36,18 @@ int throw(ctx_s *pctx, int r)
 	pctx->mustReturnValue = 1;
 	pctx->returnValue = r;
 
-	int ebp = pctx->ebp;
-	int esp = pctx->esp;
+	int bp = pctx->ebp;
+	int sp = pctx->esp;
 
 	/*printf("avant asm\n");*/
 	asm ("movl %0, %%ebp" "\n\t" "movl %1, %%esp"
 	:  /* output variables */
-	: "r"(ebp), "r"(esp)/* input variables */
+	: "r"(bp), "r"(sp)/* input variables */
 	: "%ebp", "%esp"
 	);
 	printf("Ici\n");
+	
+	return 0;
 }
 
 int plusOne(int v)
@@ -64,4 +66,6 @@ int main()
 	}
 
 	throw(&context, 1337);
+	
+	return 0;
 }
