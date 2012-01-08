@@ -4,8 +4,7 @@
 static int i = 0;
 static jmp_buf buf;
 
-int
-main()
+int main()
 {
 	int j = 0;
 	if (setjmp(buf)) {
