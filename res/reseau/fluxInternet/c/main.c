@@ -5,7 +5,7 @@
 unsigned short int download (char * url, char * fileName);
 
 int main(int argc, char *argv[]) {
-	char url [] = "http://www.google.com/ig/api?weather=Paris", *fileName = "Paris.xml";
+	char url [] = "http://www.google.fr/ig/api?weather=Paris", *fileName = "Paris.xml";
 	//Download page "url" and save it to the file "fileName"
 	download (url, fileName);
 	
