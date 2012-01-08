@@ -1,13 +1,13 @@
-#include <setjmp.h>
 #include <stdio.h>
 #include <stdlib.h>
+#include <assert.h>
 
 typedef struct {
 	long esp; /* stack pointer */
 	long ebp; /* base pointer */
 	
-	int returnValue; /* in case of throw */
 	short mustReturnValue; /* boolean */
+	int returnValue;
 } ctx_s;
 
 ctx_s* context;
@@ -15,7 +15,7 @@ ctx_s* context;
 typedef int (func_t)(int);
 
 int try(ctx_s *pctx, func_t* f, int arg)
-{
+{	
 	pctx->mustReturnValue = 0;
 	
 	asm ("movl %%ebp, %0" "\n\t" "movl %%esp, %1"
@@ -24,13 +24,13 @@ int try(ctx_s *pctx, func_t* f, int arg)
 	);
 	
 	if (pctx->mustReturnValue) {
-		return pctx->returnValue;
+		return 1337; /*pctx->returnValue;*/
 	} else {
 		return f(arg);
 	}
 }
 
-void throw(ctx_s *pctx, int r)
+int throw(ctx_s *pctx, int r)
 {
 	pctx->mustReturnValue = 1;
 	pctx->returnValue = r;
@@ -38,10 +38,10 @@ void throw(ctx_s *pctx, int r)
 	long ebp = pctx->ebp;
 	long esp = pctx->esp;
 
-	asm ("movl %0, %%ebp" "\n\t" "movl %1, %%esp"
+	asm ("movl %1, %%esp" "\n\t" "movl %0, %%ebp" "\n\t" "ret"
 	:  /* output variables */
 	: "r"(ebp), "r"(esp) /* input variables */
-	: "%ebp", "%esp"
+	: "%esp"/*, "%ebp" */
 	);
 }
 
@@ -59,6 +59,7 @@ static int mul(int depth)
 				return i * mul(depth+1);
 			else
 				throw(context, -1);
+				return 0;
 		default:
 			return 0;
 	}
