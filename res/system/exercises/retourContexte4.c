@@ -10,9 +10,22 @@ typedef struct {
 	short mustReturnValue; /* boolean */
 } ctx_s;
 
-static ctx_s context;
 
 typedef int (func_t)(int);
+
+
+int displayContext()
+{
+	int bp, sp;
+	
+	asm ("movl %%ebp, %0" "\n\t" "movl %%esp, %1"
+	: "=r"(bp), "=r"(sp) /* output variables */
+	: /* input variables */
+	);
+
+	printf("Valeur de bp : %d\nValeur de sp : %d\n", bp, sp);
+	
+}
 
 int try(ctx_s *pctx, func_t* f, int arg)
 {
@@ -40,12 +53,11 @@ int throw(ctx_s *pctx, int r)
 	int sp = pctx->esp;
 
 	/*printf("avant asm\n");*/
-	asm ("movl %0, %%ebp" "\n\t" "movl %1, %%esp"
-	:  /* output variables */
-	: "r"(bp), "r"(sp)/* input variables */
-	: "%ebp", "%esp"
+	asm ("movl %0, %%esp" "\n\t" "movl %1, %%ebp"
+	: /* output variables */
+	: "r"(sp), "r"(bp)/* input variables */
+	:
 	);
-	printf("Ici\n");
 	
 	return 0;
 }
@@ -55,17 +67,29 @@ int plusOne(int v)
 	return ++v;
 }
 
+
 int main()
 {
+	ctx_s context;
+	printf("Avant le try: ");
+	displayContext(&context);
 	int returnedValue = try(&context, plusOne, 1);
+	displayContext();
+
 	printf("Valeur retournée : %d\n", returnedValue);
 	
 	if (returnedValue == 1337)
 	{
+		printf("Si 1337 : ");
+		displayContext();
 		return 0;
 	}
 
+	printf("Avant le throw : ");
+	displayContext();
 	throw(&context, 1337);
+	printf("Apres le throw : "); 
+	displayContext();
 	
 	return 0;
 }
