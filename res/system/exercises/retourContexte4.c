@@ -7,10 +7,10 @@ typedef struct {
 	long ebp; /* base pointer */
 	
 	short mustReturnValue; /* boolean */
-	int returnValue;
 } ctx_s;
 
 ctx_s* context;
+static int returnValue;
 
 typedef int (func_t)(int);
 
@@ -24,7 +24,7 @@ int try(ctx_s *pctx, func_t* f, int arg)
 	);
 	
 	if (pctx->mustReturnValue) {
-		return 1337; /*pctx->returnValue;*/
+		return returnValue;
 	} else {
 		return f(arg);
 	}
@@ -33,12 +33,12 @@ int try(ctx_s *pctx, func_t* f, int arg)
 int throw(ctx_s *pctx, int r)
 {
 	pctx->mustReturnValue = 1;
-	pctx->returnValue = r;
+	returnValue = r;
 
 	long ebp = pctx->ebp;
 	long esp = pctx->esp;
 
-	asm ("movl %1, %%esp" "\n\t" "movl %0, %%ebp" "\n\t" "ret"
+	asm ("movl %1, %%esp" "\n\t" "movl %0, %%ebp"
 	:  /* output variables */
 	: "r"(ebp), "r"(esp) /* input variables */
 	: "%esp"/*, "%ebp" */
@@ -67,7 +67,7 @@ static int mul(int depth)
 
 int main()
 {
-	int product;
+	int product = 0;
 	context = (ctx_s*) malloc(sizeof(ctx_s));
 	
 	printf("A list of int, please\n");
