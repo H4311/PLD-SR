@@ -26,5 +26,20 @@ typedef struct gThread
 
 
 
+/**
+ * Initialisation du système
+ */
+void init();
+
+/**
+ * création d'un nouveau thread
+ */
+void createThread();
+
+/**
+ * Changement de contexte
+ */
+void yield();
+
 
 #endif
