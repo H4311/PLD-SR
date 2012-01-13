@@ -5,8 +5,6 @@
 typedef struct {
 	long esp; /* stack pointer */
 	long ebp; /* base pointer */
-	
-	short mustReturnValue; /* boolean */
 } ctx_s;
 
 ctx_s* context;
@@ -15,24 +13,17 @@ static int returnValue;
 typedef int (func_t)(int);
 
 int try(ctx_s *pctx, func_t* f, int arg)
-{	
-	pctx->mustReturnValue = 0;
-	
+{		
 	asm ("movl %%ebp, %0" "\n\t" "movl %%esp, %1"
 	: "=r"(pctx->ebp), "=r"(pctx->esp) /* output variables */
 	: /* input variables */
 	);
 	
-	if (pctx->mustReturnValue) {
-		return returnValue;
-	} else {
-		return f(arg);
-	}
+	return f(arg);
 }
 
 int throw(ctx_s *pctx, int r)
 {
-	pctx->mustReturnValue = 1;
 	returnValue = r;
 
 	long ebp = pctx->ebp;
@@ -43,6 +34,8 @@ int throw(ctx_s *pctx, int r)
 	: "r"(ebp), "r"(esp) /* input variables */
 	: "%esp"/*, "%ebp" */
 	);
+	
+	return returnValue;
 }
 
 static int mul(int depth)
