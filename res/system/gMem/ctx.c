@@ -3,7 +3,7 @@
 
 # include <stdlib.h> /* malloc */
 
-ctx_s* context;
+ctx_s* __CTX_CURRENT_PROCESS_NAME;
 
 ctx_s* create_ctx()
 {
@@ -14,6 +14,6 @@ ctx_s* create_ctx()
 
 void destroy_ctx(ctx_s* pctx)
 {
-	free(pctx->heap); /* TODO : replace with destroy_mem ? */
+	destroy_mem(pctx);
 	free(pctx);
 }

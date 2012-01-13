@@ -1,3 +1,4 @@
+
 #include <stdio.h>
 #include <stdlib.h>
 #include <assert.h>
@@ -5,20 +6,12 @@
 typedef struct {
 	long esp; /* stack pointer */
 	long ebp; /* base pointer */
-
-	short mustReturnValue; /* boolean */
-	int returnValue;
 } ctx_s;
 
 ctx_s* context;
-static int retValue;
+static int returnValue;
 
 typedef int (func_t)(int);
-
-int doNothing()
-{
-	return 0;
-}
 
 void displayContext() 
 {
@@ -32,38 +25,29 @@ void displayContext()
 }
 
 int try(ctx_s *pctx, func_t* f, int arg)
-{	
-	pctx->mustReturnValue = 0;
-
+{		
 	asm ("movl %%ebp, %0" "\n\t" "movl %%esp, %1"
 	: "=r"(pctx->ebp), "=r"(pctx->esp) /* output variables */
 	: /* input variables */
 	);
-
-	printf("ebp save : %d, esp save : %d\n", pctx->ebp, pctx->esp);
-
-	if (pctx->mustReturnValue) {
-		return 1337; /*pctx->returnValue;*/
-	} else {
-		return f(arg);
-	}
 	
+	return f(arg);
 }
 
-int throw(ctx_s *pctx)
+int throw(ctx_s *pctx, int r)
 {
-	pctx->mustReturnValue = 1;
-	pctx->returnValue = retValue;
+	returnValue = r;
 
 	long ebp = pctx->ebp;
 	long esp = pctx->esp;
 
-	asm ("movl %1, %%esp" "\n\t" "movl %0, %%ebp" "\n\t" /*"pop %%ebp" "\n\t" "ret"*/
-	: /* output variables */
+	asm ("movl %1, %%esp" "\n\t" "movl %0, %%ebp"
+	:  /* output variables */
 	: "r"(ebp), "r"(esp) /* input variables */
 	: /*"%esp"/*, "%ebp" */
 	);
-
+	
+	return returnValue;
 }
 
 static int mul(int depth)
@@ -83,8 +67,7 @@ static int mul(int depth)
 			}
 			else 
 			{
-				retValue = -1;
-				throw(context);
+				throw(context, -1);
 				return 0;
 			}
 		default:
@@ -95,12 +78,11 @@ static int mul(int depth)
 
 int main()
 {
-	int product;
+	int product = 0;
 	context = (ctx_s*) malloc(sizeof(ctx_s));
-
-	retValue = 0;
+	
 	printf("A list of int, please\n");
-	product = try(context, (func_t*) mul, retValue);
+	product = try(context, (func_t*) mul, 0);
 	printf("product = %d\n", product);
 
 	free(context);

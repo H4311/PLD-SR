@@ -1,4 +1,4 @@
-CC      = gcc
+CC      = clang
 CFLAGS  = -Wall -ansi -pedantic -g -m32
 
 ###------------------------------
@@ -24,7 +24,7 @@ Makefile.depends:
 
 include Makefile.depends
 
-main: main.o $(OBJECTS)
+main: $(OBJECTS) main.o 
 
 
 ###------------------------------

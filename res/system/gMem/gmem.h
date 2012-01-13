@@ -1,11 +1,11 @@
 # ifndef __GMEM_H__
 # define __GMEM_H__
 
-# include "ctx.h"
+# include "gmem_interface.h"
 
 /* #define USE_MALLOC */
 # ifdef USE_MALLOC
-	#include "stdlib.h"
+	#include <stdlib.h>
 	#define gmalloc malloc
 	#define gfree free
 # else
@@ -14,5 +14,6 @@
 # endif
 
 void init_mem(ctx_s* pctx);
+void destroy_mem(ctx_s* pctx);
 
 # endif
