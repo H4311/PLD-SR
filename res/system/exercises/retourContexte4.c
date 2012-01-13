@@ -34,7 +34,7 @@ int try(ctx_s *pctx, func_t* f, int arg)
 	return f(arg);
 }
 
-int throw(ctx_s *pctx)
+int throw(ctx_s *pctx, int r)
 {
 	returnValue = r;
 
@@ -67,8 +67,7 @@ static int mul(int depth)
 			}
 			else 
 			{
-				retValue = -1;
-				throw(context);
+				throw(context, -1);
 				return 0;
 			}
 		default:
@@ -81,10 +80,9 @@ int main()
 {
 	int product = 0;
 	context = (ctx_s*) malloc(sizeof(ctx_s));
-
-	retValue = 0;
+	
 	printf("A list of int, please\n");
-	product = try(context, (func_t*) mul, retValue);
+	product = try(context, (func_t*) mul, 0);
 	printf("product = %d\n", product);
 
 	free(context);
