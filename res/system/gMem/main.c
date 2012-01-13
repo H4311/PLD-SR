@@ -10,11 +10,11 @@ int main(int argc, char** argv)
 	
 	context = create_ctx();
 	
-	table = (int*) gmalloc(1023);
+	table = (int*) gmalloc(1024);
 	assert(table != NULL);
 	gfree(table);
 	
-	table = (int*) gmalloc(1);
+	table = (int*) gmalloc(2);
 	assert(table != NULL);
 	gfree(table);
 	

@@ -14,7 +14,7 @@ typedef struct
 } blockNode;
 
 typedef struct {
-	__GMEM_HEAP_TYPE heap;
+	char heap[__GMEM_HEAP_SIZE];
 } ctx_s;
 
 extern ctx_s* __CTX_CURRENT_PROCESS_NAME;

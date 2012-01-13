@@ -90,6 +90,7 @@ void gfree(void* ptr)
 	newBlock = (blockNode*) malloc(sizeof(blockNode));
 	newBlock->mem = ptr;
 	newBlock->size = sizeof(*ptr);
+	
 	newBlock->next = __CTX_CURRENT_PROCESS_NAME->heap;
 	__CTX_CURRENT_PROCESS_NAME->heap = newBlock;
 }
