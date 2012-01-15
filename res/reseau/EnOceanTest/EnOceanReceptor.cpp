@@ -1,13 +1,28 @@
-/*
- * EnOceanReceptor.cpp
- *
- *  Created on: 8 janv. 2012
- *      Author: bill
- */
-#include <stdio.h>
-#include "EnOceanReceptor.h"
-#include "cssl.h"
+/*************************************************************************
+                           EnOceanReceptor  -  description
+                             -------------------
+    Creation             : 08 Jan. 2012
+    Copyright            : (C) 2012 by H4311 - Benjamin PLANCHE (BPE)
+*************************************************************************/
 
+//---- Implementation - <EnOceanReceptor> (EnOceanReceptor.cpp file) -----
+
+//---------------------------------------------------------------- INCLUDE
+
+//--------------------------------------------------------- System Include
+using namespace std;
+#include <stdio.h>
+
+//------------------------------------------------------ Personnal Include
+#include "EnOceanReceptor.h"
+
+//-------------------------------------------------------------- Constants
+
+
+
+//----------------------------------------------------------------- PUBLIC
+
+//--------------------------------------------------------- Public Methods
 
 void EnOceanReceptor::connect(char* address, int portno, EnOceanCallbackFunction cb) {
 	cssl_start();
@@ -18,74 +33,12 @@ void EnOceanReceptor::connect(char* address, int portno, EnOceanCallbackFunction
 	}
 	callback = cb;
 	return;
-}
+} //----- End of connect
 
 void EnOceanReceptor::close() {
 	cssl_close(serial);
 	cssl_stop();
-}
-
-
-
-
-
-
-
-
-
-
-/** Is called, if a full frame was received
- */
-void EnOceanReceptor::frame_receive() {
-	if(callback != NULL)
-		callback(receivebuffer[frames_read]);
-	frames_read++;
-	frames_read%=BUFSIZE;
-}
-
-/** Is called, when some byte was received (only for internal use!)
- */
-void EnOceanReceptor::raw_receive(int id, uint8_t *buf, int length) {
-    int i;
-    for(i=0;i<length;i++) {
-    	// write received byte into buffer
-    	BYTE* actual_frame = (BYTE*) &(receivebuffer[frames_received]);
-    	*(actual_frame + bytes_received*sizeof(BYTE)) = buf[i];
-    	bytes_received++;
-    	if (bytes_received >= (sizeof(struct enocean_data_structure)/sizeof(BYTE))) {
-    		// data-frame full -> begin next one and call appropriate function
-    		bytes_received = 0;
-    		frames_received++;
-    		frames_received%=BUFSIZE;
-    		frame_receive();
-    	}
-    }
-}
-
-
-
-
-
-
-
-EnOceanReceptor::EnOceanReceptor() {
-
-}
-
-EnOceanReceptor::EnOceanReceptor(vector<EnOceanSensor> sensors, char* hostAddress, int portNum) {
-	//enocean_error_structure error = enocean_initSock(hostAddress, portNum);
-	//if (error.code != E_OK) {
-	//	printf("%s\n",error.message);
-	//}
-	//enocean_set_callback_function(callBack);
-}
-
-EnOceanReceptor::~EnOceanReceptor() {
-	// TODO Auto-generated destructor stub
-}
-
-
-
+} //----- End of close
 
 
 ///**
@@ -144,3 +97,57 @@ EnOceanReceptor::~EnOceanReceptor() {
 //{
 //	enocean_send_raw((BYTE*)data, sizeof(*data));
 //}
+
+
+//------------------------------------------------- Static public Methods
+
+//------------------------------------------------------------- Operators
+
+
+//-------------------------------------------------- Builder / Destructor
+EnOceanReceptor::EnOceanReceptor() {
+
+} //----- End of EnOceanReceptor
+
+EnOceanReceptor::~EnOceanReceptor() {
+	try {
+		close();
+	} catch (Exception e) {}
+	while (messagesQueue.pop() == 0);
+	destroy(messagesQueue);
+} //----- End of ~EnOceanReceptor
+
+
+//---------------------------------------------------------------- PRIVATE
+
+//------------------------------------------------------ Protected Methods
+
+/** Is called, if a full frame was received
+ */
+void EnOceanReceptor::frame_receive() {
+	if(callback != NULL)
+		//callback(receivebuffer[frames_read]);
+		messagesQueue.push(receivebuffer[frames_read], NULL);
+	frames_read++;
+	frames_read%=BUFSIZE;
+} //----- End of frame_receive
+
+/** Is called, when some byte was received (only for internal use!)
+ */
+void EnOceanReceptor::raw_receive(int id, uint8_t *buf, int length) {
+    int i;
+    for(i=0;i<length;i++) {
+    	// write received byte into buffer
+    	BYTE* actual_frame = (BYTE*) &(receivebuffer[frames_received]);
+    	*(actual_frame + bytes_received*sizeof(BYTE)) = buf[i];
+    	bytes_received++;
+    	if (bytes_received >= (sizeof(struct enocean_data_structure)/sizeof(BYTE))) {
+    		// data-frame full -> begin next one and call appropriate function
+    		bytes_received = 0;
+    		frames_received++;
+    		frames_received%=BUFSIZE;
+    		frame_receive();
+    	}
+    }
+} //----- End of raw_receive
+
