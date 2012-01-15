@@ -1,52 +1,42 @@
-#include <setjmp.h>
 #include <stdio.h>
+#include <stdlib.h>
+#include <assert.h>
 
+#define STACK_SIZE 16384
+
+typedef void (func_t) (void*);
 
 typedef struct {
-	int esp; /* stack pointer */
-	int ebp; /* base pointer */
-	void* stack[];
-	
-	/*todo*/
-	
+	int id;
+	int launched;
+	long esp; /* stack pointer */
+	long ebp; /* base pointer */
+	void* stack;
+	func_t *f;
+	void* args;
 } ctx_s;
 
-struct ctx_s ctx_ping;
-struct ctx_s ctx_pong;
+static ctx_s *curr_ctx;
+ctx_s ctx_ping;
+ctx_s ctx_pong;
 
-
+int init_ctx(ctx_s *ctx, int stack_size, func_t f, void *args);
 void f_ping(void *arg);
 void f_pong(void *arg);
-
-
-void init_ctx(ctx_s *ctx, int stack_size, func_t f, void *args)
-{
-	asm ("movl %%ebp, %0" "\n\t" "movl %%esp, %1"
-	: "=r"(ctx->ebp), "=r"(ctx->esp) /* output variables */
-	: /* input variables */
-	);
-		
-	/*TODO*/
-	
-}
-
-
-void switch_to_ctx(ctx_s *ctx)
-{
-	/*todo*/
-	
-	
-}
-
+void switch_to_ctx(ctx_s *ctx);
 
 int main(int argc, char *argv[])
 {
-	init_ctx(&ctx_ping, 16384, f_ping, NULL);
-	init_ctx(&ctx_pong, 16384, f_pong, NULL);
+	ctx_ping.id = 1;
+	ctx_pong.id = 2;
+	ctx_ping.launched = 0;
+	ctx_pong.launched = 0;
+	init_ctx(&ctx_ping, STACK_SIZE, f_ping, NULL);
+	init_ctx(&ctx_pong, STACK_SIZE, f_pong, NULL);
+	curr_ctx = &ctx_ping;
 	switch_to_ctx(&ctx_ping);
 	exit(EXIT_SUCCESS);
 }
-
 
 void f_ping(void *args)
 {
@@ -61,7 +51,6 @@ void f_ping(void *args)
 	}
 }
 
-
 void f_pong(void *args)
 {
 	while(1) 
@@ -71,4 +60,44 @@ void f_pong(void *args)
 		printf("2") ;
 		switch_to_ctx(&ctx_ping);
 	}
+
+}
+
+int init_ctx(ctx_s *ctx, int stack_size, func_t f, void *args)
+{
+	ctx->stack = malloc(stack_size);
+	ctx->f = f;
+	ctx->args = args;
+	printf("Contexte %d initialisé\n", ctx->id);
+}
+
+
+void switch_to_ctx(ctx_s *ctx)
+{
+	//printf("Saving context %d ... \n", curr_ctx->id);
+	/* Saving stack pointers to the current context */
+	asm ("movl %%ebp, %0" "\n\t" "movl %%esp, %1"
+	: "=r"(curr_ctx->ebp), "=r"(curr_ctx->esp) /* output variables */
+	: /* input variables */
+	);
+	
+	/* Defines the new context */
+	curr_ctx = ctx;
+	
+	if (!ctx->launched)
+	{
+		ctx->launched = 1;
+		ctx->f(ctx->args);
+	}
+	
+	//printf("Switching to context %d ... \n", curr_ctx->id);
+	/* Restore stack registers */
+	asm ("movl %0, %%esp" "\n\t" "movl %1, %%ebp"
+	:  /* output variables */
+	: "r"(curr_ctx->esp), "r"(curr_ctx->ebp) /* input variables */
+	: /*"%esp"/*, "%ebp" */
+	);	
+	
+	//printf("Switched to context %d ... \n", curr_ctx->id);
+	
 }
