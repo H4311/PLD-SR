@@ -1,9 +1,9 @@
 CC = gcc
-CFLAGS = -Wall -Werror -pedantic
+CFLAGS = -Wall -pedantic #-Werror
 EXE = gThread
 INCLUDES = 
 LIBS = 
-OBJ_FILES = gThreads.o
+OBJ_FILES = gThreads.o appli.o
 
 all: $(EXE)
 

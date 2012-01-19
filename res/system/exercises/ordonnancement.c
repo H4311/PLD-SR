@@ -9,8 +9,9 @@ typedef void (func_t) (void*);
 struct ctx_s {
 	int id;
 	int launched;
-	long esp; /* stack pointer */
-	long ebp; /* base pointer */
+	int saved;
+	long esp; 
+	long ebp; 
 	void* stack;
 	func_t *f;
 	void* args;
@@ -26,15 +27,20 @@ static ctx_s *first_ctx;
 int create_ctx(int stack_size, func_t f, void *args);
 void f_ping(void *arg);
 void f_pong(void *arg);
+void f_paf(void *arg);
+void display_ctx();
 void yield();
 void destroy_all_ctx();
+
 
 int main(int argc, char *argv[])
 {
 	id_counter = 1;
 	create_ctx(STACK_SIZE, f_ping, NULL);
 	create_ctx(STACK_SIZE, f_pong, NULL);
+	create_ctx(STACK_SIZE, f_paf, NULL);
 	curr_ctx = first_ctx;
+	/*display_ctx();*/
 	yield();
 	destroy_all_ctx();
 	exit(EXIT_SUCCESS);
@@ -47,6 +53,7 @@ int create_ctx(int stack_size, func_t f, void *args)
 	curr_ctx = (ctx_s*) malloc(sizeof(ctx_s));
 	curr_ctx->id = id_counter;
 	curr_ctx->launched = 0;
+	curr_ctx->saved = 0;
 	curr_ctx->stack = malloc(stack_size);
 	curr_ctx->f = f;
 	curr_ctx->args = args;
@@ -69,15 +76,27 @@ int create_ctx(int stack_size, func_t f, void *args)
 	
 }
 
+void display_ctx()
+{
+	curr_ctx = first_ctx;
+	while (curr_ctx != NULL)
+	{
+		printf("Id : %d; ", curr_ctx->id);
+		curr_ctx = curr_ctx->next_ctx;
+	}
+	printf("\n");
+	
+}
+
 void yield() 
 {
-	
+	//printf("Sauvegarde du contexte %d\n", curr_ctx->id);
 	/* Saving stack pointers to the current context */
-	asm ("movl %%ebp, %0" "\n\t" "movl %%esp, %1"
+	asm ("movl %%ebp, %0" "\n\t" "movl %%esp, %1" "\n\t"
 	: "=r"(curr_ctx->ebp), "=r"(curr_ctx->esp) /* output variables */
 	: /* input variables */
 	);
-		
+	
 	if (curr_ctx->next_ctx == NULL)
 	{
 		curr_ctx = first_ctx;
@@ -94,7 +113,7 @@ void yield()
 	}
 	
 	/* Restore stack registers */
-	asm ("movl %0, %%esp" "\n\t" "movl %1, %%ebp"
+	asm ("movl %0, %%esp" "\n\t" "movl %1, %%ebp" "\n\t"
 	:  /* output variables */
 	: "r"(curr_ctx->esp), "r"(curr_ctx->ebp) /* input variables */
 	: /*"%esp"/*, "%ebp" */
@@ -111,7 +130,7 @@ void destroy_all_ctx()
 		//printf("Contexte %d à détruire\n", curr_ctx->id);
 		temp_ctx = curr_ctx->next_ctx ;
 		if (temp_ctx != NULL)
-			printf("Prochaine Contexte à détruire : %d\n", temp_ctx->id);
+			printf("Prochain Contexte à détruire : %d\n", temp_ctx->id);
 		//printf("Destruction du contexte %d ... ", curr_ctx->id);
 		free(curr_ctx);
 		//printf("... réussie !\n");
@@ -143,4 +162,15 @@ void f_pong(void *args)
 		yield();
 	}
 
+}
+
+void f_paf(void *args)
+{
+	while(1) 
+	{
+		printf("+") ;
+		yield();
+		printf("-") ;
+		yield();
+	}
 }
