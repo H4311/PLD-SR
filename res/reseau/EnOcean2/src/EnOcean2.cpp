@@ -8,6 +8,8 @@
 #include "EnOceanReceptor.h"
 #include "EnOceanAnalyser.h"
 #include <iostream>
+#include "PeriphTable.h"
+#include "Sensors.h"
 
 /**
  * main? Don't know, what main does ;)
@@ -19,6 +21,11 @@ int main(int argc, char *argv[]) {
 	EnOceanReceptor recep = EnOceanReceptor();
 	recep.open(adresse.c_str(), 5000);
 	recep.read();
+
+	PeriphTable table = PeriphTable();
+	table.add((SensorId)666666666, (EnOceanCallbackFunction)analyseTempAndHumidSensor);
+
+	EnOceanAnalyserThread(&table);
 
 	cout << "Fin\n";
 

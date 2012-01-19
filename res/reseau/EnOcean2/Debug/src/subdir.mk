@@ -7,6 +7,7 @@ CPP_SRCS += \
 ../src/EnOcean2.cpp \
 ../src/EnOceanAnalyser.cpp \
 ../src/EnOceanReceptor.cpp \
+../src/PeriphTable.cpp \
 ../src/Receptor.cpp \
 ../src/Sensors.cpp 
 
@@ -14,6 +15,7 @@ OBJS += \
 ./src/EnOcean2.o \
 ./src/EnOceanAnalyser.o \
 ./src/EnOceanReceptor.o \
+./src/PeriphTable.o \
 ./src/Receptor.o \
 ./src/Sensors.o 
 
@@ -21,6 +23,7 @@ CPP_DEPS += \
 ./src/EnOcean2.d \
 ./src/EnOceanAnalyser.d \
 ./src/EnOceanReceptor.d \
+./src/PeriphTable.d \
 ./src/Receptor.d \
 ./src/Sensors.d 
 

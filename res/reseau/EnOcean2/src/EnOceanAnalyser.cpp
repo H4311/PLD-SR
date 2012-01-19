@@ -13,6 +13,8 @@
 using namespace std;
 #include <stdio.h>
 
+#include <iostream>
+
 //------------------------------------------------------ Personnal Include
 #include "EnOceanAnalyser.h"
 #include "Sensors.h"
@@ -23,22 +25,13 @@ using namespace std;
 
 //--------------------------------------------------------- Public Methods
 
-void* EnOceanAnalyserThread(void* sensorsInfo) {
-	EnOceanAnalyser analyz = EnOceanAnalyser();
-	
-	// Sets the analyst :
-	map<SensorId, EnOceanCallbackFunction>* sensors = (map<SensorId, EnOceanCallbackFunction>*)sensorsInfo;
-	for ( map<SensorId, EnOceanCallbackFunction>::iterator iter = sensors->begin(); iter != sensors->end(); ++iter ) {
-		analyz.addSensor(iter->first, iter->second);
-	}
+void* EnOceanAnalyserThread(void* periphTable) {
+	EnOceanAnalyser analyz = EnOceanAnalyser((PeriphTable*)periphTable);
 	
 	// Run it :
 	analyz.run();
+	return NULL;
 }//----- End of EnOceanAnalyserThread
-
-bool EnOceanAnalyser::addSensor(SensorId id, EnOceanCallbackFunction cf) {
-	return (sensors.insert(pair<SensorId,EnOceanCallbackFunction>(id, cf))).second;
-} //----- End of addSensor
 
 void EnOceanAnalyser::setMessagesQueue(blocking_queue<enocean_data_structure>* mQ) {
 	messagesQueue = mQ;
@@ -48,12 +41,12 @@ void EnOceanAnalyser::run() {
 	enocean_data_structure* frame;
 	SensorId id;
 	string data;
-	map<SensorId, EnOceanCallbackFunction>::const_iterator translator;
+	EnOceanCallbackFunction translator;
 	while (messagesQueue->front(frame, NULL) == 0) {
 		id = getEnOceanID(frame);
-		if ((translator = sensors.find(id)) != sensors.end()) { // If it is a sensor we use :
-			data = (translator->second)(frame);
-			printf(data.c_str()); // TO DO : Log
+		if ((translator = periph->find(id)) != NULL) { // If it is a sensor we use :
+			data = translator(frame);
+			cout << data; // TO DO : Log
 		}
 		free(frame);
 	}
@@ -67,7 +60,7 @@ void EnOceanAnalyser::run() {
 
 
 //-------------------------------------------------- Builder / Destructor
-EnOceanAnalyser::EnOceanAnalyser() {
+EnOceanAnalyser::EnOceanAnalyser(PeriphTable* per): periph(per) {
 
 } //----- End of EnOceanAnalyser
 

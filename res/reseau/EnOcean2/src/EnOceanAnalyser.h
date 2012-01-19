@@ -19,13 +19,12 @@ using namespace std;
 
 //------------------------------------------------------ Personnal Include
 #include "blocking_queue.h"
-#include "EnOceanProtocol.h"
+#include "PeriphTable.h"
 #include "Sensors.h"
 
 //------------------------------------------------------------- Constantes
 
 //------------------------------------------------------------------ Types 
-typedef string (*EnOceanCallbackFunction)(enocean_data_structure* frame);
 
 //------------------------------------------------------------------------ 
 // Description : 
@@ -41,13 +40,6 @@ public:
 //------------------------------------------------------- Public Constants
 
 //--------------------------------------------------------- Public Methods
-
-	bool addSensor(SensorId id, EnOceanCallbackFunction cf);
-	// Manual :
-    //		Adds a sensor to the list of sensors to take into account.
-	//		Returns true if the sensor has been added, false if it has already been before.
-    // Contract :
-    //		/
 
 	void run();
 	// Manual :
@@ -67,7 +59,7 @@ public:
 
 //-------------------------------------------------- Builder / Destructor
 
-	EnOceanAnalyser();
+	EnOceanAnalyser(PeriphTable* periph);
 	virtual ~EnOceanAnalyser();
 
 //---------------------------------------------------------------- PRIVATE
@@ -81,7 +73,7 @@ private:
 protected:
 //-------------------------------------------------- Protected Attributes
 
-	map<SensorId, EnOceanCallbackFunction> sensors;
+	PeriphTable* periph;
 	blocking_queue<enocean_data_structure>* messagesQueue;
 
 private:
@@ -96,7 +88,7 @@ private:
 };
 
 //------------------------------ Other definition, depending on this class
-void* EnOceanAnalyserThread (void* sensorsInfo);
+void* EnOceanAnalyserThread (void* periphTable);
 // Manual :
 //		Create a instance of EnOceanAnalyser, and run it.
 // Contract :
