@@ -19,5 +19,6 @@ int main(int argc, char** argv)
 	gfree(table);
 	
 	destroy_ctx(context);
+
 	return 0;
 }
