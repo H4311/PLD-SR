@@ -22,6 +22,7 @@ typedef struct gThread
 {  
     int id;
     char *name;
+    int launched;
     int priority;
     int stackSize;
     void* stack;

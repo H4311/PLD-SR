@@ -6,7 +6,8 @@ typedef void (func_t) (void*);
 
 void letters(void *args)
 {
-	while(1) 
+	int i;
+	for (i = 0; i<100; ++i) 
 	{
 		printf("A") ;
 		yield();
@@ -16,9 +17,11 @@ void letters(void *args)
 		yield();
 	}
 }
+
 void numbers(void *args)
 {
-	while(1) 
+	int i;
+	for (i = 0; i<100; ++i) 
 	{
 		printf("1") ;
 		yield();
@@ -29,8 +32,14 @@ void numbers(void *args)
 
 int main()
 {
+	/*
+	 * Create two threads
+	 */
+	
 	int lettersId = createGThread("letters", letters, NULL, STACK_SIZE);
 	int numbersId = createGThread("numbers", numbers, NULL, STACK_SIZE);
+	
+	/*yield();*/
 	
 	killGThread(numbersId);
 	killGThread(lettersId);

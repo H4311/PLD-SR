@@ -11,7 +11,7 @@ clean:
 	rm $(EXE) $(OBJ_FILES)
 
 $(EXE): $(OBJ_FILES)
-	$(CC) -o $(EXE) $(OBJ_FILES) $(LIBS)
+	$(CC) -o $(EXE) $(OBJ_FILES) $(LIBS) -m32 -ggdb
 
 %.o: %.c
 	$(CC) $(CFLAGS) $(INCLUDES) -o $@ -c $<
