@@ -8,9 +8,10 @@
 	#define gfree free
 # else
 	void* gmalloc(unsigned size);
-	void gfree(void* ptr);
+	void  gfree(void* ptr);
 # endif
 
 void gmem_printHeader(void* ptr);
+int gmem_sizeFreeBlockList();
 
 # endif

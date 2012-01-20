@@ -14,38 +14,46 @@ union header
 	struct
 	{
 		unsigned size;
-		char* mem;
 		union header* next;
+		void* mem;
 	} blockNode;
 	Align x;
 };
 
-unsigned hdrSize = sizeof(union header);
+static union header * firstHdr = NULL;  /* first header to search */
+static union header * prevHdr = NULL; /* header just before the one to return */
+static unsigned hdrSize = sizeof(union header);
 
 void* gmalloc(unsigned size)
 {
-	static union header * firstHeader = NULL;  /* first header to search */
-	union header * hdr = NULL; /* the header to return */
-	union header * prevHdr = NULL; /* header just before the one to return */
-	unsigned i;
+	static short notFormated = 1; /* boolean to know if the heap is formated */
 	
-	if (firstHeader == NULL)
+	union header * hdr = NULL; /* the header to return */
+	
+	if (notFormated)
 	{
+		notFormated = 0;
 		/* format heap */
-		firstHeader = (union header*) __CURRENT_CONTEXT->heap;
-		firstHeader->blockNode.size = __HEAP_SIZE - hdrSize;
-		firstHeader->blockNode.next = firstHeader;
-		
-		firstHeader->blockNode.mem = (void*)((unsigned)firstHeader + hdrSize);
+		firstHdr = (union header*) __CURRENT_CONTEXT->heap;
+		firstHdr->blockNode.size = __HEAP_SIZE - hdrSize;
+		firstHdr->blockNode.next = firstHdr;
+		firstHdr->blockNode.mem = (void*)((unsigned)firstHdr + hdrSize);
+		prevHdr = firstHdr;
 	}
 	
-	hdr = firstHeader;
-	/* First fit : finds the first block after the last used position */
+	if (firstHdr == NULL)
+	{
+		return NULL;
+	}
+	
+	hdr = firstHdr;
+	/* First fit : finds the first sufficiently big block after the last
+	 * used position */
 	while(hdr->blockNode.size < size)
 	{
 		prevHdr = hdr;
 		hdr = hdr->blockNode.next;
-		if (hdr == firstHeader)
+		if (hdr == firstHdr)
 		/* Two cases :
 		 * - Just one node in the list, we're in the while so there's
 		 * not enough memory => return NULL
@@ -56,62 +64,69 @@ void* gmalloc(unsigned size)
 			return NULL;
 		}
 	}
+	/* from this line, we have a good block */
 
 	/* splits the block if it is bigger than the size asked */
-	/*
 	if (hdr->blockNode.size > size)
 	{
 		unsigned delta = hdr->blockNode.size - size;
-		unsigned sizeNewHdr = delta - hdrSize;
-		if (sizeNewHdr > 0)
+		unsigned sizeMemNewBlock = delta - hdrSize;
+		if (sizeMemNewBlock > 0)
 		{
-			// "Creates" a new header
-			union header* newHdr = hdr->blockNode.mem + size;
-			newHdr->blockNode.mem = newHdr + hdrSize;
-			newHdr->blockNode.size = sizeNewHdr;
+			/* "Creates" a new header */
+			union header* newHdr = (union header*)((unsigned)hdr->blockNode.mem + size);
+			newHdr->blockNode.mem = (void*)((unsigned)newHdr + hdrSize);
+			newHdr->blockNode.size = sizeMemNewBlock;
 			
-			// inserts it in the circular linked list
+			/* inserts it in the circular linked list */
 			newHdr->blockNode.next = (hdr->blockNode.next == hdr) ? newHdr : hdr->blockNode.next;
-			if (prevHdr != NULL)
+			if (prevHdr != hdr)
 			{
+				/* if there is more than one block */
 				prevHdr->blockNode.next = newHdr;
+			} else
+			{
+				/* if there is just one block */
+				prevHdr = newHdr;
 			}
 			
-			firstHeader = newHdr;
+			firstHdr = newHdr;
 			# ifdef __DEBUG
-			printf("[GMALLOC] A new block has been created.\n");
-			gmem_printHeader(hdr->blockNode.mem);
+			printf("[GMALLOC] A new block has been created :\n");
 			gmem_printHeader(newHdr->blockNode.mem);
 			# endif	
 			
 			hdr->blockNode.size = size;
-			hdr->blockNode.next = NULL;
+		}
+	} else
+	/* just removes the block */
+	{
+		firstHdr = (hdr->blockNode.next != hdr) ? hdr->blockNode.next : NULL;
+		if (prevHdr != hdr)
+		{
+			prevHdr->blockNode.next = hdr->blockNode.next;
+		} else
+		{
+			/* if there was just one block, there is no more previous */
+			prevHdr = NULL;
 		}
 	}
-	*/
+	hdr->blockNode.next = NULL;
 	
 	/* inits the mem with zeros */
-	/* TODO wtf is that malloc bug ?
 	{
 		char* mem = hdr->blockNode.mem;
-		char* maxAddr = (int) mem + (int) hdr->blockNode.size - 1;
-		int i = 0;
-		printf("mem = %d / maxAddr = %d\n", mem, maxAddr);
+		char* maxAddr = (void*)((unsigned)mem + hdr->blockNode.size - 1);
 		while(mem < maxAddr)
 		{
 			*mem++ = 0;
-			printf("mem = %d / maxAddr = %d\n", mem, maxAddr);
 		}
 	}
-	*/
-	
-	printf("[HEADER] Pointer : %x\n", hdr->blockNode.mem);
-	printf("[HEADER] Header : %x\n", hdr);
-	printf("\n");
-	printf("Valeur de pmem == hdr + hdrSize : %x\n", hdr + hdrSize);
-	printf("Valeur de hdr == pmem - hdrSize : %x\n", (hdr->blockNode.mem) - hdrSize);
-	
+		
+	# ifdef __DEBUG
+	printf("[GMALLOC] Returned block :\n");
 	gmem_printHeader(hdr->blockNode.mem);
+	# endif
 	
 	/* returns the memory */
 	return (void*) hdr->blockNode.mem;
@@ -126,7 +141,7 @@ void gfree(void* ptr)
 		return;
 	}
 	
-	hdr = ptr - hdrSize;
+	hdr = (void*)((unsigned)ptr - hdrSize);
 	
 # ifdef __DEBUG
 	printf("[GFREE] Memory used : %d\n", hdr->blockNode.size);
@@ -145,13 +160,29 @@ void gmem_printHeader(void* ptr)
 	if (ptr == NULL)
 		return;
 		
-	hdr = ptr - (void*)hdrSize;
+	hdr = (void*)((unsigned)ptr - hdrSize);
 	printf("\n");
-	printf("[HEADER] Pointer : %x\n", ptr);
-	printf("[HEADER] Header : %x\n", hdr);
+	printf("[HEADER] Pointer : %p\n", ptr);
+	printf("[HEADER] Header : %p\n", hdr);
 	printf("[HEADER] Size of mem : %d\n", hdr->blockNode.size);
-	printf("[HEADER] Adress of mem : %x\n", hdr->blockNode.mem);
-	printf("[HEADER] Next header adress : %x\n", hdr->blockNode.next);
+	printf("[HEADER] Adress of mem : %p\n", hdr->blockNode.mem);
+	printf("[HEADER] Next header adress : %p\n", hdr->blockNode.next);
 	printf("\n");
 # endif
+}
+
+int gmem_sizeFreeBlockList()
+{
+	union header* hdr = firstHdr;
+	if (hdr == NULL)
+		return 0;
+	else
+	{
+		int size = 0;
+		do {
+			++size;
+			hdr = hdr->blockNode.next;
+		} while (hdr != firstHdr);
+		return size;
+	}
 }
