@@ -10,12 +10,19 @@ int main(int argc, char** argv)
 	
 	context = create_ctx();
 	
-	table = (int*) gmalloc(1024);
-	assert(table != NULL);
-	gfree(table);
+	table = (int*) gmalloc(__HEAP_SIZE);
+	assert(table == NULL);
 	
-	table = (int*) gmalloc(2);
+	table = (int*) gmalloc(256);
+	/*
+	for(; i < 256; ++i)
+	{
+		printf("%d) %d\n", i, table[i]);
+	}
+	* */
 	assert(table != NULL);
+	gmem_printHeader(table);
+	
 	gfree(table);
 	
 	destroy_ctx(context);

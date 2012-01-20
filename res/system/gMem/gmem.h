@@ -11,4 +11,6 @@
 	void gfree(void* ptr);
 # endif
 
+void gmem_printHeader(void* ptr);
+
 # endif

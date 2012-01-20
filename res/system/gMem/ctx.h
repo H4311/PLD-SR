@@ -1,6 +1,7 @@
 # ifndef __CTX_H__
 # define __CTX_H__
 
+# define __CURRENT_CONTEXT context
 # define __HEAP_SIZE 512
 
 /*****************************************************
@@ -13,7 +14,7 @@ typedef struct {
 /*****************************************************
  * The context which has been chosen by the scheduler 
  **/
-extern ctx_s* context;
+extern ctx_s* __CURRENT_CONTEXT;
 
 /*****************************************************
  * Function to create an execution context
