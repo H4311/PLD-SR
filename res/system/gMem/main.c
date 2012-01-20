@@ -6,7 +6,7 @@
 
 int main(int argc, char** argv)
 {
-	int* table = 0, *table2 = 0;
+	int* table = 0, *table2 = 0, *table3 = 0;
 	
 	context = create_ctx();
 	
@@ -36,9 +36,21 @@ int main(int argc, char** argv)
 	/* 512 - 256 - 32 - 3*12 */
 	
 	gfree(table);
-	
 	printf("After free(table), available memory : %d\n", gmem_availableMem());
 	/* 512 - 32 - 3*12 */
+	
+	table3 = (int*) gmalloc(sizeof(int)*8); /* 32 */
+	assert(table3 != NULL);
+	printf("After table3.malloc(), available memory : %d\n", gmem_availableMem());
+	/* 512 - 32 - 32 - 4*12 */
+	
+	gfree(table3);
+	printf("After free(table3), available memory : %d\n", gmem_availableMem());
+	/* 512 - 32 - 4*12 */
+	
+	gfree(table2);
+	printf("After free(table2), available memory : %d\n", gmem_availableMem());
+	/* 512 - 4*12 */
 	
 	destroy_ctx(context);
 
