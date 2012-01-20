@@ -13,5 +13,6 @@
 
 void gmem_printHeader(void* ptr);
 int gmem_sizeFreeBlockList();
+unsigned gmem_availableMem();
 
 # endif

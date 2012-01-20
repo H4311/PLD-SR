@@ -91,10 +91,10 @@ void* gmalloc(unsigned size)
 			}
 			
 			firstHdr = newHdr;
-			# ifdef __DEBUG
+# ifdef __DEBUG
 			printf("[GMALLOC] A new block has been created :\n");
 			gmem_printHeader(newHdr->blockNode.mem);
-			# endif	
+# endif	
 			
 			hdr->blockNode.size = size;
 		}
@@ -123,10 +123,10 @@ void* gmalloc(unsigned size)
 		}
 	}
 		
-	# ifdef __DEBUG
+# ifdef __DEBUG
 	printf("[GMALLOC] Returned block :\n");
 	gmem_printHeader(hdr->blockNode.mem);
-	# endif
+# endif
 	
 	/* returns the memory */
 	return (void*) hdr->blockNode.mem;
@@ -134,6 +134,7 @@ void* gmalloc(unsigned size)
 
 void gfree(void* ptr)
 {
+	union header* hdrToInsert = NULL;
 	union header* hdr = NULL;
 	/* no ptr means no memory */
 	if (ptr == NULL)
@@ -141,20 +142,28 @@ void gfree(void* ptr)
 		return;
 	}
 	
-	hdr = (void*)((unsigned)ptr - hdrSize);
+	hdrToInsert = (void*)((unsigned)ptr - hdrSize);
 	
-# ifdef __DEBUG
-	printf("[GFREE] Memory used : %d\n", hdr->blockNode.size);
-# endif
+	if (firstHdr == NULL)
+	{
+		firstHdr = hdrToInsert;
+		prevHdr = hdrToInsert;
+		return;
+	}
 	
 	/* finds the best place to put the header back */
+	hdr = firstHdr;
 	
 	/* puts it */
+	hdrToInsert->blockNode.next = hdr->blockNode.next;
+	hdr->blockNode.next = hdrToInsert;
+	
+	prevHdr = hdr;
+	firstHdr = hdrToInsert;
 }
 
 void gmem_printHeader(void* ptr)
 {
-# ifdef __DEBUG
 	union header* hdr = NULL;
 	
 	if (ptr == NULL)
@@ -168,7 +177,6 @@ void gmem_printHeader(void* ptr)
 	printf("[HEADER] Adress of mem : %p\n", hdr->blockNode.mem);
 	printf("[HEADER] Next header adress : %p\n", hdr->blockNode.next);
 	printf("\n");
-# endif
 }
 
 int gmem_sizeFreeBlockList()
@@ -184,5 +192,21 @@ int gmem_sizeFreeBlockList()
 			hdr = hdr->blockNode.next;
 		} while (hdr != firstHdr);
 		return size;
+	}
+}
+
+unsigned gmem_availableMem()
+{
+	union header* hdr = firstHdr;
+	if (hdr == NULL)
+		return 0U;
+	else
+	{
+		unsigned availableMem = 0U;
+		do {
+			availableMem += hdr->blockNode.size;
+			hdr = hdr->blockNode.next;
+		} while (hdr != firstHdr);
+		return availableMem;
 	}
 }
