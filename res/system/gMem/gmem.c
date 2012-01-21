@@ -1,48 +1,90 @@
 # include "gmem.h"
-# include "gmem_private.h"
-# define NULL ((void*) 0)
+# include <stdlib.h>	/* NULL, srand, rand... */
 
-# include <stdio.h>
-# include <assert.h>
-
-# include <stdlib.h>
-# include <time.h>
-
-# define __DEBUG
+/* Uncomment this if you want to see a lot of debug messages when
+ * using the functions.
+ **/
+/* # define __DEBUG */
+ 
+/*
+ * Magic number, used in structures to check coherency. This allows to
+ * detect heap corruptions and checks that ptr given to gfree have been
+ * allocated with gmalloc.
+ */
 # define __MAGIC_NUMBER 1337
-# define __GMEM_FUNCTIONAL_TEST_TRIES 1000
 
+# ifdef USE_MALLOC 
+/* STDLIB implementation */
+void* gmalloc(unsigned size)
+{
+	return malloc(size);
+}
+
+void gfree(void* ptr)
+{
+	free(ptr);
+}
+# else
+
+# include "gmem_private.h"	/* tests */
+
+# include <stdio.h>		/* printf() */
+# include <assert.h>	/* assert() */
+# include <time.h>		/* time() */
+
+/*
+ * Used to align headers on word, in order to optimize execution.
+ * (cf Kernighan & Ritchie's C Programming Language)
+ */
 typedef long Align;
 
+/*
+ * Scoop : the heap is in fact a fixed-size char table.
+ */
 static char heap[__HEAP_SIZE];
 
+/*
+ * Union header, which contains the struct describing a header and is
+ * aligned.
+ */
 union header
 {
 	struct
 	{
-		unsigned magic; /* to check consistency */
-		unsigned size;
-		union header* next;
-		void* mem;
+		unsigned magic; 	/* used to check consistency */
+		unsigned size;		/* size of the memory given */
+		union header* next; /* next header in the circular list */
+		void* mem;			/* pointer on memory */
 	} blockNode;
 	Align x;
 };
 
-static union header * firstHdr = NULL;  /* first header to search. It
-is guaranteed that it's the littlest address pointer in the free list */
-static union header* lastHdr = NULL; /* TODO */
+/*
+ * The headers descripting free memory are put in a circular chained 
+ * list, sorted by pointer address, in order to optimize merging when 
+ * freeing.
+ */
+static union header * firstHdr = NULL;  /* first header to search
+(littlest address). */
+static union header* lastHdr = NULL; /* last header to search (biggest
+address). */
 
-static unsigned hdrSize = sizeof(union header);
+static unsigned hdrSize = sizeof(union header); /* size of an header*/
 
 void* gmalloc(unsigned size)
 {
-	static short formatted = 0; /* boolean to know if the heap is formated */
+	static short formatted = 0; /* boolean to know if the heap is 
+	formatted. Is just done once at the first gmalloc. */
 	
-	union header * prevHdr = NULL; /* header just before the one to return */
+	union header * prevHdr = NULL; /* header just before the one to 
+	return */
 	union header * hdr = NULL; /* the header to return */
 	
-	unsigned delta;
-	unsigned sizeMemNewBlock;
+	/* These two variables are used later to know if it's interesting
+	 * to split the block.
+	 */
+	int delta;
+	int sizeMemNewBlock;
 	
 	if (!formatted)
 	{
@@ -55,7 +97,8 @@ void* gmalloc(unsigned size)
 		lastHdr = prevHdr = firstHdr;
 	}
 	
-	if (firstHdr == NULL)
+	/* firstHdr is NULL only when all the memory has been used */
+	if (size == 0U || firstHdr == NULL)
 	{
 		return NULL;
 	}
@@ -88,7 +131,8 @@ void* gmalloc(unsigned size)
 	if (hdr->blockNode.size > size && sizeMemNewBlock > 0)
 	{
 		/* "Creates" a new header */
-		union header* newHdr = (union header*)((unsigned)hdr->blockNode.mem + size);
+		union header* newHdr = (union header*)
+								((unsigned)hdr->blockNode.mem + size);
 		newHdr->blockNode.mem = (void*)((unsigned)newHdr + hdrSize);
 		newHdr->blockNode.size = sizeMemNewBlock;
 		
@@ -96,18 +140,11 @@ void* gmalloc(unsigned size)
 		newHdr->blockNode.next = (hdr->blockNode.next == hdr) 
 									? newHdr 
 									: hdr->blockNode.next;
-		/* if (prevHdr != NULL && prevHdr != hdr) */ /* TODO */
-		if (prevHdr != hdr)
+		if (hdr != prevHdr)
 		{
 			/* if there is more than one block */
 			prevHdr->blockNode.next = newHdr;
-		} 
-		/* else
-		{
-			// if there is just one block
-			prevHdr = newHdr;
-			lastHdr = newHdr;
-		} */
+		}
 		
 		if (hdr == lastHdr)
 		{
@@ -119,6 +156,8 @@ void* gmalloc(unsigned size)
 			firstHdr = newHdr;
 		}
 # ifdef __DEBUG
+		printf("[GMALLOC] Delta = %d, sizeOfNew = %d\n", 
+				delta, sizeMemNewBlock);
 		printf("[GMALLOC] A new block has been created :\n");
 		gmem_printHeader(newHdr->blockNode.mem);
 # endif	
@@ -133,7 +172,8 @@ void* gmalloc(unsigned size)
 		
 		if (hdr == firstHdr)
 		{
-			firstHdr = (hdr->blockNode.next != hdr) ? hdr->blockNode.next : NULL;
+			firstHdr = (hdr->blockNode.next != hdr) ?hdr->blockNode.next
+													: NULL;
 		}
 		
 		if (hdr == lastHdr)
@@ -144,16 +184,14 @@ void* gmalloc(unsigned size)
 	hdr->blockNode.next = NULL;
 	
 	/* inits the mem with zeros */
-	/* TODO wtf is that malloc bug ?
 	{
 		char* mem = hdr->blockNode.mem;
-		char* maxAddr = (void*)((unsigned)mem + hdr->blockNode.size - 1); // -1
+		char* maxAddr = (void*)((unsigned)mem + hdr->blockNode.size);
 		while(mem < maxAddr)
 		{
 			*mem++ = 0;
 		}
 	}
-	* */
 		
 # ifdef __DEBUG
 	printf("[GMALLOC] Returned block :\n");
@@ -176,25 +214,37 @@ static short hdrBeforeHdr(union header* hdr1, union header* hdr2)
 }
 
 void gfree(void* ptr)
+/* We look for a place to put the header, then we put it. */
 {
-	union header* hdrToInsert = NULL;
-	union header* hdr = NULL;
-	union header* hdrIter = NULL;
-	short boolMergeWithHdr = 0;
-	short boolMergeWithHdrIter = 0;
-	/* no ptr means no memory */
+	union header* hdrToInsert = NULL;	/* header associated to ptr */
+	union header* hdr = NULL;			/* header before the place to 
+	insert */
+	union header* hdrIter = NULL;		/* header just after the place
+	to insert */
+	
+	short boolMergeWithHdr = 0; /* indicates whether we need a merge 
+	with the previous one or not. */
+	short boolMergeWithHdrIter = 0; /* indicates whether we need a 
+	merge with the next one or not. */
+	
 	if (ptr == NULL)
+	/* no ptr means nothing to do */
 	{
 		return;
 	}
 	
 	hdrToInsert = (void*)((unsigned)ptr - hdrSize);
-	assert(hdrToInsert->blockNode.magic == __MAGIC_NUMBER);
+	if (hdrToInsert->blockNode.magic != __MAGIC_NUMBER)
+	/* fatal error : heap could have been corrupted (segfault) */
+	{
+		fprintf(stderr, 
+				"Fatal error : corrupted heap when call to free.\n");
+		exit(1);
+	}
 	
 	if (firstHdr == NULL)
 	{
-		firstHdr = hdrToInsert;
-		/* prevHdr = hdrToInsert; */
+		lastHdr = firstHdr = hdrToInsert;
 		return;
 	}
 	
@@ -205,6 +255,7 @@ void gfree(void* ptr)
 		hdrIter = hdrIter->blockNode.next;
 		
 		if (hdrBeforeHdr(hdr, hdrToInsert))
+		/* we can merge with the previous one */
 		{
 # ifdef __DEBUG
 			printf("[GFREE] hdr(%p) < hdrToInsert(%p)\n",
@@ -215,6 +266,7 @@ void gfree(void* ptr)
 		}
 		
 		if (hdrBeforeHdr(hdrToInsert, hdrIter))
+		/* we can merge with the next one */
 		{
 # ifdef __DEBUG
 			printf("[GFREE] hdrToInsert(%p) < hdrIter(%p)\n",
@@ -227,8 +279,8 @@ void gfree(void* ptr)
 	while (!boolMergeWithHdr && !boolMergeWithHdrIter 
 			&& hdrIter != firstHdr);
 	
-	/* We have to merge with the previous one and the next one */
 	if (boolMergeWithHdr && boolMergeWithHdrIter)
+	/* We have to merge with the previous one and the next one */
 	{
 # ifdef __DEBUG
 		printf("[GFREE] Merging with previous and next ones.\n");
@@ -242,21 +294,21 @@ void gfree(void* ptr)
 			lastHdr = hdr;
 		}
 	}
-	/* Just merges with the previous one */
 	else if (boolMergeWithHdr)
+	/* Just merges with the previous one */
 	{
 # ifdef __DEBUG
 		printf("[GFREE] Merging with the previous one.\n");
 # endif
 		hdr->blockNode.size += hdrToInsert->blockNode.size + hdrSize;
 	}
-	/* Just merges with the next one */
 	else if (boolMergeWithHdrIter)
+	/* Just merges with the next one */
 	{
 # ifdef __DEBUG
 		printf("[GFREE] Merging with the next one.\n");
 # endif
-		hdrToInsert->blockNode.size += hdrIter->blockNode.size + hdrSize;
+		hdrToInsert->blockNode.size += hdrIter->blockNode.size +hdrSize;
 		hdrToInsert->blockNode.next = 
 			(hdrIter->blockNode.next != hdrIter) ?
 				hdrIter->blockNode.next :
@@ -275,17 +327,20 @@ void gfree(void* ptr)
 	}
 	else
 	/* No cool place has been found, just puts it in increasing order of
-	 * pointers*/
+	 * pointers. We have to look another time for the best place, by
+	 * looking at addresses. */
+	/* TODO : the place to insert could be searched the first time. */
 	{	
-		short done = 0;
-		union header* hdrMin = NULL;
-		union header* hdrMax = NULL;
+		short done = 0;	/* boolean to know if we're done */
+		union header* hdrMin = NULL; /* the littlest address */
+		union header* hdrMax = NULL; /* the biggest address */
 		
 		hdrIter = firstHdr;
 		do {
 			hdr = hdrIter;
 			hdrIter = hdrIter->blockNode.next;
 			
+			/* Looks for the littlest and biggest addresses */
 			if (hdrMin == NULL || hdr < hdrMin)
 			{
 				hdrMin = hdr;
@@ -299,7 +354,7 @@ void gfree(void* ptr)
 			/* if there's just one element */
 			{
 # ifdef __DEBUG
-		printf("[GFREE]\tSimple insertion in a list of one element.\n");
+		printf("[GFREE] Simple insertion in a list of one element.\n");
 # endif
 				hdrToInsert->blockNode.next = hdr;
 				hdr->blockNode.next = hdrToInsert;
@@ -315,7 +370,7 @@ void gfree(void* ptr)
 			/* there are at least two elements and they're sorted */
 			{
 # ifdef __DEBUG
-		printf("[GFREE]\tSimple insertion between 2 sorted elements.\n");
+		printf("[GFREE] Simple insertion between 2 sorted elements.\n");
 # endif
 				hdrToInsert->blockNode.next = hdr->blockNode.next;
 				hdr->blockNode.next = hdrToInsert;
@@ -329,7 +384,7 @@ void gfree(void* ptr)
 			if (hdrMax != NULL && hdrToInsert > hdrMax)
 			{
 # ifdef __DEBUG
-		printf("[GFREE]\tSimple insertion at end.\n");
+		printf("[GFREE] Simple insertion at end.\n");
 # endif
 				hdrToInsert->blockNode.next = hdrMax;
 				hdrMax->blockNode.next = hdrToInsert;
@@ -337,14 +392,15 @@ void gfree(void* ptr)
 			} else if (hdrMin != NULL && hdrToInsert < hdrMin)
 			{
 # ifdef __DEBUG
-		printf("[GFREE]\tSimple insertion at head.\n");
+		printf("[GFREE] Simple insertion at head.\n");
 # endif
 				hdrToInsert->blockNode.next = hdrMin;
 				lastHdr->blockNode.next = firstHdr = hdrToInsert;
 			} else
 			{
 				/* never should happen */
-				printf("[GFREE] Impossible case reached.\n");
+				fprintf(stderr, "[GFREE] Impossible case reached.\n");
+				exit(1);
 			}
 		}
 	}
@@ -361,7 +417,7 @@ void gmem_printHeader(void* ptr)
 	printf("\n");
 	printf("[HEADER] Pointer : %p\n", ptr);
 	printf("[HEADER] Header : %p\n", hdr);
-	printf("[HEADER] Size of mem : %d\n", hdr->blockNode.size);
+	printf("[HEADER] Size of mem : %u\n", hdr->blockNode.size);
 	printf("[HEADER] Adress of mem : %p\n", hdr->blockNode.mem);
 	printf("[HEADER] Next header adress : %p\n", hdr->blockNode.next);
 	printf("\n");
@@ -404,19 +460,18 @@ void gmem_show_heap()
 	int i = 0;
 	union header* hdr = firstHdr;
 	printf("\n\n----- HEAP -----\n");
-	printf("- Heap : base = %p / end = %p\n", (void*) heap, (void*)((unsigned)heap + __HEAP_SIZE - 1));
+	printf("- Available memory : %d\n", gmem_availableMem());
+	printf("- Heap : base = %p / end = %p\n", 
+				(void*) heap, 
+				(void*)((unsigned)heap + __HEAP_SIZE - 1));
 	do {
-		printf("- Header %d : base = %p / end = %p\n",
+		printf("- Header %d : base = %p / mem = %d / end = %p\n",
 			i++, 
 			(void*)hdr, 
-			(void*)((unsigned)hdr->blockNode.mem + hdr->blockNode.size -1) );
-			
-		if (i > 10)
-		{
-			printf("First = %p, HDR = %p, HDR->next = %p\n", (void*) firstHdr, (void*)hdr, (void*) hdr->blockNode.next);
-			getchar();
-		}
-			
+			hdr->blockNode.size,
+			(void*)
+			((unsigned)hdr->blockNode.mem + hdr->blockNode.size -1) );
+				
 		hdr = hdr->blockNode.next;
 	} while (hdr != firstHdr);
 	printf("----- END OF HEAP -----\n\n");
@@ -430,7 +485,8 @@ void gmem_test0()
 	assert(gmem_sizeFreeBlockList() == 1);
 	
 	assert((void*)((unsigned)heap + __HEAP_SIZE - 1)
-		== (void*)((unsigned)firstHdr->blockNode.mem + firstHdr->blockNode.size -1));
+		== (void*)((unsigned)firstHdr->blockNode.mem 
+					+ firstHdr->blockNode.size -1));
 	printf("Test 0 : OK.\n");
 }
 
@@ -469,7 +525,9 @@ void gmem_test1()
 	assert(gmem_sizeFreeBlockList() == 1);
 
 	assert((void*)((unsigned)heap + (unsigned)__HEAP_SIZE - 1U)
-		== (void*)((unsigned)firstHdr->blockNode.mem + firstHdr->blockNode.size -1U));
+		== (void*)((unsigned)firstHdr->blockNode.mem 
+		+ firstHdr->blockNode.size 
+		-1U));
 		
 	printf("Test 1 : OK.\n");
 }
@@ -490,7 +548,7 @@ void gmem_test2()
 	
 	table3 = (int*) gmalloc(mem3);
 	assert(table3 != NULL);
-	assert(gmem_availableMem() == __HEAP_SIZE - 3*hdrSize - mem3 - mem2);
+	assert(gmem_availableMem() == __HEAP_SIZE - 3*hdrSize - mem3 -mem2);
 	
 	gmem_fill_tab(table2, size2);
 	gmem_fill_tab(table3, size3);
@@ -504,8 +562,9 @@ void gmem_test2()
 	assert(gmem_availableMem() == initialAvailableMem);
 	assert(gmem_sizeFreeBlockList() == 1);
 	
-	assert((void*)((unsigned)heap + __HEAP_SIZE - 1)
-		== (void*)((unsigned)firstHdr->blockNode.mem + firstHdr->blockNode.size -1));
+	assert((void*)((unsigned)heap + __HEAP_SIZE - 1U)
+		== (void*)((unsigned)firstHdr->blockNode.mem 
+					+ firstHdr->blockNode.size - 1U));
 		
 	printf("Test 2 : OK.\n");
 }
@@ -515,8 +574,7 @@ void gmem_test3()
 	int *table[10];
 	short boolMemAllocated[10];
 	int i;
-	int sizeOfOneTable = 4;
-	unsigned memSize = sizeof(int)*sizeOfOneTable;
+	int size[4] = {4U, 6U, 8U, 10U};
 	unsigned initialAvailableMem = gmem_availableMem();
 	
 	printf("Test 3 : running.\n");
@@ -541,14 +599,17 @@ void gmem_test3()
 			boolMemAllocated[j] = 0;
 		} else
 		{
-			printf("\t\tMalloc.\n");
+			int sizeChosen = size[rand()%4];
+			unsigned memSize = sizeof(int)*sizeChosen;
+			printf("\t\tMalloc of %d.\n", memSize);
 			table[j] = (int*) gmalloc(memSize);
 			assert(table[j] != NULL);
-			gmem_fill_tab(table[j], sizeOfOneTable);
+			gmem_fill_tab(table[j], sizeChosen);
 			boolMemAllocated[j] = 1;
 		}
+# ifdef __DEBUG
 		gmem_show_heap();
-		/* (); */
+# endif
 	}
 	
 	for (i = 0; i < 10; ++i)
@@ -561,8 +622,12 @@ void gmem_test3()
 	
 	assert(gmem_availableMem() == initialAvailableMem);
 	assert(gmem_sizeFreeBlockList() == 1);
-	assert((void*)((unsigned)heap + __HEAP_SIZE - 1)
-		== (void*)((unsigned)firstHdr->blockNode.mem + firstHdr->blockNode.size -1));
+	assert((void*)((unsigned)heap + __HEAP_SIZE - 1U)
+		== (void*)((unsigned)firstHdr->blockNode.mem 
+						+ firstHdr->blockNode.size 
+						- 1U));
 		
 	printf("Test 3 : OK.\n");
 }
+
+# endif

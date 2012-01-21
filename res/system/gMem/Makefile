@@ -1,5 +1,6 @@
 CC      = clang
-CFLAGS  = -Wall -ansi -pedantic -g -m32 
+CFLAGS  = -Wall -ansi -pedantic -m32 -g
+LIBS    = -lm
 
 ###------------------------------
 ### Main targets 
