@@ -1,45 +1,65 @@
 #ifndef _GTHREADS_H_
 #define _GTHREADS_H_
 
+#define FALSE 0
+#define TRUE 1
+
+#define ERROR -1
+#define OK 0
+
 #define STACK_SIZE 1042
 #define NAME_SIZE 20
 
+typedef void (gThread_func_t) (void*);
 
 typedef struct {
 	int esp; /* stack pointer */
 	int ebp; /* base pointer */
-
-	/* todo */
 	
 } ctx_s;
-
 
 typedef struct gThread
 {  
     int id;
-    char name[NAME_SIZE];
+    char *name;
+    int launched;
     int priority;
     int stackSize;
-	ctx_s context;
-    
+    void* stack;
+    ctx_s context;
+	gThread_func_t *func;
+	void* args;
+    struct gThread *nextThread;
 } gThread;
 
 
-
 /**
- * Initialisation du système
+ * System initialization
  */
-void init();
+void initSystem();
 
 /**
- * création d'un nouveau thread
+ * Create a new thread
  */
-void createThread();
+int createGThread(char *name, gThread_func_t thread, void* args, int stackSize);
 
 /**
- * Changement de contexte
+ * Kill a thread
+ */
+int killGThread(int threadId);
+
+/**
+ * Switch context
  */
 void yield();
 
+
+/**
+ * Enable/Disable interrupts
+ */
+void enableIT();
+void disableIT();
+ 
+  
 
 #endif
