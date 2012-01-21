@@ -71,7 +71,7 @@ int main(int argc, char** argv)
 	while(p != NULL)
 	{
 		struct prime* temp = p->next;
-		printf("%d ", p->p);
+		/* printf("%d ", p->p); */
 		gfree(p);
 		p = temp;
 	}

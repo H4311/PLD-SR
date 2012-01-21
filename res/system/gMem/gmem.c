@@ -332,23 +332,11 @@ void gfree(void* ptr)
 	/* TODO : the place to insert could be searched the first time. */
 	{	
 		short done = 0;	/* boolean to know if we're done */
-		union header* hdrMin = NULL; /* the littlest address */
-		union header* hdrMax = NULL; /* the biggest address */
 		
 		hdrIter = firstHdr;
 		do {
 			hdr = hdrIter;
 			hdrIter = hdrIter->blockNode.next;
-			
-			/* Looks for the littlest and biggest addresses */
-			if (hdrMin == NULL || hdr < hdrMin)
-			{
-				hdrMin = hdr;
-			}
-			if (hdrMax == NULL || hdr > hdrMax)
-			{
-				hdrMax = hdr;
-			}
 			
 			if (hdr == hdrIter)
 			/* if there's just one element */
@@ -381,20 +369,20 @@ void gfree(void* ptr)
 		if (!done)
 		/* must put the header in the head or end of list */
 		{
-			if (hdrMax != NULL && hdrToInsert > hdrMax)
+			if (lastHdr != NULL && hdrToInsert > lastHdr)
 			{
 # ifdef __DEBUG
 		printf("[GFREE] Simple insertion at end.\n");
 # endif
-				hdrToInsert->blockNode.next = hdrMax;
-				hdrMax->blockNode.next = hdrToInsert;
+				hdrToInsert->blockNode.next = lastHdr;
+				lastHdr->blockNode.next = hdrToInsert;
 				lastHdr = hdrToInsert;
-			} else if (hdrMin != NULL && hdrToInsert < hdrMin)
+			} else if (firstHdr != NULL && hdrToInsert < firstHdr)
 			{
 # ifdef __DEBUG
 		printf("[GFREE] Simple insertion at head.\n");
 # endif
-				hdrToInsert->blockNode.next = hdrMin;
+				hdrToInsert->blockNode.next = firstHdr;
 				lastHdr->blockNode.next = firstHdr = hdrToInsert;
 			} else
 			{
@@ -415,11 +403,12 @@ void gmem_printHeader(void* ptr)
 		
 	hdr = (void*)((unsigned)ptr - hdrSize);
 	printf("\n");
-	printf("[HEADER] Pointer : %p\n", ptr);
-	printf("[HEADER] Header : %p\n", hdr);
+	printf("[HEADER] Pointer : %p\n", (void*) ptr);
+	printf("[HEADER] Header : %p\n", (void*) hdr);
 	printf("[HEADER] Size of mem : %u\n", hdr->blockNode.size);
 	printf("[HEADER] Adress of mem : %p\n", hdr->blockNode.mem);
-	printf("[HEADER] Next header adress : %p\n", hdr->blockNode.next);
+	printf("[HEADER] Next header adress : %p\n", (void*) 
+												hdr->blockNode.next);
 	printf("\n");
 }
 

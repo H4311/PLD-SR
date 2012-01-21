@@ -1,4 +1,4 @@
-CC      = clang
+CC      = gcc
 CFLAGS  = -Wall -ansi -pedantic -m32 -g
 LIBS    = -lm
 
