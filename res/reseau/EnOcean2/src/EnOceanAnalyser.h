@@ -16,15 +16,22 @@
 using namespace std;
 #include <map>
 #include <string>
+#include <pthread.h>
 
 //------------------------------------------------------ Personnal Include
 #include "blocking_queue.h"
 #include "PeriphTable.h"
 #include "Sensors.h"
+#include "EnOceanReceptor.h"
 
 //------------------------------------------------------------- Constantes
 
 //------------------------------------------------------------------ Types 
+typedef struct thread_param {
+	EnOceanMsgQueue* messagesQueue;
+	PeriphTable* periph;
+} Analyser_thread_param;
+
 
 //------------------------------------------------------------------------ 
 // Description : 
@@ -47,7 +54,7 @@ public:
     // Contract :
     //		The messageQueue must be defined.
 
-	void setMessagesQueue (blocking_queue<enocean_data_structure>* messagesQueue);
+	void setMessagesQueue (EnOceanMsgQueue* messagesQueue);
 	// Manual :
     //		Set the attribute messagesQueue
     // Contract :
@@ -59,7 +66,7 @@ public:
 
 //-------------------------------------------------- Builder / Destructor
 
-	EnOceanAnalyser(PeriphTable* periph);
+	EnOceanAnalyser(PeriphTable* periph, EnOceanMsgQueue* messagesQueue);
 	virtual ~EnOceanAnalyser();
 
 //---------------------------------------------------------------- PRIVATE
@@ -74,7 +81,7 @@ protected:
 //-------------------------------------------------- Protected Attributes
 
 	PeriphTable* periph;
-	blocking_queue<enocean_data_structure>* messagesQueue;
+	EnOceanMsgQueue* messagesQueue;
 
 private:
 //----------------------------------------------------- Private Attributes
@@ -88,7 +95,8 @@ private:
 };
 
 //------------------------------ Other definition, depending on this class
-void* EnOceanAnalyserThread (void* periphTable);
+
+int runAnalyser (pthread_t *thread, void* periphTable);
 // Manual :
 //		Create a instance of EnOceanAnalyser, and run it.
 // Contract :

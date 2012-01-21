@@ -19,10 +19,10 @@ using namespace std;
 #include "EnOceanProtocol.h"
 #include "blocking_queue.h"
 #include "Receptor.h"
-
 //------------------------------------------------------------- Constantes
 
 //------------------------------------------------------------------ Types 
+typedef blocking_queue<enocean_data_structure> EnOceanMsgQueue;
 
 //------------------------------------------------------------------------ 
 // Description : 
@@ -36,7 +36,7 @@ class EnOceanReceptor : public Receptor
 
 public:
 //------------------------------------------------------- Public Constants
-	static const int FRAME_SIZE = 8;
+	static const int FRAME_SIZE = 28;
 	static const int QUEUE_SIZE = 0;
 //--------------------------------------------------------- Public Methods
 
@@ -46,8 +46,8 @@ public:
 
 //-------------------------------------------------- Builder / Destructor
 
-	EnOceanReceptor();
-	EnOceanReceptor(unsigned int frames);
+	EnOceanReceptor(blocking_queue<enocean_data_structure>* messagesQueue);
+	EnOceanReceptor(blocking_queue<enocean_data_structure>* messagesQueue, unsigned int frames);
 	virtual ~EnOceanReceptor();
 
 //---------------------------------------------------------------- PRIVATE
@@ -65,7 +65,7 @@ private:
 
 protected:
 //-------------------------------------------------- Protected Attributes
-	blocking_queue<enocean_data_structure> messagesQueue; // Trames en attente de traitement.
+	EnOceanMsgQueue* messagesQueue; // Trames en attente de traitement.
 
 private:
 //----------------------------------------------------- Private Attributes

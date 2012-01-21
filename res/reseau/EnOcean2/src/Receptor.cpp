@@ -57,38 +57,19 @@ int Receptor::open(const char* address, const int portno) {
 	/* creation de la socket */
 	if ( (sock = socket(AF_INET,SOCK_STREAM,0)) < 0)
 	{
-	  cout << "<Error> EnOcean - creation socket client\n";
+	  cout << "<Error> EnOcean - Creation socket client\n";
 	  return sock;
 	}
 
+	if (connect(sock, (sockaddr*)&serverSockAddr, sizeof(serverSockAddr)) < 0) {
+		/* error */
+		cout << "<Error> EnOcean - Connection socket client\n";
+		return -1;
+	}
+
+
 	return sock;
-//
-//	sock = socket(AF_INET, SOCK_STREAM, 0);
-//	if(sock == INVALID_SOCKET)
-//	{
-//	    perror("socket()");
-//	    exit(errno);
-//	}
-//	struct hostent *hostinfo = NULL;
-//	struct sockaddr_in sin = { 0 }; /* initialise la structure avec des 0 */
-//
-//	hostinfo = gethostbyname(address); /* on récupère les informations de l'hôte auquel on veut se connecter */
-//	if (hostinfo == NULL) /* l'hôte n'existe pas */
-//	{
-//	    fprintf (stderr, "Unknown host %s.\n", hostname);
-//	    return(EXIT_FAILURE);
-//	}
-//
-//	sin.sin_addr = *(IN_ADDR *) hostinfo->h_addr; /* l'adresse se trouve dans le champ h_addr de la structure hostinfo */
-//	sin.sin_port = htons(portno); /* on utilise htons pour le port */
-//	sin.sin_family = AF_INET;
-//
-//	if(connect(sock,(SOCKADDR *) &sin, sizeof(SOCKADDR)) == SOCKET_ERROR)
-//	{
-//	    perror("connect()");
-//	    return(errno);
-//	}
-//	return sock;
+
 } //----- End of connect
 
 int Receptor::read(int nbFrame) {
@@ -102,7 +83,9 @@ int Receptor::read(int nbFrame) {
 				cout << "<Erreur> Read | " << n << endl;
 				break;
 			}
+			cout << "<Receptor> Frame Received.\n";
 			frame_receive(buffer);
+			cout << "<Receptor> Frame Sent.\n";
 			nbFrameRead++;
 		}
 	}
@@ -113,6 +96,7 @@ int Receptor::read(int nbFrame) {
 				cout << "<Erreur> Read | " << n << endl;
 				break;
 			}
+			cout << "<Receptor> Frame Sent.\n";
 			frame_receive(buffer);
 			nbFrameRead++;
 		}
