@@ -5,7 +5,7 @@ CFLAGS  = -Wall -ansi -pedantic -g -m32
 ### Main targets 
 ###------------------------------------------------------------
 BINARIES = main
-OBJECTS = gmem.o ctx.o
+OBJECTS = gmem.o 
 
 all: $(BINARIES)
 
@@ -30,7 +30,10 @@ main: $(OBJECTS) main.o
 ###------------------------------
 ### Misc.
 ###------------------------------------------------------------
-.PHONY: clean
+.PHONY: clean, rebuild
 clean:
 	$(RM) *.o $(BINARIES) Makefile.depends
+
+rebuild: clean all
+	
 

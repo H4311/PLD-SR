@@ -1,6 +1,8 @@
 # ifndef __GMEM_H__
 # define __GMEM_H__
 
+# define __HEAP_SIZE 512
+
 /* #define USE_MALLOC */
 # ifdef USE_MALLOC
 	#include <stdlib.h>
@@ -10,9 +12,5 @@
 	void* gmalloc(unsigned size);
 	void  gfree(void* ptr);
 # endif
-
-void gmem_printHeader(void* ptr);
-int gmem_sizeFreeBlockList();
-unsigned gmem_availableMem();
 
 # endif
