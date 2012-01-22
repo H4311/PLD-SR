@@ -24,7 +24,7 @@ using namespace std;
 //--------------------------------------------------------- Public Methods
 
 SensorId getEnOceanID(enocean_data_structure* frame) {
-	SensorId id = frame->ID_BYTE0 + 255*frame->ID_BYTE1 + 65025*frame->ID_BYTE2 + 16581375*frame->ID_BYTE3;
+	SensorId id = /*frame->ID_BYTE0 + 255*frame->ID_BYTE1 + 65025*frame->ID_BYTE2 + 16581375*frame->ID_BYTE3*/ 0;
 	return id;
 } //----- End of getEnOceanID
 

@@ -12,7 +12,6 @@
 //--------------------------------------------------------- System Include
 using namespace std;
 #include <stdio.h>
-
 #include <iostream>
 
 //------------------------------------------------------ Personnal Include
@@ -25,15 +24,26 @@ using namespace std;
 
 //--------------------------------------------------------- Public Methods
 
-void* EnOceanAnalyserThread(void* periphTable) {
-	EnOceanAnalyser analyz = EnOceanAnalyser((PeriphTable*)periphTable);
-	
+void* EnOceanAnalyserThread(void* param) {
+
+	Analyser_thread_param* p = (Analyser_thread_param*)param;
+
+	EnOceanAnalyser analyz = EnOceanAnalyser(p->periph, p->messagesQueue);
+	cout << "<Analyser> Created.\n";
 	// Run it :
 	analyz.run();
 	return NULL;
 }//----- End of EnOceanAnalyserThread
 
-void EnOceanAnalyser::setMessagesQueue(blocking_queue<enocean_data_structure>* mQ) {
+int runAnalyser (pthread_t *thread, void* param)
+{
+	cout << "<Analyser> Creating.\n";
+	return pthread_create(thread, NULL, EnOceanAnalyserThread, param);
+
+}
+
+
+void EnOceanAnalyser::setMessagesQueue(EnOceanMsgQueue* mQ) {
 	messagesQueue = mQ;
 } //----- End of setMessagesQueue
 
@@ -42,13 +52,18 @@ void EnOceanAnalyser::run() {
 	SensorId id;
 	string data;
 	EnOceanCallbackFunction translator;
-	while (messagesQueue->front(frame, NULL) == 0) {
+	cout << "<Analyser> Ready.\n";
+	while (messagesQueue->front(frame) == 0) {
+		cout << "<Analyser> Frame Received.\n";
 		id = getEnOceanID(frame);
+		cout << "<Analyser> ID :" << id << endl;
 		if ((translator = periph->find(id)) != NULL) { // If it is a sensor we use :
+			cout << "<Analyser> Sensor identified.\n";
 			data = translator(frame);
 			cout << data; // TO DO : Log
 		}
-		free(frame);
+		cout << "<Analyser> Frame processed.\n";
+		messagesQueue->pop();
 	}
 	
 } //----- End of run
@@ -60,7 +75,7 @@ void EnOceanAnalyser::run() {
 
 
 //-------------------------------------------------- Builder / Destructor
-EnOceanAnalyser::EnOceanAnalyser(PeriphTable* per): periph(per) {
+EnOceanAnalyser::EnOceanAnalyser(PeriphTable* per, EnOceanMsgQueue* m): periph(per), messagesQueue(m) {
 
 } //----- End of EnOceanAnalyser
 

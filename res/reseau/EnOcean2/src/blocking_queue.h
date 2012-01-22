@@ -21,16 +21,13 @@ template <class value_type> class blocking_queue {
   unsigned int maxsize;
 
   /* Flag a thread to stop blocking on an empty queue. */
-  bool qdone;             
+  bool qdone;
 
   /* Controls access to the queue's internal state. */
-  pthread_mutex_t qlock;  
+  pthread_mutex_t qlock;
 
   /* Signals threads waiting for the queue to wake up. */
   pthread_cond_t qcond;
-
-  /* Return ((current time) + timeout) in endtime. Return -1 for error. */
-  int end_time(struct timespec *endtime /*out*/, struct timespec *timeout);
 
 public:
 
@@ -41,27 +38,18 @@ public:
   ~blocking_queue();
 
   /* Return 0 for success, ETIMEDOUT for a time-out, or -1 for other error. */
-  int push(value_type *item, struct timespec *timeout = NULL);
+  int push(value_type *item);
 
   /* Return 0 for success, ETIMEDOUT for a time-out, EWOULDBLOCK if the queue is
    * no longer receiving data and would block indefinitely, or -1 for other
    * error.  timeout == NULL means block indefinitely, or until another thread
    * calls signal_done(). timeout == 0 means immediately return data if there is
    * any available, or otherwise immediately return EWOULDBLOCK. */
-  int front(value_type *&item /*out*/, 
-            struct timespec *timeout = NULL);
+  int front(value_type *&item);
 
   /* Return 0 for success, or -1 if the queue is empty. */
   int pop();
 
-  /* Return 0 for success, -1 for error. */
-  int signal_done();
-
-  /* Return 0 for success, -1 for error. */
-  int is_done(bool &done /*out*/);
-
-  /* Yuck */
-  int copy_data(vector<value_type *> &newdata /*out*/);
 };
 
 template <class value_type>
@@ -79,76 +67,36 @@ blocking_queue<value_type>::~blocking_queue() {
 }
 
 template <class value_type>
-int blocking_queue<value_type>::end_time(struct timespec *endtime /*out*/, 
-                                         struct timespec *timeout) {
-  time_t curtime;
-  /* Works in Linux, but not OS X:
-     clock_gettime(CLOCK_REALTIME, &spec_curtime);*/
-  /* More portable, but less accurate: */
-  if(time(&curtime) == -1) {
-    return -1;
-  }
-  endtime->tv_nsec = timeout->tv_nsec;
-  endtime->tv_sec = timeout->tv_sec + curtime;
-  return 0;
-}
-
-template <class value_type>
-int blocking_queue<value_type>::push(value_type *item,
-                                     struct timespec *timeout) {
-  struct timespec maxtime;
+int blocking_queue<value_type>::push(value_type *item)
+{
   int rv = 0;
-  if(timeout != NULL) {
-    if(this->end_time(&maxtime, timeout) == -1) {
-      return -1;
-    }
-  }
   pthread_mutex_lock(&this->qlock);
   if(this->maxsize > 0) {
     while(this->data.size() == this->maxsize) {
-      if(timeout == NULL) {
         pthread_cond_wait(&this->qcond, &this->qlock);
-      } else if(pthread_cond_timedwait(&this->qcond, &this->qlock, &maxtime) ==
-                ETIMEDOUT) {
-        rv = ETIMEDOUT;
-        goto unlock_return;
-      }
     }
   }
   this->data.push_back(item);
   this->qdone = false;
   pthread_cond_broadcast(&this->qcond);
- unlock_return:
   pthread_mutex_unlock(&this->qlock);
   return rv;
 }
 
 template <class value_type>
-int blocking_queue<value_type>::front(value_type *&item /*out*/,
-                                      struct timespec *timeout) {
-  struct timespec maxtime;
+int blocking_queue<value_type>::front(value_type *&item) {
   int rv = 0;
-  if(timeout != NULL) {
-    if(this->end_time(&maxtime, timeout) == -1) {
-      return -1;
-    }
-  }
+  int n;
   pthread_mutex_lock(&this->qlock);
   while(!this->qdone && this->data.empty()) {
-    if(timeout == NULL) {
-      pthread_cond_wait(&this->qcond, &this->qlock);
-    } else if(pthread_cond_timedwait(&this->qcond, &this->qlock, &maxtime) ==
-              ETIMEDOUT) {
-      rv = ETIMEDOUT;
-      goto unlock_return;
-    }
+    pthread_cond_wait(&this->qcond, &this->qlock);
   }
-  if(!this->data.empty()) {
+  if(!(this->data.empty())) {
+	  n = this->data.size();
     item = this->data.front();
   } else {
     rv = EWOULDBLOCK;
   }
- unlock_return:
   pthread_mutex_unlock(&this->qlock);
   return rv;
 }
@@ -166,33 +114,5 @@ int blocking_queue<value_type>::pop() {
   return rv;
 }
 
-template <class value_type>
-int blocking_queue<value_type>::signal_done() {
-  pthread_mutex_lock(&this->qlock);
-  this->qdone = true;
-  pthread_cond_broadcast(&this->qcond);
-  pthread_mutex_unlock(&this->qlock);
-  return 0;
-}
-
-template <class value_type>
-int blocking_queue<value_type>::is_done(bool &done /*out*/) {
-  pthread_mutex_lock(&this->qlock);
-  done = this->qdone;
-  pthread_mutex_unlock(&this->qlock);
-  return 0;
-}
-
-template <class value_type>
-int blocking_queue<value_type>::copy_data(vector<value_type *> &newdata /*out*/)
-{
-  pthread_mutex_lock(&this->qlock);
-  newdata.reserve(this->data.size());
-  for(unsigned int i = 0; i < this->data.size(); ++i) {
-    newdata.insert(newdata.end(), new value_type(*this->data[i]));
-  }
-  pthread_mutex_unlock(&this->qlock);
-  return 0;
-}
 
 #endif

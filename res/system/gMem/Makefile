@@ -1,11 +1,12 @@
-CC      = clang
-CFLAGS  = -Wall -ansi -pedantic -g -m32
+CC      = gcc
+CFLAGS  = -Wall -ansi -pedantic -m32 -g
+LIBS    = -lm
 
 ###------------------------------
 ### Main targets 
 ###------------------------------------------------------------
 BINARIES = main
-OBJECTS = gmem.o ctx.o
+OBJECTS = gmem.o 
 
 all: $(BINARIES)
 
@@ -30,7 +31,10 @@ main: $(OBJECTS) main.o
 ###------------------------------
 ### Misc.
 ###------------------------------------------------------------
-.PHONY: clean
+.PHONY: clean, rebuild
 clean:
 	$(RM) *.o $(BINARIES) Makefile.depends
+
+rebuild: clean all
+	
 

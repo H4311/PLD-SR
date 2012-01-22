@@ -12,6 +12,7 @@
 //--------------------------------------------------------- System Include
 using namespace std;
 #include <stdio.h>
+#include <iostream>
 
 //------------------------------------------------------ Personnal Include
 #include "EnOceanReceptor.h"
@@ -30,12 +31,11 @@ using namespace std;
 
 
 //-------------------------------------------------- Builder / Destructor
-EnOceanReceptor::EnOceanReceptor(unsigned int frameS): Receptor(frameS) {
-	messagesQueue = blocking_queue<enocean_data_structure>(QUEUE_SIZE);
+EnOceanReceptor::EnOceanReceptor(EnOceanMsgQueue* m, unsigned int frameS): Receptor(frameS), messagesQueue(m) {
 } //----- End of EnOceanReceptor
 
-EnOceanReceptor::EnOceanReceptor(): Receptor(FRAME_SIZE) {
-	messagesQueue = blocking_queue<enocean_data_structure>(QUEUE_SIZE);
+EnOceanReceptor::EnOceanReceptor(EnOceanMsgQueue* m): Receptor(FRAME_SIZE), messagesQueue(m) {
+	cout << "<Receptor> Created.\n";
 } //----- End of EnOceanReceptor
 
 EnOceanReceptor::~EnOceanReceptor() {
@@ -49,10 +49,22 @@ EnOceanReceptor::~EnOceanReceptor() {
 /** Is called, if a full frame was received
  */
 void EnOceanReceptor::frame_receive(char* buffer) {
-	enocean_data_structure* frame = (enocean_data_structure*)malloc(sizeof(enocean_data_structure));
-	BYTE* byte = (BYTE*)frame;
-	for (unsigned int i = 0; i < frameSize; i++) {
-		*(byte + i*sizeof(BYTE)) = buffer[i];
+	enocean_data_structure frame;
+	BYTE* byte = (BYTE*)&frame;
+	BYTE temp;
+	char c[3] = {'0', '0', 0};
+	cout << "<Receptor> Frame to be sent.\n";
+	cout << "<Receptor> ";
+	for (unsigned int i = 0; i < frameSize; i += 2) {
+		c[0] = buffer[i];
+		c[1] = buffer[i+1];
+		temp = strtol (c,NULL,16);
+		*byte = temp;
+		byte += sizeof(BYTE);
+		cout << temp << "(" << i << ")" << "|";
 	}
-	messagesQueue.push(frame, NULL);
+	cout << endl;
+	if (frame.ID_BYTE3 == 0xE3) {
+	messagesQueue->push(&frame);
+	}
 } //----- End of frame_receive
