@@ -5,7 +5,7 @@
 # define __HEAP_SIZE  1048576
 
 /* Uncomment this if you want to use stdlib's malloc() and free() */
- # define USE_MALLOC
+/* # define USE_MALLOC */
 
 /*
  * Our implementation of malloc. If a place is found, the memory is
