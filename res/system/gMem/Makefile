@@ -1,5 +1,5 @@
 CC      = gcc
-CFLAGS  = -Wall -ansi -pedantic -m32 -g
+CFLAGS  = -Wall -ansi -pedantic -m32 -O3 -g
 LIBS    = -lm
 
 ###------------------------------

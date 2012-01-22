@@ -60,14 +60,12 @@ union header
 };
 
 /*
- * The headers descripting free memory are put in a circular chained 
+ * The headers descripting free memory are put in a chained 
  * list, sorted by pointer address, in order to optimize merging when 
  * freeing.
  */
 static union header * firstHdr = NULL;  /* first header to search
 (littlest address). */
-static union header* lastHdr = NULL; /* last header to search (biggest
-address). */
 
 static unsigned hdrSize = sizeof(union header); /* size of an header*/
 
@@ -76,9 +74,9 @@ void* gmalloc(unsigned size)
 	static short formatted = 0; /* boolean to know if the heap is 
 	formatted. Is just done once at the first gmalloc. */
 	
-	union header * prevHdr = NULL; /* header just before the one to 
+	union header * prevHdr; /* header just before the one to 
 	return */
-	union header * hdr = NULL; /* the header to return */
+	union header * hdr; /* the header to return */
 	
 	/* These two variables are used later to know if it's interesting
 	 * to split the block.
@@ -92,9 +90,9 @@ void* gmalloc(unsigned size)
 		/* format heap */
 		firstHdr = (union header*) heap;
 		firstHdr->blockNode.size = __HEAP_SIZE - hdrSize;
-		firstHdr->blockNode.next = firstHdr;
+		firstHdr->blockNode.next = NULL;
 		firstHdr->blockNode.mem = (void*)((unsigned)firstHdr + hdrSize);
-		lastHdr = prevHdr = firstHdr;
+		prevHdr = NULL;
 	}
 	
 	/* firstHdr is NULL only when all the memory has been used */
@@ -104,20 +102,15 @@ void* gmalloc(unsigned size)
 	}
 	
 	hdr = firstHdr;
-	prevHdr = lastHdr;
+	prevHdr = NULL;
 	/* First fit : finds the first sufficiently big block after the last
 	 * used position */
 	while(hdr->blockNode.size < size)
 	{
 		prevHdr = hdr;
 		hdr = hdr->blockNode.next;
-		if (hdr == firstHdr)
-		/* Two cases :
-		 * - Just one node in the list, we're in the while so there's
-		 * not enough memory => return NULL
-		 * - More than one node : we've make a whole "turn" in the list
-		 * => no block has enough memory => return NULL
-		 * */
+		if (hdr == NULL)
+		/* no block has enough memory => return NULL */
 		{
 			return NULL;
 		}
@@ -136,23 +129,17 @@ void* gmalloc(unsigned size)
 		newHdr->blockNode.mem = (void*)((unsigned)newHdr + hdrSize);
 		newHdr->blockNode.size = sizeMemNewBlock;
 		
-		/* inserts it in the circular linked list */
-		newHdr->blockNode.next = (hdr->blockNode.next == hdr) 
-									? newHdr 
-									: hdr->blockNode.next;
-		if (hdr != prevHdr)
+		/* inserts it in the linked list */
+		newHdr->blockNode.next = hdr->blockNode.next;
+		if (NULL != prevHdr)
 		{
 			/* if there is more than one block */
 			prevHdr->blockNode.next = newHdr;
 		}
 		
-		if (hdr == lastHdr)
-		{
-			lastHdr = newHdr;
-		}
-		
 		if (hdr == firstHdr)
 		{
+			/* if we remove the head, it is replaced */
 			firstHdr = newHdr;
 		}
 # ifdef __DEBUG
@@ -165,20 +152,14 @@ void* gmalloc(unsigned size)
 	} else
 	/* just removes the block */
 	{			
-		if (hdr != prevHdr)
+		if (NULL != prevHdr)
 		{
 			prevHdr->blockNode.next = hdr->blockNode.next;
 		}
 		
 		if (hdr == firstHdr)
 		{
-			firstHdr = (hdr->blockNode.next != hdr) ?hdr->blockNode.next
-													: NULL;
-		}
-		
-		if (hdr == lastHdr)
-		{
-			lastHdr = (prevHdr != hdr) ? prevHdr : NULL;
+			firstHdr = hdr->blockNode.next;
 		}
 	}
 	hdr->blockNode.next = NULL;
@@ -244,17 +225,17 @@ void gfree(void* ptr)
 	
 	if (firstHdr == NULL)
 	{
-		lastHdr = firstHdr = hdrToInsert;
+		firstHdr = hdrToInsert;
 		return;
 	}
 	
 	/* finds the best place to put the header back */
 	hdrIter = firstHdr;
-	do {		
-		hdr = hdrIter;		
-		hdrIter = hdrIter->blockNode.next;
-		
-		if (hdrBeforeHdr(hdr, hdrToInsert))
+	hdr = NULL;
+	while (!boolMergeWithHdr && !boolMergeWithHdrIter 
+			&& hdrIter != NULL) 
+	{
+		if (hdr != NULL && hdrBeforeHdr(hdr, hdrToInsert))
 		/* we can merge with the previous one */
 		{
 # ifdef __DEBUG
@@ -265,7 +246,7 @@ void gfree(void* ptr)
 			boolMergeWithHdr = 1;
 		}
 		
-		if (hdrBeforeHdr(hdrToInsert, hdrIter))
+		if (hdrIter != NULL && hdrBeforeHdr(hdrToInsert, hdrIter))
 		/* we can merge with the next one */
 		{
 # ifdef __DEBUG
@@ -275,9 +256,15 @@ void gfree(void* ptr)
 # endif
 			boolMergeWithHdrIter = 1;
 		}
+		
+		if (!boolMergeWithHdr && !boolMergeWithHdrIter)
+		{
+			/* if we have to merge, we don't change hdr and hdrIter
+			 * values. */
+			hdr = hdrIter;		
+			hdrIter = (hdr != NULL) ? hdr->blockNode.next : NULL;		
+		}
 	}
-	while (!boolMergeWithHdr && !boolMergeWithHdrIter 
-			&& hdrIter != firstHdr);
 	
 	if (boolMergeWithHdr && boolMergeWithHdrIter)
 	/* We have to merge with the previous one and the next one */
@@ -288,11 +275,6 @@ void gfree(void* ptr)
 		hdr->blockNode.size += hdrToInsert->blockNode.size + hdrSize;
 		hdr->blockNode.size += hdrIter->blockNode.size + hdrSize;
 		hdr->blockNode.next = hdrIter->blockNode.next;
-		
-		if (hdrIter == lastHdr)
-		{
-			lastHdr = hdr;
-		}
 	}
 	else if (boolMergeWithHdr)
 	/* Just merges with the previous one */
@@ -309,21 +291,17 @@ void gfree(void* ptr)
 		printf("[GFREE] Merging with the next one.\n");
 # endif
 		hdrToInsert->blockNode.size += hdrIter->blockNode.size +hdrSize;
-		hdrToInsert->blockNode.next = 
-			(hdrIter->blockNode.next != hdrIter) ?
-				hdrIter->blockNode.next :
-				hdrToInsert;
+		hdrToInsert->blockNode.next = hdrIter->blockNode.next;
 				
 		if (hdrIter == firstHdr)
 		{
 			firstHdr = hdrToInsert;
 		}
-		if (hdrIter == lastHdr)
-		{
-			lastHdr = hdrToInsert;
-		}
 		
-		hdr->blockNode.next = hdrToInsert;
+		if (hdr != NULL)
+		{
+			hdr->blockNode.next = hdrToInsert;
+		}
 	}
 	else
 	/* No cool place has been found, just puts it in increasing order of
@@ -349,9 +327,6 @@ void gfree(void* ptr)
 				if (hdrToInsert < hdr)
 				{
 					firstHdr = hdrToInsert;
-				} else
-				{
-					lastHdr = hdrToInsert;
 				}
 				done = 1;
 			} else if (hdr < hdrToInsert && hdrToInsert < hdrIter)
@@ -364,31 +339,27 @@ void gfree(void* ptr)
 				hdr->blockNode.next = hdrToInsert;
 				done = 1;
 			}
-		} while (!done && hdrIter != firstHdr);
+		} while (!done && hdrIter != NULL);
 		
 		if (!done)
 		/* must put the header in the head or end of list */
 		{
-			if (lastHdr != NULL && hdrToInsert > lastHdr)
-			{
-# ifdef __DEBUG
-		printf("[GFREE] Simple insertion at end.\n");
-# endif
-				hdrToInsert->blockNode.next = lastHdr;
-				lastHdr->blockNode.next = hdrToInsert;
-				lastHdr = hdrToInsert;
-			} else if (firstHdr != NULL && hdrToInsert < firstHdr)
+			if (firstHdr != NULL && hdrToInsert < firstHdr)
 			{
 # ifdef __DEBUG
 		printf("[GFREE] Simple insertion at head.\n");
 # endif
 				hdrToInsert->blockNode.next = firstHdr;
-				lastHdr->blockNode.next = firstHdr = hdrToInsert;
+				firstHdr = hdrToInsert;
 			} else
 			{
-				/* never should happen */
-				fprintf(stderr, "[GFREE] Impossible case reached.\n");
-				exit(1);
+# ifdef __DEBUG
+		printf("[GFREE] Simple insertion at end.\n");
+# endif
+				if (hdr == NULL) 
+					firstHdr = hdrToInsert;
+				else
+					hdr->blockNode.next = hdrToInsert;
 			}
 		}
 	}
@@ -415,33 +386,23 @@ void gmem_printHeader(void* ptr)
 int gmem_sizeFreeBlockList()
 {
 	union header* hdr = firstHdr;
-	if (hdr == NULL)
-		return 0;
-	else
-	{
-		int size = 0;
-		do {
-			++size;
-			hdr = hdr->blockNode.next;
-		} while (hdr != firstHdr);
-		return size;
+	int size = 0;
+	while (hdr != NULL) {
+		++size;
+		hdr = hdr->blockNode.next;
 	}
+	return size;
 }
 
 unsigned gmem_availableMem()
 {
 	union header* hdr = firstHdr;
-	if (hdr == NULL)
-		return 0U;
-	else
-	{
-		unsigned availableMem = 0U;
-		do {
-			availableMem += hdr->blockNode.size;
-			hdr = hdr->blockNode.next;
-		} while (hdr != firstHdr);
-		return availableMem;
+	unsigned availableMem = 0U;
+	while (hdr != NULL) {
+		availableMem += hdr->blockNode.size;
+		hdr = hdr->blockNode.next;
 	}
+	return availableMem;
 }
 
 void gmem_show_heap()
@@ -453,7 +414,7 @@ void gmem_show_heap()
 	printf("- Heap : base = %p / end = %p\n", 
 				(void*) heap, 
 				(void*)((unsigned)heap + __HEAP_SIZE - 1));
-	do {
+	while (hdr != NULL) {
 		printf("- Header %d : base = %p / mem = %d / end = %p\n",
 			i++, 
 			(void*)hdr, 
@@ -462,7 +423,7 @@ void gmem_show_heap()
 			((unsigned)hdr->blockNode.mem + hdr->blockNode.size -1) );
 				
 		hdr = hdr->blockNode.next;
-	} while (hdr != firstHdr);
+	}
 	printf("----- END OF HEAP -----\n\n");
 }
 
