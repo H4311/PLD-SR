@@ -36,7 +36,6 @@ class EnOceanReceptor : public Receptor
 
 public:
 //------------------------------------------------------- Public Constants
-	static const int FRAME_SIZE = 28;
 	static const int QUEUE_SIZE = 0;
 //--------------------------------------------------------- Public Methods
 

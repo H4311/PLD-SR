@@ -21,55 +21,113 @@ using namespace std;
 
 //----------------------------------------------------------------- PUBLIC
 
-//--------------------------------------------------------- Public Methods
+	void EnOceanSensorAPI::toFrame(enocean_data_structure* frame, char* buffer) {
+		BYTE* byte = (BYTE*)frame;
+		BYTE temp;
+		char c[3] = {'0', '0', 0};
+		for (unsigned int i = 0; i < EnOceanSensorAPI::FRAME_SIZE; i += 2) {
+			c[0] = buffer[i];
+			c[1] = buffer[i+1];
+			temp = strtol (c,NULL,16);
+			*byte = temp;
+			byte += sizeof(BYTE);
+		}
+	}
+	
+	char fromHexToChar (BYTE hex) {
+		if (hex <= 9) { return ('0'+hex); }
+		else { return ('A'+(hex-1)); }
+	}
+	
+	void EnOceanSensorAPI::toString(enocean_data_structure* frame, char* buffer) {
+		BYTE* byte = (BYTE*)frame;
+		BYTE temp;
+		char c;
+		for (unsigned int i = 0; i < EnOceanSensorAPI::FRAME_SIZE; i += 2) {
+			temp = *byte & 15;
+			buffer[i] = fromHexToChar(temp);
+			temp = *byte >> 4;
+			buffer[i+1] = fromHexToChar(temp);
+			byte += sizeof(BYTE);
+		}
+	}
+	
+	
+	
+	
+	
+	void EnOceanSensorAPI::setID(enocean_data_structure* frame, SensorId id) {
+		frame->ID_BYTE0 = id & 255;
+		id = id >> 8;
+		frame->ID_BYTE1 = id & 255;
+		id = id >> 8;
+		frame->ID_BYTE2 = id & 255;
+		id = id >> 8;
+		frame->ID_BYTE3 = id & 255;
+	}
 
-SensorId getEnOceanID(enocean_data_structure* frame) {
-	SensorId id = /*frame->ID_BYTE0 + 255*frame->ID_BYTE1 + 65025*frame->ID_BYTE2 + 16581375*frame->ID_BYTE3*/ 0;
-	return id;
-} //----- End of getEnOceanID
+	EnOceanSensorAPI::SensorId EnOceanSensorAPI::getID(enocean_data_structure* frame) {
+		SensorId id = /*frame->ID_BYTE0 + 255*frame->ID_BYTE1 + 65025*frame->ID_BYTE2 + 16581375*frame->ID_BYTE3*/ 0;
+		return id;
+	} //----- End of getEnOceanID
 
-string analyseRockerSwitch(enocean_data_structure* frame) {
-	ostringstream oss;
-	oss << "< " << getRockerSwitchAction1st(frame) << " | ";
-	oss << getRockerSwitchEnergyBow(frame) << " | ";
-	oss << getRockerSwitchAction2nd(frame) << " | ";
-	oss << isRockerSwitchAction2nd(frame) << " >/n";
-	return oss.str();
-} //----- End of analyseRockerSwitch
+	string EnOceanSensorAPI::analyseRockerSwitch(enocean_data_structure* frame) {
+		ostringstream oss;
+		oss << "< " << getRockerSwitchAction1st(frame) << " | ";
+		oss << getRockerSwitchEnergyBow(frame) << " | ";
+		oss << getRockerSwitchAction2nd(frame) << " | ";
+		oss << isRockerSwitchAction2nd(frame) << " >/n";
+		return oss.str();
+	} //----- End of analyseRockerSwitch
 
-string analyseTempAndHumidSensor(enocean_data_structure* frame, int minTemp, int maxTemp) {
-	ostringstream oss;
-	oss << "< " << getTemperature(frame, minTemp, maxTemp) << "�c | ";
-	oss << getHumidity(frame) << "% >/n";
-	return oss.str();
-} //----- End of analyseTempAndHumidSensor
+	string EnOceanSensorAPI::analyseTempAndHumidSensor(enocean_data_structure* frame, int minTemp, int maxTemp) {
+		ostringstream oss;
+		bool dataFrame = (frame->DATA_BYTE0 >> 3) & 1;
+		if (dataFrame) {
+			if ((frame->DATA_BYTE0 >> 1) & 1) { // If temperature sensor is available :
+				oss << "< " << getTemperature(frame, minTemp, maxTemp) << "�c | ";
+			}
+			oss << getHumidity(frame) << "% >/n";
+		}
+		return oss.str();
+	} //----- End of analyseTempAndHumidSensor
 
 
+	EnOceanSensorAPI::RockerSwitchAction EnOceanSensorAPI::getRockerSwitchAction1st(enocean_data_structure* frame) {
+		BYTE info = frame->DATA_BYTE3 >> 5;
+		return (RockerSwitchAction)info;
+	} //----- End of getRockerSwitchAction1st
 
-RockerSwitchAction getRockerSwitchAction1st(enocean_data_structure* frame) {
-	BYTE info = frame->DATA_BYTE3 >> 5;
-	return (RockerSwitchAction)info;
-} //----- End of getRockerSwitchAction1st
-RockerSwitchEnergyBow getRockerSwitchEnergyBow(enocean_data_structure* frame) {
-	BYTE info = (frame->DATA_BYTE3 & 16) >> 4;
-	return (RockerSwitchEnergyBow)info;
-} //----- End of getRockerSwitchEnergyBow
-RockerSwitchAction getRockerSwitchAction2nd(enocean_data_structure* frame) {
-	BYTE info = (frame->DATA_BYTE3 & 14) >> 1;
-	return (RockerSwitchAction)info;
-} //----- End of getRockerSwitchAction2nd
-bool isRockerSwitchAction2nd(enocean_data_structure* frame) {
-	BYTE info = (frame->DATA_BYTE3 & 1);
-	return info;
-} //----- End of isRockerSwitchAction2nd
+	RockerSwitchEnergyBow getRockerSwitchEnergyBow(enocean_data_structure* frame) {
+		BYTE info = (frame->DATA_BYTE3 & 16) >> 4;
+		return (RockerSwitchEnergyBow)info;
+	} //----- End of getRockerSwitchEnergyBow
+	EnOceanSensorAPI::RockerSwitchAction EnOceanSensorAPI::getRockerSwitchAction2nd(enocean_data_structure* frame) {
+		BYTE info = (frame->DATA_BYTE3 & 14) >> 1;
+		return (RockerSwitchAction)info;
+	} //----- End of getRockerSwitchAction2nd
+	bool EnOceanSensorAPI::isRockerSwitchAction2nd(enocean_data_structure* frame) {
+		BYTE info = (frame->DATA_BYTE3 & 1);
+		return info;
+	} //----- End of isRockerSwitchAction2nd
 
-float getTemperature(enocean_data_structure* frame, int minTemp, int maxTemp) {
-	return (float)frame->DATA_BYTE1 * (float)(maxTemp-minTemp) / 250.0 + minTemp;
-} //----- End of getTemperature
+	float EnOceanSensorAPI::getTemperature(enocean_data_structure* frame, int minTemp, int maxTemp) {
+		float multiplyer = (float)(maxTemp-minTemp) / 250.0;
+		return (float)frame->DATA_BYTE1 * multiplyer + (float)( (multiplyer>=0)? minTemp : maxTemp );
+	} //----- End of getTemperature
 
-float getHumidity(enocean_data_structure* frame) {
-	return (float)frame->DATA_BYTE2 / 2.5;
-} //----- End of getHumidity
+	void EnOceanSensorAPI::setTemperature(enocean_data_structure* frame, float temp, int minTemp, int maxTemp) {
+		float multiplyer = (float)(maxTemp-minTemp) / 250.0;
+		frame->DATA_BYTE1 = (BYTE)((temp - (float)( (multiplyer>=0)? minTemp : maxTemp )) / multiplyer);
+	} //----- End of setTemperature
+
+	float EnOceanSensorAPI::getHumidity(enocean_data_structure* frame) {
+		return (float)frame->DATA_BYTE2 / 2.5;
+	} //----- End of getHumidity
+
+	void EnOceanSensorAPI::setHumidity(enocean_data_structure* frame, float humi) {
+		frame->DATA_BYTE2 = (BYTE)(humi * 2.5);
+	} //----- End of setHumidity
 
 
 

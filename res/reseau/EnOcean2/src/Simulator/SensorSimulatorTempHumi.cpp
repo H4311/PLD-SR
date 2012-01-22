@@ -1,45 +1,59 @@
+
 /*************************************************************************
-                           PeriphTable  -  description
+                           SensorSimulatorTempHumi  -  description
                              -------------------
     Creation             : 08 Jan. 2012
     Copyright            : (C) 2012 by H4311 - Benjamin PLANCHE (BPE)
 *************************************************************************/
 
-//---- Implementation - <PeriphTable> (PeriphTable.cpp file) -----
+//---- Implementation - <SensorSimulatorTempHumi> (SensorSimulatorTempHumi.cpp file) -----
 
 //---------------------------------------------------------------- INCLUDE
 
 //--------------------------------------------------------- System Include
 using namespace std;
 
-
 //------------------------------------------------------ Personnal Include
-#include "PeriphTable.h"
-
+#include "SensorSimulatorTempHumi.h"
+#include "../Sensors.h"
 //-------------------------------------------------------------- Constants
 
 //----------------------------------------------------------------- PUBLIC
 
 //--------------------------------------------------------- Public Methods
-
-int PeriphTable::add(SensorId id, EnOceanCallbackFunction cf) {
-	int n;
+float SensorSimulatorTempHumi::getTemperature() {
+	float t;
 	pthread_mutex_lock(&mutex);
-	n = (periph.insert(pair<SensorId,EnOceanCallbackFunction>(id, cf))).second;
+	t = temperature;
 	pthread_mutex_unlock(&mutex);
-	return n;
-} //----- End of add
+	return t;
+}
 
-EnOceanCallbackFunction PeriphTable::find(SensorId id) {
+void SensorSimulatorTempHumi::setTemperature(float t) {
 	pthread_mutex_lock(&mutex);
-	map<SensorId, EnOceanCallbackFunction>::const_iterator hop = periph.find(id);
-	EnOceanCallbackFunction ret = (hop != periph.end())? hop->second : NULL;
+	temperature = t;
+	EnOceanSensor::setTemperature(&frame, temperature);
 	pthread_mutex_unlock(&mutex);
-	return ret;
+}
 
-} //----- End of read
+float SensorSimulatorTempHumi::getHumidity() {
+	float h;
+	pthread_mutex_lock(&mutex);
+	h = humidity;
+	pthread_mutex_unlock(&mutex);
+	return h;
+}
 
+void SensorSimulatorTempHumi::setHumidity(float h) {
+	pthread_mutex_lock(&mutex);
+	humidity = h;
+	EnOceanSensor::setHumidity(&frame, humidity);
+	pthread_mutex_unlock(&mutex);
+}
 
+void SensorSimulatorTempHumi::getString(char* buffer) {
+	EnOceanSensor::toString(&frame, buffer);
+}
 
 //------------------------------------------------- Static public Methods
 
@@ -47,16 +61,14 @@ EnOceanCallbackFunction PeriphTable::find(SensorId id) {
 
 
 //-------------------------------------------------- Builder / Destructor
-PeriphTable::PeriphTable() {
-	pthread_mutex_init(&mutex, NULL);
-} //----- End of PeriphTable
+SensorSimulatorTempHumi::SensorSimulatorTempHumi(int id, int tMin, int tMax) : SensorSimulator(id), tempMin(tMin), tempMax(tMax) {
+	frame.DATA_BYTE0 &= 12; // Data frame + Temp° sensor available.
+} //----- End of SensorSimulatorTempHumi
 
-PeriphTable::~PeriphTable() {
-	pthread_mutex_destroy(&mutex);
-} //----- End of ~PeriphTable
+SensorSimulatorTempHumi::~SensorSimulatorTempHumi() {
+} //----- End of ~SensorSimulatorTempHumi
 
 
 //---------------------------------------------------------------- PRIVATE
 
 //------------------------------------------------------ Protected Methods
-

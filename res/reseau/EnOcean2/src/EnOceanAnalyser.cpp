@@ -53,7 +53,7 @@ void EnOceanAnalyser::run() {
 	string data;
 	EnOceanCallbackFunction translator;
 	cout << "<Analyser> Ready.\n";
-	while (messagesQueue->front(frame) == 0) {
+	while (messagesQueue->front(frame, NULL) == 0) {
 		cout << "<Analyser> Frame Received.\n";
 		id = getEnOceanID(frame);
 		cout << "<Analyser> ID :" << id << endl;

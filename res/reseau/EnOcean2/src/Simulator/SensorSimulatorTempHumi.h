@@ -1,50 +1,50 @@
+
 /*************************************************************************
-                           PeriphTable  -  description
+                           SensorSimulatorTempHumi  -  description
                              -------------------
     Creation             : 08 Jan. 2012
     Copyright            : (C) 2012 by H4311 - Benjamin PLANCHE (BPE)
 *************************************************************************/
 
-//------- Definition - <PeriphTable> (PeriphTable.h file) --------
+//------- Definition - <SensorSimulatorTempHumi> (SensorSimulatorTempHumi.h file) --------
 
-#ifndef PERIPHTABLE_H_
-#define PERIPHTABLE_H_
+#ifndef SENSORSIMULATOR_H_
+#define SENSORSIMULATOR_H_
 
 //---------------------------------------------------------------- INCLUDE
 
-//-------------------------------------------------------- System Includes
+//--------------------------------------------------------- System Include
 using namespace std;
-#include <map>
-#include <string>
 #include <pthread.h>
-//----------------------------------------------------- Personnal Includes
-#include "EnOceanProtocol.h"
-#include "Receptor.h"
-#include "Sensors.h"
-
+//------------------------------------------------------ Personnal Include
+#include "../EnOceanProtocol.h"
 
 //------------------------------------------------------------- Constantes
 
 //------------------------------------------------------------------ Types
-typedef string (*EnOceanCallbackFunction)(enocean_data_structure* frame);
 
 //------------------------------------------------------------------------
 // Description :
-//		Receipts and stocks the frames sent by the EnOcean server.
+//		Analyses the frame provided by the server, and extracts the informations from them, for the chosen sensors.
 //
 //------------------------------------------------------------------------
 
-class PeriphTable
+class SensorSimulatorTempHumi : public SensorSimulator
 {
 //----------------------------------------------------------------- PUBLIC
 
 public:
 //------------------------------------------------------- Public Constants
-	static const int FRAME_SIZE = 8;
-	static const int QUEUE_SIZE = 0;
+
 //--------------------------------------------------------- Public Methods
-	int add(SensorId id, EnOceanCallbackFunction funct);
-	EnOceanCallbackFunction find(SensorId id);
+
+	float getTemperature();
+	void setTemperature(float t);
+	float getHumidity();
+	void setHumidity(float h);
+	
+	getString(char* frame);
+
 
 //------------------------------------------------- Static public Methods
 
@@ -52,8 +52,8 @@ public:
 
 //-------------------------------------------------- Builder / Destructor
 
-	PeriphTable();
-	virtual ~PeriphTable();
+	SensorSimulatorTempHumi(int id, int tMin, int tMax);
+	virtual ~SensorSimulatorTempHumi();
 
 //---------------------------------------------------------------- PRIVATE
 
@@ -65,8 +65,12 @@ private:
 
 protected:
 //-------------------------------------------------- Protected Attributes
-	map<SensorId, EnOceanCallbackFunction> periph;
-	pthread_mutex_t mutex;
+
+	float temperature;
+	int tempMin;
+	int tempMax;
+	float humidity;
+
 
 private:
 //----------------------------------------------------- Private Attributes
@@ -81,5 +85,5 @@ private:
 
 //------------------------------ Other definition, depending on this class
 
-#endif /* PERIPHTABLE_H_ */
 
+#endif /* SENSORSIMULATOR_H_ */

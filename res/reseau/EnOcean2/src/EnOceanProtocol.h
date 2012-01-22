@@ -10,6 +10,7 @@
 /// the main "type" for datatransfer
 #define BYTE uint8_t
 
+#define FRAME_SIZE 28
 /**
  * @defgroup structs Data structures
  * The definitions of the EnOcean data-structures

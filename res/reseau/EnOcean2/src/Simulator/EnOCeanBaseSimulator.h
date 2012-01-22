@@ -1,50 +1,71 @@
+
 /*************************************************************************
-                           PeriphTable  -  description
+                           EnOCeanBaseSimulator  -  description
                              -------------------
     Creation             : 08 Jan. 2012
     Copyright            : (C) 2012 by H4311 - Benjamin PLANCHE (BPE)
 *************************************************************************/
 
-//------- Definition - <PeriphTable> (PeriphTable.h file) --------
+//------- Definition - <EnOCeanBaseSimulator> (EnOCeanBaseSimulator.h file) --------
 
-#ifndef PERIPHTABLE_H_
-#define PERIPHTABLE_H_
+#ifndef ENOCEANBASESIMULATOR_H_
+#define ENOCEANBASESIMULATOR_H_
 
 //---------------------------------------------------------------- INCLUDE
 
-//-------------------------------------------------------- System Includes
+//--------------------------------------------------------- System Include
 using namespace std;
-#include <map>
-#include <string>
 #include <pthread.h>
-//----------------------------------------------------- Personnal Includes
-#include "EnOceanProtocol.h"
-#include "Receptor.h"
-#include "Sensors.h"
-
-
+#include <vector>
+//------------------------------------------------------ Personnal Include
+#include "../EnOceanProtocol.h"
+#include "SensorSimulator.h"
+#include "ServerSimulator.h"
 //------------------------------------------------------------- Constantes
 
 //------------------------------------------------------------------ Types
-typedef string (*EnOceanCallbackFunction)(enocean_data_structure* frame);
 
 //------------------------------------------------------------------------
 // Description :
-//		Receipts and stocks the frames sent by the EnOcean server.
+//		Analyses the frame provided by the server, and extracts the informations from them, for the chosen sensors.
 //
 //------------------------------------------------------------------------
 
-class PeriphTable
+class EnOCeanBaseSimulator
 {
 //----------------------------------------------------------------- PUBLIC
 
 public:
 //------------------------------------------------------- Public Constants
-	static const int FRAME_SIZE = 8;
-	static const int QUEUE_SIZE = 0;
+	const int DELAY = 100;
 //--------------------------------------------------------- Public Methods
-	int add(SensorId id, EnOceanCallbackFunction funct);
-	EnOceanCallbackFunction find(SensorId id);
+
+	int addSensor(SensorSimulator* sensor);
+	void delSensor(SensorId id);
+	int countSensors();
+
+	int openSocket(int port);
+		// Manual :
+	    //		Open the socket.
+
+	int acceptClient();
+	// Manual :
+	//		Accept a client connection.
+	// Contract :
+	//		open()
+
+	int closeClient();
+	int closeSocket();
+	
+	int writeClient(char* msg, int length);
+	
+	getFrame(int posSensor, char* frame);
+	
+	int getFlag();
+	
+	void run();
+	void stop();
+
 
 //------------------------------------------------- Static public Methods
 
@@ -52,8 +73,8 @@ public:
 
 //-------------------------------------------------- Builder / Destructor
 
-	PeriphTable();
-	virtual ~PeriphTable();
+	EnOCeanBaseSimulator();
+	virtual ~EnOCeanBaseSimulator();
 
 //---------------------------------------------------------------- PRIVATE
 
@@ -65,9 +86,11 @@ private:
 
 protected:
 //-------------------------------------------------- Protected Attributes
-	map<SensorId, EnOceanCallbackFunction> periph;
+	vector<SensorSimulator*> sensors;
 	pthread_mutex_t mutex;
-
+	ServerSimulator server;
+	pthread_t thread;
+	int flag;
 private:
 //----------------------------------------------------- Private Attributes
 
@@ -80,6 +103,6 @@ private:
 };
 
 //------------------------------ Other definition, depending on this class
+	void* EnOceanBaseSimulatorThread (void* param);
 
-#endif /* PERIPHTABLE_H_ */
-
+#endif /* ENOCEANBASESIMULATOR_H_ */
