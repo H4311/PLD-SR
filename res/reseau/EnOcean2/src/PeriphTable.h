@@ -43,8 +43,8 @@ public:
 	static const int FRAME_SIZE = 8;
 	static const int QUEUE_SIZE = 0;
 //--------------------------------------------------------- Public Methods
-	int add(SensorId id, EnOceanCallbackFunction funct);
-	EnOceanCallbackFunction find(SensorId id);
+	int add(EnOceanSensorAPI::SensorId id, EnOceanCallbackFunction funct);
+	EnOceanCallbackFunction find(EnOceanSensorAPI::SensorId id);
 
 //------------------------------------------------- Static public Methods
 
@@ -65,7 +65,7 @@ private:
 
 protected:
 //-------------------------------------------------- Protected Attributes
-	map<SensorId, EnOceanCallbackFunction> periph;
+	map<EnOceanSensorAPI::SensorId, EnOceanCallbackFunction> periph;
 	pthread_mutex_t mutex;
 
 private:

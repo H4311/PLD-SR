@@ -72,7 +72,7 @@ int Receptor::open(const char* address, const int portno) {
 
 } //----- End of connect
 
-int Receptor::read(int nbFrame) {
+int Receptor::readFrame(int nbFrame) {
 	int nbFrameRead = 0;
 	int n;
 	char* buffer = (char*)malloc(frameSize*sizeof(char));
@@ -80,9 +80,10 @@ int Receptor::read(int nbFrame) {
 		for(;;) {
 			if((n = recv(sock, buffer, frameSize, 0)) < 0)
 			{
-				cout << "<Erreur> Read | " << n << endl;
+				cout << "<Receptor> Error - Read | " << n << endl;
 				break;
 			}
+
 			cout << "<Receptor> Frame Received.\n";
 			frame_receive(buffer);
 			cout << "<Receptor> Frame Sent.\n";

@@ -13,8 +13,7 @@ using namespace std;
 #include <stdio.h>
 #include <string>
 #include <sstream>
-
-
+#include <stdlib.h>
 //------------------------------------------------------ Personnal Include
 #include "Sensors.h"
 //-------------------------------------------------------------- Constants
@@ -28,7 +27,7 @@ using namespace std;
 		for (unsigned int i = 0; i < EnOceanSensorAPI::FRAME_SIZE; i += 2) {
 			c[0] = buffer[i];
 			c[1] = buffer[i+1];
-			temp = strtol (c,NULL,16);
+			temp = strtol(c,NULL,16);
 			*byte = temp;
 			byte += sizeof(BYTE);
 		}
@@ -36,18 +35,17 @@ using namespace std;
 	
 	char fromHexToChar (BYTE hex) {
 		if (hex <= 9) { return ('0'+hex); }
-		else { return ('A'+(hex-1)); }
+		else { return ('A'+(hex-10)); }
 	}
 	
 	void EnOceanSensorAPI::toString(enocean_data_structure* frame, char* buffer) {
 		BYTE* byte = (BYTE*)frame;
 		BYTE temp;
-		char c;
 		for (unsigned int i = 0; i < EnOceanSensorAPI::FRAME_SIZE; i += 2) {
 			temp = *byte & 15;
-			buffer[i] = fromHexToChar(temp);
-			temp = *byte >> 4;
 			buffer[i+1] = fromHexToChar(temp);
+			temp = *byte >> 4;
+			buffer[i] = fromHexToChar(temp);
 			byte += sizeof(BYTE);
 		}
 	}
@@ -95,16 +93,16 @@ using namespace std;
 
 	EnOceanSensorAPI::RockerSwitchAction EnOceanSensorAPI::getRockerSwitchAction1st(enocean_data_structure* frame) {
 		BYTE info = frame->DATA_BYTE3 >> 5;
-		return (RockerSwitchAction)info;
+		return (EnOceanSensorAPI::RockerSwitchAction)info;
 	} //----- End of getRockerSwitchAction1st
 
-	RockerSwitchEnergyBow getRockerSwitchEnergyBow(enocean_data_structure* frame) {
+	EnOceanSensorAPI::RockerSwitchEnergyBow EnOceanSensorAPI::getRockerSwitchEnergyBow(enocean_data_structure* frame) {
 		BYTE info = (frame->DATA_BYTE3 & 16) >> 4;
-		return (RockerSwitchEnergyBow)info;
+		return (EnOceanSensorAPI::RockerSwitchEnergyBow)info;
 	} //----- End of getRockerSwitchEnergyBow
 	EnOceanSensorAPI::RockerSwitchAction EnOceanSensorAPI::getRockerSwitchAction2nd(enocean_data_structure* frame) {
 		BYTE info = (frame->DATA_BYTE3 & 14) >> 1;
-		return (RockerSwitchAction)info;
+		return (EnOceanSensorAPI::RockerSwitchAction)info;
 	} //----- End of getRockerSwitchAction2nd
 	bool EnOceanSensorAPI::isRockerSwitchAction2nd(enocean_data_structure* frame) {
 		BYTE info = (frame->DATA_BYTE3 & 1);

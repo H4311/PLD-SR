@@ -8,16 +8,14 @@
 
 //------- Definition - <SensorSimulatorTempHumi> (SensorSimulatorTempHumi.h file) --------
 
-#ifndef SENSORSIMULATOR_H_
-#define SENSORSIMULATOR_H_
+#ifndef SENSORSIMULATORTEMPHUMI_H_
+#define SENSORSIMULATORTEMPHUMI_H_
 
 //---------------------------------------------------------------- INCLUDE
 
 //--------------------------------------------------------- System Include
-using namespace std;
-#include <pthread.h>
 //------------------------------------------------------ Personnal Include
-#include "../EnOceanProtocol.h"
+#include "SensorSimulator.h"
 
 //------------------------------------------------------------- Constantes
 
@@ -43,7 +41,7 @@ public:
 	float getHumidity();
 	void setHumidity(float h);
 	
-	getString(char* frame);
+	void getFrame(char* frame);
 
 
 //------------------------------------------------- Static public Methods
@@ -86,4 +84,4 @@ private:
 //------------------------------ Other definition, depending on this class
 
 
-#endif /* SENSORSIMULATOR_H_ */
+#endif /* SENSORSIMULATORTEMPHUMI_H_ */

@@ -17,7 +17,7 @@
 using namespace std;
 #include <pthread.h>
 //------------------------------------------------------ Personnal Include
-#include "../EnOceanProtocol.h"
+#include "../Sensors.h"
 
 //------------------------------------------------------------- Constantes
 
@@ -38,7 +38,7 @@ public:
 
 //--------------------------------------------------------- Public Methods
 
-	SensorId getId();
+	EnOceanSensorAPI::SensorId getId();
 
 	virtual void getFrame(char* frame) = 0;
 
@@ -63,7 +63,7 @@ private:
 protected:
 //-------------------------------------------------- Protected Attributes
 
-	SensorId id;					// ID
+	EnOceanSensorAPI::SensorId id;					// ID
 	pthread_mutex_t mutex; 			// Mutex to protect this value
 	enocean_data_structure frame; 	// Frame to ben sent
 

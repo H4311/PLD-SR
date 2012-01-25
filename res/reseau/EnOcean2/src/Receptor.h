@@ -40,7 +40,7 @@ public:
     // Contract :
     //		The server is listening.
 
-	int read(int nbFrame = 0);
+	int readFrame(int nbFrame = 0);
 	// Manual :
 	    //		Reads nbFrame and sends them into the queue.Returns the number of frame read.
 		//		If nbFrame = 0, then it reads until the connection is closed by the server.

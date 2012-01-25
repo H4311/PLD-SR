@@ -12,7 +12,8 @@
 
 //--------------------------------------------------------- System Include
 using namespace std;
-
+#include <stdlib.h>
+#include <iostream>
 //------------------------------------------------------ Personnal Include
 #include "SensorSimulatorTempHumi.h"
 #include "../Sensors.h"
@@ -32,7 +33,7 @@ float SensorSimulatorTempHumi::getTemperature() {
 void SensorSimulatorTempHumi::setTemperature(float t) {
 	pthread_mutex_lock(&mutex);
 	temperature = t;
-	EnOceanSensor::setTemperature(&frame, temperature);
+	EnOceanSensorAPI::setTemperature(&frame, temperature, tempMin, tempMax);
 	pthread_mutex_unlock(&mutex);
 }
 
@@ -47,12 +48,12 @@ float SensorSimulatorTempHumi::getHumidity() {
 void SensorSimulatorTempHumi::setHumidity(float h) {
 	pthread_mutex_lock(&mutex);
 	humidity = h;
-	EnOceanSensor::setHumidity(&frame, humidity);
+	EnOceanSensorAPI::setHumidity(&frame, humidity);
 	pthread_mutex_unlock(&mutex);
 }
 
-void SensorSimulatorTempHumi::getString(char* buffer) {
-	EnOceanSensor::toString(&frame, buffer);
+void SensorSimulatorTempHumi::getFrame(char* buffer) {
+	EnOceanSensorAPI::toString(&frame, buffer);
 }
 
 //------------------------------------------------- Static public Methods
@@ -62,7 +63,14 @@ void SensorSimulatorTempHumi::getString(char* buffer) {
 
 //-------------------------------------------------- Builder / Destructor
 SensorSimulatorTempHumi::SensorSimulatorTempHumi(int id, int tMin, int tMax) : SensorSimulator(id), tempMin(tMin), tempMax(tMax) {
-	frame.DATA_BYTE0 &= 12; // Data frame + Temp� sensor available.
+	temperature = rand()%(tMax-tMin) - tMin;
+	humidity = rand()%100;
+	frame.DATA_BYTE0 &= 12; // Data frame + Temp� sensor available.
+	EnOceanSensorAPI::setHumidity(&frame, humidity);
+	EnOceanSensorAPI::setTemperature(&frame, temperature, tempMin, tempMax);
+
+	cout << "<Sensor Simmu n°" << id << "> Créé - " << temperature << "°c [" << tempMin << "; " << tempMax << "] - " << humidity << "%\n";
+
 } //----- End of SensorSimulatorTempHumi
 
 SensorSimulatorTempHumi::~SensorSimulatorTempHumi() {

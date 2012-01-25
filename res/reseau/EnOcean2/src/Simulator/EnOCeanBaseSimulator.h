@@ -18,7 +18,7 @@ using namespace std;
 #include <pthread.h>
 #include <vector>
 //------------------------------------------------------ Personnal Include
-#include "../EnOceanProtocol.h"
+#include "../Sensors.h"
 #include "SensorSimulator.h"
 #include "ServerSimulator.h"
 //------------------------------------------------------------- Constantes
@@ -37,11 +37,11 @@ class EnOCeanBaseSimulator
 
 public:
 //------------------------------------------------------- Public Constants
-	const int DELAY = 100;
+	static const int DELAY = 100;
 //--------------------------------------------------------- Public Methods
 
-	int addSensor(SensorSimulator* sensor);
-	void delSensor(SensorId id);
+	void addSensor(SensorSimulator* sensor);
+	void delSensor(EnOceanSensorAPI::SensorId id);
 	int countSensors();
 
 	int openSocket(int port);
@@ -59,7 +59,7 @@ public:
 	
 	int writeClient(char* msg, int length);
 	
-	getFrame(int posSensor, char* frame);
+	void getFrame(int posSensor, char* frame);
 	
 	int getFlag();
 	

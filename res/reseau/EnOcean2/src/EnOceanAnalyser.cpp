@@ -49,13 +49,13 @@ void EnOceanAnalyser::setMessagesQueue(EnOceanMsgQueue* mQ) {
 
 void EnOceanAnalyser::run() {
 	enocean_data_structure* frame;
-	SensorId id;
+	EnOceanSensorAPI::SensorId id;
 	string data;
 	EnOceanCallbackFunction translator;
 	cout << "<Analyser> Ready.\n";
 	while (messagesQueue->front(frame, NULL) == 0) {
-		cout << "<Analyser> Frame Received.\n";
-		id = getEnOceanID(frame);
+		cout << "<Analyser> Frame Received : " << frame << ".\n";
+		id = EnOceanSensorAPI::getID(frame);
 		cout << "<Analyser> ID :" << id << endl;
 		if ((translator = periph->find(id)) != NULL) { // If it is a sensor we use :
 			cout << "<Analyser> Sensor identified.\n";

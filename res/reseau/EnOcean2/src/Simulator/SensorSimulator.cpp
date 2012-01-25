@@ -21,7 +21,7 @@ using namespace std;
 //----------------------------------------------------------------- PUBLIC
 
 //--------------------------------------------------------- Public Methods
-SensorId SensorSimulator::getId() {
+EnOceanSensorAPI::SensorId SensorSimulator::getId() {
 	return id;
 }
 
@@ -34,7 +34,7 @@ SensorId SensorSimulator::getId() {
 //-------------------------------------------------- Builder / Destructor
 SensorSimulator::SensorSimulator(int i){
 	id = i;
-	setEnOCeanID(&frame, id);
+	EnOceanSensorAPI::setID(&frame, id);
 	frame.SYNC_BYTE1 = 0;
 	frame.SYNC_BYTE2 = 0;
 	frame.H_SEQ_LENGTH = 0; ///< Header identification and number of octets following the header octet
@@ -45,7 +45,7 @@ SensorSimulator::SensorSimulator(int i){
 	frame.DATA_BYTE0 = 0; ///< Data Byte 0
 	frame.STATUS = 0; ///< Status field
 	frame.CHECKSUM = 0;
-	pthread_mutex_init(&mutex);
+	pthread_mutex_init(&mutex, NULL);
 } //----- End of SensorSimulator
 
 SensorSimulator::~SensorSimulator() {

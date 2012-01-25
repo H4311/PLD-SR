@@ -13,6 +13,7 @@
 //--------------------------------------------------------- System Include
 using namespace std;
 #include <unistd.h>
+#include <iostream>
 //------------------------------------------------------ Personnal Include
 #include "EnOCeanBaseSimulator.h"
 //-------------------------------------------------------------- Constants
@@ -23,38 +24,43 @@ using namespace std;
 
 void* EnOceanBaseSimulatorThread (void* param) {
 	int delayBetween2Sendings;
-	char[28] frame;
-	EnOceanBaseSimulator* simu = (EnOceanBaseSimulator*)simu;
+	char frame[EnOceanSensorAPI::FRAME_SIZE];
+	EnOCeanBaseSimulator* simu = (EnOCeanBaseSimulator*)param;
+
+	// Wait for client :
+	simu->acceptClient();
+
 	// Sends data from each sensor, sleeping between two sending :
 	while(simu->getFlag() == 0) {
-		delayBetween2Sendings = (simu.DELAY*1000) / simu->countSensors();
-		delayBetween2Sendings (delayBetween2Sendings > 100)? 100 : delayBetween2Sendings;
+		delayBetween2Sendings = (simu->DELAY*1000000) / simu->countSensors();
+		delayBetween2Sendings = (delayBetween2Sendings < 100)? 100 : delayBetween2Sendings;
 		
 		for (int i = 0; i < simu->countSensors(); i++) {
+			if (simu->getFlag() != 0) { break; }
 			simu->getFrame(i, frame);
+			cout << "<Simulator> " << frame << "|\r | " << delayBetween2Sendings << endl;
 			simu->writeClient(frame, 28);
 			usleep(delayBetween2Sendings);
 		}
 	}
 	
+	simu->closeClient();
 	
 	return NULL;
 }//----- End of EnOceanBaseSimulatorThread
 
-int EnOCeanBaseSimulator::addSensor(SensorSimulator* sensor) {
-	int ret;
+void EnOCeanBaseSimulator::addSensor(SensorSimulator* sensor) {
 	pthread_mutex_lock(&mutex);
-	ret = sensors.push_back(sensor);
+	sensors.push_back(sensor);
 	pthread_mutex_unlock(&mutex);
-	return ret;
 }
 
-void EnOCeanBaseSimulator::delSensor(SensorId id) {
+void EnOCeanBaseSimulator::delSensor(EnOceanSensorAPI::SensorId id) {
 	pthread_mutex_lock(&mutex);
-	vector<SensorSimulator*>::iterator it;
-	for ( it=sensors.begin() ; it < sensors.end(); it++ )
+
+	for (vector<SensorSimulator*>::iterator it=sensors.begin() ; it < sensors.end(); it++ )
     {
-		if (it->getId() == id) {
+		if ((*it)->getId() == (EnOceanSensorAPI::SensorId)id) {
 			sensors.erase(it);
 			return;
 		}
@@ -71,19 +77,19 @@ int EnOCeanBaseSimulator::countSensors() {
 }
 
 int EnOCeanBaseSimulator::openSocket(int port) {
-	server.openSocket(port);
+	return server.openSocket(port);
 }
 
 int EnOCeanBaseSimulator::acceptClient() {
-	server.acceptClient();
+	return server.acceptClient();
 }
 
 int EnOCeanBaseSimulator::closeClient() {
-	server.closeClient();
+	return server.closeClient();
 	
 }
 int EnOCeanBaseSimulator::closeSocket() {
-	server.closeSocket();
+	return server.closeSocket();
 }
 
 int EnOCeanBaseSimulator::writeClient(char* msg, int length) {
@@ -92,11 +98,11 @@ int EnOCeanBaseSimulator::writeClient(char* msg, int length) {
 
  void EnOCeanBaseSimulator::getFrame(int posSensor, char* frame) {
 	pthread_mutex_lock(&mutex);
-	sensors[posSensor].getString(frame);
+	sensors[posSensor]->getFrame(frame);
 	pthread_mutex_unlock(&mutex);	
 }
 
-int getFlag() {
+int EnOCeanBaseSimulator::getFlag() {
 	int f;
 	pthread_mutex_lock(&mutex);
 	f = flag;
@@ -104,14 +110,14 @@ int getFlag() {
 	return f;
 }
 
-void run() {
+void EnOCeanBaseSimulator::run() {
 	pthread_mutex_lock(&mutex);
 	flag = 0;
 	pthread_mutex_unlock(&mutex);
-	pthread_create(&thread, NULL, EnOceanBaseSimulatorThread, &this);
+	pthread_create(&thread, NULL, EnOceanBaseSimulatorThread, this);
 }
 
-void stop() {
+void EnOCeanBaseSimulator::stop() {
 	pthread_mutex_lock(&mutex);
 	flag = 1;
 	pthread_mutex_unlock(&mutex);
@@ -125,7 +131,7 @@ void stop() {
 
 //-------------------------------------------------- Builder / Destructor
 EnOCeanBaseSimulator::EnOCeanBaseSimulator(){
-	pthread_mutex_init(&mutex);
+	pthread_mutex_init(&mutex, NULL);
 	flag = 0;
 } //----- End of EnOCeanBaseSimulator
 

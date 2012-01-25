@@ -16,7 +16,7 @@ using namespace std;
 
 //------------------------------------------------------ Personnal Include
 #include "EnOceanReceptor.h"
-#include "Sensor.h"
+#include "Sensors.h"
 //-------------------------------------------------------------- Constants
 
 
@@ -34,7 +34,7 @@ using namespace std;
 EnOceanReceptor::EnOceanReceptor(EnOceanMsgQueue* m, unsigned int frameS): Receptor(frameS), messagesQueue(m) {
 } //----- End of EnOceanReceptor
 
-EnOceanReceptor::EnOceanReceptor(EnOceanMsgQueue* m): Receptor(EnOceanSensor::FRAME_SIZE), messagesQueue(m) {
+EnOceanReceptor::EnOceanReceptor(EnOceanMsgQueue* m): Receptor(EnOceanSensorAPI::FRAME_SIZE), messagesQueue(m) {
 	cout << "<Receptor> Created.\n";
 } //----- End of EnOceanReceptor
 
@@ -52,8 +52,7 @@ void EnOceanReceptor::frame_receive(char* buffer) {
 	enocean_data_structure frame;
 	cout << "<Receptor> Frame to be sent.\n";
 	cout << "<Receptor> " << buffer << endl;
-	EnOceanSensor::toFrame(&frame, buffer);
-	if (frame.ID_BYTE3 == 0xE3) {
+	EnOceanSensorAPI::toFrame(&frame, buffer);
+
 	messagesQueue->push(&frame, NULL);
-	}
 } //----- End of frame_receive

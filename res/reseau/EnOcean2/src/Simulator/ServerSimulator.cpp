@@ -60,7 +60,7 @@ int ServerSimulator::acceptClient () {
 int ServerSimulator::writeClient(char* msg, int length) {
 	int n;
 	pthread_mutex_lock(&mutex);
-	n = write(sockClient,"I got your message", length);
+	n = write(sockClient,msg, length);
 	pthread_mutex_unlock(&mutex);
 	return n;
 }
