@@ -17,7 +17,7 @@ using namespace std;
 #include <stdint.h>
 #include <signal.h>
 #include <termios.h>
-
+#include <pthread.h>
 
 //----------------------------------------------------- Personnal Includes
 #include "blocking_queue.h"
@@ -53,6 +53,8 @@ public:
     // Contract :
     //		The connection is open.
 
+	void run();
+	void stop();
 
 //------------------------------------------------- Static public Methods
 
@@ -73,6 +75,8 @@ protected:
     // Contract :
     //		/
 
+	bool getFlag();
+
 private:
 //----------------------------------------------------- Protected Methods
 
@@ -81,7 +85,9 @@ protected:
 
 	unsigned int frameSize;
 	int sock;
-
+	bool flag;
+	pthread_mutex_t mutex;
+	pthread_t thread;
 
 private:
 //----------------------------------------------------- Private Attributes
@@ -95,5 +101,6 @@ private:
 };
 
 //------------------------------ Other definition, depending on this class
+void* ReceptorThread (void* param);
 
 #endif /* Receptor_H_ */

@@ -37,15 +37,20 @@ using namespace std;
 		if (hex <= 9) { return ('0'+hex); }
 		else { return ('A'+(hex-10)); }
 	}
-	
+
 	void EnOceanSensorAPI::toString(enocean_data_structure* frame, char* buffer) {
 		BYTE* byte = (BYTE*)frame;
-		BYTE temp;
+		int temp;
+		char c;
 		for (unsigned int i = 0; i < EnOceanSensorAPI::FRAME_SIZE; i += 2) {
+			temp = *byte;
+			if (temp < 0) { temp = 255 - temp; }
 			temp = *byte & 15;
-			buffer[i+1] = fromHexToChar(temp);
+			c = fromHexToChar(temp);
+			buffer[i+1] = c;
 			temp = *byte >> 4;
-			buffer[i] = fromHexToChar(temp);
+			c = fromHexToChar(temp);
+			buffer[i] = c;
 			byte += sizeof(BYTE);
 		}
 	}
@@ -65,7 +70,10 @@ using namespace std;
 	}
 
 	EnOceanSensorAPI::SensorId EnOceanSensorAPI::getID(enocean_data_structure* frame) {
-		SensorId id = /*frame->ID_BYTE0 + 255*frame->ID_BYTE1 + 65025*frame->ID_BYTE2 + 16581375*frame->ID_BYTE3*/ 0;
+		SensorId id = frame->ID_BYTE0;
+		id += frame->ID_BYTE1 << 8;
+		id += frame->ID_BYTE2 << 16;
+		id += frame->ID_BYTE3 << 24;
 		return id;
 	} //----- End of getEnOceanID
 
@@ -89,6 +97,18 @@ using namespace std;
 		}
 		return oss.str();
 	} //----- End of analyseTempAndHumidSensor
+
+	string EnOceanSensorAPI::analyseTempAndHumidSensor_EEP_07_04_01(enocean_data_structure* frame) {
+		ostringstream oss;
+		bool dataFrame = (frame->DATA_BYTE0 >> 3) & 1;
+		if (dataFrame) {
+			if ((frame->DATA_BYTE0 >> 1) & 1) { // If temperature sensor is available :
+				oss << "< " << getTemperature(frame, 0, 40) << "°c | ";
+			}
+			oss << getHumidity(frame) << "% >";
+		}
+		return oss.str();
+	} //----- End of analyseTempAndHumidSensor_EEP_07_04_01
 
 
 	EnOceanSensorAPI::RockerSwitchAction EnOceanSensorAPI::getRockerSwitchAction1st(enocean_data_structure* frame) {

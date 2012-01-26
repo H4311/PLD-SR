@@ -58,6 +58,7 @@ public :
 
 // ---- TEMP & HUMID SENSOR ----
 	static string analyseTempAndHumidSensor(enocean_data_structure* frame, int minTemp, int maxTemp);
+	static string analyseTempAndHumidSensor_EEP_07_04_01(enocean_data_structure* frame);
 	
 	static float getTemperature(enocean_data_structure* frame, int minTemp, int maxTemp);
 	static float getHumidity(enocean_data_structure* frame);

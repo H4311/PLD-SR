@@ -48,11 +48,14 @@ public:
 
 //--------------------------------------------------------- Public Methods
 
-	void run();
+	void analyse();
 	// Manual :
     //		Loop : waits for coming frames, then analyses and processes them.
     // Contract :
     //		The messageQueue must be defined.
+
+	void run();
+	void stop();
 
 	void setMessagesQueue (EnOceanMsgQueue* messagesQueue);
 	// Manual :
@@ -73,6 +76,7 @@ public:
 
 protected:
 //------------------------------------------------------ Protected Methods
+	bool getFlag();
 	
 private:
 //----------------------------------------------------- Protected Methods
@@ -82,6 +86,9 @@ protected:
 
 	PeriphTable* periph;
 	EnOceanMsgQueue* messagesQueue;
+	bool flag;
+	pthread_mutex_t mutex;
+	pthread_t thread;
 
 private:
 //----------------------------------------------------- Private Attributes
@@ -96,10 +103,7 @@ private:
 
 //------------------------------ Other definition, depending on this class
 
-int runAnalyser (pthread_t *thread, void* periphTable);
-// Manual :
-//		Create a instance of EnOceanAnalyser, and run it.
-// Contract :
-//		sensorsInfo is a pointer to a map<SensorId, EnOceanCallbackFunction>
+void* EnOceanAnalyserThread (void* param);
+
 
 #endif /* ENOCEANANALYSER_H_ */

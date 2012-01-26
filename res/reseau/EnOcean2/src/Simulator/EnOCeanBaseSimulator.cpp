@@ -38,7 +38,7 @@ void* EnOceanBaseSimulatorThread (void* param) {
 		for (int i = 0; i < simu->countSensors(); i++) {
 			if (simu->getFlag() != 0) { break; }
 			simu->getFrame(i, frame);
-			cout << "<Simulator> " << frame << "|\r | " << delayBetween2Sendings << endl;
+			cout << "<Simulator> " << frame << " | " << delayBetween2Sendings/1000 << endl;
 			simu->writeClient(frame, 28);
 			usleep(delayBetween2Sendings);
 		}

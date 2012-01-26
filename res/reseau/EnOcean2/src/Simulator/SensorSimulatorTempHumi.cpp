@@ -65,7 +65,7 @@ void SensorSimulatorTempHumi::getFrame(char* buffer) {
 SensorSimulatorTempHumi::SensorSimulatorTempHumi(int id, int tMin, int tMax) : SensorSimulator(id), tempMin(tMin), tempMax(tMax) {
 	temperature = rand()%(tMax-tMin) - tMin;
 	humidity = rand()%100;
-	frame.DATA_BYTE0 &= 12; // Data frame + Temp� sensor available.
+	frame.DATA_BYTE0 = 0xA; // Data frame + Temp� sensor available.
 	EnOceanSensorAPI::setHumidity(&frame, humidity);
 	EnOceanSensorAPI::setTemperature(&frame, temperature, tempMin, tempMax);
 

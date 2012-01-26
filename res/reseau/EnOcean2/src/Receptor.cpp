@@ -32,6 +32,12 @@ typedef int SOCKET;
 
 //--------------------------------------------------------- Public Methods
 
+void* ReceptorThread (void* param) {
+	Receptor* receptor = (Receptor*)param;
+	receptor->readFrame();
+	return NULL;
+}//----- End of ReceptorThread
+
 int Receptor::open(const char* address, const int portno) {
 	struct sockaddr_in serverSockAddr;
 	struct hostent *serverHostEnt;
@@ -77,7 +83,7 @@ int Receptor::readFrame(int nbFrame) {
 	int n;
 	char* buffer = (char*)malloc(frameSize*sizeof(char));
 	if (nbFrame == 0) {
-		for(;;) {
+		while (getFlag() == true) {
 			if((n = recv(sock, buffer, frameSize, 0)) < 0)
 			{
 				cout << "<Receptor> Error - Read | " << n << endl;
@@ -109,6 +115,28 @@ int Receptor::readFrame(int nbFrame) {
 void Receptor::close() {
 	close();
 } //----- End of close
+
+bool Receptor::getFlag() {
+	bool f;
+	pthread_mutex_lock(&mutex);
+	f = flag;
+	pthread_mutex_unlock(&mutex);
+	return f;
+} //----- End of getFlag
+
+void Receptor::run() {
+	pthread_mutex_lock(&mutex);
+	flag = true;
+	pthread_mutex_unlock(&mutex);
+	pthread_create(&thread, NULL, ReceptorThread, this);
+} //----- End of run
+
+void Receptor::stop() {
+	pthread_mutex_lock(&mutex);
+	flag = false;
+	pthread_mutex_unlock(&mutex);
+	pthread_join(thread, NULL);
+} //----- End of stop
 
 ///**
 // * returns a clean data structure, filled with 0
@@ -176,6 +204,7 @@ void Receptor::close() {
 //-------------------------------------------------- Builder / Destructor
 Receptor::Receptor(unsigned int frameS) {
 	frameSize = frameS;
+	flag = false;
 } //----- End of Receptor
 
 Receptor::~Receptor() {

@@ -49,10 +49,10 @@ EnOceanReceptor::~EnOceanReceptor() {
 /** Is called, if a full frame was received
  */
 void EnOceanReceptor::frame_receive(char* buffer) {
-	enocean_data_structure frame;
+	enocean_data_structure* frame = new enocean_data_structure();
 	cout << "<Receptor> Frame to be sent.\n";
 	cout << "<Receptor> " << buffer << endl;
-	EnOceanSensorAPI::toFrame(&frame, buffer);
+	EnOceanSensorAPI::toFrame(frame, buffer);
 
-	messagesQueue->push(&frame, NULL);
+	messagesQueue->push(frame, NULL);
 } //----- End of frame_receive
