@@ -11,20 +11,169 @@ body {
     letter-spacing: 0em;
     word-spacing: 0em;
     line-height: 1.4;
-    background-color: #1a1b1f;
+    /*background-color: #1a1b1f;*/
+	background-color: rgb(187, 210, 225);
 	margin: 0px;
 	padding: 0px;
+}
+
+#header{
+	text-align: center;
 }
 
 #wrapper {
     height: auto;
     min-height: 101%; /* have scroll bar always there, so things won't jump around */
-    background: url('images/background.png') no-repeat 50% 0;
+    /*background: url('images/background.png') no-repeat 50% 0;*/
 	margin: 0px;
 	padding: 0px;
 }
 
-.info, .warning {
+
+#resume{
+	margin: auto;
+	width: 80%;
+	height: 250px;
+	/*background-color: rgb(210, 202, 236);*/
+	background: url('images/ciel.jpg') repeat center;
+	margin-bottom: 10px;
+	
+	padding-top: 2%;
+	
+	-moz-border-radius: 10px;
+    -webkit-border-radius: 10px;
+    border-radius: 10px;
+
+    -moz-box-shadow: 5px 5px 20px #000;
+    -webkit-box-shadow: 5px 5px 20px #000;
+    box-shadow: 5px 5px 20px #000;
+}
+
+#resume p {
+	white-space: pre-wrap;       /* css-3 */
+    white-space: -moz-pre-wrap;  /* Mozilla, since 1999 */
+    white-space: -pre-wrap;      /* Opera 4-6 */
+    white-space: -o-pre-wrap;    /* Opera 7 */
+    word-wrap: break-word;       /* Internet Explorer 5.5+ */
+}
+
+#resume figure{
+	float: left;
+}
+
+#resume img{
+	/*TODO: verifier la taille image*/
+}
+
+.meteo, .etat{
+	height: 250px;
+	max-height: 80%;
+	max-width: 80%;
+	float:left;
+	border: solid black 2px;
+	width: 45%;
+}
+
+.meteo{
+	margin-left: 3%;
+	margin-right: 3%;
+	
+	-moz-border-radius: 10px;
+    -webkit-border-radius: 10px;
+    border-radius: 10px;
+}
+
+.etat{
+	-moz-border-radius: 10px;
+    -webkit-border-radius: 10px;
+    border-radius: 10px;
+}
+
+#liste_patient{
+	float: top;
+	position: relative;
+	margin: auto;
+	width: 80%;
+	max-height: 300px;
+	overflow-y: scroll;
+	background-color: rgb(210, 202, 236);
+	
+	margin-bottom: 3%;
+	
+	-moz-border-radius: 10px;
+    -webkit-border-radius: 10px;
+    border-radius: 10px;
+	
+	-moz-box-shadow: 5px 5px 20px #000;
+    -webkit-box-shadow: 5px 5px 20px #000;
+    box-shadow: 5px 5px 20px #000;
+}
+
+#liste_patient h2{
+	text-align: center;
+}
+
+#liste_patient ol{
+	list-style-type: none;
+}
+
+.patient, #liste_patient{
+	opacity: 0.9;
+
+    -moz-border-radius: 10px;
+    -webkit-border-radius: 10px;
+    border-radius: 10px;
+}
+
+.patient{
+	background-color: white;
+	padding-left: 2%;
+	width: 28%;
+	margin-right: 2%;
+	margin-bottom: 2%;
+	float: left;
+
+}
+
+.patient:hover{
+	-moz-box-shadow: 5px 5px 20px #000;
+    -webkit-box-shadow: 5px 5px 20px #000;
+    box-shadow: 5px 5px 20px #000;
+}
+
+
+#notifications {
+	float: top;
+	position: relative;
+	margin: auto;
+	width: 80%;
+	max-height: 400px;
+	overflow-y: scroll;
+	
+	background-color: rgb(210, 202, 236);
+	
+	-moz-box-shadow: 5px 5px 20px #000;
+    -webkit-box-shadow: 5px 5px 20px #000;
+    box-shadow: 5px 5px 20px #000;
+	
+	-moz-border-radius: 10px;
+    -webkit-border-radius: 10px;
+    border-radius: 10px;
+}
+
+#notifications h2{
+	text-align: center;
+}
+
+#notifications ol{
+	list-style-type: none;
+}
+
+summary{
+	Font-size: 20px;
+}
+
+.info, .warning{
 	padding: 1em; margin: 1.5em 0;
     background-color: #ffffff;
     color: #000;
@@ -46,15 +195,100 @@ body {
 	margin: 10px;
 }
 
-#notifications {
-	margin: auto;
-	width: 80%;
-}
-
 .info {
 	background-color: #fef185;
 }
 
 .warning {
 	background-color: #d95a5a;
+}
+
+
+::-webkit-scrollbar {
+	width:15px;
+	height:15px;
+	background-color: rgb(160,160,160);
+}
+
+::-webkit-scrollbar-corner {
+background-image: ;
+background-repeat:no-repeat;
+}
+::-webkit-resizer {
+background-image: ;
+background-repeat:no-repeat;
+background-position: bottom right;
+}
+::-webkit-scrollbar-button:start {
+display:none;
+}
+::-webkit-scrollbar-button:end {
+display:block;
+}
+::-webkit-scrollbar:vertical {
+/*-webkit-border-image:url(http://help.apple.com/mobileme/images/vertical-button.png) 2 0 2 0;*/
+border-color:transparent;
+border-width:2px 0;
+/*background-image:url(http://help.apple.com/mobileme/images/vertical-button-background.png);*/
+background-repeat:repeat-y;
+}
+::-webkit-scrollbar:vertical:corner-present {
+border-bottom-width:0;
+}
+::-webkit-scrollbar-thumb:vertical {
+-webkit-border-image:url("images/thumb_apple.png") 15 0 15 0;
+border-color:transparent;
+border-width:15px 0;
+min-height:20px;
+}
+::-webkit-scrollbar-track-piece:vertical:start {
+margin-top:6px;
+}
+::-webkit-scrollbar-track-piece:vertical:end {
+margin-bottom:-6px;
+}
+::-webkit-scrollbar-track-piece:vertical:decrement {
+/*-webkit-border-image:url(http://help.apple.com/mobileme/images/vertical-track.png) 15 0 15 0;*/
+border-color:transparent;
+border-width:15px 0 0 0;
+}
+::-webkit-scrollbar-track-piece:vertical:increment {
+/*-webkit-border-image:url(http://help.apple.com/mobileme/images/vertical-track.png) 15 0 15 0;*/
+border-color:transparent;
+border-width:0 0 15px 0;
+}
+::-webkit-scrollbar-button:vertical {
+height:21px;
+/*-webkit-border-image:url(http://help.apple.com/mobileme/images/vertical-button.png) 2 0 2 0;*/
+border-color:transparent;
+border-width:2px 0;
+}
+::-webkit-scrollbar-button:vertical:decrement {
+/*background-image:url(http://help.apple.com/mobileme/images/vertical-decrement-arrow.png), url(http://help.apple.com/mobileme/images/vertical-button-background.png);*/
+background-repeat:no-repeat, repeat-y;
+background-position:4px 7px, 0 0;
+}
+::-webkit-scrollbar-button:vertical:decrement:active {
+/*-webkit-border-image:url(http://help.apple.com/mobileme/images/vertical-button-active.png) 2 0 2 0;*/
+/*background-image:url(http://help.apple.com/mobileme/images/vertical-decrement-arrow.png), url(http://help.apple.com/mobileme/images/vertical-button-background-active.png);*/
+}
+::-webkit-scrollbar-button:vertical:increment {
+/*background-image:url(http://help.apple.com/mobileme/images/vertical-increment-arrow.png), url(http://help.apple.com/mobileme/images/vertical-button-background.png);*/
+background-repeat:no-repeat, repeat-y;
+height:16px;
+border-top-width:0;
+background-position:4px 5px, 0 0;
+}
+::-webkit-scrollbar-button:vertical:increment:active {
+/*-webkit-border-image:url(http://help.apple.com/mobileme/images/vertical-button-active.png) 2 0 2 0;*/
+/*background-image:url(http://help.apple.com/mobileme/images/vertical-increment-arrow.png), url(http://help.apple.com/mobileme/images/vertical-button-background-active.png);*/
+}
+::-webkit-scrollbar-button:vertical:end:increment:corner-present {
+border-bottom-width:0;
+height:15px;
+}
+::-webkit-scrollbar:disabled {
+background:red;
+-webkit-border-image:none;
+display:none;
 }
