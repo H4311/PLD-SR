@@ -1,60 +1,48 @@
+
 /*************************************************************************
-                           Receptor  -  description
+                           SensorSimulatorTempHumi  -  description
                              -------------------
     Creation             : 08 Jan. 2012
     Copyright            : (C) 2012 by H4311 - Benjamin PLANCHE (BPE)
 *************************************************************************/
 
-//------- Definition - <Receptor> (Receptor.h file) --------
+//------- Definition - <SensorSimulatorTempHumi> (SensorSimulatorTempHumi.h file) --------
 
-#ifndef Receptor_H_
-#define Receptor_H_
+#ifndef SENSORSIMULATORTEMPHUMI_H_
+#define SENSORSIMULATORTEMPHUMI_H_
 
 //---------------------------------------------------------------- INCLUDE
 
-//-------------------------------------------------------- System Includes
-using namespace std;
-#include <stdint.h>
-#include <signal.h>
-#include <termios.h>
-#include <pthread.h>
-
-//----------------------------------------------------- Personnal Includes
-#include "blocking_queue.h"
+//--------------------------------------------------------- System Include
+//------------------------------------------------------ Personnal Include
+#include "SensorSimulator.h"
 
 //------------------------------------------------------------- Constantes
 
-class Receptor
+//------------------------------------------------------------------ Types
+
+//------------------------------------------------------------------------
+// Description :
+//		Analyses the frame provided by the server, and extracts the informations from them, for the chosen sensors.
+//
+//------------------------------------------------------------------------
+
+class SensorSimulatorTempHumi : public SensorSimulator
 {
 //----------------------------------------------------------------- PUBLIC
 
 public:
 //------------------------------------------------------- Public Constants
 
-
 //--------------------------------------------------------- Public Methods
 
-	int open(const char* address, const int portno);
-	// Manual :
-    //		Connects to the server, using TCP socket.
-    // Contract :
-    //		The server is listening.
+	float getTemperature();
+	void setTemperature(float t);
+	float getHumidity();
+	void setHumidity(float h);
+	
+	void getFrame(char* frame);
 
-	int readFrame(int nbFrame = 0);
-	// Manual :
-	    //		Reads nbFrame and sends them into the queue.Returns the number of frame read.
-		//		If nbFrame = 0, then it reads until the connection is closed by the server.
-	    // Contract :
-	    //		The connection has been opened.
-
-	void close();
-	// Manual :
-    //		Close the connection with the server.
-    // Contract :
-    //		The connection is open.
-
-	void run();
-	void stop();
 
 //------------------------------------------------- Static public Methods
 
@@ -62,20 +50,13 @@ public:
 
 //-------------------------------------------------- Builder / Destructor
 
-	Receptor(unsigned int frameS);
-	virtual ~Receptor();
+	SensorSimulatorTempHumi(int id, int tMin, int tMax);
+	virtual ~SensorSimulatorTempHumi();
 
 //---------------------------------------------------------------- PRIVATE
 
 protected:
 //------------------------------------------------------ Protected Methods
-	virtual void frame_receive(char* buffer) = 0;
-	// Manual :
-    //		Processes the receipt of a complete frame.
-    // Contract :
-    //		/
-
-	bool getFlag();
 
 private:
 //----------------------------------------------------- Protected Methods
@@ -83,11 +64,11 @@ private:
 protected:
 //-------------------------------------------------- Protected Attributes
 
-	unsigned int frameSize;
-	int sock;
-	bool flag;
-	pthread_mutex_t mutex;
-	pthread_t thread;
+	float temperature;
+	int tempMin;
+	int tempMax;
+	float humidity;
+
 
 private:
 //----------------------------------------------------- Private Attributes
@@ -101,6 +82,6 @@ private:
 };
 
 //------------------------------ Other definition, depending on this class
-void* ReceptorThread (void* param);
 
-#endif /* Receptor_H_ */
+
+#endif /* SENSORSIMULATORTEMPHUMI_H_ */

@@ -1,60 +1,47 @@
+
 /*************************************************************************
-                           Receptor  -  description
+                           SensorSimulator  -  description
                              -------------------
     Creation             : 08 Jan. 2012
     Copyright            : (C) 2012 by H4311 - Benjamin PLANCHE (BPE)
 *************************************************************************/
 
-//------- Definition - <Receptor> (Receptor.h file) --------
+//------- Definition - <SensorSimulator> (SensorSimulator.h file) --------
 
-#ifndef Receptor_H_
-#define Receptor_H_
+#ifndef SENSORSIMULATOR_H_
+#define SENSORSIMULATOR_H_
 
 //---------------------------------------------------------------- INCLUDE
 
-//-------------------------------------------------------- System Includes
+//--------------------------------------------------------- System Include
 using namespace std;
-#include <stdint.h>
-#include <signal.h>
-#include <termios.h>
 #include <pthread.h>
-
-//----------------------------------------------------- Personnal Includes
-#include "blocking_queue.h"
+//------------------------------------------------------ Personnal Include
+#include "../Sensors.h"
 
 //------------------------------------------------------------- Constantes
 
-class Receptor
+//------------------------------------------------------------------ Types
+
+//------------------------------------------------------------------------
+// Description :
+//		Analyses the frame provided by the server, and extracts the informations from them, for the chosen sensors.
+//
+//------------------------------------------------------------------------
+
+class SensorSimulator
 {
 //----------------------------------------------------------------- PUBLIC
 
 public:
 //------------------------------------------------------- Public Constants
 
-
 //--------------------------------------------------------- Public Methods
 
-	int open(const char* address, const int portno);
-	// Manual :
-    //		Connects to the server, using TCP socket.
-    // Contract :
-    //		The server is listening.
+	EnOceanSensorAPI::SensorId getId();
 
-	int readFrame(int nbFrame = 0);
-	// Manual :
-	    //		Reads nbFrame and sends them into the queue.Returns the number of frame read.
-		//		If nbFrame = 0, then it reads until the connection is closed by the server.
-	    // Contract :
-	    //		The connection has been opened.
+	virtual void getFrame(char* frame) = 0;
 
-	void close();
-	// Manual :
-    //		Close the connection with the server.
-    // Contract :
-    //		The connection is open.
-
-	void run();
-	void stop();
 
 //------------------------------------------------- Static public Methods
 
@@ -62,20 +49,13 @@ public:
 
 //-------------------------------------------------- Builder / Destructor
 
-	Receptor(unsigned int frameS);
-	virtual ~Receptor();
+	SensorSimulator(int id);
+	virtual ~SensorSimulator();
 
 //---------------------------------------------------------------- PRIVATE
 
 protected:
 //------------------------------------------------------ Protected Methods
-	virtual void frame_receive(char* buffer) = 0;
-	// Manual :
-    //		Processes the receipt of a complete frame.
-    // Contract :
-    //		/
-
-	bool getFlag();
 
 private:
 //----------------------------------------------------- Protected Methods
@@ -83,11 +63,9 @@ private:
 protected:
 //-------------------------------------------------- Protected Attributes
 
-	unsigned int frameSize;
-	int sock;
-	bool flag;
-	pthread_mutex_t mutex;
-	pthread_t thread;
+	EnOceanSensorAPI::SensorId id;					// ID
+	pthread_mutex_t mutex; 			// Mutex to protect this value
+	enocean_data_structure frame; 	// Frame to ben sent
 
 private:
 //----------------------------------------------------- Private Attributes
@@ -101,6 +79,6 @@ private:
 };
 
 //------------------------------ Other definition, depending on this class
-void* ReceptorThread (void* param);
 
-#endif /* Receptor_H_ */
+
+#endif /* SENSORSIMULATOR_H_ */

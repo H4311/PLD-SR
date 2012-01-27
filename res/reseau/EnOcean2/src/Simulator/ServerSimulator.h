@@ -1,60 +1,61 @@
+
 /*************************************************************************
-                           Receptor  -  description
+                           ServerSimulator  -  description
                              -------------------
     Creation             : 08 Jan. 2012
     Copyright            : (C) 2012 by H4311 - Benjamin PLANCHE (BPE)
 *************************************************************************/
 
-//------- Definition - <Receptor> (Receptor.h file) --------
+//------- Definition - <ServerSimulator> (ServerSimulator.h file) --------
 
-#ifndef Receptor_H_
-#define Receptor_H_
+#ifndef SERVERSIMULATOR_H_
+#define SERVERSIMULATOR_H_
 
 //---------------------------------------------------------------- INCLUDE
 
-//-------------------------------------------------------- System Includes
+//--------------------------------------------------------- System Include
 using namespace std;
-#include <stdint.h>
-#include <signal.h>
-#include <termios.h>
 #include <pthread.h>
-
-//----------------------------------------------------- Personnal Includes
-#include "blocking_queue.h"
+//------------------------------------------------------ Personnal Include
 
 //------------------------------------------------------------- Constantes
 
-class Receptor
+//------------------------------------------------------------------ Types
+
+//------------------------------------------------------------------------
+// Description :
+//		Analyses the frame provided by the server, and extracts the informations from them, for the chosen sensors.
+//
+//------------------------------------------------------------------------
+
+class ServerSimulator
 {
 //----------------------------------------------------------------- PUBLIC
 
 public:
 //------------------------------------------------------- Public Constants
 
-
 //--------------------------------------------------------- Public Methods
 
-	int open(const char* address, const int portno);
+	int openSocket(int port);
 	// Manual :
-    //		Connects to the server, using TCP socket.
+    //		Open the socket.
+
+	int acceptClient();
+	// Manual :
+    //		Accept a client connection.
     // Contract :
-    //		The server is listening.
+    //		open()
 
-	int readFrame(int nbFrame = 0);
+	int writeClient(char* msg, int length);
 	// Manual :
-	    //		Reads nbFrame and sends them into the queue.Returns the number of frame read.
-		//		If nbFrame = 0, then it reads until the connection is closed by the server.
-	    // Contract :
-	    //		The connection has been opened.
+	//		Write to the client.
+	// Contract :
+	//		open() & accept()
 
-	void close();
-	// Manual :
-    //		Close the connection with the server.
-    // Contract :
-    //		The connection is open.
+	int closeClient();
+	int closeSocket();
 
-	void run();
-	void stop();
 
 //------------------------------------------------- Static public Methods
 
@@ -62,20 +63,13 @@ public:
 
 //-------------------------------------------------- Builder / Destructor
 
-	Receptor(unsigned int frameS);
-	virtual ~Receptor();
+	ServerSimulator();
+	virtual ~ServerSimulator();
 
 //---------------------------------------------------------------- PRIVATE
 
 protected:
 //------------------------------------------------------ Protected Methods
-	virtual void frame_receive(char* buffer) = 0;
-	// Manual :
-    //		Processes the receipt of a complete frame.
-    // Contract :
-    //		/
-
-	bool getFlag();
 
 private:
 //----------------------------------------------------- Protected Methods
@@ -83,11 +77,9 @@ private:
 protected:
 //-------------------------------------------------- Protected Attributes
 
-	unsigned int frameSize;
-	int sock;
-	bool flag;
+	int sockfd;
+	int sockClient;
 	pthread_mutex_t mutex;
-	pthread_t thread;
 
 private:
 //----------------------------------------------------- Private Attributes
@@ -101,6 +93,6 @@ private:
 };
 
 //------------------------------ Other definition, depending on this class
-void* ReceptorThread (void* param);
 
-#endif /* Receptor_H_ */
+
+#endif /* SERVERSIMULATOR_H_ */

@@ -32,6 +32,12 @@ typedef int SOCKET;
 
 //--------------------------------------------------------- Public Methods
 
+void* ReceptorThread (void* param) {
+	Receptor* receptor = (Receptor*)param;
+	receptor->readFrame();
+	return NULL;
+}//----- End of ReceptorThread
+
 int Receptor::open(const char* address, const int portno) {
 	struct sockaddr_in serverSockAddr;
 	struct hostent *serverHostEnt;
@@ -72,17 +78,18 @@ int Receptor::open(const char* address, const int portno) {
 
 } //----- End of connect
 
-int Receptor::read(int nbFrame) {
+int Receptor::readFrame(int nbFrame) {
 	int nbFrameRead = 0;
 	int n;
 	char* buffer = (char*)malloc(frameSize*sizeof(char));
 	if (nbFrame == 0) {
-		for(;;) {
+		while (getFlag() == true) {
 			if((n = recv(sock, buffer, frameSize, 0)) < 0)
 			{
-				cout << "<Erreur> Read | " << n << endl;
+				cout << "<Receptor> Error - Read | " << n << endl;
 				break;
 			}
+
 			cout << "<Receptor> Frame Received.\n";
 			frame_receive(buffer);
 			cout << "<Receptor> Frame Sent.\n";
@@ -108,6 +115,28 @@ int Receptor::read(int nbFrame) {
 void Receptor::close() {
 	close();
 } //----- End of close
+
+bool Receptor::getFlag() {
+	bool f;
+	pthread_mutex_lock(&mutex);
+	f = flag;
+	pthread_mutex_unlock(&mutex);
+	return f;
+} //----- End of getFlag
+
+void Receptor::run() {
+	pthread_mutex_lock(&mutex);
+	flag = true;
+	pthread_mutex_unlock(&mutex);
+	pthread_create(&thread, NULL, ReceptorThread, this);
+} //----- End of run
+
+void Receptor::stop() {
+	pthread_mutex_lock(&mutex);
+	flag = false;
+	pthread_mutex_unlock(&mutex);
+	pthread_join(thread, NULL);
+} //----- End of stop
 
 ///**
 // * returns a clean data structure, filled with 0
@@ -175,6 +204,7 @@ void Receptor::close() {
 //-------------------------------------------------- Builder / Destructor
 Receptor::Receptor(unsigned int frameS) {
 	frameSize = frameS;
+	flag = false;
 } //----- End of Receptor
 
 Receptor::~Receptor() {

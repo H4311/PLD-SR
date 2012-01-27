@@ -10,6 +10,7 @@ struct prime {
 	struct prime* next;
 } ;
 
+# ifndef USE_MALLOC
 typedef void (*TestFunction) (void);
 
 static TestFunction testFunctions[] = {gmem_test0, 
@@ -17,6 +18,7 @@ static TestFunction testFunctions[] = {gmem_test0,
 									   gmem_test2,
 									   gmem_test3};
 static int numberOfTestFunctions = 4;
+# endif
 
 /* Test main */
 int main(int argc, char** argv)

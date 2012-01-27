@@ -1,6 +1,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <assert.h>
+#include <sys/resource.h>
 
 #define STACK_SIZE 16384
 
@@ -33,15 +34,30 @@ void yield();
 void destroy_all_ctx();
 
 
+struct rlimit limite;
+
 int main(int argc, char *argv[])
 {
 	id_counter = 1;
+	
+	/* Pour regarder les tailles de heap et stack dispo
+	getrlimit(RLIMIT_STACK, &limite);
+	printf("cur : %lu, max : %lu\n", limite.rlim_cur, limite.rlim_max);
+	*/
+	
+	/*
+	 * Création des différents contextes
+	 */
 	create_ctx(STACK_SIZE, f_ping, NULL);
 	create_ctx(STACK_SIZE, f_pong, NULL);
 	create_ctx(STACK_SIZE, f_paf, NULL);
 	curr_ctx = first_ctx;
-	/*display_ctx();*/
+
+	/*
+	 * Appel à l'ordonnanceur
+	 */
 	yield();
+	
 	destroy_all_ctx();
 	exit(EXIT_SUCCESS);
 }
@@ -97,6 +113,8 @@ void yield()
 	: /* input variables */
 	);
 	
+	//fflush(stdout);
+	
 	if (curr_ctx->next_ctx == NULL)
 	{
 		curr_ctx = first_ctx;
@@ -119,6 +137,9 @@ void yield()
 	: /*"%esp"/*, "%ebp" */
 	);	
 	
+	//printf("Restitution du contexte %d\n", curr_ctx->id);
+	
+	return;
 }
 
 void destroy_all_ctx()
@@ -143,11 +164,11 @@ void f_ping(void *args)
 {
 	while(1) 
 	{
-		printf("A") ;
+		printf("A");
 		yield();
-		printf("B") ;
+		printf("B");
 		yield();
-		printf("C") ;
+		printf("C");
 		yield();
 	}
 }
@@ -156,9 +177,9 @@ void f_pong(void *args)
 {
 	while(1) 
 	{
-		printf("1") ;
+		printf("1");
 		yield();
-		printf("2") ;
+		printf("2");
 		yield();
 	}
 
@@ -168,9 +189,9 @@ void f_paf(void *args)
 {
 	while(1) 
 	{
-		printf("+") ;
+		printf("y");
 		yield();
-		printf("-") ;
+		printf("z");
 		yield();
 	}
 }

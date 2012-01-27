@@ -11,7 +11,6 @@
 
 //--------------------------------------------------------- System Include
 using namespace std;
-#include <pthread.h>
 
 
 //------------------------------------------------------ Personnal Include
@@ -23,17 +22,17 @@ using namespace std;
 
 //--------------------------------------------------------- Public Methods
 
-int PeriphTable::add(SensorId id, EnOceanCallbackFunction cf) {
+int PeriphTable::add(EnOceanSensorAPI::SensorId id, EnOceanCallbackFunction cf) {
 	int n;
 	pthread_mutex_lock(&mutex);
-	n = (periph.insert(pair<SensorId,EnOceanCallbackFunction>(id, cf))).second;
+	n = (periph.insert(pair<EnOceanSensorAPI::SensorId,EnOceanCallbackFunction>(id, cf))).second;
 	pthread_mutex_unlock(&mutex);
 	return n;
 } //----- End of add
 
-EnOceanCallbackFunction PeriphTable::find(SensorId id) {
+EnOceanCallbackFunction PeriphTable::find(EnOceanSensorAPI::SensorId id) {
 	pthread_mutex_lock(&mutex);
-	map<SensorId, EnOceanCallbackFunction>::const_iterator hop = periph.find(id);
+	map<EnOceanSensorAPI::SensorId, EnOceanCallbackFunction>::const_iterator hop = periph.find(id);
 	EnOceanCallbackFunction ret = (hop != periph.end())? hop->second : NULL;
 	pthread_mutex_unlock(&mutex);
 	return ret;
@@ -49,10 +48,11 @@ EnOceanCallbackFunction PeriphTable::find(SensorId id) {
 
 //-------------------------------------------------- Builder / Destructor
 PeriphTable::PeriphTable() {
-
+	pthread_mutex_init(&mutex, NULL);
 } //----- End of PeriphTable
 
 PeriphTable::~PeriphTable() {
+	pthread_mutex_destroy(&mutex);
 } //----- End of ~PeriphTable
 
 
