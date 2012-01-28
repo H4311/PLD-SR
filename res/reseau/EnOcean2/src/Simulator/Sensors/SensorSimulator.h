@@ -1,27 +1,24 @@
 
 /*************************************************************************
-                           EnOCeanBaseSimulator  -  description
+                           SensorSimulator  -  description
                              -------------------
     Creation             : 08 Jan. 2012
     Copyright            : (C) 2012 by H4311 - Benjamin PLANCHE (BPE)
 *************************************************************************/
 
-//------- Definition - <EnOCeanBaseSimulator> (EnOCeanBaseSimulator.h file) --------
+//------- Definition - <SensorSimulator> (SensorSimulator.h file) --------
 
-#ifndef ENOCEANBASESIMULATOR_H_
-#define ENOCEANBASESIMULATOR_H_
+#ifndef SENSORSIMULATOR_H_
+#define SENSORSIMULATOR_H_
 
 //---------------------------------------------------------------- INCLUDE
 
 //--------------------------------------------------------- System Include
 using namespace std;
 #include <pthread.h>
-#include <vector>
 //------------------------------------------------------ Personnal Include
-#include "../Devices/EnOceanSensorAPI.h"
-#include "Sensors/SensorSimulator.h"
-#include "ServerSimulator.h"
-#include "Actuators/Actuator.h"
+#include "../../Devices/EnOceanSensorAPI.h"
+
 //------------------------------------------------------------- Constantes
 
 //------------------------------------------------------------------ Types
@@ -32,46 +29,18 @@ using namespace std;
 //
 //------------------------------------------------------------------------
 
-class EnOCeanBaseSimulator
+class SensorSimulator
 {
 //----------------------------------------------------------------- PUBLIC
 
 public:
 //------------------------------------------------------- Public Constants
-	static const int DELAY = 100;
+
 //--------------------------------------------------------- Public Methods
 
-	void addSensor(SensorSimulator* sensor);
-	void delSensor(EnOceanSensorAPI::SensorId id);
-	int countSensors();
+	EnOceanSensorAPI::SensorId getId();
 
-	void addActuator(Actuator* sensor);
-	void delActuator(int id);
-	int countActuators();
-
-	float updateSensors();
-
-	int openSocket(int port);
-		// Manual :
-	    //		Open the socket.
-
-	int acceptClient();
-	// Manual :
-	//		Accept a client connection.
-	// Contract :
-	//		open()
-
-	int closeClient();
-	int closeSocket();
-	
-	int writeClient(char* msg, int length);
-	
-	void getFrame(int posSensor, char* frame);
-	
-	int getFlag();
-	
-	void run();
-	void stop();
+	virtual void getFrame(char* frame) = 0;
 
 
 //------------------------------------------------- Static public Methods
@@ -80,8 +49,8 @@ public:
 
 //-------------------------------------------------- Builder / Destructor
 
-	EnOCeanBaseSimulator();
-	virtual ~EnOCeanBaseSimulator();
+	SensorSimulator(int id);
+	virtual ~SensorSimulator();
 
 //---------------------------------------------------------------- PRIVATE
 
@@ -93,12 +62,11 @@ private:
 
 protected:
 //-------------------------------------------------- Protected Attributes
-	vector<SensorSimulator*> sensors;
-	vector<Actuator*> actuators;
-	pthread_mutex_t mutex;
-	ServerSimulator server;
-	pthread_t thread;
-	int flag;
+
+	EnOceanSensorAPI::SensorId id;					// ID
+	pthread_mutex_t mutex; 			// Mutex to protect this value
+	enocean_data_structure frame; 	// Frame to ben sent
+
 private:
 //----------------------------------------------------- Private Attributes
 
@@ -111,6 +79,6 @@ private:
 };
 
 //------------------------------ Other definition, depending on this class
-	void* EnOceanBaseSimulatorThread (void* param);
 
-#endif /* ENOCEANBASESIMULATOR_H_ */
+
+#endif /* SENSORSIMULATOR_H_ */

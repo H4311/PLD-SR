@@ -1,60 +1,49 @@
+
 /*************************************************************************
-                           Receptor  -  description
+                           EnOceanActuator  -  description
                              -------------------
-    Creation             : 08 Jan. 2012
+    Creation             : 28 Jan. 2012
     Copyright            : (C) 2012 by H4311 - Benjamin PLANCHE (BPE)
 *************************************************************************/
 
-//------- Definition - <Receptor> (Receptor.h file) --------
+//------- Definition - <EnOceanActuator> (EnOceanActuator.h file) --------
 
-#ifndef Receptor_H_
-#define Receptor_H_
+#ifndef ENOCEAN_ACTUATOR_H_
+#define ENOCEAN_ACTUATOR_H_
 
 //---------------------------------------------------------------- INCLUDE
 
-//-------------------------------------------------------- System Includes
+//--------------------------------------------------------- System Include
 using namespace std;
-#include <stdint.h>
-#include <signal.h>
-#include <termios.h>
-#include <pthread.h>
-
-//----------------------------------------------------- Personnal Includes
-#include "blocking_queue.h"
+//------------------------------------------------------ Personnal Include
+#include "Actuator.h"
 
 //------------------------------------------------------------- Constantes
 
-class Receptor
+//------------------------------------------------------------------ Types
+
+//------------------------------------------------------------------------
+// Description :
+//		Element simulating EnOCean actuator, which can edit the value of some EnOcean sensors.
+//
+//------------------------------------------------------------------------
+
+class EnOceanActuator : public Actuator
 {
 //----------------------------------------------------------------- PUBLIC
 
 public:
 //------------------------------------------------------- Public Constants
 
-
 //--------------------------------------------------------- Public Methods
 
-	int open(const char* address, const int portno);
-	// Manual :
-    //		Connects to the server, using TCP socket.
-    // Contract :
-    //		The server is listening.
+	void setStatus(bool status);
+	bool getStatus();
 
-	int readFrame(int nbFrame = 0);
-	// Manual :
-	    //		Reads nbFrame and sends them into the queue.Returns the number of frame read.
-		//		If nbFrame = 0, then it reads until the connection is closed by the server.
-	    // Contract :
-	    //		The connection has been opened.
+	void setEnergeticCostPerSecond(float e);
+	float getEnergeticCostPerSecond();
+	virtual float update() = 0;
 
-	void closeSocket();
-	// Manual :
-    //		Close the connection with the server.
-    // Contract :
-    //		The connection is open.
-
-	void run();
-	void stop();
 
 //------------------------------------------------- Static public Methods
 
@@ -62,20 +51,13 @@ public:
 
 //-------------------------------------------------- Builder / Destructor
 
-	Receptor(unsigned int frameS);
-	virtual ~Receptor();
+	EnOceanActuator(int id, float enerCoef);
+	virtual ~EnOceanActuator();
 
 //---------------------------------------------------------------- PRIVATE
 
 protected:
 //------------------------------------------------------ Protected Methods
-	virtual void frame_receive(char* buffer) = 0;
-	// Manual :
-    //		Processes the receipt of a complete frame.
-    // Contract :
-    //		/
-
-	bool getFlag();
 
 private:
 //----------------------------------------------------- Protected Methods
@@ -83,11 +65,8 @@ private:
 protected:
 //-------------------------------------------------- Protected Attributes
 
-	unsigned int frameSize;
-	int sock;
-	bool flag;
-	pthread_mutex_t mutex;
-	pthread_t thread;
+	float energeticCostPerSecond;		// cost when on
+	bool on;						// on or off
 
 private:
 //----------------------------------------------------- Private Attributes
@@ -101,6 +80,6 @@ private:
 };
 
 //------------------------------ Other definition, depending on this class
-void* ReceptorThread (void* param);
 
-#endif /* Receptor_H_ */
+
+#endif /* ENOCEAN_ACTUATOR_H_ */

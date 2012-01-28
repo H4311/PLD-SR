@@ -4,17 +4,23 @@
 
 # Add inputs and outputs from these tool invocations to the build variables 
 CPP_SRCS += \
-../src/EnOcean2.cpp 
+../src/Simulator/Actuators/Actuator.cpp \
+../src/Simulator/Actuators/EnOceanActuator.cpp \
+../src/Simulator/Actuators/EnOceanActuatorAirConditioning.cpp 
 
 OBJS += \
-./src/EnOcean2.o 
+./src/Simulator/Actuators/Actuator.o \
+./src/Simulator/Actuators/EnOceanActuator.o \
+./src/Simulator/Actuators/EnOceanActuatorAirConditioning.o 
 
 CPP_DEPS += \
-./src/EnOcean2.d 
+./src/Simulator/Actuators/Actuator.d \
+./src/Simulator/Actuators/EnOceanActuator.d \
+./src/Simulator/Actuators/EnOceanActuatorAirConditioning.d 
 
 
 # Each subdirectory must supply rules for building sources it contributes
-src/%.o: ../src/%.cpp
+src/Simulator/Actuators/%.o: ../src/Simulator/Actuators/%.cpp
 	@echo 'Building file: $<'
 	@echo 'Invoking: GCC C++ Compiler'
 	g++ -O0 -g3 -Wall -c -fmessage-length=0 -MMD -MP -MF"$(@:%.o=%.d)" -MT"$(@:%.o=%.d)" -o"$@" "$<"

@@ -1,47 +1,59 @@
-
 /*************************************************************************
-                           SensorSimulator  -  description
+                           PeriphTable  -  description
                              -------------------
     Creation             : 08 Jan. 2012
     Copyright            : (C) 2012 by H4311 - Benjamin PLANCHE (BPE)
 *************************************************************************/
 
-//------- Definition - <SensorSimulator> (SensorSimulator.h file) --------
+//------- Definition - <PeriphTable> (PeriphTable.h file) --------
 
-#ifndef SENSORSIMULATOR_H_
-#define SENSORSIMULATOR_H_
+#ifndef PERIPHTABLE_H_
+#define PERIPHTABLE_H_
 
 //---------------------------------------------------------------- INCLUDE
 
-//--------------------------------------------------------- System Include
+//-------------------------------------------------------- System Includes
 using namespace std;
+#include <map>
+#include <string>
 #include <pthread.h>
-//------------------------------------------------------ Personnal Include
-#include "../Sensors.h"
+//----------------------------------------------------- Personnal Includes
+#include "EnOceanProtocol.h"
+#include "../EnOceanClient/Receptor.h"
+#include "EnOceanSensorAPI.h"
+
 
 //------------------------------------------------------------- Constantes
 
 //------------------------------------------------------------------ Types
+typedef string (*EnOceanCallbackFunction)(enocean_data_structure* frame);
 
 //------------------------------------------------------------------------
 // Description :
-//		Analyses the frame provided by the server, and extracts the informations from them, for the chosen sensors.
+//		Map containing the "drivers", ie the id of the knownn devices, and the functions to process the data they send.
 //
 //------------------------------------------------------------------------
 
-class SensorSimulator
+class DeviceTable
 {
 //----------------------------------------------------------------- PUBLIC
 
 public:
 //------------------------------------------------------- Public Constants
-
+	static const int FRAME_SIZE = 8;
+	static const int QUEUE_SIZE = 0;
 //--------------------------------------------------------- Public Methods
+	int add(EnOceanSensorAPI::SensorId id, EnOceanCallbackFunction funct);
+	// Manual :
+    //		Add a driver to the list.
+    // Contract :
+    //		/
 
-	EnOceanSensorAPI::SensorId getId();
-
-	virtual void getFrame(char* frame) = 0;
-
+	EnOceanCallbackFunction find(EnOceanSensorAPI::SensorId id);
+	// Manual :
+    //		Returns the Process-function corresponding to the device's id (or NULL if not found).
+    // Contract :
+    //		/
 
 //------------------------------------------------- Static public Methods
 
@@ -49,8 +61,8 @@ public:
 
 //-------------------------------------------------- Builder / Destructor
 
-	SensorSimulator(int id);
-	virtual ~SensorSimulator();
+	DeviceTable();
+	virtual ~DeviceTable();
 
 //---------------------------------------------------------------- PRIVATE
 
@@ -62,10 +74,8 @@ private:
 
 protected:
 //-------------------------------------------------- Protected Attributes
-
-	EnOceanSensorAPI::SensorId id;					// ID
-	pthread_mutex_t mutex; 			// Mutex to protect this value
-	enocean_data_structure frame; 	// Frame to ben sent
+	map<EnOceanSensorAPI::SensorId, EnOceanCallbackFunction> drivers;
+	pthread_mutex_t mutex;
 
 private:
 //----------------------------------------------------- Private Attributes
@@ -80,5 +90,5 @@ private:
 
 //------------------------------ Other definition, depending on this class
 
+#endif /* PERIPHTABLE_H_ */
 
-#endif /* SENSORSIMULATOR_H_ */

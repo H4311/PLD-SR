@@ -16,7 +16,6 @@ using namespace std;
 
 //------------------------------------------------------ Personnal Include
 #include "EnOceanAnalyser.h"
-#include "Sensors.h"
 
 //-------------------------------------------------------------- Constants
 
@@ -35,19 +34,23 @@ void EnOceanAnalyser::setMessagesQueue(EnOceanMsgQueue* mQ) {
 } //----- End of setMessagesQueue
 
 void EnOceanAnalyser::analyse() {
+	pair<enocean_data_structure*, long*>* data;
 	enocean_data_structure* frame;
+	long* timestamp;
 	EnOceanSensorAPI::SensorId id;
-	string data;
+	string dataS;
 	EnOceanCallbackFunction translator;
 	cout << "<Analyser> Ready.\n";
-	while ((flag == true) && (messagesQueue->front(frame, NULL)) == 0) {
+	while ((flag == true) && (messagesQueue->front(data, NULL)) == 0) {
 		cout << "<Analyser> Frame Received.\n";
+		frame = data->first;
+		timestamp = data->second;
 		id = EnOceanSensorAPI::getID(frame);
 		cout << "<Analyser> ID : " << id << endl;
 		if ((translator = periph->find(id)) != NULL) { // If it is a sensor we use :
 			cout << "<Analyser> Sensor identified.\n";
-			data = translator(frame);
-			cout << "<Analyser> Extraction : " << data << ".\n"; // TO DO : Log
+			dataS = translator(frame);
+			cout << "<Analyser> Extraction : " << dataS << " | Time : " << *timestamp << "s.\n"; // TO DO : Log
 		}
 		cout << "<Analyser> Frame processed.\n";
 		messagesQueue->pop();
@@ -84,7 +87,7 @@ void EnOceanAnalyser::stop() {
 
 
 //-------------------------------------------------- Builder / Destructor
-EnOceanAnalyser::EnOceanAnalyser(PeriphTable* per, EnOceanMsgQueue* m): periph(per), messagesQueue(m), flag(false) {
+EnOceanAnalyser::EnOceanAnalyser(DeviceTable* per, EnOceanMsgQueue* m): periph(per), messagesQueue(m), flag(false) {
 	pthread_mutex_init(&mutex, NULL);
 } //----- End of EnOceanAnalyser
 

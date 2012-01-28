@@ -16,7 +16,7 @@ using namespace std;
 #include <iostream>
 //------------------------------------------------------ Personnal Include
 #include "SensorSimulatorTempHumi.h"
-#include "../Sensors.h"
+#include "../../Devices/EnOceanSensorAPI.h"
 //-------------------------------------------------------------- Constants
 
 //----------------------------------------------------------------- PUBLIC
@@ -33,7 +33,10 @@ float SensorSimulatorTempHumi::getTemperature() {
 void SensorSimulatorTempHumi::setTemperature(float t) {
 	pthread_mutex_lock(&mutex);
 	temperature = t;
-	EnOceanSensorAPI::setTemperature(&frame, temperature, tempMin, tempMax);
+	if (temperature > tempMax) { t = tempMax; }
+	else if (temperature < tempMin) { t = tempMin; }
+
+	EnOceanSensorAPI::setTemperature(&frame, t, tempMin, tempMax);
 	pthread_mutex_unlock(&mutex);
 }
 

@@ -10,7 +10,11 @@ RM := rm -rf
 -include sources.mk
 -include subdir.mk
 -include src/Simulator/subdir.mk
+-include src/Simulator/Sensors/subdir.mk
+-include src/Simulator/Actuators/subdir.mk
+-include src/EnOceanClient/subdir.mk
 -include src/subdir.mk
+-include src/Devices/subdir.mk
 -include objects.mk
 
 ifneq ($(MAKECMDGOALS),clean)

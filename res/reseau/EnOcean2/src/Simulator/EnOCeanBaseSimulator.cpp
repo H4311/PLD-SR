@@ -32,6 +32,11 @@ void* EnOceanBaseSimulatorThread (void* param) {
 
 	// Sends data from each sensor, sleeping between two sending :
 	while(simu->getFlag() == 0) {
+
+		// Updating the sensors :
+		simu->updateSensors();
+
+		// Sending their values :
 		delayBetween2Sendings = (simu->DELAY*1000000) / simu->countSensors();
 		delayBetween2Sendings = (delayBetween2Sendings < 100)? 100 : delayBetween2Sendings;
 		
@@ -75,6 +80,45 @@ int EnOCeanBaseSimulator::countSensors() {
 	pthread_mutex_unlock(&mutex);
 	return ret;
 }
+
+void EnOCeanBaseSimulator::addActuator(Actuator* a) {
+	pthread_mutex_lock(&mutex);
+	actuators.push_back(a);
+	pthread_mutex_unlock(&mutex);
+}
+
+void EnOCeanBaseSimulator::delActuator(int id) {
+	pthread_mutex_lock(&mutex);
+
+	for (vector<Actuator*>::iterator it=actuators.begin() ; it < actuators.end(); it++ )
+    {
+		if ((*it)->getID() == id) {
+			actuators.erase(it);
+			return;
+		}
+	}
+	pthread_mutex_unlock(&mutex);
+}
+
+int EnOCeanBaseSimulator::countActuators() {
+	int ret;
+	pthread_mutex_lock(&mutex);
+	ret = actuators.size();
+	pthread_mutex_unlock(&mutex);
+	return ret;
+}
+
+float EnOCeanBaseSimulator::updateSensors() {
+	float conso;
+	pthread_mutex_lock(&mutex);
+	for (vector<Actuator*>::iterator it=actuators.begin() ; it < actuators.end(); it++ )
+	    {
+			conso = (*it)->update();
+		}
+	pthread_mutex_unlock(&mutex);
+	return conso;
+}
+
 
 int EnOCeanBaseSimulator::openSocket(int port) {
 	return server.openSocket(port);

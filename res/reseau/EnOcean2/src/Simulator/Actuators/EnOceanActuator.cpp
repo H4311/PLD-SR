@@ -1,20 +1,19 @@
+
 /*************************************************************************
-                           PeriphTable  -  description
+                           EnOceanActuator  -  description
                              -------------------
-    Creation             : 08 Jan. 2012
+    Creation             : 28 Jan. 2012
     Copyright            : (C) 2012 by H4311 - Benjamin PLANCHE (BPE)
 *************************************************************************/
 
-//---- Implementation - <PeriphTable> (PeriphTable.cpp file) -----
+//---- Implementation - <EnOceanActuator> (EnOceanActuator.cpp file) -----
 
 //---------------------------------------------------------------- INCLUDE
 
 //--------------------------------------------------------- System Include
 using namespace std;
-
-
 //------------------------------------------------------ Personnal Include
-#include "PeriphTable.h"
+#include "EnOceanActuator.h"
 
 //-------------------------------------------------------------- Constants
 
@@ -22,41 +21,47 @@ using namespace std;
 
 //--------------------------------------------------------- Public Methods
 
-int PeriphTable::add(EnOceanSensorAPI::SensorId id, EnOceanCallbackFunction cf) {
-	int n;
+bool EnOceanActuator::getStatus() {
 	pthread_mutex_lock(&mutex);
-	n = (periph.insert(pair<EnOceanSensorAPI::SensorId,EnOceanCallbackFunction>(id, cf))).second;
+	bool s = on;
 	pthread_mutex_unlock(&mutex);
-	return n;
-} //----- End of add
+	return s;
+}
 
-EnOceanCallbackFunction PeriphTable::find(EnOceanSensorAPI::SensorId id) {
+void EnOceanActuator::setStatus(bool s) {
 	pthread_mutex_lock(&mutex);
-	map<EnOceanSensorAPI::SensorId, EnOceanCallbackFunction>::const_iterator hop = periph.find(id);
-	EnOceanCallbackFunction ret = (hop != periph.end())? hop->second : NULL;
+	on = s;
 	pthread_mutex_unlock(&mutex);
-	return ret;
+}
 
-} //----- End of read
+float EnOceanActuator::getEnergeticCostPerSecond() {
+	pthread_mutex_lock(&mutex);
+	float s = energeticCostPerSecond;
+	pthread_mutex_unlock(&mutex);
+	return s;
+}
 
-
-
+void EnOceanActuator::setEnergeticCostPerSecond(float e) {
+	pthread_mutex_lock(&mutex);
+	energeticCostPerSecond = e;
+	pthread_mutex_unlock(&mutex);
+}
 //------------------------------------------------- Static public Methods
 
 //------------------------------------------------------------- Operators
 
 
 //-------------------------------------------------- Builder / Destructor
-PeriphTable::PeriphTable() {
-	pthread_mutex_init(&mutex, NULL);
-} //----- End of PeriphTable
+EnOceanActuator::EnOceanActuator(int i, float e): Actuator(i), energeticCostPerSecond(e), on(false){
 
-PeriphTable::~PeriphTable() {
-	pthread_mutex_destroy(&mutex);
-} //----- End of ~PeriphTable
+} //----- End of EnOceanActuator
+
+EnOceanActuator::~EnOceanActuator() {
+	// TODO Auto-generated destructor stub
+
+} //----- End of ~EnOceanActuator
 
 
 //---------------------------------------------------------------- PRIVATE
 
 //------------------------------------------------------ Protected Methods
-

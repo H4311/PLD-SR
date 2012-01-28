@@ -19,9 +19,9 @@ using namespace std;
 #include <pthread.h>
 
 //------------------------------------------------------ Personnal Include
-#include "blocking_queue.h"
-#include "PeriphTable.h"
-#include "Sensors.h"
+#include "../Libs/blocking_queue.h"
+#include "../Devices/DeviceTable.h"
+#include "../Devices/EnOceanSensorAPI.h"
 #include "EnOceanReceptor.h"
 
 //------------------------------------------------------------- Constantes
@@ -29,7 +29,7 @@ using namespace std;
 //------------------------------------------------------------------ Types 
 typedef struct thread_param {
 	EnOceanMsgQueue* messagesQueue;
-	PeriphTable* periph;
+	DeviceTable* periph;
 } Analyser_thread_param;
 
 
@@ -55,7 +55,15 @@ public:
     //		The messageQueue must be defined.
 
 	void run();
+	// Manual :
+    //		Lauches the thread, to run the analysis.
+    // Contract :
+    //		Not to be used twice without stop() before.
 	void stop();
+	// Manual :
+    //		Stop the thread.
+    // Contract :
+    //		/
 
 	void setMessagesQueue (EnOceanMsgQueue* messagesQueue);
 	// Manual :
@@ -69,7 +77,7 @@ public:
 
 //-------------------------------------------------- Builder / Destructor
 
-	EnOceanAnalyser(PeriphTable* periph, EnOceanMsgQueue* messagesQueue);
+	EnOceanAnalyser(DeviceTable* periph, EnOceanMsgQueue* messagesQueue);
 	virtual ~EnOceanAnalyser();
 
 //---------------------------------------------------------------- PRIVATE
@@ -84,11 +92,11 @@ private:
 protected:
 //-------------------------------------------------- Protected Attributes
 
-	PeriphTable* periph;
-	EnOceanMsgQueue* messagesQueue;
-	bool flag;
-	pthread_mutex_t mutex;
-	pthread_t thread;
+	DeviceTable* periph;				// Table of the known sensors
+	EnOceanMsgQueue* messagesQueue;		// Messages to be analysed
+	bool flag;							// Synchronisation flag for the thread
+	pthread_mutex_t mutex;				// Mutex to protect the data
+	pthread_t thread;					// Thread
 
 private:
 //----------------------------------------------------- Private Attributes
@@ -104,6 +112,9 @@ private:
 //------------------------------ Other definition, depending on this class
 
 void* EnOceanAnalyserThread (void* param);
-
+// Manual :
+//		Lauches the thread.
+// Contract :
+//		param is of type (EnOceanAnalyser*).
 
 #endif /* ENOCEANANALYSER_H_ */

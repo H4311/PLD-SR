@@ -15,7 +15,7 @@ using namespace std;
 #include <sstream>
 #include <stdlib.h>
 //------------------------------------------------------ Personnal Include
-#include "Sensors.h"
+#include "EnOceanSensorAPI.h"
 //-------------------------------------------------------------- Constants
 
 //----------------------------------------------------------------- PUBLIC

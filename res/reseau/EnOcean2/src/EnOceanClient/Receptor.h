@@ -1,50 +1,74 @@
 /*************************************************************************
-                           PeriphTable  -  description
+                           Receptor  -  description
                              -------------------
     Creation             : 08 Jan. 2012
     Copyright            : (C) 2012 by H4311 - Benjamin PLANCHE (BPE)
 *************************************************************************/
 
-//------- Definition - <PeriphTable> (PeriphTable.h file) --------
+//------- Definition - <Receptor> (Receptor.h file) --------
 
-#ifndef PERIPHTABLE_H_
-#define PERIPHTABLE_H_
+#ifndef Receptor_H_
+#define Receptor_H_
 
 //---------------------------------------------------------------- INCLUDE
 
 //-------------------------------------------------------- System Includes
 using namespace std;
-#include <map>
-#include <string>
+#include <stdint.h>
+#include <signal.h>
+#include <termios.h>
 #include <pthread.h>
-//----------------------------------------------------- Personnal Includes
-#include "EnOceanProtocol.h"
-#include "Receptor.h"
-#include "Sensors.h"
 
+//----------------------------------------------------- Personnal Includes
+#include "../Libs/blocking_queue.h"
 
 //------------------------------------------------------------- Constantes
 
-//------------------------------------------------------------------ Types
-typedef string (*EnOceanCallbackFunction)(enocean_data_structure* frame);
-
 //------------------------------------------------------------------------
 // Description :
-//		Receipts and stocks the frames sent by the EnOcean server.
+//		Receives and saves into a queue the data sent by a server (TCP).
 //
 //------------------------------------------------------------------------
 
-class PeriphTable
+class Receptor
 {
 //----------------------------------------------------------------- PUBLIC
 
 public:
 //------------------------------------------------------- Public Constants
-	static const int FRAME_SIZE = 8;
-	static const int QUEUE_SIZE = 0;
+
+
 //--------------------------------------------------------- Public Methods
-	int add(EnOceanSensorAPI::SensorId id, EnOceanCallbackFunction funct);
-	EnOceanCallbackFunction find(EnOceanSensorAPI::SensorId id);
+
+	int open(const char* address, const int portno);
+	// Manual :
+    //		Connects to the server, using TCP socket.
+    // Contract :
+    //		The server is listening.
+
+	int readFrame(int nbFrame = 0);
+	// Manual :
+	    //		Reads nbFrame and sends them into the queue.Returns the number of frame read.
+		//		If nbFrame = 0, then it reads until the connection is closed by the server.
+	    // Contract :
+	    //		The connection has been opened.
+
+	void closeSocket();
+	// Manual :
+    //		Close the connection with the server.
+    // Contract :
+    //		The connection is open.
+
+	void run();
+	// Manual :
+    //		Lauches the thread, which loop on readFrame.
+    // Contract :
+    //		Not to be used twice without stop() before.
+	void stop();
+	// Manual :
+    //		Stops the thread.
+    // Contract :
+    //		/
 
 //------------------------------------------------- Static public Methods
 
@@ -52,21 +76,36 @@ public:
 
 //-------------------------------------------------- Builder / Destructor
 
-	PeriphTable();
-	virtual ~PeriphTable();
+	Receptor(unsigned int frameS);
+	virtual ~Receptor();
 
 //---------------------------------------------------------------- PRIVATE
 
 protected:
 //------------------------------------------------------ Protected Methods
+	virtual void frame_receive(char* buffer) = 0;
+	// Manual :
+    //		Processes the receipt of a complete frame.
+    // Contract :
+    //		/
+
+	bool getFlag();
+	// Manual :
+    //		Get the value of the synchro flag.
+    // Contract :
+    //		/
 
 private:
 //----------------------------------------------------- Protected Methods
 
 protected:
 //-------------------------------------------------- Protected Attributes
-	map<EnOceanSensorAPI::SensorId, EnOceanCallbackFunction> periph;
-	pthread_mutex_t mutex;
+
+	unsigned int frameSize;			// Size in octet of a frame
+	int sock;						// Socket
+	bool flag;						// Synchro flag (for the thread)
+	pthread_mutex_t mutex;			// Mutex protecting the data
+	pthread_t thread;				// tHREAD
 
 private:
 //----------------------------------------------------- Private Attributes
@@ -80,6 +119,10 @@ private:
 };
 
 //------------------------------ Other definition, depending on this class
+void* ReceptorThread (void* param);
+// Manual :
+//		Lauches the thread.
+// Contract :
+//		param is of type (Receptor*).
 
-#endif /* PERIPHTABLE_H_ */
-
+#endif /* Receptor_H_ */

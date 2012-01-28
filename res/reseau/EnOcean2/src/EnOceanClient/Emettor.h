@@ -1,78 +1,63 @@
-
 /*************************************************************************
-                           EnOCeanBaseSimulator  -  description
+                           Emettor  -  description
                              -------------------
-    Creation             : 08 Jan. 2012
+    Creation             : 28 Jan. 2012
     Copyright            : (C) 2012 by H4311 - Benjamin PLANCHE (BPE)
 *************************************************************************/
 
-//------- Definition - <EnOCeanBaseSimulator> (EnOCeanBaseSimulator.h file) --------
+//------- Definition - <Emettor> (Emettor.h file) --------
 
-#ifndef ENOCEANBASESIMULATOR_H_
-#define ENOCEANBASESIMULATOR_H_
+#ifndef EMETTOR_H_
+#define EMETTOR_H_
 
 //---------------------------------------------------------------- INCLUDE
 
-//--------------------------------------------------------- System Include
+//-------------------------------------------------------- System Includes
 using namespace std;
+#include <stdint.h>
+#include <signal.h>
+#include <termios.h>
 #include <pthread.h>
-#include <vector>
-//------------------------------------------------------ Personnal Include
-#include "../Devices/EnOceanSensorAPI.h"
-#include "Sensors/SensorSimulator.h"
-#include "ServerSimulator.h"
-#include "Actuators/Actuator.h"
+
+//----------------------------------------------------- Personnal Includes
+#include "../Libs/blocking_queue.h"
+
 //------------------------------------------------------------- Constantes
 
-//------------------------------------------------------------------ Types
 
 //------------------------------------------------------------------------
 // Description :
-//		Analyses the frame provided by the server, and extracts the informations from them, for the chosen sensors.
+//		Class using an TCP socket to send frames to a server.
 //
 //------------------------------------------------------------------------
 
-class EnOCeanBaseSimulator
+class Emettor
 {
 //----------------------------------------------------------------- PUBLIC
 
 public:
 //------------------------------------------------------- Public Constants
-	static const int DELAY = 100;
+
+
 //--------------------------------------------------------- Public Methods
 
-	void addSensor(SensorSimulator* sensor);
-	void delSensor(EnOceanSensorAPI::SensorId id);
-	int countSensors();
-
-	void addActuator(Actuator* sensor);
-	void delActuator(int id);
-	int countActuators();
-
-	float updateSensors();
-
-	int openSocket(int port);
-		// Manual :
-	    //		Open the socket.
-
-	int acceptClient();
+	int open(const char* address, const int portno);
 	// Manual :
-	//		Accept a client connection.
-	// Contract :
-	//		open()
+    //		Connects to the server, using TCP socket.
+    // Contract :
+    //		The server is listening.
 
-	int closeClient();
-	int closeSocket();
-	
-	int writeClient(char* msg, int length);
-	
-	void getFrame(int posSensor, char* frame);
-	
-	int getFlag();
-	
-	void run();
-	void stop();
+	int sendFrame(char* frame, int length);
+	// Manual :
+	    //		Sends the given string to the server.
+	    // Contract :
+	    //		The connection has been opened.
 
+	void closeSocket();
+	// Manual :
+    //		Close the connection with the server.
+    // Contract :
+    //		The connection is open.
 
 //------------------------------------------------- Static public Methods
 
@@ -80,8 +65,8 @@ public:
 
 //-------------------------------------------------- Builder / Destructor
 
-	EnOCeanBaseSimulator();
-	virtual ~EnOCeanBaseSimulator();
+	Emettor();
+	virtual ~Emettor();
 
 //---------------------------------------------------------------- PRIVATE
 
@@ -93,12 +78,10 @@ private:
 
 protected:
 //-------------------------------------------------- Protected Attributes
-	vector<SensorSimulator*> sensors;
-	vector<Actuator*> actuators;
-	pthread_mutex_t mutex;
-	ServerSimulator server;
-	pthread_t thread;
-	int flag;
+
+	int sock;	// Socket.
+
+
 private:
 //----------------------------------------------------- Private Attributes
 
@@ -111,6 +94,5 @@ private:
 };
 
 //------------------------------ Other definition, depending on this class
-	void* EnOceanBaseSimulatorThread (void* param);
 
-#endif /* ENOCEANBASESIMULATOR_H_ */
+#endif /* EMETTOR_H_ */

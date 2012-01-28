@@ -1,43 +1,51 @@
+
 /*************************************************************************
-                           EnOceanReceptor  -  description
+                           Actuator  -  description
                              -------------------
-    Creation             : 08 Jan. 2012
+    Creation             : 28 Jan. 2012
     Copyright            : (C) 2012 by H4311 - Benjamin PLANCHE (BPE)
 *************************************************************************/
 
-//------- Definition - <EnOceanReceptor> (EnOceanReceptor.h file) --------
+//------- Definition - <Actuator> (Actuator.h file) --------
 
-#ifndef ENOCEANRECEPTOR_H_
-#define ENOCEANRECEPTOR_H_
+#ifndef ACTUATOR_H_
+#define ACTUATOR_H_
 
 //---------------------------------------------------------------- INCLUDE
 
-//-------------------------------------------------------- System Includes
+//--------------------------------------------------------- System Include
 using namespace std;
-
-//----------------------------------------------------- Personnal Includes
-#include "EnOceanProtocol.h"
-#include "blocking_queue.h"
-#include "Receptor.h"
+#include <vector>
+#include <pthread.h>
+//------------------------------------------------------ Personnal Include
+#include "../Sensors/SensorSimulator.h"
 //------------------------------------------------------------- Constantes
 
-//------------------------------------------------------------------ Types 
-typedef blocking_queue<enocean_data_structure> EnOceanMsgQueue;
+//------------------------------------------------------------------ Types
 
-//------------------------------------------------------------------------ 
-// Description : 
-//		Receipts and stocks the frames sent by the EnOcean server.
+//------------------------------------------------------------------------
+// Description :
+//		Element which can edit the value of some sensors.
 //
-//------------------------------------------------------------------------ 
+//------------------------------------------------------------------------
 
-class EnOceanReceptor : public Receptor
+class Actuator
 {
 //----------------------------------------------------------------- PUBLIC
 
 public:
 //------------------------------------------------------- Public Constants
-	static const int QUEUE_SIZE = 0;
+
 //--------------------------------------------------------- Public Methods
+
+	int getID();
+
+	void addSensor(SensorSimulator* sensor);
+	void delSensor(EnOceanSensorAPI::SensorId id);
+	int countSensors();
+
+	virtual float update() = 0;
+
 
 //------------------------------------------------- Static public Methods
 
@@ -45,26 +53,23 @@ public:
 
 //-------------------------------------------------- Builder / Destructor
 
-	EnOceanReceptor(blocking_queue<enocean_data_structure>* messagesQueue);
-	EnOceanReceptor(blocking_queue<enocean_data_structure>* messagesQueue, unsigned int frames);
-	virtual ~EnOceanReceptor();
+	Actuator(int id);
+	virtual ~Actuator();
 
 //---------------------------------------------------------------- PRIVATE
 
 protected:
 //------------------------------------------------------ Protected Methods
-	void frame_receive(char* buffer);
-		// Manual :
-	    //		Processes the receipt of a complete frame.
-	    // Contract :
-	    //		/
 
 private:
 //----------------------------------------------------- Protected Methods
 
 protected:
 //-------------------------------------------------- Protected Attributes
-	EnOceanMsgQueue* messagesQueue; // Trames en attente de traitement.
+
+	vector<SensorSimulator*> sensors;
+	int id;
+	pthread_mutex_t mutex; 			// Mutex to protect this value
 
 private:
 //----------------------------------------------------- Private Attributes
@@ -79,4 +84,5 @@ private:
 
 //------------------------------ Other definition, depending on this class
 
-#endif /* ENOCEANRECEPTOR_H_ */
+
+#endif /* ACTUATOR_H_ */

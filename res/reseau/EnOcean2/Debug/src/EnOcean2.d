@@ -1,30 +1,73 @@
-src/EnOcean2.d: ../src/EnOcean2.cpp ../src/EnOceanReceptor.h \
- ../src/EnOceanProtocol.h ../src/blocking_queue.h ../src/Receptor.h \
- ../src/EnOceanAnalyser.h ../src/PeriphTable.h ../src/Sensors.h \
- ../src/Simulator/EnOCeanBaseSimulator.h ../src/Simulator/../Sensors.h \
- ../src/Simulator/SensorSimulator.h ../src/Simulator/ServerSimulator.h \
- ../src/Simulator/SensorSimulatorTempHumi.h
+src/EnOcean2.d: ../src/EnOcean2.cpp \
+ ../src/EnOceanClient/EnOceanReceptor.h \
+ ../src/EnOceanClient/../Devices/EnOceanProtocol.h \
+ ../src/EnOceanClient/../Libs/blocking_queue.h \
+ ../src/EnOceanClient/Receptor.h ../src/EnOceanClient/EnOceanAnalyser.h \
+ ../src/EnOceanClient/../Devices/DeviceTable.h \
+ ../src/EnOceanClient/../Devices/EnOceanProtocol.h \
+ ../src/EnOceanClient/../Devices/../EnOceanClient/Receptor.h \
+ ../src/EnOceanClient/../Devices/EnOceanSensorAPI.h \
+ ../src/EnOceanClient/../Devices/EnOceanSensorAPI.h \
+ ../src/EnOceanClient/EnOceanReceptor.h \
+ ../src/Simulator/EnOCeanBaseSimulator.h \
+ ../src/Simulator/../Devices/EnOceanSensorAPI.h \
+ ../src/Simulator/Sensors/SensorSimulator.h \
+ ../src/Simulator/Sensors/../../Devices/EnOceanSensorAPI.h \
+ ../src/Simulator/ServerSimulator.h ../src/Simulator/Actuators/Actuator.h \
+ ../src/Simulator/Actuators/../Sensors/SensorSimulator.h \
+ ../src/Simulator/Sensors/SensorSimulatorTempHumi.h \
+ ../src/Simulator/Sensors/SensorSimulator.h \
+ ../src/Simulator/Actuators/EnOceanActuatorAirConditioning.h \
+ ../src/Simulator/Actuators/EnOceanActuator.h \
+ ../src/Simulator/Actuators/Actuator.h ../src/Devices/DeviceTable.h \
+ ../src/Devices/EnOceanSensorAPI.h
 
-../src/EnOceanReceptor.h:
+../src/EnOceanClient/EnOceanReceptor.h:
 
-../src/EnOceanProtocol.h:
+../src/EnOceanClient/../Devices/EnOceanProtocol.h:
 
-../src/blocking_queue.h:
+../src/EnOceanClient/../Libs/blocking_queue.h:
 
-../src/Receptor.h:
+../src/EnOceanClient/Receptor.h:
 
-../src/EnOceanAnalyser.h:
+../src/EnOceanClient/EnOceanAnalyser.h:
 
-../src/PeriphTable.h:
+../src/EnOceanClient/../Devices/DeviceTable.h:
 
-../src/Sensors.h:
+../src/EnOceanClient/../Devices/EnOceanProtocol.h:
+
+../src/EnOceanClient/../Devices/../EnOceanClient/Receptor.h:
+
+../src/EnOceanClient/../Devices/EnOceanSensorAPI.h:
+
+../src/EnOceanClient/../Devices/EnOceanSensorAPI.h:
+
+../src/EnOceanClient/EnOceanReceptor.h:
 
 ../src/Simulator/EnOCeanBaseSimulator.h:
 
-../src/Simulator/../Sensors.h:
+../src/Simulator/../Devices/EnOceanSensorAPI.h:
 
-../src/Simulator/SensorSimulator.h:
+../src/Simulator/Sensors/SensorSimulator.h:
+
+../src/Simulator/Sensors/../../Devices/EnOceanSensorAPI.h:
 
 ../src/Simulator/ServerSimulator.h:
 
-../src/Simulator/SensorSimulatorTempHumi.h:
+../src/Simulator/Actuators/Actuator.h:
+
+../src/Simulator/Actuators/../Sensors/SensorSimulator.h:
+
+../src/Simulator/Sensors/SensorSimulatorTempHumi.h:
+
+../src/Simulator/Sensors/SensorSimulator.h:
+
+../src/Simulator/Actuators/EnOceanActuatorAirConditioning.h:
+
+../src/Simulator/Actuators/EnOceanActuator.h:
+
+../src/Simulator/Actuators/Actuator.h:
+
+../src/Devices/DeviceTable.h:
+
+../src/Devices/EnOceanSensorAPI.h:
