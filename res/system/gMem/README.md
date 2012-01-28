@@ -1,4 +1,5 @@
-h1. Conception
+Conception
+==========
 
 - Au moment de la création du contexte, appel à init_mem, qui créé la
 liste chaînée avec un bloc libre faisant la taille totale du tas.
@@ -10,7 +11,8 @@ renvoyé à l'utilisateur.
 - Les blocs sont triés dans l'ordre croissant des pointeurs, ce qui
 favorise l'utilisation de first_fit.
 
-h1. Tests
+Tests
+=====
 
 - Le test 0 vérifie que l'allocation d'une zone trop grande aboutit à un
 pointeur NULL.
