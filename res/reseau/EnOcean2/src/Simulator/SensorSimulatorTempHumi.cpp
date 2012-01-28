@@ -69,7 +69,7 @@ SensorSimulatorTempHumi::SensorSimulatorTempHumi(int id, int tMin, int tMax) : S
 	EnOceanSensorAPI::setHumidity(&frame, humidity);
 	EnOceanSensorAPI::setTemperature(&frame, temperature, tempMin, tempMax);
 
-	cout << "<Sensor Simmu n°" << id << "> Créé - " << temperature << "°c [" << tempMin << "; " << tempMax << "] - " << humidity << "%\n";
+	cout << "<Sensor Simu n°" << id << "> Créé - " << temperature << "°c [" << tempMin << "; " << tempMax << "] - " << humidity << "%\n";
 
 } //----- End of SensorSimulatorTempHumi
 

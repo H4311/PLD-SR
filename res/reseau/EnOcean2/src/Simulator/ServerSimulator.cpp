@@ -19,6 +19,7 @@ using namespace std;
 #include <sys/types.h>
 #include <sys/socket.h>
 #include <netinet/in.h>
+#include <iostream>
 
 //------------------------------------------------------ Personnal Include
 #include "ServerSimulator.h"
@@ -42,11 +43,12 @@ int ServerSimulator::openSocket (int port)
 	serv_addr.sin_port = htons(port);
 
 	if (bind(sockfd, (struct sockaddr *) &serv_addr, sizeof(serv_addr)) < 0) {
+		cout << "<Base Simu> Error - Socket.\n";
 		return sockfd;
 	}
 
 	listen(sockfd, 1);
-
+	cout << "<Base Simu> Connecté.\n";
 	return sockfd;
 }
 
@@ -54,6 +56,7 @@ int ServerSimulator::acceptClient () {
 	struct sockaddr_in cli_addr;
 	socklen_t clilen = sizeof(struct sockaddr_in);
 	sockClient = accept(sockfd, (struct sockaddr *) &cli_addr, &clilen);
+	cout << "<Base Simu> Client accepté.\n";
 	return sockClient;
 }
 

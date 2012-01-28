@@ -112,8 +112,8 @@ int Receptor::readFrame(int nbFrame) {
 	return nbFrameRead;
 } //----- End of read
 
-void Receptor::close() {
-	close();
+void Receptor::closeSocket() {
+	close(sock);
 } //----- End of close
 
 bool Receptor::getFlag() {
@@ -205,10 +205,12 @@ void Receptor::stop() {
 Receptor::Receptor(unsigned int frameS) {
 	frameSize = frameS;
 	flag = false;
+	pthread_mutex_init(&mutex, NULL);
 } //----- End of Receptor
 
 Receptor::~Receptor() {
-	close();
+	stop();
+	pthread_mutex_destroy(&mutex);
 } //----- End of ~Receptor
 
 

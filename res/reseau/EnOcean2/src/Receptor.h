@@ -47,7 +47,7 @@ public:
 	    // Contract :
 	    //		The connection has been opened.
 
-	void close();
+	void closeSocket();
 	// Manual :
     //		Close the connection with the server.
     // Contract :
