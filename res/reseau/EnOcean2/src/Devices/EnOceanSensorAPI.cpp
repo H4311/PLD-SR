@@ -95,7 +95,7 @@ using namespace std;
 			return oss.str();
 		} //----- End of analyseRockerSwitch_F6_02_01
 
-	string EnOceanSensorAPI::analyseTempSensor(enocean_data_structure* frame, int minTemp, int maxTemp) {
+	string EnOceanSensorAPI::analyseTempSensor(enocean_data_structure* frame, float minTemp, float maxTemp) {
 		ostringstream oss;
 		bool dataFrame = (frame->DATA_BYTE0 >> 3) & 1;
 		if (dataFrame) {
@@ -108,7 +108,7 @@ using namespace std;
 			return analyseTempSensor(frame,0 , 40);
 		} //----- End of analyseTempAndHumidSensor_EEP_07_02_05
 
-	string EnOceanSensorAPI::analyseTempAndHumidSensor(enocean_data_structure* frame, int minTemp, int maxTemp) {
+	string EnOceanSensorAPI::analyseTempAndHumidSensor(enocean_data_structure* frame, float minTemp, float maxTemp) {
 		ostringstream oss;
 		bool dataFrame = (frame->DATA_BYTE0 >> 3) & 1;
 		if (dataFrame) {
@@ -128,7 +128,7 @@ using namespace std;
 		return analyseLumAndOcc(frame, 0, 510, 0.0, 5.1);
 	} //----- End of analyseLumAndOcc_EEP_07_08_01
 
-	string EnOceanSensorAPI::analyseLumAndOcc(enocean_data_structure* frame, int minLum, int maxLum, float minV, float maxV) {
+	string EnOceanSensorAPI::analyseLumAndOcc(enocean_data_structure* frame, float minLum, float maxLum, float minV, float maxV) {
 		ostringstream oss;
 		float lum = getLuminosity(frame, minLum, maxLum);
 		float volt = getVoltage(frame, minV, maxV);
@@ -156,18 +156,18 @@ using namespace std;
 		return info;
 	} //----- End of isRockerSwitchAction2nd
 
-	float EnOceanSensorAPI::getTemperature(enocean_data_structure* frame, int minTemp, int maxTemp) {
+	float EnOceanSensorAPI::getTemperature(enocean_data_structure* frame, float minTemp, float maxTemp) {
 		float multiplyer = (float)(maxTemp-minTemp) / 255.0;
 		return (float)frame->DATA_BYTE1 * multiplyer + (float)( (multiplyer>=0)? minTemp : maxTemp );
 	} //----- End of getTemperature
 
-	float EnOceanSensorAPI::getTemperatureInverted(enocean_data_structure* frame, int minTemp, int maxTemp) {
+	float EnOceanSensorAPI::getTemperatureInverted(enocean_data_structure* frame, float minTemp, float maxTemp) {
 		float multiplyer = (float)(maxTemp-minTemp) / 255.0;
 		BYTE invert = ~frame->DATA_BYTE1;
 		return (float)invert * multiplyer + (float)( (multiplyer>=0)? minTemp : maxTemp );
 	} //----- End of getTemperature
 
-	void EnOceanSensorAPI::setTemperature(enocean_data_structure* frame, float temp, int minTemp, int maxTemp) {
+	void EnOceanSensorAPI::setTemperature(enocean_data_structure* frame, float temp, float minTemp, float maxTemp) {
 		float multiplyer = (float)(maxTemp-minTemp) / 255.0;
 		frame->DATA_BYTE1 = (BYTE)((temp - (float)( (multiplyer>=0)? minTemp : maxTemp )) / multiplyer);
 	} //----- End of setTemperature
@@ -180,7 +180,7 @@ using namespace std;
 		frame->DATA_BYTE2 = (BYTE)(humi * 2.55);
 	} //----- End of setHumidity
 
-	float EnOceanSensorAPI::getLuminosity(enocean_data_structure* frame, int minLum, int maxLum) {
+	float EnOceanSensorAPI::getLuminosity(enocean_data_structure* frame, float minLum, float maxLum) {
 		float multiplyer = (float)(maxLum-minLum) / 255.0;
 		return (float)frame->DATA_BYTE2 * multiplyer + (float)( (multiplyer>=0)? minLum : maxLum );
 	}

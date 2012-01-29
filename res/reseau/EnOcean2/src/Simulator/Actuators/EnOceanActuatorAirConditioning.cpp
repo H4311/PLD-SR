@@ -50,13 +50,35 @@ float EnOceanActuatorAirConditioning::update() {
 		return 0;
 	}
 }
+
+void EnOceanActuatorAirConditioning::set(enocean_data_structure* frame)  {
+	pthread_mutex_lock(&mutex);
+	on = (frame->DATA_BYTE0 >> 3) & 1;
+	temperature = EnOceanSensorAPI::getTemperature(frame, tempMin, tempMax);
+	pthread_mutex_unlock(&mutex);
+
+}
+
+enocean_data_structure EnOceanActuatorAirConditioning::toFrame(int id, bool on, float temp, float tempMin, float tempMax) {
+	enocean_data_structure frame;
+	BYTE* byte = (BYTE*)(&frame);
+	for (unsigned int i = 0; i < EnOceanSensorAPI::FRAME_SIZE/2; i++) {
+		*byte = 0;
+		byte += sizeof(BYTE);
+	}
+	EnOceanSensorAPI::setID(&frame, (EnOceanSensorAPI::SensorId)id);
+	EnOceanSensorAPI::setTemperature(&frame, temp, tempMin, tempMax);
+	frame.DATA_BYTE0 = on?(1<<3):(0<<3);
+
+	return frame;
+}
 //------------------------------------------------- Static public Methods
 
 //------------------------------------------------------------- Operators
 
 
 //-------------------------------------------------- Builder / Destructor
-EnOceanActuatorAirConditioning::EnOceanActuatorAirConditioning(int i, float e, float t): EnOceanActuator(i,e), temperature(t){
+EnOceanActuatorAirConditioning::EnOceanActuatorAirConditioning(int i, float e, float t, float tMi, float tMa): EnOceanActuator(i,e), temperature(t), tempMin(tMi), tempMax(tMa){
 
 } //----- End of EnOceanActuatorAirConditioning
 

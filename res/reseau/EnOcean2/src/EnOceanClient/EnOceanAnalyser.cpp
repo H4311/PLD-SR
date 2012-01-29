@@ -41,7 +41,7 @@ void EnOceanAnalyser::analyse() {
 	string dataS;
 	EnOceanCallbackFunction translator;
 	cout << "<Analyser> Ready.\n";
-	while ((flag == true) && (messagesQueue->front(data, NULL)) == 0) {
+	while ((getFlag() == true) && (messagesQueue->front(data, NULL)) == 0) {
 		cout << "<Analyser> Frame Received.\n";
 		frame = data->first;
 		timestamp = data->second;
@@ -53,6 +53,9 @@ void EnOceanAnalyser::analyse() {
 			cout << "<Analyser> Extraction : " << dataS << " | Time : " << *timestamp << "s.\n"; // TO DO : Log
 		}
 		cout << "<Analyser> Frame processed.\n";
+		free(frame);
+		free(timestamp);
+		free(data);
 		messagesQueue->pop();
 	}
 	

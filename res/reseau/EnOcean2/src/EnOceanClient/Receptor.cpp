@@ -32,11 +32,17 @@ typedef int SOCKET;
 
 //--------------------------------------------------------- Public Methods
 
-void* ReceptorThread (void* param) {
+void* ReceptorThread_Receive (void* param) {
 	Receptor* receptor = (Receptor*)param;
 	receptor->readFrame();
 	return NULL;
-}//----- End of ReceptorThread
+}//----- End of ReceptorThread_Receive
+
+void* ReceptorThread_Send (void* param) {
+	Receptor* receptor = (Receptor*)param;
+	receptor->sendFrame();
+	return NULL;
+}//----- End of ReceptorThread_Receive
 
 int Receptor::open(const char* address, const int portno) {
 	struct sockaddr_in serverSockAddr;
@@ -84,7 +90,7 @@ int Receptor::readFrame(int nbFrame) {
 	char* buffer = (char*)malloc(frameSize*sizeof(char));
 	if (nbFrame == 0) {
 		while (getFlag() == true) {
-			if((n = recv(sock, buffer, frameSize, 0)) < 0)
+			if((n = recvFrame(buffer)) < 0)
 			{
 				cout << "<Receptor> Error - Read | " << n << endl;
 				break;
@@ -110,32 +116,51 @@ int Receptor::readFrame(int nbFrame) {
 	}
 	free(buffer);
 	return nbFrameRead;
-} //----- End of read
+} //----- End of readFrame
+
+void Receptor::sendFrame() {
+	int n;
+	string* buffer;
+	while ((getFlag() == true) && (msgToSend->front(buffer, NULL) == 0)) {
+		if((n = sendFrame(buffer->c_str())) < 0)
+		{
+			cout << "<Receptor> Error - Send | " << n << endl;
+			break;
+		}
+		cout << "<Receptor> Frame Sent.\n";
+		//free(buffer);
+		msgToSend->pop();
+	}
+}
 
 void Receptor::closeSocket() {
+	pthread_mutex_lock(&mutexSock);
 	close(sock);
+	pthread_mutex_unlock(&mutexSock);
 } //----- End of close
 
 bool Receptor::getFlag() {
 	bool f;
-	pthread_mutex_lock(&mutex);
+	pthread_mutex_lock(&mutexSock);
 	f = flag;
-	pthread_mutex_unlock(&mutex);
+	pthread_mutex_unlock(&mutexSock);
 	return f;
 } //----- End of getFlag
 
 void Receptor::run() {
-	pthread_mutex_lock(&mutex);
+	pthread_mutex_lock(&mutexSock);
 	flag = true;
-	pthread_mutex_unlock(&mutex);
-	pthread_create(&thread, NULL, ReceptorThread, this);
+	pthread_mutex_unlock(&mutexSock);
+	pthread_create(&threadSend, NULL, ReceptorThread_Send, this);
+	pthread_create(&threadReceive, NULL, ReceptorThread_Receive, this);
 } //----- End of run
 
 void Receptor::stop() {
-	pthread_mutex_lock(&mutex);
+	pthread_mutex_lock(&mutexSock);
 	flag = false;
-	pthread_mutex_unlock(&mutex);
-	pthread_join(thread, NULL);
+	pthread_mutex_unlock(&mutexSock);
+	pthread_join(threadSend, NULL);
+	pthread_join(threadReceive, NULL);
 } //----- End of stop
 
 ///**
@@ -202,15 +227,13 @@ void Receptor::stop() {
 
 
 //-------------------------------------------------- Builder / Destructor
-Receptor::Receptor(unsigned int frameS) {
-	frameSize = frameS;
-	flag = false;
-	pthread_mutex_init(&mutex, NULL);
+Receptor::Receptor(unsigned int frameS, blocking_queue<string>* msg): frameSize(frameS), msgToSend(msg), flag(false){
+	pthread_mutex_init(&mutexSock, NULL);
 } //----- End of Receptor
 
 Receptor::~Receptor() {
 	stop();
-	pthread_mutex_destroy(&mutex);
+	pthread_mutex_destroy(&mutexSock);
 } //----- End of ~Receptor
 
 
@@ -218,4 +241,18 @@ Receptor::~Receptor() {
 
 //------------------------------------------------------ Protected Methods
 
+int Receptor::recvFrame(char* buffer) {
+	int n;
+	pthread_mutex_lock(&mutexSock);
+	n = recv(sock, buffer, frameSize, 0);
+	pthread_mutex_unlock(&mutexSock);
+	return n;
+}
 
+int Receptor::sendFrame(const char* buffer) {
+	int n;
+	pthread_mutex_lock(&mutexSock);
+	n = send(sock, buffer, frameSize, 0);
+	pthread_mutex_unlock(&mutexSock);
+	return n;
+}

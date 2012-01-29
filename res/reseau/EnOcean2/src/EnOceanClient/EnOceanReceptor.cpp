@@ -31,10 +31,10 @@ using namespace std;
 
 
 //-------------------------------------------------- Builder / Destructor
-EnOceanReceptor::EnOceanReceptor(EnOceanMsgQueue* m, unsigned int frameS): Receptor(frameS), messagesQueue(m) {
+EnOceanReceptor::EnOceanReceptor(EnOceanMsgQueue* m, unsigned int frameS, blocking_queue<string>* msg): Receptor(frameS, msg), messagesQueue(m) {
 } //----- End of EnOceanReceptor
 
-EnOceanReceptor::EnOceanReceptor(EnOceanMsgQueue* m): Receptor(EnOceanSensorAPI::FRAME_SIZE), messagesQueue(m) {
+EnOceanReceptor::EnOceanReceptor(EnOceanMsgQueue* m, blocking_queue<string>* msg): Receptor(EnOceanSensorAPI::FRAME_SIZE, msg), messagesQueue(m) {
 	cout << "<Receptor> Created.\n";
 } //----- End of EnOceanReceptor
 

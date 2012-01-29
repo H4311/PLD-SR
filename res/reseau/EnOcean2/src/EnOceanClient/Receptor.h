@@ -18,6 +18,7 @@ using namespace std;
 #include <signal.h>
 #include <termios.h>
 #include <pthread.h>
+#include <string>
 
 //----------------------------------------------------- Personnal Includes
 #include "../Libs/blocking_queue.h"
@@ -48,10 +49,16 @@ public:
 
 	int readFrame(int nbFrame = 0);
 	// Manual :
-	    //		Reads nbFrame and sends them into the queue.Returns the number of frame read.
-		//		If nbFrame = 0, then it reads until the connection is closed by the server.
-	    // Contract :
-	    //		The connection has been opened.
+	//		Reads nbFrame and sends them into the queue.Returns the number of frame read.
+	//		If nbFrame = 0, then it reads until the connection is closed by the server.
+	// Contract :
+	//		The connection has been opened.
+
+	void sendFrame();
+	// Manual :
+	//		Sends the waiting data to the server.
+	// Contract :
+	//		The connection has been opened.
 
 	void closeSocket();
 	// Manual :
@@ -76,7 +83,7 @@ public:
 
 //-------------------------------------------------- Builder / Destructor
 
-	Receptor(unsigned int frameS);
+	Receptor(unsigned int frameS, blocking_queue<string>* msgToSend);
 	virtual ~Receptor();
 
 //---------------------------------------------------------------- PRIVATE
@@ -91,9 +98,27 @@ protected:
 
 	bool getFlag();
 	// Manual :
-    //		Get the value of the synchro flag.
+    //		Gets the value of the synchro flag.
     // Contract :
     //		/
+
+	void waitData();
+	// Manual :
+	//		Waits for data to be read.
+	// Contract :
+	//		The connection is open.
+
+	int recvFrame(char* buffer);
+	// Manual :
+	//		Receives data (blocking).
+	// Contract :
+	//		The connection is open.
+
+	int sendFrame(const char* buffer);
+	// Manual :
+	//		Sends data (blocking).
+	// Contract :
+	//		The connection is open.
 
 private:
 //----------------------------------------------------- Protected Methods
@@ -103,15 +128,18 @@ protected:
 
 	unsigned int frameSize;			// Size in octet of a frame
 	int sock;						// Socket
+	blocking_queue<string>* msgToSend;		// Messages to be sent
 	bool flag;						// Synchro flag (for the thread)
-	pthread_mutex_t mutex;			// Mutex protecting the data
-	pthread_t thread;				// tHREAD
+	pthread_mutex_t mutexSock;		// Mutex protecting the socket
+	pthread_t threadSend;			// Thread running to send data
+	pthread_t threadReceive;		// Thread running to receive data
 
 private:
 //----------------------------------------------------- Private Attributes
 
 //--------------------------------------------------------- Friend Classes
-
+	friend void* ReceptorThread_Receive (void* param);
+	friend void* ReceptorThread_Send (void* param);
 //-------------------------------------------------------- Private Classes
 
 //---------------------------------------------------------- Private Types
@@ -119,7 +147,8 @@ private:
 };
 
 //------------------------------ Other definition, depending on this class
-void* ReceptorThread (void* param);
+void* ReceptorThread_Send (void* param);
+void* ReceptorThread_Receive (void* param);
 // Manual :
 //		Lauches the thread.
 // Contract :

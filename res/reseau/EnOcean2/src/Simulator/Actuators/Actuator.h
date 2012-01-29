@@ -45,6 +45,7 @@ public:
 	int countSensors();
 
 	virtual float update() = 0;
+	virtual void set(enocean_data_structure *frame) = 0;
 
 
 //------------------------------------------------- Static public Methods

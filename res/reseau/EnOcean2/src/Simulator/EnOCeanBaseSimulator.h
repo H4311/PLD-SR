@@ -38,7 +38,7 @@ class EnOCeanBaseSimulator
 
 public:
 //------------------------------------------------------- Public Constants
-	static const int DELAY = 100;
+	static const int DELAY = 5;
 //--------------------------------------------------------- Public Methods
 
 	void addSensor(SensorSimulator* sensor);
@@ -65,6 +65,7 @@ public:
 	int closeSocket();
 	
 	int writeClient(char* msg, int length);
+	int readClient(char* msg, int length);
 	
 	void getFrame(int posSensor, char* frame);
 	
@@ -97,13 +98,15 @@ protected:
 	vector<Actuator*> actuators;
 	pthread_mutex_t mutex;
 	ServerSimulator server;
-	pthread_t thread;
+	pthread_t thread_Send;
+	pthread_t thread_Receive;
 	int flag;
 private:
 //----------------------------------------------------- Private Attributes
 
 //--------------------------------------------------------- Friend Classes
-
+	friend void* EnOceanBaseSimulatorThread_Send(void* param);
+	friend void* EnOceanBaseSimulatorThread_Receive(void* param);
 //-------------------------------------------------------- Private Classes
 
 //---------------------------------------------------------- Private Types
@@ -111,6 +114,7 @@ private:
 };
 
 //------------------------------ Other definition, depending on this class
-	void* EnOceanBaseSimulatorThread (void* param);
+void* EnOceanBaseSimulatorThread_Send(void* param);
+void* EnOceanBaseSimulatorThread_Receive(void* param);
 
 #endif /* ENOCEANBASESIMULATOR_H_ */

@@ -53,17 +53,41 @@ int ServerSimulator::openSocket (int port)
 }
 
 int ServerSimulator::acceptClient () {
-	struct sockaddr_in cli_addr;
-	socklen_t clilen = sizeof(struct sockaddr_in);
-	sockClient = accept(sockfd, (struct sockaddr *) &cli_addr, &clilen);
-	cout << "<Base Simu> Client accepté.\n";
-	return sockClient;
+	int s;
+	pthread_mutex_lock(&mutex);
+	if (sockClient == 0) {
+		struct sockaddr_in cli_addr;
+		socklen_t clilen = sizeof(struct sockaddr_in);
+		s = accept(sockfd, (struct sockaddr *) &cli_addr, &clilen);
+		cout << "<Base Simu> Client accepté.\n";
+		sockClient = s;
+	}
+	else {
+		s = sockClient;
+	}
+	pthread_mutex_unlock(&mutex);
+	return s;
+}
+
+void ServerSimulator::waitData() {
+	fd_set set;
+	FD_ZERO(&set);
+	FD_SET(sockClient, &set);
+	select(FD_SETSIZE, &set, NULL, NULL, NULL);
 }
 
 int ServerSimulator::writeClient(char* msg, int length) {
 	int n;
 	pthread_mutex_lock(&mutex);
 	n = write(sockClient,msg, length);
+	pthread_mutex_unlock(&mutex);
+	return n;
+}
+
+int ServerSimulator::readClient(char* msg, int length) {
+	int n;
+	pthread_mutex_lock(&mutex);
+	n = read(sockClient,msg, length);
 	pthread_mutex_unlock(&mutex);
 	return n;
 }

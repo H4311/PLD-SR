@@ -8,7 +8,7 @@ src/EnOcean2.d: ../src/EnOcean2.cpp \
  ../src/EnOceanClient/../Devices/../EnOceanClient/Receptor.h \
  ../src/EnOceanClient/../Devices/EnOceanSensorAPI.h \
  ../src/EnOceanClient/../Devices/EnOceanSensorAPI.h \
- ../src/EnOceanClient/EnOceanReceptor.h \
+ ../src/EnOceanClient/EnOceanReceptor.h ../src/EnOceanClient/Emettor.h \
  ../src/Simulator/EnOCeanBaseSimulator.h \
  ../src/Simulator/../Devices/EnOceanSensorAPI.h \
  ../src/Simulator/Sensors/SensorSimulator.h \
@@ -43,6 +43,8 @@ src/EnOcean2.d: ../src/EnOcean2.cpp \
 ../src/EnOceanClient/../Devices/EnOceanSensorAPI.h:
 
 ../src/EnOceanClient/EnOceanReceptor.h:
+
+../src/EnOceanClient/Emettor.h:
 
 ../src/Simulator/EnOCeanBaseSimulator.h:
 

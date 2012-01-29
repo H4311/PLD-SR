@@ -50,7 +50,7 @@ public:
 
 //-------------------------------------------------- Builder / Destructor
 
-	SensorSimulatorTempHumi(int id, int tMin, int tMax);
+	SensorSimulatorTempHumi(int id, float tMin, float tMax);
 	virtual ~SensorSimulatorTempHumi();
 
 //---------------------------------------------------------------- PRIVATE
@@ -65,8 +65,8 @@ protected:
 //-------------------------------------------------- Protected Attributes
 
 	float temperature;
-	int tempMin;
-	int tempMax;
+	float tempMin;
+	float tempMax;
 	float humidity;
 
 

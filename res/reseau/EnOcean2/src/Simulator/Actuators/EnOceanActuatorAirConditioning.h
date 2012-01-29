@@ -42,15 +42,17 @@ public:
 	float getTemperature();
 
 	float update();
+	void set(enocean_data_structure *frame);
 
 
 //------------------------------------------------- Static public Methods
+	static enocean_data_structure toFrame(int id, bool on, float temp, float tempMin, float tempMax);
 
 //------------------------------------------------------------- Operators
 
 //-------------------------------------------------- Builder / Destructor
 
-	EnOceanActuatorAirConditioning(int id, float enerCoef, float temp);
+	EnOceanActuatorAirConditioning(int id, float enerCoef, float temp, float tempMin, float tempMax);
 	virtual ~EnOceanActuatorAirConditioning();
 
 //---------------------------------------------------------------- PRIVATE
@@ -65,6 +67,8 @@ protected:
 //-------------------------------------------------- Protected Attributes
 
 	float temperature;		// Chosen temperature
+	float tempMin;
+	float tempMax;
 
 private:
 //----------------------------------------------------- Private Attributes

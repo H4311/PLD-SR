@@ -7,6 +7,7 @@
 
 #include "EnOceanClient/EnOceanReceptor.h"
 #include "EnOceanClient/EnOceanAnalyser.h"
+#include "EnOceanClient/Emettor.h"
 #include "Simulator/EnOCeanBaseSimulator.h"
 #include "Simulator/Sensors/SensorSimulatorTempHumi.h"
 #include "Simulator/Actuators/EnOceanActuatorAirConditioning.h"
@@ -23,7 +24,7 @@ int main(int argc, char *argv[]) {
 	//string adresse = "134.214.105.28";
 	//int port = 5000;
 	string adresse = "127.0.0.1";
-	int port = 5001;
+	int port = 5019;
 
 	EnOCeanBaseSimulator simulator = EnOCeanBaseSimulator();
 
@@ -47,61 +48,61 @@ int main(int argc, char *argv[]) {
 	simulator.addSensor(&sensorSimu3);
 	simulator.addSensor(&sensorSimu4);
 	simulator.addSensor(&sensorSimu5);
-	simulator.addSensor(&sensorSimu1);
-	simulator.addSensor(&sensorSimu2);
-	simulator.addSensor(&sensorSimu3);
-	simulator.addSensor(&sensorSimu4);
-	simulator.addSensor(&sensorSimu5);
-	simulator.addSensor(&sensorSimu1);
-	simulator.addSensor(&sensorSimu2);
-	simulator.addSensor(&sensorSimu3);
-	simulator.addSensor(&sensorSimu4);
-	simulator.addSensor(&sensorSimu5);
-	simulator.addSensor(&sensorSimu1);
-	simulator.addSensor(&sensorSimu2);
-	simulator.addSensor(&sensorSimu3);
-	simulator.addSensor(&sensorSimu4);
-	simulator.addSensor(&sensorSimu5);
-	simulator.addSensor(&sensorSimu1);
-	simulator.addSensor(&sensorSimu2);
-	simulator.addSensor(&sensorSimu3);
-	simulator.addSensor(&sensorSimu4);
-	simulator.addSensor(&sensorSimu5);
-	simulator.addSensor(&sensorSimu1);
-	simulator.addSensor(&sensorSimu2);
-	simulator.addSensor(&sensorSimu3);
-	simulator.addSensor(&sensorSimu4);
-	simulator.addSensor(&sensorSimu5);
-	simulator.addSensor(&sensorSimu1);
-	simulator.addSensor(&sensorSimu2);
-	simulator.addSensor(&sensorSimu3);
-	simulator.addSensor(&sensorSimu4);
-	simulator.addSensor(&sensorSimu5);
-	simulator.addSensor(&sensorSimu1);
-	simulator.addSensor(&sensorSimu2);
-	simulator.addSensor(&sensorSimu3);
-	simulator.addSensor(&sensorSimu4);
-	simulator.addSensor(&sensorSimu5);
-	simulator.addSensor(&sensorSimu1);
-	simulator.addSensor(&sensorSimu2);
-	simulator.addSensor(&sensorSimu3);
-	simulator.addSensor(&sensorSimu4);
-	simulator.addSensor(&sensorSimu5);
-	simulator.addSensor(&sensorSimu1);
-	simulator.addSensor(&sensorSimu2);
-	simulator.addSensor(&sensorSimu3);
-	simulator.addSensor(&sensorSimu4);
-	simulator.addSensor(&sensorSimu5);
-	simulator.addSensor(&sensorSimu1);
-	simulator.addSensor(&sensorSimu2);
-	simulator.addSensor(&sensorSimu3);
-	simulator.addSensor(&sensorSimu4);
-	simulator.addSensor(&sensorSimu5);
-	simulator.addSensor(&sensorSimu1);
-	simulator.addSensor(&sensorSimu2);
-	simulator.addSensor(&sensorSimu3);
-	simulator.addSensor(&sensorSimu4);
-	simulator.addSensor(&sensorSimu5);
+//	simulator.addSensor(&sensorSimu1);
+//	simulator.addSensor(&sensorSimu2);
+//	simulator.addSensor(&sensorSimu3);
+//	simulator.addSensor(&sensorSimu4);
+//	simulator.addSensor(&sensorSimu5);
+//	simulator.addSensor(&sensorSimu1);
+//	simulator.addSensor(&sensorSimu2);
+//	simulator.addSensor(&sensorSimu3);
+//	simulator.addSensor(&sensorSimu4);
+//	simulator.addSensor(&sensorSimu5);
+//	simulator.addSensor(&sensorSimu1);
+//	simulator.addSensor(&sensorSimu2);
+//	simulator.addSensor(&sensorSimu3);
+//	simulator.addSensor(&sensorSimu4);
+//	simulator.addSensor(&sensorSimu5);
+//	simulator.addSensor(&sensorSimu1);
+//	simulator.addSensor(&sensorSimu2);
+//	simulator.addSensor(&sensorSimu3);
+//	simulator.addSensor(&sensorSimu4);
+//	simulator.addSensor(&sensorSimu5);
+//	simulator.addSensor(&sensorSimu1);
+//	simulator.addSensor(&sensorSimu2);
+//	simulator.addSensor(&sensorSimu3);
+//	simulator.addSensor(&sensorSimu4);
+//	simulator.addSensor(&sensorSimu5);
+//	simulator.addSensor(&sensorSimu1);
+//	simulator.addSensor(&sensorSimu2);
+//	simulator.addSensor(&sensorSimu3);
+//	simulator.addSensor(&sensorSimu4);
+//	simulator.addSensor(&sensorSimu5);
+//	simulator.addSensor(&sensorSimu1);
+//	simulator.addSensor(&sensorSimu2);
+//	simulator.addSensor(&sensorSimu3);
+//	simulator.addSensor(&sensorSimu4);
+//	simulator.addSensor(&sensorSimu5);
+//	simulator.addSensor(&sensorSimu1);
+//	simulator.addSensor(&sensorSimu2);
+//	simulator.addSensor(&sensorSimu3);
+//	simulator.addSensor(&sensorSimu4);
+//	simulator.addSensor(&sensorSimu5);
+//	simulator.addSensor(&sensorSimu1);
+//	simulator.addSensor(&sensorSimu2);
+//	simulator.addSensor(&sensorSimu3);
+//	simulator.addSensor(&sensorSimu4);
+//	simulator.addSensor(&sensorSimu5);
+//	simulator.addSensor(&sensorSimu1);
+//	simulator.addSensor(&sensorSimu2);
+//	simulator.addSensor(&sensorSimu3);
+//	simulator.addSensor(&sensorSimu4);
+//	simulator.addSensor(&sensorSimu5);
+//	simulator.addSensor(&sensorSimu1);
+//	simulator.addSensor(&sensorSimu2);
+//	simulator.addSensor(&sensorSimu3);
+//	simulator.addSensor(&sensorSimu4);
+//	simulator.addSensor(&sensorSimu5);
 
 
 	simulator.openSocket(port);
@@ -115,26 +116,40 @@ int main(int argc, char *argv[]) {
 	table.add((EnOceanSensorAPI::SensorId)0x4, (EnOceanCallbackFunction)EnOceanSensorAPI::analyseTempAndHumidSensor_EEP_07_04_01);
 
 	EnOceanMsgQueue msgQueue = EnOceanMsgQueue();
-
+	blocking_queue<string> msgToSend = blocking_queue<string>();
 
 	EnOceanAnalyser analyser = EnOceanAnalyser(&table, &msgQueue);
 	analyser.run();
 
-	EnOceanReceptor recep = EnOceanReceptor(&msgQueue);
+	EnOceanReceptor recep = EnOceanReceptor(&msgQueue, &msgToSend);
 	recep.open(adresse.c_str(), port);
 	recep.run();
 
-	EnOceanActuatorAirConditioning airCond = EnOceanActuatorAirConditioning(1, 10.0, 12);
+	EnOceanActuatorAirConditioning airCond = EnOceanActuatorAirConditioning(1, 10.0, 12, 0, 40);
 	airCond.addSensor(&sensorSimu1);
 	airCond.addSensor(&sensorSimu2);
 	airCond.addSensor(&sensorSimu3);
 	airCond.addSensor(&sensorSimu4);
 	airCond.addSensor(&sensorSimu5);
 	airCond.setStatus(true);
+
+	simulator.addActuator(&airCond);
+//
+//	Emettor em = Emettor();
+//	em.open(adresse.c_str(), port);
+
+	enocean_data_structure frame = EnOceanActuatorAirConditioning::toFrame(1,true,0,0,40);
+	char buffer[EnOceanSensorAPI::FRAME_SIZE];
+	EnOceanSensorAPI::toString(&frame, buffer);
+	string sBuffer = buffer;
+//	em.sendFrame(buffer, EnOceanSensorAPI::FRAME_SIZE);
+
+	msgToSend.push(&sBuffer);
+
 	for (;;) {
 //		simulator.addSensor(&sensorSimu1);
 //		cout << "<Main> Ajout d'un capteur. Total = " << simulator.countSensors() << endl;
-		airCond.update();
+//		airCond.update();
 		usleep(1000000);
 	}
 	simulator.stop();

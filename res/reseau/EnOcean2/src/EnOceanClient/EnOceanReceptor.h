@@ -45,8 +45,8 @@ public:
 
 //-------------------------------------------------- Builder / Destructor
 
-	EnOceanReceptor(EnOceanMsgQueue* messagesQueue);
-	EnOceanReceptor(EnOceanMsgQueue* messagesQueue, unsigned int frames);
+	EnOceanReceptor(EnOceanMsgQueue* messagesQueue,blocking_queue<string>* msgToSend);
+	EnOceanReceptor(EnOceanMsgQueue* messagesQueue, unsigned int frames, blocking_queue<string>* msgToSend);
 	virtual ~EnOceanReceptor();
 
 //---------------------------------------------------------------- PRIVATE
