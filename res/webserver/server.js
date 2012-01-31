@@ -6,13 +6,14 @@ function startServer(route, handle) {
 		var pathname = url.parse(req.url).pathname;
 		console.log("Request received for " + pathname);
 		req.setEncoding("utf8");
+
 		var postData = "";
 		req.addListener("data", function(chunk) {
 			postData += chunk;
 		});
 
 		req.addListener("end", function() {
-			content = route(handle, pathname, resp, postData);
+			route(handle, pathname, resp, postData);
 		});
 	}
 	

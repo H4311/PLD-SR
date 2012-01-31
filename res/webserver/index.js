@@ -6,5 +6,6 @@ handle = {};
 handle["/"] = rh.start;
 handle["/start"] = rh.start;
 handle["/upload"] = rh.upload;
+handle["/captors"] = rh.captorsError;
 
 server.start(router.route, handle);
