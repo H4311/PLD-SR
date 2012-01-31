@@ -4,28 +4,13 @@
 
 # Add inputs and outputs from these tool invocations to the build variables 
 CPP_SRCS += \
-../src/EnOcean2.cpp \
-../src/EnOceanAnalyser.cpp \
-../src/EnOceanReceptor.cpp \
-../src/PeriphTable.cpp \
-../src/Receptor.cpp \
-../src/Sensors.cpp 
+../src/EnOcean2.cpp 
 
 OBJS += \
-./src/EnOcean2.o \
-./src/EnOceanAnalyser.o \
-./src/EnOceanReceptor.o \
-./src/PeriphTable.o \
-./src/Receptor.o \
-./src/Sensors.o 
+./src/EnOcean2.o 
 
 CPP_DEPS += \
-./src/EnOcean2.d \
-./src/EnOceanAnalyser.d \
-./src/EnOceanReceptor.d \
-./src/PeriphTable.d \
-./src/Receptor.d \
-./src/Sensors.d 
+./src/EnOcean2.d 
 
 
 # Each subdirectory must supply rules for building sources it contributes

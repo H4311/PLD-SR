@@ -46,6 +46,7 @@ public:
     //		Accept a client connection.
     // Contract :
     //		open()
+	//		Connexion du client en lecture avant en écriture !
 
 	int writeClient(char* msg, int length);
 	// Manual :
@@ -53,6 +54,13 @@ public:
 	// Contract :
 	//		open() & accept()
 
+	int readClient(char* msg, int length);
+	// Manual :
+	//		Read from the client.
+	// Contract :
+	//		open() & accept()
+
+	void waitData();
 	int closeClient();
 	int closeSocket();
 
