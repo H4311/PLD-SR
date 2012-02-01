@@ -7,13 +7,14 @@
 
 #include "EnOceanClient/EnOceanReceptor.h"
 #include "EnOceanClient/EnOceanAnalyser.h"
-#include "EnOceanClient/Emettor.h"
 #include "Simulator/EnOCeanBaseSimulator.h"
 #include "Simulator/Sensors/SensorSimulatorTempHumi.h"
 #include "Simulator/Actuators/EnOceanActuatorAirConditioning.h"
+#include "Simulator/Actuators/EventActuatorFire.h"
 #include <iostream>
 #include "Devices/DeviceTable.h"
 #include "Devices/EnOceanSensorAPI.h"
+#include "Simulator/Model/Room.h"
 #include <pthread.h>
 #include <unistd.h>
 /**
@@ -24,23 +25,32 @@ int main(int argc, char *argv[]) {
 	//string adresse = "134.214.105.28";
 	//int port = 5000;
 	string adresse = "127.0.0.1";
-	int port = 5019;
+	int port = 5005;
 
 	EnOCeanBaseSimulator simulator = EnOCeanBaseSimulator();
 
-	SensorSimulatorTempHumi sensorSimu1 = SensorSimulatorTempHumi(0x012345, 0, 40);
+	Room room1 = Room(1);
+	Room room2 = Room(2);
+	Room room3 = Room(3);
+	Room room4 = Room(4);
+
+	room1.addNeigthborRoom(&room2);
+	room2.addNeigthborRoom(&room3);
+	room3.addNeigthborRoom(&room4);
+
+	SensorSimulatorTempHumi sensorSimu1 = SensorSimulatorTempHumi(0x012345, &room1, 0, 40);
 	simulator.addSensor(&sensorSimu1);
 
-	SensorSimulatorTempHumi sensorSimu2 = SensorSimulatorTempHumi(0x01, 0, 40);
+	SensorSimulatorTempHumi sensorSimu2 = SensorSimulatorTempHumi(0x01, &room2, 0, 40);
 	simulator.addSensor(&sensorSimu2);
 
-	SensorSimulatorTempHumi sensorSimu3 = SensorSimulatorTempHumi(0x02, 0, 40);
+	SensorSimulatorTempHumi sensorSimu3 = SensorSimulatorTempHumi(0x02, &room3, 0, 40);
 	simulator.addSensor(&sensorSimu3);
 
-	SensorSimulatorTempHumi sensorSimu4 = SensorSimulatorTempHumi(0x03, 0, 40);
+	SensorSimulatorTempHumi sensorSimu4 = SensorSimulatorTempHumi(0x03, &room4, 0, 40);
 	simulator.addSensor(&sensorSimu4);
 
-	SensorSimulatorTempHumi sensorSimu5 = SensorSimulatorTempHumi(0x04, 0, 40);
+	SensorSimulatorTempHumi sensorSimu5 = SensorSimulatorTempHumi(0x04, &room1, 0, 40);
 	simulator.addSensor(&sensorSimu5);
 
 	simulator.addSensor(&sensorSimu1);
@@ -126,25 +136,23 @@ int main(int argc, char *argv[]) {
 	recep.run();
 
 	EnOceanActuatorAirConditioning airCond = EnOceanActuatorAirConditioning(1, 10.0, 12, 0, 40);
-	airCond.addSensor(&sensorSimu1);
-	airCond.addSensor(&sensorSimu2);
-	airCond.addSensor(&sensorSimu3);
-	airCond.addSensor(&sensorSimu4);
-	airCond.addSensor(&sensorSimu5);
+	airCond.addRoom(&room1);
+	airCond.addRoom(&room2);
+	airCond.addRoom(&room3);
+	airCond.addRoom(&room4);
 	airCond.setStatus(true);
 
+	EventActuatorFire fire = EventActuatorFire(2, 5);
+	fire.addRoom(&room1);
+
 	simulator.addActuator(&airCond);
+	simulator.addActuator(&fire);
 //
 //	Emettor em = Emettor();
 //	em.open(adresse.c_str(), port);
 
 	enocean_data_structure frame = EnOceanActuatorAirConditioning::toFrame(1,true,0,0,40);
-	char buffer[EnOceanSensorAPI::FRAME_SIZE];
-	EnOceanSensorAPI::toString(&frame, buffer);
-	string sBuffer = buffer;
-//	em.sendFrame(buffer, EnOceanSensorAPI::FRAME_SIZE);
-
-	msgToSend.push(&sBuffer);
+	recep.pushFrame(&frame);
 
 	for (;;) {
 //		simulator.addSensor(&sensorSimu1);

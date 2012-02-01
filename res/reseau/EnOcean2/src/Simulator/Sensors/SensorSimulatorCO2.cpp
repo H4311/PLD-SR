@@ -1,52 +1,33 @@
 
 /*************************************************************************
-                           Actuator  -  description
+                           SensorSimulatorCO2  -  description
                              -------------------
-    Creation             : 28 Jan. 2012
+    Creation             : 30 Jan. 2012
     Copyright            : (C) 2012 by H4311 - Benjamin PLANCHE (BPE)
 *************************************************************************/
 
-//---- Implementation - <Actuator> (Actuator.cpp file) -----
+//---- Implementation - <SensorSimulatorCO2> (SensorSimulatorCO2.cpp file) -----
 
 //---------------------------------------------------------------- INCLUDE
 
 //--------------------------------------------------------- System Include
 using namespace std;
+#include <stdlib.h>
+#include <iostream>
 //------------------------------------------------------ Personnal Include
-#include "Actuator.h"
-
+#include "SensorSimulatorCO2.h"
+#include "../../Devices/EnOceanSensorAPI.h"
 //-------------------------------------------------------------- Constants
 
 //----------------------------------------------------------------- PUBLIC
 
 //--------------------------------------------------------- Public Methods
-
-int Actuator::getID() {
-	return id;
+void SensorSimulatorCO2::update() {
+	float co2L = room->getCO2Level();
+	if (co2L > ppmMax) { co2L = ppmMax; }
+	else if (co2L < ppmMin) { co2L = ppmMin; }
+	EnOceanSensorAPI::setCO2Level(&frame, co2L, ppmMin, ppmMax);
 }
-
-void Actuator::addRoom(Room* sensor) {
-	pthread_mutex_lock(&mutex);
-	rooms.push_back(sensor);
-	pthread_mutex_unlock(&mutex);
-}
-
-void Actuator::delRoom(int id) {
-	pthread_mutex_lock(&mutex);
-	for (vector<Room*>::iterator it=rooms.begin() ; it < rooms.end(); it++ )
-    {
-		if ((*it)->getId() == id) {
-			rooms.erase(it);
-			return;
-		}
-	}
-	pthread_mutex_unlock(&mutex);
-}
-
-int Actuator::countRooms() {
-	return rooms.size();
-}
-
 
 //------------------------------------------------- Static public Methods
 
@@ -54,14 +35,15 @@ int Actuator::countRooms() {
 
 
 //-------------------------------------------------- Builder / Destructor
-Actuator::Actuator(int i): id(i){
-	pthread_mutex_init(&mutex, NULL);
-} //----- End of Actuator
+SensorSimulatorCO2::SensorSimulatorCO2(int id, Room* r, float minp, float maxp) : SensorSimulator(id, r), ppmMin(minp), ppmMax(maxp) {
+	float t = room->getCO2Level();
+	EnOceanSensorAPI::setCO2Level(&frame, t, ppmMin, ppmMax);
+	cout << "<Sensor Simu n°" << id << "> Créé - " << t << "ppm [" << ppmMin << "; " << ppmMax << "]\n";
 
-Actuator::~Actuator() {
-	// TODO Auto-generated destructor stub
-	pthread_mutex_destroy(&mutex);
-} //----- End of ~Actuator
+} //----- End of SensorSimulatorCO2
+
+SensorSimulatorCO2::~SensorSimulatorCO2() {
+} //----- End of ~SensorSimulatorCO2
 
 
 //---------------------------------------------------------------- PRIVATE

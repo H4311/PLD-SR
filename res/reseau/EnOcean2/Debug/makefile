@@ -9,8 +9,10 @@ RM := rm -rf
 # All of the sources participating in the build are defined here
 -include sources.mk
 -include subdir.mk
+-include src/Trash/subdir.mk
 -include src/Simulator/subdir.mk
 -include src/Simulator/Sensors/subdir.mk
+-include src/Simulator/Model/subdir.mk
 -include src/Simulator/Actuators/subdir.mk
 -include src/EnOceanClient/subdir.mk
 -include src/subdir.mk

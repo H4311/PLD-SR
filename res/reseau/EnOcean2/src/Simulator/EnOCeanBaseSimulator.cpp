@@ -81,8 +81,10 @@ void* EnOceanBaseSimulatorThread_Receive (void* param) {
 		pthread_mutex_lock(&(simu->mutex));
 		for (vector<Actuator*>::const_iterator it=simu->actuators.begin() ; it < simu->actuators.end(); it++ )
 		{
-			if ((*it)->getID() == id) {
-				(*it)->set(&frame);
+			EnOceanActuator* act = dynamic_cast<EnOceanActuator*>((*it));
+
+			if ((act != 0) && (act->getID() == id)) {
+				act->set(&frame);
 				cout << "<Simu Receptor> Actuator updated.\n";
 				break;
 			}

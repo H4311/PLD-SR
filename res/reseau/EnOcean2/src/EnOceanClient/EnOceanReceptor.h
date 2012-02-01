@@ -39,6 +39,8 @@ public:
 	static const int QUEUE_SIZE = 0;
 //--------------------------------------------------------- Public Methods
 
+	void pushFrame(enocean_data_structure* frame);
+
 //------------------------------------------------- Static public Methods
 
 //------------------------------------------------------------- Operators

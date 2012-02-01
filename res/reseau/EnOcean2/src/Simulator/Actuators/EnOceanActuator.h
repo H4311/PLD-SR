@@ -17,7 +17,7 @@
 using namespace std;
 //------------------------------------------------------ Personnal Include
 #include "Actuator.h"
-
+#include "../../Devices/EnOceanSensorAPI.h"
 //------------------------------------------------------------- Constantes
 
 //------------------------------------------------------------------ Types
@@ -42,7 +42,9 @@ public:
 
 	void setEnergeticCostPerSecond(float e);
 	float getEnergeticCostPerSecond();
+
 	virtual float update() = 0;
+	virtual void set(enocean_data_structure *frame) = 0;
 
 
 //------------------------------------------------- Static public Methods

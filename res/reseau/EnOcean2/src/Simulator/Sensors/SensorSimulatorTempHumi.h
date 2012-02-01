@@ -22,9 +22,7 @@
 //------------------------------------------------------------------ Types
 
 //------------------------------------------------------------------------
-// Description :
-//		Analyses the frame provided by the server, and extracts the informations from them, for the chosen sensors.
-//
+
 //------------------------------------------------------------------------
 
 class SensorSimulatorTempHumi : public SensorSimulator
@@ -36,13 +34,12 @@ public:
 
 //--------------------------------------------------------- Public Methods
 
-	float getTemperature();
-	void setTemperature(float t);
-	float getHumidity();
-	void setHumidity(float h);
-	
-	void getFrame(char* frame);
+//	float getTemperature();
+//	void setTemperature(float t);
+//	float getHumidity();
+//	void setHumidity(float h);
 
+	void update();
 
 //------------------------------------------------- Static public Methods
 
@@ -50,7 +47,7 @@ public:
 
 //-------------------------------------------------- Builder / Destructor
 
-	SensorSimulatorTempHumi(int id, float tMin, float tMax);
+	SensorSimulatorTempHumi(int id, Room* r, float tMin, float tMax);
 	virtual ~SensorSimulatorTempHumi();
 
 //---------------------------------------------------------------- PRIVATE
@@ -64,10 +61,10 @@ private:
 protected:
 //-------------------------------------------------- Protected Attributes
 
-	float temperature;
+//	float temperature;
 	float tempMin;
 	float tempMax;
-	float humidity;
+//	float humidity;
 
 
 private:
