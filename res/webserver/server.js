@@ -3,7 +3,10 @@ var url = require("url");
 
 function startServer(route, handle) {
 	function onRequest(req, resp) {
-		var pathname = url.parse(req.url).pathname;
+		var urlParsed = url.parse(req.url, true);
+		var pathname = urlParsed.pathname;
+		var parameters = urlParsed.query;
+
 		console.log("Request received for " + pathname);
 		req.setEncoding("utf8");
 
@@ -13,7 +16,7 @@ function startServer(route, handle) {
 		});
 
 		req.addListener("end", function() {
-			route(handle, pathname, resp, postData);
+			route(handle, pathname, resp, parameters, postData);
 		});
 	}
 	
