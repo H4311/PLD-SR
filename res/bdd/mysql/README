@@ -1,6 +1,19 @@
+README by thib
+
+# Remarques diverses
+L'api C utilisée pour mysql est intégrée dans les paquets de clients/serveur.
+Mysql ne fourni pas de support pour les contraintes FOREIGN KEY.
 
 # Prérequis
-mysql
+
+Pour utiliser mysql, il faut les deux paquets suivants :
+-> mysql-client
+-> mysql-server
+Commandes :
+sudo apt-get install mysql-client mysql-server
+
+Remarque inutile : Ces deux paquets sont des méta paquets qui pointent vers les paquets de la dernière version de mysql.
+
 
 # Déploiement
 
@@ -19,3 +32,8 @@ Utilisateur root, password root, (localhost)
 Utilisateur hexanome, hexanome, (localhost), a tous les privileges
 
 Tables : capteurs, mesures
+
+
+# Api
+
+A compléter...
