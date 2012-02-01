@@ -28,51 +28,36 @@ void insertCapteur(MYSQL* mysql, int type, int numeroCapteur) {
 	}
 }
 
-void insertMesure(MYSQL* mysql, int idCapteur, int time, int typeMesure, double mesure) {
-	char s[128];
+void insertMesure(MYSQL* mysql, int type, int numeroCapteur, long long time, int typeMesure, double mesure) {
+	char s[256];
 	
-	MYSQL_TIME  ts;
-	MYSQL_BIND  bind[4];
+	MYSQL_BIND  bind[3];
 	MYSQL_STMT  *stmt;
 	
 	stmt = mysql_stmt_init(mysql);
 
-	sprintf(s, "INSERT INTO mesures (idCapteur, time, typeMesure, mesure) VALUES (?,?,?,?)");
+	sprintf(s, "INSERT INTO mesures (idCapteur, time, typeMesure, mesure) VALUES ((SELECT id FROM capteurs WHERE type=%d AND numeroCapteur=%d),?,?,?)", type, numeroCapteur);
 	
 	mysql_stmt_prepare(stmt, s, strlen(s));
 	
 	memset(bind, 0, sizeof(bind));
-
-	bind[0].buffer_type= MYSQL_TYPE_LONG;
-	bind[0].buffer= (char *)&idCapteur;
+	
+	bind[0].buffer_type= FIELD_TYPE_LONGLONG;
+	bind[0].buffer= (char *)&time;
 	bind[0].is_null= 0;
 	bind[0].length= 0;
 	
-	bind[1].buffer_type= MYSQL_TYPE_TIMESTAMP;
-	bind[1].buffer= (char *)&ts;
+	bind[1].buffer_type= MYSQL_TYPE_LONG;
+	bind[1].buffer= (char *)&typeMesure;
 	bind[1].is_null= 0;
 	bind[1].length= 0;
 	
-	bind[2].buffer_type= MYSQL_TYPE_LONG;
-	bind[2].buffer= (char *)&typeMesure;
+	bind[2].buffer_type= MYSQL_TYPE_DOUBLE;
+	bind[2].buffer= (char *)&mesure;
 	bind[2].is_null= 0;
 	bind[2].length= 0;
-	
-	bind[3].buffer_type= MYSQL_TYPE_DOUBLE;
-	bind[3].buffer= (char *)&mesure;
-	bind[3].is_null= 0;
-	bind[3].length= 0;
 
 	mysql_stmt_bind_param(stmt, bind);
-
-	/* Fourni les données à envoyer dans la structure ts */
-	ts.year= 2002;
-	ts.month= 02;
-	ts.day= 03;
-
-	ts.hour= 10;
-	ts.minute= 45;
-	ts.second= 20;
 
 	mysql_stmt_execute(stmt);
 	

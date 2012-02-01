@@ -1,6 +1,7 @@
 #include <mysql/mysql.h>
 #include <stdio.h>
 #include <stdlib.h>
+#include <time.h>
 #include "mysqlinsert.h"
 
 int main(){
@@ -12,7 +13,9 @@ int main(){
 	MYSQL* mysql = connectToMysql();
 	
 	insertCapteur(mysql, 1, 4);
-	insertMesure(mysql, 4, 100, 2, 5);
+	time_t t;
+	time(&t);
+	insertMesure(mysql, 1, 4, t, 2, 5);
 	
 	closeMysql(mysql);
 	
