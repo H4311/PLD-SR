@@ -25,6 +25,12 @@ using namespace std;
 
 //--------------------------------------------------------- Public Methods
 
+void EnOceanReceptor::pushFrame(enocean_data_structure* frame) {
+	char buffer[EnOceanSensorAPI::FRAME_SIZE];
+	EnOceanSensorAPI::toString(frame, buffer);
+	string sBuffer = buffer;
+	msgToSend->push(&sBuffer);
+}
 //------------------------------------------------- Static public Methods
 
 //------------------------------------------------------------- Operators

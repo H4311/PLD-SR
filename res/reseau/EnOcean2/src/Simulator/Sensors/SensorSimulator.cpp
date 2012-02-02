@@ -25,6 +25,19 @@ EnOceanSensorAPI::SensorId SensorSimulator::getId() {
 	return id;
 }
 
+void SensorSimulator::update() {
+	return;
+}
+
+void SensorSimulator::getFrame(char* buffer) {
+	update();
+	EnOceanSensorAPI::toString(&frame, buffer);
+}
+
+Room* SensorSimulator::getRoom() {
+	return room;
+}
+
 
 //------------------------------------------------- Static public Methods
 
@@ -32,8 +45,7 @@ EnOceanSensorAPI::SensorId SensorSimulator::getId() {
 
 
 //-------------------------------------------------- Builder / Destructor
-SensorSimulator::SensorSimulator(int i){
-	id = i;
+SensorSimulator::SensorSimulator(int i, Room* r): id(i), room(r){
 	EnOceanSensorAPI::setID(&frame, id);
 	frame.SYNC_BYTE1 = 0;
 	frame.SYNC_BYTE2 = 0;

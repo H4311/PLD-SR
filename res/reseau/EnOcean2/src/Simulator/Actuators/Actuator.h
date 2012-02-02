@@ -18,7 +18,7 @@ using namespace std;
 #include <vector>
 #include <pthread.h>
 //------------------------------------------------------ Personnal Include
-#include "../Sensors/SensorSimulator.h"
+#include "../Model/Room.h"
 //------------------------------------------------------------- Constantes
 
 //------------------------------------------------------------------ Types
@@ -40,12 +40,12 @@ public:
 
 	int getID();
 
-	void addSensor(SensorSimulator* sensor);
-	void delSensor(EnOceanSensorAPI::SensorId id);
-	int countSensors();
+	void addRoom(Room* room);
+	void delRoom(int id);
+	int countRooms();
 
 	virtual float update() = 0;
-	virtual void set(enocean_data_structure *frame) = 0;
+
 
 
 //------------------------------------------------- Static public Methods
@@ -68,8 +68,8 @@ private:
 protected:
 //-------------------------------------------------- Protected Attributes
 
-	vector<SensorSimulator*> sensors;
 	int id;
+	vector<Room*> rooms;
 	pthread_mutex_t mutex; 			// Mutex to protect this value
 
 private:

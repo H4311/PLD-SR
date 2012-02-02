@@ -55,10 +55,6 @@ using namespace std;
 		}
 	}
 	
-	
-	
-	
-	
 	void EnOceanSensorAPI::setID(enocean_data_structure* frame, SensorId id) {
 		frame->ID_BYTE0 = id & 255;
 		id = id >> 8;
@@ -77,6 +73,9 @@ using namespace std;
 		return id;
 	} //----- End of getEnOceanID
 
+
+// ---- CONTACT SENSOR ----
+
 	string EnOceanSensorAPI::analyseContactSensor_D5_00_01(enocean_data_structure* frame) {
 			ostringstream oss;
 			bool isLearning, contact;
@@ -86,6 +85,9 @@ using namespace std;
 			return oss.str();
 		} //----- End of analyseContactSensor_D5_00_01
 
+
+// ---- ROCKER SWITCH ----
+
 	string EnOceanSensorAPI::analyseRockerSwitch_F6_02_01(enocean_data_structure* frame) {
 			ostringstream oss;
 			oss << "< " << getRockerSwitchAction1st(frame) << " | ";
@@ -94,6 +96,9 @@ using namespace std;
 			oss << isRockerSwitchAction2nd(frame) << " >";
 			return oss.str();
 		} //----- End of analyseRockerSwitch_F6_02_01
+
+
+// ---- TEMP & HUMID SENSOR ----
 
 	string EnOceanSensorAPI::analyseTempSensor(enocean_data_structure* frame, float minTemp, float maxTemp) {
 		ostringstream oss;
@@ -124,19 +129,40 @@ using namespace std;
 		return analyseTempAndHumidSensor(frame,0 , 40);
 	} //----- End of analyseTempAndHumidSensor_EEP_07_04_01
 
+
+// ---- LUM & OCC SENSOR ----
+
 	string EnOceanSensorAPI::analyseLumAndOcc_EEP_07_08_01(enocean_data_structure* frame) {
 		return analyseLumAndOcc(frame, 0, 510, 0.0, 5.1);
 	} //----- End of analyseLumAndOcc_EEP_07_08_01
 
 	string EnOceanSensorAPI::analyseLumAndOcc(enocean_data_structure* frame, float minLum, float maxLum, float minV, float maxV) {
 		ostringstream oss;
-		float lum = getLuminosity(frame, minLum, maxLum);
+		float lum = getIlluminance(frame, minLum, maxLum);
 		float volt = getVoltage(frame, minV, maxV);
 		bool pir = getPIRStatus(frame);
 		bool occ = getOccupancy(frame);
 		oss << "< Lum : " << lum << "lx | Volt : " << volt << "V | PIR : " << (pir?"ON":"OFF") << " | Occ : " << (occ?"Pressed":"Released");
 		return oss.str();
 	} //----- End of analyseLumAndOcc
+
+
+// ---- CO2 GAS SENSOR ----
+		string EnOceanSensorAPI::analyseCO2_EEP_07_09_01(enocean_data_structure* frame) {
+			return analyseC02(frame, 0, 2000);
+		} //----- End of analyseCO2_EEP_07_09_01
+
+		string EnOceanSensorAPI::analyseC02(enocean_data_structure* frame, float minPPM, float maxPPM) {
+			ostringstream oss;
+			bool dataFrame = (frame->DATA_BYTE0 >> 3) & 1;
+			if (dataFrame) {
+				oss << "< CO2 : " << getCO2Level(frame, minPPM, maxPPM) << "ppm. >";
+			}
+			return oss.str();
+		} //----- End of analyseC02
+
+
+// ---- BASIC FUNCTIONS ----
 
 	EnOceanSensorAPI::RockerSwitchAction EnOceanSensorAPI::getRockerSwitchAction1st(enocean_data_structure* frame) {
 		BYTE info = frame->DATA_BYTE3 >> 5;
@@ -155,6 +181,7 @@ using namespace std;
 		BYTE info = (frame->DATA_BYTE3 & 1);
 		return info;
 	} //----- End of isRockerSwitchAction2nd
+
 
 	float EnOceanSensorAPI::getTemperature(enocean_data_structure* frame, float minTemp, float maxTemp) {
 		float multiplyer = (float)(maxTemp-minTemp) / 255.0;
@@ -180,21 +207,60 @@ using namespace std;
 		frame->DATA_BYTE2 = (BYTE)(humi * 2.55);
 	} //----- End of setHumidity
 
-	float EnOceanSensorAPI::getLuminosity(enocean_data_structure* frame, float minLum, float maxLum) {
+	float EnOceanSensorAPI::getIlluminance(enocean_data_structure* frame, float minLum, float maxLum) {
 		float multiplyer = (float)(maxLum-minLum) / 255.0;
 		return (float)frame->DATA_BYTE2 * multiplyer + (float)( (multiplyer>=0)? minLum : maxLum );
 	}
+
+	void EnOceanSensorAPI::setIlluminance(enocean_data_structure* frame, float val, float minL, float maxL) {
+		float multiplyer = (float)(maxL-minL) / 255.0;
+		frame->DATA_BYTE2 = (BYTE)((val - (float)( (multiplyer>=0)? minL : maxL )) / multiplyer);
+	} //----- End of setIlluminance
 
 	float EnOceanSensorAPI::getVoltage(enocean_data_structure* frame, float minV, float maxV) {
 		float multiplyer = (float)(maxV-minV) / 255.0;
 		return (float)frame->DATA_BYTE3 * multiplyer + (float)( (multiplyer>=0)? minV : maxV );
 	}
 
+	void EnOceanSensorAPI::setVoltage(enocean_data_structure* frame, float val, float minV, float maxV) {
+			float multiplyer = (float)(maxV-minV) / 255.0;
+			frame->DATA_BYTE3 = (BYTE)((val - (float)( (multiplyer>=0)? minV : maxV )) / multiplyer);
+		} //----- End of setVoltage
+
 	bool EnOceanSensorAPI::getPIRStatus(enocean_data_structure* frame) {
 		return (!(frame->DATA_BYTE0 & 2));
 	}
 
+	void EnOceanSensorAPI::setPIRStatus(enocean_data_structure* frame, bool val) {
+		if (val) {
+			frame->DATA_BYTE0 &= ~(1 << 1);
+		}
+		else {
+			frame->DATA_BYTE0 |= 1 << 1;
+		}
+	}
+
 	bool EnOceanSensorAPI::getOccupancy(enocean_data_structure* frame) {
 		return (frame->DATA_BYTE0 & 0);
+	}
+
+	void EnOceanSensorAPI::setOccupancy(enocean_data_structure* frame, bool val) {
+			if (val) {
+				frame->DATA_BYTE0 &= ~(1 << 0);
+			}
+			else {
+				frame->DATA_BYTE0 |= 1 << 0;
+			}
+		}
+
+
+	float EnOceanSensorAPI::getCO2Level(enocean_data_structure* frame, float minPPM, float maxPPM) {
+		float multiplyer = (float)(maxPPM-minPPM) / 255.0;
+		return (float)frame->DATA_BYTE3 * multiplyer + (float)( (multiplyer>=0)? minPPM : maxPPM );
+	}
+
+	void EnOceanSensorAPI::setCO2Level(enocean_data_structure* frame, float val, float minPPM, float maxPPM) {
+		float multiplyer = (float)(maxPPM-minPPM) / 255.0;
+		frame->DATA_BYTE3 = (BYTE)((val - (float)( (multiplyer>=0)? minPPM : maxPPM )) / multiplyer);
 	}
 

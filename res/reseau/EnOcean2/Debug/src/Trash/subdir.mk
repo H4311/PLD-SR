@@ -4,14 +4,17 @@
 
 # Add inputs and outputs from these tool invocations to the build variables 
 CPP_SRCS += \
+../src/Trash/Emettor.cpp \
 ../src/Trash/EnOceanDevice.cpp \
 ../src/Trash/EnOceanDevice_TempHumi.cpp 
 
 OBJS += \
+./src/Trash/Emettor.o \
 ./src/Trash/EnOceanDevice.o \
 ./src/Trash/EnOceanDevice_TempHumi.o 
 
 CPP_DEPS += \
+./src/Trash/Emettor.d \
 ./src/Trash/EnOceanDevice.d \
 ./src/Trash/EnOceanDevice_TempHumi.d 
 

@@ -23,8 +23,10 @@ C_UPPER_DEPS :=
 
 # Every subdirectory with source files must be described here
 SUBDIRS := \
+src/Trash \
 src/Simulator \
 src/Simulator/Sensors \
+src/Simulator/Model \
 src/Simulator/Actuators \
 src/EnOceanClient \
 src \

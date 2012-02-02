@@ -1,78 +1,47 @@
-
 /*************************************************************************
-                           EnOCeanBaseSimulator  -  description
+                           EventActuatorFire  -  description
                              -------------------
-    Creation             : 08 Jan. 2012
+    Creation             : 28 Jan. 2012
     Copyright            : (C) 2012 by H4311 - Benjamin PLANCHE (BPE)
 *************************************************************************/
 
-//------- Definition - <EnOCeanBaseSimulator> (EnOCeanBaseSimulator.h file) --------
+//------- Definition - <EventActuatorFire> (EventActuatorFire.h file) --------
 
-#ifndef ENOCEANBASESIMULATOR_H_
-#define ENOCEANBASESIMULATOR_H_
+#ifndef EVENTACTUATORFIRE_H_
+#define EVENTACTUATORFIRE_H_
 
 //---------------------------------------------------------------- INCLUDE
 
 //--------------------------------------------------------- System Include
 using namespace std;
-#include <pthread.h>
 #include <vector>
 //------------------------------------------------------ Personnal Include
-#include "../Devices/EnOceanSensorAPI.h"
-#include "Sensors/SensorSimulator.h"
-#include "ServerSimulator.h"
-#include "Actuators/EnOceanActuator.h"
+#include "EnOceanActuator.h"
+#include "../Model/Room.h"
+
 //------------------------------------------------------------- Constantes
 
 //------------------------------------------------------------------ Types
 
 //------------------------------------------------------------------------
 // Description :
-//		Analyses the frame provided by the server, and extracts the informations from them, for the chosen sensors.
+//		Element simulating aeration, which can edit the value of some EnOcean sensors (CO2 level).
 //
 //------------------------------------------------------------------------
 
-class EnOCeanBaseSimulator
+class EventActuatorFire : public Actuator
 {
 //----------------------------------------------------------------- PUBLIC
 
 public:
 //------------------------------------------------------- Public Constants
-	static const int DELAY = 5;
+
 //--------------------------------------------------------- Public Methods
 
-	void addSensor(SensorSimulator* sensor);
-	void delSensor(EnOceanSensorAPI::SensorId id);
-	int countSensors();
+	void setPower(float e);
+	float getPower();
 
-	void addActuator(Actuator* sensor);
-	void delActuator(int id);
-	int countActuators();
-
-	float updateSensors();
-
-	int openSocket(int port);
-		// Manual :
-	    //		Open the socket.
-
-	int acceptClient();
-	// Manual :
-	//		Accept a client connection.
-	// Contract :
-	//		open()
-
-	int closeClient();
-	int closeSocket();
-	
-	int writeClient(char* msg, int length);
-	int readClient(char* msg, int length);
-	
-	void getFrame(int posSensor, char* frame);
-	
-	int getFlag();
-	
-	void run();
-	void stop();
+	float update();
 
 
 //------------------------------------------------- Static public Methods
@@ -81,8 +50,8 @@ public:
 
 //-------------------------------------------------- Builder / Destructor
 
-	EnOCeanBaseSimulator();
-	virtual ~EnOCeanBaseSimulator();
+	EventActuatorFire(int id, float power);
+	virtual ~EventActuatorFire();
 
 //---------------------------------------------------------------- PRIVATE
 
@@ -94,19 +63,13 @@ private:
 
 protected:
 //-------------------------------------------------- Protected Attributes
-	vector<SensorSimulator*> sensors;
-	vector<Actuator*> actuators;
-	pthread_mutex_t mutex;
-	ServerSimulator server;
-	pthread_t thread_Send;
-	pthread_t thread_Receive;
-	int flag;
+
+	float power;		// Chosen power
 private:
 //----------------------------------------------------- Private Attributes
 
 //--------------------------------------------------------- Friend Classes
-	friend void* EnOceanBaseSimulatorThread_Send(void* param);
-	friend void* EnOceanBaseSimulatorThread_Receive(void* param);
+
 //-------------------------------------------------------- Private Classes
 
 //---------------------------------------------------------- Private Types
@@ -114,7 +77,6 @@ private:
 };
 
 //------------------------------ Other definition, depending on this class
-void* EnOceanBaseSimulatorThread_Send(void* param);
-void* EnOceanBaseSimulatorThread_Receive(void* param);
 
-#endif /* ENOCEANBASESIMULATOR_H_ */
+
+#endif /* EVENTACTUATORFIRE_H_ */
