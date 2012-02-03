@@ -26,7 +26,7 @@ using namespace std;
 //------------------------------------------------------------- Constantes
 
 //------------------------------------------------------------------ Types
-typedef string (*EnOceanCallbackFunction)(enocean_data_structure* frame);
+typedef string (*EnOceanCallbackFunction)(enocean_data_structure* frame, MYSQL* mysql, long long int timestamp);
 
 //------------------------------------------------------------------------
 // Description :

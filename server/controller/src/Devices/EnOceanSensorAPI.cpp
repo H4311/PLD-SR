@@ -14,8 +14,12 @@ using namespace std;
 #include <string>
 #include <sstream>
 #include <stdlib.h>
+#include <mysql/mysql.h>
 //------------------------------------------------------ Personnal Include
 #include "EnOceanSensorAPI.h"
+extern "C" {
+	#include "../Bdd/mysqlinsert.h"
+}
 //-------------------------------------------------------------- Constants
 
 //----------------------------------------------------------------- PUBLIC
@@ -76,11 +80,13 @@ using namespace std;
 
 // ---- CONTACT SENSOR ----
 
-	string EnOceanSensorAPI::analyseContactSensor_D5_00_01(enocean_data_structure* frame) {
+	string EnOceanSensorAPI::analyseContactSensor_D5_00_01(enocean_data_structure* frame, MYSQL* mysql, long long int timestamp) {
 			ostringstream oss;
 			bool isLearning, contact;
 			isLearning = (frame->DATA_BYTE0 >> 3) & 0;
 			contact = frame->DATA_BYTE0 & 1;
+			insertMesure(mysql, CAPTEUR_ENOCEAN, (int)getID(frame), timestamp, 0, (contact?1:0));
+			insertMesure(mysql, CAPTEUR_ENOCEAN, (int)getID(frame), timestamp, 1, (isLearning?1:0));
 			oss << "Contact : " << (contact?"Yes":"No") << " | Learning : " << (isLearning?"Yes":"No") << " >";
 			return oss.str();
 		} //----- End of analyseContactSensor_D5_00_01
@@ -88,75 +94,87 @@ using namespace std;
 
 // ---- ROCKER SWITCH ----
 
-	string EnOceanSensorAPI::analyseRockerSwitch_F6_02_01(enocean_data_structure* frame) {
+	string EnOceanSensorAPI::analyseRockerSwitch_F6_02_01(enocean_data_structure* frame, MYSQL* mysql, long long int timestamp) {
 			ostringstream oss;
 			oss << "< " << getRockerSwitchAction1st(frame) << " | ";
 			oss << getRockerSwitchEnergyBow(frame) << " | ";
 			oss << getRockerSwitchAction2nd(frame) << " | ";
 			oss << isRockerSwitchAction2nd(frame) << " >";
+			insertMesure(mysql, CAPTEUR_ENOCEAN, (int)getID(frame), timestamp, 0, getRockerSwitchAction1st(frame));
+			insertMesure(mysql, CAPTEUR_ENOCEAN, (int)getID(frame), timestamp, 1, getRockerSwitchEnergyBow(frame));
+			insertMesure(mysql, CAPTEUR_ENOCEAN, (int)getID(frame), timestamp, 2, getRockerSwitchAction2nd(frame));
+			insertMesure(mysql, CAPTEUR_ENOCEAN, (int)getID(frame), timestamp, 3, isRockerSwitchAction2nd(frame));
 			return oss.str();
 		} //----- End of analyseRockerSwitch_F6_02_01
 
 
 // ---- TEMP & HUMID SENSOR ----
 
-	string EnOceanSensorAPI::analyseTempSensor(enocean_data_structure* frame, float minTemp, float maxTemp) {
+	string EnOceanSensorAPI::analyseTempSensor(enocean_data_structure* frame, float minTemp, float maxTemp, MYSQL* mysql, long long int timestamp) {
 		ostringstream oss;
 		bool dataFrame = (frame->DATA_BYTE0 >> 3) & 1;
 		if (dataFrame) {
 			oss << "< " << getTemperatureInverted(frame, minTemp, maxTemp) << "�c >";
+			insertMesure(mysql, CAPTEUR_ENOCEAN, (int)getID(frame), timestamp, 0, getTemperatureInverted(frame, minTemp, maxTemp));
 		}
 		return oss.str();
 	} //----- End of analyseTempSensor
 
-	string EnOceanSensorAPI::analyseTempSensor_EEP_07_02_05(enocean_data_structure* frame) {
-			return analyseTempSensor(frame,0 , 40);
+	string EnOceanSensorAPI::analyseTempSensor_EEP_07_02_05(enocean_data_structure* frame, MYSQL* mysql, long long int timestamp) {
+			return analyseTempSensor(frame,0 , 40, mysql, timestamp);
 		} //----- End of analyseTempAndHumidSensor_EEP_07_02_05
 
-	string EnOceanSensorAPI::analyseTempAndHumidSensor(enocean_data_structure* frame, float minTemp, float maxTemp) {
+	string EnOceanSensorAPI::analyseTempAndHumidSensor(enocean_data_structure* frame, float minTemp, float maxTemp, MYSQL* mysql, long long int timestamp) {
 		ostringstream oss;
 		bool dataFrame = (frame->DATA_BYTE0 >> 3) & 1;
 		if (dataFrame) {
 			if ((frame->DATA_BYTE0 >> 1) & 1) { // If temperature sensor is available :
+				insertMesure(mysql, CAPTEUR_ENOCEAN, (int)getID(frame), timestamp, 0, getTemperature(frame, minTemp, maxTemp));
 				oss << "< " << getTemperature(frame, minTemp, maxTemp) << "�c | ";
 			}
+			insertMesure(mysql, CAPTEUR_ENOCEAN, (int)getID(frame), timestamp, 1, getHumidity(frame));
 			oss << getHumidity(frame) << "% >/n";
 		}
 		return oss.str();
 	} //----- End of analyseTempAndHumidSensor
 
-	string EnOceanSensorAPI::analyseTempAndHumidSensor_EEP_07_04_01(enocean_data_structure* frame) {
-		return analyseTempAndHumidSensor(frame,0 , 40);
+	string EnOceanSensorAPI::analyseTempAndHumidSensor_EEP_07_04_01(enocean_data_structure* frame, MYSQL* mysql, long long int timestamp) {
+		return analyseTempAndHumidSensor(frame,0 , 40, mysql, timestamp);
 	} //----- End of analyseTempAndHumidSensor_EEP_07_04_01
 
 
 // ---- LUM & OCC SENSOR ----
 
-	string EnOceanSensorAPI::analyseLumAndOcc_EEP_07_08_01(enocean_data_structure* frame) {
-		return analyseLumAndOcc(frame, 0, 510, 0.0, 5.1);
+	string EnOceanSensorAPI::analyseLumAndOcc_EEP_07_08_01(enocean_data_structure* frame, MYSQL* mysql, long long int timestamp) {
+		return analyseLumAndOcc(frame, 0, 510, 0.0, 5.1, mysql, timestamp);
 	} //----- End of analyseLumAndOcc_EEP_07_08_01
 
-	string EnOceanSensorAPI::analyseLumAndOcc(enocean_data_structure* frame, float minLum, float maxLum, float minV, float maxV) {
+	string EnOceanSensorAPI::analyseLumAndOcc(enocean_data_structure* frame, float minLum, float maxLum, float minV, float maxV, MYSQL* mysql, long long int timestamp) {
 		ostringstream oss;
 		float lum = getIlluminance(frame, minLum, maxLum);
 		float volt = getVoltage(frame, minV, maxV);
 		bool pir = getPIRStatus(frame);
 		bool occ = getOccupancy(frame);
+		insertMesure(mysql, CAPTEUR_ENOCEAN, (int)getID(frame), timestamp, 0, getIlluminance(frame, minLum, maxLum));
+		insertMesure(mysql, CAPTEUR_ENOCEAN, (int)getID(frame), timestamp, 1, getVoltage(frame, minV, maxV));
+		insertMesure(mysql, CAPTEUR_ENOCEAN, (int)getID(frame), timestamp, 2, getPIRStatus(frame));
+		insertMesure(mysql, CAPTEUR_ENOCEAN, (int)getID(frame), timestamp, 3, getOccupancy(frame));
 		oss << "< Lum : " << lum << "lx | Volt : " << volt << "V | PIR : " << (pir?"ON":"OFF") << " | Occ : " << (occ?"Pressed":"Released");
 		return oss.str();
 	} //----- End of analyseLumAndOcc
 
 
 // ---- CO2 GAS SENSOR ----
-		string EnOceanSensorAPI::analyseCO2_EEP_07_09_01(enocean_data_structure* frame) {
-			return analyseC02(frame, 0, 2000);
+		string EnOceanSensorAPI::analyseCO2_EEP_07_09_01(enocean_data_structure* frame, MYSQL* mysql, long long int timestamp) {
+			return analyseC02(frame, 0, 2000, mysql, timestamp);
 		} //----- End of analyseCO2_EEP_07_09_01
 
-		string EnOceanSensorAPI::analyseC02(enocean_data_structure* frame, float minPPM, float maxPPM) {
+		string EnOceanSensorAPI::analyseC02(enocean_data_structure* frame, float minPPM, float maxPPM, MYSQL* mysql, long long int timestamp) {
 			ostringstream oss;
 			bool dataFrame = (frame->DATA_BYTE0 >> 3) & 1;
 			if (dataFrame) {
 				oss << "< CO2 : " << getCO2Level(frame, minPPM, maxPPM) << "ppm. >";
+				insertMesure(mysql, CAPTEUR_ENOCEAN, (int)getID(frame), timestamp, 0, getCO2Level(frame, minPPM, maxPPM));
 			}
 			return oss.str();
 		} //----- End of analyseC02

@@ -25,7 +25,7 @@ src/EnOcean2.d: ../src/EnOcean2.cpp \
  ../src/Simulator/Actuators/EnOceanActuator.h \
  ../src/Simulator/Actuators/EventActuatorFire.h \
  ../src/Devices/DeviceTable.h ../src/Devices/EnOceanSensorAPI.h \
- ../src/Simulator/Model/Room.h
+ ../src/Simulator/Model/Room.h ../src/Bdd/mysqlinsert.h
 
 ../src/EnOceanClient/EnOceanReceptor.h:
 
@@ -84,3 +84,5 @@ src/EnOcean2.d: ../src/EnOcean2.cpp \
 ../src/Devices/EnOceanSensorAPI.h:
 
 ../src/Simulator/Model/Room.h:
+
+../src/Bdd/mysqlinsert.h:

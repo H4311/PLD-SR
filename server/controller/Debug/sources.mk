@@ -31,4 +31,5 @@ src/Simulator/Actuators \
 src/EnOceanClient \
 src \
 src/Devices \
+src/Bdd \
 
