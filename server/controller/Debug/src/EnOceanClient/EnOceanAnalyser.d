@@ -10,7 +10,8 @@ src/EnOceanClient/EnOceanAnalyser.d: \
  ../src/EnOceanClient/../Devices/EnOceanSensorAPI.h \
  ../src/EnOceanClient/EnOceanReceptor.h \
  ../src/EnOceanClient/../Devices/EnOceanProtocol.h \
- ../src/EnOceanClient/Receptor.h
+ ../src/EnOceanClient/Receptor.h \
+ ../src/EnOceanClient/../Bdd/mysqlinsert.h
 
 ../src/EnOceanClient/EnOceanAnalyser.h:
 
@@ -33,3 +34,5 @@ src/EnOceanClient/EnOceanAnalyser.d: \
 ../src/EnOceanClient/../Devices/EnOceanProtocol.h:
 
 ../src/EnOceanClient/Receptor.h:
+
+../src/EnOceanClient/../Bdd/mysqlinsert.h:

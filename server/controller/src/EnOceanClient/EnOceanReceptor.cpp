@@ -57,12 +57,12 @@ EnOceanReceptor::~EnOceanReceptor() {
 void EnOceanReceptor::frame_receive(char* buffer) {
 	struct timeval timestamp;
 	gettimeofday(&timestamp, NULL);
-	long *t = new long;
-	*t = timestamp.tv_sec;
+	long long *t = new long long;
+	*t = ((long long int)timestamp.tv_sec)*1000 + ((long long int)timestamp.tv_usec)/1000;
 	enocean_data_structure* frame = new enocean_data_structure();
 	cout << "<Receptor> Frame to be sent.\n";
 	cout << "<Receptor> " << buffer << endl;
 	EnOceanSensorAPI::toFrame(frame, buffer);
-	pair<enocean_data_structure*, long*> * data = new pair<enocean_data_structure*, long*>(frame, t);
+	pair<enocean_data_structure*, long long*> * data = new pair<enocean_data_structure*, long long*>(frame, t);
 	messagesQueue->push(data, NULL);
 } //----- End of frame_receive

@@ -22,7 +22,7 @@ using namespace std;
 //------------------------------------------------------------- Constantes
 
 //------------------------------------------------------------------ Types 
-typedef blocking_queue< pair<enocean_data_structure*, long*> > EnOceanMsgQueue;
+typedef blocking_queue< pair<enocean_data_structure*, long long*> > EnOceanMsgQueue;
 
 //------------------------------------------------------------------------ 
 // Description : 
