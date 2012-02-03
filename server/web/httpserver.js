@@ -1,5 +1,6 @@
 var http = require("http");
 var url = require("url");
+var staticserve = require("./staticserve");
 
 function route(handlers, pathname, query, postData, resp) {
 	if (typeof handlers[pathname] === 'function') {
@@ -7,7 +8,7 @@ function route(handlers, pathname, query, postData, resp) {
 		handlers[pathname](query, postData, resp);
 	} else	{
 		console.log("No route found for : " + pathname + ". Trying static serving...");
-		serveStatic(pathname, resp);
+		staticserve.serve(pathname, resp);
 	}
 }
 
@@ -31,7 +32,7 @@ function httpStart(port, handlers) {
 	}
 	
 	http.createServer(onRequest).listen(port);
-	console.log("Webserver launched");
+	console.log("Webserver launched on port "+port);
 }
 
 exports.start = httpStart;
