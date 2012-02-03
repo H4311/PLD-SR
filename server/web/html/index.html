@@ -30,10 +30,11 @@
 			$.ajax({
 				type: 'POST',
 				url: rest + '/sensors',
-				data: "{\"sensors\":[{\"id\":\"1\"}]}",
+				data: '{"sensors":[{"id":"1", "from":"2012/01/01 00:00:00"}]}',
 				crossDomain: true,
 				processData: false,
 				success: function(data) {
+					alert("COUCOU");
 					$("#sensors").html(data);
 				},
 				dataType: "json"

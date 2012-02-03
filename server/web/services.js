@@ -25,6 +25,7 @@ function serviceSensors(query, post, resp) {
 	resp.writeHead(200, {"Content-type" : "application/json"});
 	
 	// Parse the json request in POST data :
+	console.log("POST data : " + post);
 	request = JSON.parse(post);
 	if(!request) {
 		error(0, resp);
