@@ -281,4 +281,3 @@ extern "C" {
 		float multiplyer = (float)(maxPPM-minPPM) / 255.0;
 		frame->DATA_BYTE3 = (BYTE)((val - (float)( (multiplyer>=0)? minPPM : maxPPM )) / multiplyer);
 	}
-

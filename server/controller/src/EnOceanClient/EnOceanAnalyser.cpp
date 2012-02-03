@@ -117,4 +117,3 @@ EnOceanAnalyser::~EnOceanAnalyser() {
 
 //------------------------------------------------------ Protected Methods
 
-
