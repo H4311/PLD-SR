@@ -11,7 +11,7 @@ function sqlClose(db) {
 	db.close();
 }
 
-function sqlQuery(db, query, callback) {
+function sqlAsyncQuery(db, query, callbackAsync, callbackEnd) { 
 	var timestamp = new Date().getTime();
 	var result={};
 	result.fields = [];
@@ -24,11 +24,16 @@ function sqlQuery(db, query, callback) {
 		.on('row', function(hit) {
 			result.hits.push(hit);
 			result.count++;
+			if(callbackAsync != null) callbackAsync(hit);
 		})
 		.on('end', function() {
 			result.took = new Date().getTime() - timestamp;
-			callback(result);
+			callbackEnd(result);
 		});
+}
+
+function sqlQuery(db, query, callback) {
+	sqlAsyncQuery(db, query, null, callback);
 }
 
 function sqlDumpResult(result) {
@@ -45,6 +50,13 @@ function sqlDumpResult(result) {
 
 }
 
+exports.createClient = sqlCreateClient;
+exports.close = sqlClose;
+exports.asyncQuery = sqlAsyncQuery;
+exports.query = sqlQuery;
+exports.dumpResult = sqlDumpResult;
+
+// Utilisation :
 var db = sqlCreateClient("localhost", "root", "root", "test");
 sqlQuery(db, "select 1+1,2,3,'4',length('hello')", function(result) {sqlDumpResult(result);});
 sqlClose(db);

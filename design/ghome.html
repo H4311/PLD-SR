@@ -3,6 +3,7 @@
 <head>
 	<meta charset="utf-8" />
 	<link rel="stylesheet" href="style.css" />
+	<script src="http://code.jquery.com/jquery-1.7.1.js"></script>
 	<title>Application Test</title>
 </head>
 
@@ -11,7 +12,20 @@
 
 	<header id="header" class="branding" role="banner">
 		<hgroup>
+		<div class="retourTdB">
+			<a href="ghome_principal.html">
+			<img src="images/retour.png" alt="image" width="40" height="40"/>
+			</a>
+		</div>
 		<h1>Tableau de Bord<h1>
+		<div class="alerte">
+			<!--TODO: ref vers la chambre qui pose probleme !! -->
+			<a href="ghome.html">
+			<figure>
+				<img src="images/attention2.png" alt="The Alert" width="60" height="50">
+			</figure>
+			</a>
+		</div> 
 		</hgroup>
 	</header>
 	
@@ -24,19 +38,30 @@
 
 	
 	<section id="resume">
-		<div class="meteo">
-			<h2>Aujourd'hui</h2>
+		<h2>Chambre 226</h2>
+		<div class="chambre">
 			<figure>
-				<img src="images/nuage.png" alt="The Meteo"  width="100" height="100">Zone de renseignement generaux. Il fait beau on est super content. Des gens meurent d'autres vivent. C'est super 
+				<img src="images/chambre.jpg" alt="The Meteo"  width="150" height="150">
+				<strong>Temperature ambiante</strong> : 26 Celsius<br />
+				<strong>Nombre de patients</strong> : 5<br />
+				<strong>Luminosite</strong> :  60 Lux<br />
 			</figure>
 		</div>
-		<div class="etat">
-			<h2>Alerte</h2>
-			<figure>
-				<img src="images/attention.gif" alt="The Alert" width="60" height="50">Zone de renseignement sur les alertes graves. Chef, chef, on a un probleme : Un patient semble heureux !
-			</figure>
-		</div> 
 	</section>
+	
+	<script>
+
+	function refreshAll() {
+		$("#chambre").html("");
+		for (var i = 0; i < 10; ++i) {
+			$.get('/captors/' + i, function(data) {
+				$("#chambre").append("<p>Capteur " + data.id + " : " + data.value + "</p>");
+			}, "json");
+		}
+	}
+
+	setInterval("refreshAll()", 2000); // refreshes the page every 2 seconds
+	</script>
 	
 	<section id="liste_patient">
 	
@@ -105,17 +130,6 @@
 			</div>
 		</li>
 		</ol>
-	</section>
-	
-	<section id="notifications">
-	<a href="notifications.html">
-		<h2>Notifications</h2>
-		<ol>
-		<li><div class="info">Notification 1</div></li>
-		<li><div class="warning">Notification 2</div></li>
-		<li><div class="info">Notification 3</div></li>
-		</ol>
-	</a>
 	</section>
 	
 
