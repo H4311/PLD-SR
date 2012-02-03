@@ -2,7 +2,7 @@ var squel = require("squel");
 var sql = require("./nodesql");
 
 function sqlConnect() {
-	return sql.createClient("localhost", "rithm", "rithm", "pld");
+	return sql.createClient("localhost", "root", "root", "test");
 }
 
 function error(code, resp) {
