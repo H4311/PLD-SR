@@ -126,7 +126,7 @@ void startGThread()
     currThread->state = END;
     free(currThread->context);
     free(currThread->stack);
-    exit(EXIT_SUCCESS);
+	exit(EXIT_SUCCESS);
 }
 
 

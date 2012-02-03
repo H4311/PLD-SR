@@ -7,13 +7,14 @@ void letters(void *args)
 	int i;
 	for (i = 0; i<100; ++i) 
 	{
-		printf("A") ;
+		puts("A") ;
 		yield();
-		printf("B") ;
+		puts("B") ;
 		yield();
-		printf("C") ;
+		puts("C") ;
 		yield();
 	}
+	puts("End letters");
 }
 
 void numbers(void *args)
@@ -21,11 +22,12 @@ void numbers(void *args)
 	int i;
 	for (i = 0; i<100; ++i) 
 	{
-		printf("1") ;
+		puts("1") ;
 		yield();
-		printf("2") ;
+		puts("2") ;
 		yield();
 	}
+	puts("End numbers");
 }
 
 int main()
@@ -37,6 +39,7 @@ int main()
 	int lettersId = createGThread("letters", letters, NULL, STACK_SIZE);
 	int numbersId = createGThread("numbers", numbers, NULL, STACK_SIZE);
 	
+	/* Scheduler call */
 	yield();
 	
 	killGThread(numbersId);
