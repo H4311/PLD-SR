@@ -2,8 +2,6 @@
 
 #include "gThreads.h"
 
-typedef void (func_t) (void*);
-
 void letters(void *args)
 {
 	int i;
@@ -39,7 +37,7 @@ int main()
 	int lettersId = createGThread("letters", letters, NULL, STACK_SIZE);
 	int numbersId = createGThread("numbers", numbers, NULL, STACK_SIZE);
 	
-	/*yield();*/
+	yield();
 	
 	killGThread(numbersId);
 	killGThread(lettersId);

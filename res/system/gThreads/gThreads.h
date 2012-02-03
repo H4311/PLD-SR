@@ -1,37 +1,35 @@
 #ifndef _GTHREADS_H_
 #define _GTHREADS_H_
 
-#define FALSE 0
-#define TRUE 1
+#include "commons.h"
+#include "gContext.h"
 
-#define ERROR -1
-#define OK 0
-
-#define STACK_SIZE 1042
+#define STACK_SIZE 16384
 #define NAME_SIZE 20
+
+enum gState {INIT, RUNNING, END}; 
 
 typedef void (gThread_func_t) (void*);
 
-typedef struct {
-	int esp; /* stack pointer */
-	int ebp; /* base pointer */
-	
-} ctx_s;
 
-typedef struct gThread
+/**
+ * GThread structure
+ */
+struct gThread
 {  
     int id;
     char *name;
-    int launched;
-    int priority;
-    int stackSize;
+    enum gState state;
     void* stack;
-    ctx_s context;
+    int esp;
+    int ebp;
+    gContext *context;
 	gThread_func_t *func;
 	void* args;
     struct gThread *nextThread;
-} gThread;
+};
 
+typedef struct gThread gThread;
 
 /**
  * System initialization
@@ -39,19 +37,34 @@ typedef struct gThread
 void initSystem();
 
 /**
+ * Initialize Thread
+ */
+int initGThread(struct gThread *thread, char* threadName, int stackSize, gThread_func_t func, void *args);
+
+/**
  * Create a new thread
  */
 int createGThread(char *name, gThread_func_t thread, void* args, int stackSize);
 
 /**
- * Kill a thread
+ * Start a GThread
  */
-int killGThread(int threadId);
+void startGThread();
+
+/**
+ * Thread switching
+ */
+void switchGThread(struct gThread *thread);
 
 /**
  * Switch context
  */
 void yield();
+
+/**
+ * Kill a thread
+ */
+int killGThread(int threadId);
 
 
 /**
