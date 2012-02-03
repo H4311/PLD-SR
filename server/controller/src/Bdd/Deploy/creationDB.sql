@@ -1,5 +1,0 @@
-CREATE DATABASE pld;
-
-GRANT ALL PRIVILEGES ON pld.* TO "hexanome"@"localhost" IDENTIFIED BY "hexanome";
-
-FLUSH PRIVILEGES;
