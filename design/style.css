@@ -30,6 +30,17 @@ body {
     box-shadow: 5px 5px 20px #000;
 }
 
+#header .alerte{
+	float: right;
+	margin-top: -100px;
+	margin-right: 8%;
+}
+
+#header .retourTdB{
+	float: left;
+	margin-left: 12%;
+}
+
 #wrapper {
     height: auto;
     min-height: 101%; /* have scroll bar always there, so things won't jump around */
@@ -54,15 +65,16 @@ body {
     -webkit-border-radius: 10px;
     border-radius: 10px;
 }
-/*
-#resume p {
-	white-space: pre-wrap;       
-    white-space: -moz-pre-wrap;  
-    white-space: -pre-wrap;      
-    white-space: -o-pre-wrap;  
-    word-wrap: break-word;        
-	text-align: right;
-}*/
+
+#resume .chambre{
+	margin: auto;
+	width: 90%;
+	height: 220px;
+	margin-bottom: 20px;
+	
+	padding-top: 2%;
+
+}
 
 #resume figure{
 	margin-left: 0px;
@@ -106,6 +118,16 @@ body {
 	-moz-border-radius: 10px;
     -webkit-border-radius: 10px;
     border-radius: 10px;
+}
+
+#carte{
+	border: solid black 2px;
+	width: 80%;
+	height: 200px;
+	float: top;
+	position: relative;
+	margin-bottom: 3%;
+	margin-left: 10%;
 }
 
 #liste_patient{
