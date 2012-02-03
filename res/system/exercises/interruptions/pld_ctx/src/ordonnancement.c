@@ -9,6 +9,9 @@ enum ctx_state {INIT, RUNNING, END};
 
 typedef void (func_t) (void*);
 
+/*
+ * Contexte
+ */
 struct ctx_s {
 	int id;
 	enum ctx_state state;
@@ -19,12 +22,25 @@ struct ctx_s {
 	void* args;
 	struct ctx_s *next_ctx;
 };
-
 typedef struct ctx_s ctx_s;
 
+/*
+ * Sémaphore
+ */
+struct semaphore {
+	int count;
+	struct ctx_s *ctx;
+};
+typedef struct semaphore semaphore;
+
 static int id_counter;
+static int runningContexts;
 
 static ctx_s *curr_ctx;
+/* 
+ * first_ctx peut ne pas etre utile, 
+ * la chaine des contextes étant circulaire 
+ */
 static ctx_s *first_ctx;
 
 void start_sched();
@@ -38,6 +54,10 @@ void start_ctx();
 void yield(void);
 void destroy_all_ctx();
 
+void sem_init(semaphore *sem, unsigned int val);
+void sem_up(semaphore *sem);
+void sem_down(semaphore *sem);
+
 void f_ping(void *arg);
 void f_pong(void *arg);
 void f_paf(void *arg);
@@ -49,7 +69,7 @@ void start_sched()
 {
 	start_hw();
 	setup_irq(4, yield);
-	
+	yield();
 }
 
 int main(int argc, char *argv[])
@@ -60,6 +80,7 @@ int main(int argc, char *argv[])
 	*/
 	
 	id_counter = 0;
+	runningContexts = 0;
 	curr_ctx = NULL;
 	first_ctx = NULL;
 	/*
@@ -75,7 +96,7 @@ int main(int argc, char *argv[])
 	 */ 
 	start_sched();
 
-	destroy_all_ctx();
+	/*destroy_all_ctx();*/
 	exit(EXIT_SUCCESS);
 }
 
@@ -110,11 +131,11 @@ int create_ctx(int stack_size, func_t f, void *args)
 		{
 			/* 1er contexte */
 			first_ctx = new_ctx;
-			new_ctx->next_ctx = new_ctx; /* circulaire */
+			new_ctx->next_ctx = first_ctx; /* circulaire */
 		}
 		else 
 		{
-			/* Insertion en tête */
+			/* Insertion en tête après first_ctx */
 			new_ctx->next_ctx = first_ctx->next_ctx;
 			first_ctx->next_ctx = new_ctx;
 		}    
@@ -170,42 +191,103 @@ void start_ctx()
 {
     curr_ctx->state = RUNNING;
     curr_ctx->f(curr_ctx->args);  
+    /* Quand le thread se termine (tout seul), on revient ici */
     curr_ctx->state = END;
-    free(curr_ctx->stack);
-    exit(EXIT_SUCCESS);
+    /* Kill current thread */
+    kill_context();
 }
+
+void kill_context()
+{
+	irq_disable();
+	ctx_s *ctx;
+	ctx = curr_ctx;
+	
+	/* Recherche du context précédent le contexte courant*/
+	while (ctx->next_ctx != curr_ctx)
+	{
+		ctx = ctx->next_ctx;
+	}
+
+	/* Un seul contexte restant */
+	if (ctx == curr_ctx)
+	{
+		free(curr_ctx->stack);
+		free(curr_ctx);
+		/* 
+		 * On quitte l'appli
+		 * TODO : a revoir
+		 */
+		exit(EXIT_SUCCESS);
+	}
+	else
+	{
+		ctx->next_ctx = curr_ctx->next_ctx;
+		free(curr_ctx->stack);
+		free(curr_ctx);
+		curr_ctx = ctx;
+		printf("Passage au Thread n°%d\n", curr_ctx->id);
+		irq_enable();
+		/* On continue l'ordo avec le prochain contexte */
+		switch_to_ctx(curr_ctx);
+	}
+}
+
+
+void sem_init(semaphore *sem, unsigned int val)
+{	
+	sem->count = val;
+	sem->ctx = NULL;
+}
+
+
+void sem_up(semaphore *sem)
+{
+		
+	
+	
+}
+
+
+void sem_down(semaphore *sem)
+{
+	/* Décrémente le sémaphore */
+	sem->count--;
+	
+}
+
 
 void f_ping(void *args)
 {
 	int i = 0;
-	for (;;)
+	for (;i<20;i++)
 	{
 		/*
 		puts("A");
 		puts("B");
 		puts("C");
 		*/
-		puts("ping");
+		printf("ping %d (ctx %d)\n", i, curr_ctx->id);
 	}
 }
 
 void f_pong(void *args)
 {
 	int i = 0;
-	for (;;)
+	for (;i<30;i++)
 	{
 		/*
 		puts("1");
 		puts("2");
 		*/
-		puts("pong");
+		printf("pong %d (ctx %d)\n", i, curr_ctx->id);
 	}
 }
 
 void f_paf(void *args)
 {
 	int i = 0;
-	for (;;)
+	for (;i<3;i++)
 	{
 		/*
 		puts("y");
@@ -218,7 +300,7 @@ void f_paf(void *args)
 void f_pif(void *args)
 {
 	int i = 0;
-	for (;;)
+	for (;i<5;i++)
 	{
 		/*
 		puts("p");
