@@ -7,26 +7,17 @@
 	
 	var rest = "http://localhost:1337";
 	$(document).ready(function() {
-		function refreshAll() {
-			$("#captorsValues").html("");
-			for (var i = 0; i < 10; ++i) {
-				$.get('/captors/' + i, function(data) {
-					$("#captorsValues").append("<p>Capteur " + data.id + " : " + data.value + "</p>");
-				}, "json");
-			}
-		}
-
 		function getSensors() {
 			$("#sensors").html("");
-			/*
-			$.post(rest + '/sensors/',
-			  {"sensors":[{"id":"1"}]},
+			
+			$.post(rest + '/sensors',
+			  '{"sensors":[{"id":"1", "from":"2012/01/01 00:00:00"}]}',
 			  function(data) {
-				$("#sensors").html(data);
+				$("#sensors").html(JSON.stringify(data));
 			  },
 			  "json");
-			*/
 
+			/*
 			$.ajax({
 				type: 'POST',
 				url: rest + '/sensors',
@@ -34,11 +25,11 @@
 				crossDomain: true,
 				processData: false,
 				success: function(data) {
-					alert("COUCOU");
-					$("#sensors").html(data);
+					$("#sensors").html(JSON.stringify(data));
 				},
 				dataType: "json"
 			});
+			*/
 		}
 
 		$("#getSensorsButtons").click(getSensors);
