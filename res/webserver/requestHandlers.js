@@ -1,19 +1,5 @@
 var qs = require("querystring");
-var staticserve = require("./staticserve");
-
-function start(resp, parameters, post) {
-	console.log("Start");
-	staticserve.serve("/index.html", resp);
-}
-
-function upload(resp, parameters, post) {
-	console.log("Upload");
-	resp.writeHead(200, {"Content-type":"text/html"});
-	staticserve.getStaticContent("/text.html", function(error, exists, content) {
-		text = content.toString().replace("{{response}}", qs.parse(post).text);
-		resp.end(text);
-	});
-}
+//var staticserve = require("./staticserve");
 
 function Sensor(id) {
 	this.id = id;
@@ -46,6 +32,4 @@ function captors(resp, parameters, post) {
 	resp.end();
 }
 
-exports.start = start;
-exports.upload = upload;
 exports.captors = captors;

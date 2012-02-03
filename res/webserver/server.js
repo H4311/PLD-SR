@@ -7,21 +7,18 @@ function startServer(route, handle) {
 		var pathname = urlParsed.pathname;
 		var parameters = urlParsed.query;
 
-		console.log("Request received for " + pathname);
 		req.setEncoding("utf8");
-
 		var postData = "";
 		req.addListener("data", function(chunk) {
 			postData += chunk;
 		});
-
 		req.addListener("end", function() {
 			route(handle, pathname, resp, parameters, postData);
 		});
 	}
 	
 	http.createServer(onRequest).listen(1337);
-	console.log("Webserver launched");
+	console.log("[SERVER] Webserver launched");
 }
 
 exports.start = startServer;
