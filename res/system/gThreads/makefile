@@ -3,7 +3,7 @@ CFLAGS = -Wall -pedantic #-Werror
 EXE = gThread
 INCLUDES = 
 LIBS = 
-OBJ_FILES = gThreads.o appli.o
+OBJ_FILES = gThreads.o gContext.o appli.o
 
 all: $(EXE)
 

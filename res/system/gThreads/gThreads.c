@@ -1,5 +1,6 @@
 #include <stdlib.h>
 #include <stdio.h>
+#include <assert.h>
 
 #include "gThreads.h"
 
@@ -19,8 +20,33 @@ void initSystem()
 	idCounter = 0;
 	firstThread = NULL;
 	currThread = NULL;
-	
 }
+
+/**
+ * Initialize Thread
+ */
+int initGThread(struct gThread *thread, char* threadName, int stackSize, gThread_func_t func, void *args)
+{
+    thread->stack = malloc(stackSize);
+    if (thread->stack)
+    {
+		thread->id = ++idCounter;
+		thread->name = threadName;
+		thread->state = INIT;
+		thread->context = malloc(sizeof(gContext));
+		(thread->context)->esp = thread->stack+stackSize;
+		(thread->context)->ebp = thread->stack+stackSize;
+		thread->func = func;
+		thread->args = args;
+		
+		return OK;
+	}
+	else
+	{
+		return ERROR;
+	}
+}
+
 
 /**
  * Create a new thread
@@ -33,17 +59,74 @@ int createGThread(char *threadName, gThread_func_t thread, void* args, int stack
 		initSystem();
 	}
 	
-	/* TODO : check stack size */
-	newGThread->id = ++idCounter;
-	newGThread->name = threadName;
-	newGThread->launched = 0;
-	newGThread->stack = malloc(stackSize);
-	newGThread->nextThread = firstThread;
-	firstThread = newGThread;
-	currThread = firstThread;
-	
-	printf("Création du GThread %s (n°%d)\n", newGThread->name, newGThread->id);
+	if (!newGThread)
+	{
+		printf("Error creating gThread\n");
+		return 0;
+	}
+	else 
+	{
+		/*Initialize thread*/
+		initGThread(newGThread, threadName, stackSize, thread, args);
+		if (idCounter == 1) 
+		{
+			/* 1st thread */
+			firstThread = newGThread;
+			newGThread->nextThread = newGThread;
+		}
+		else 
+		{
+			/* top insertion */
+			newGThread->nextThread = firstThread->nextThread;
+			firstThread->nextThread = newGThread;
+		}  
+	}
+	printf("Création du GThread \"%s\" (n°%d)\n", newGThread->name, newGThread->id);
 	return newGThread->id;
+}
+
+
+/**
+ * Thread switching
+ */
+void switchGThread(gThread *thread)
+{
+	assert(thread->state != END);
+    if (currThread)
+    {
+		asm("movl %%esp, %0" "\n" "movl %%ebp, %1"
+            :"=r"(currThread->context->esp),
+            "=r"(currThread->context->ebp) 
+        );
+	}
+	
+	/* Next context*/
+    currThread = thread;
+    
+    asm("movl %0, %%esp" "\n" "movl %1, %%ebp"
+        :
+        :"r"(currThread->context->esp),
+         "r"(currThread->context->ebp)
+    );
+    
+    if (currThread->state == INIT)
+    {
+        startGThread();
+    }
+} 
+
+/**
+ * Start GThread
+ */
+void startGThread()
+{
+    currThread->state = RUNNING;
+    currThread->func(currThread->args);  
+    /* Thread stopped its routine*/
+    currThread->state = END;
+    free(currThread->context);
+    free(currThread->stack);
+	exit(EXIT_SUCCESS);
 }
 
 
@@ -52,34 +135,14 @@ int createGThread(char *threadName, gThread_func_t thread, void* args, int stack
  */
 void yield()
 {
-	
-	/* Saving stack pointers to the current context */
-	asm ("movl %%ebp, %0" "\n\t" "movl %%esp, %1" "\n\t"
-	: "=r"((currThread->context).ebp), "=r"((currThread->context).esp) /* output variables */
-	: /* input variables */
-	);
-	
-	if (currThread->nextThread == NULL)
-	{
-		currThread = firstThread;
+	if (currThread != NULL)
+    {
+        switchGThread(currThread->nextThread);
+    }
+    else
+    {
+        switchGThread(firstThread);
 	}
-	else
-	{
-		currThread = currThread->nextThread;
-	}
-	
-	if (!currThread->launched)
-	{
-		currThread->launched = 1;
-		currThread->func(currThread->args);
-	}
-	
-	/* Restore stack registers */
-	asm ("movl %0, %%esp" "\n\t" "movl %1, %%ebp" "\n\t"
-	:  /* output variables */
-	: "r"((currThread->context).esp), "r"((currThread->context).ebp) /* input variables */
-	: /*"%esp", "%ebp" */
-	);	
 	
 }
 
@@ -98,8 +161,8 @@ int killGThread(int threadId)
 		if (itThread == NULL)
 			return ERROR;
 	}
-	printf("Destruction du GThread %s (n°%d)\n", itThread->name, itThread->id);
-	free(itThread->stack);
+	printf("Destruction du GThread \"%s\" (n°%d)\n", itThread->name, itThread->id);
+	/*free(itThread->stack);*/
 	free(itThread);
 	return OK;
 }
