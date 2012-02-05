@@ -66,6 +66,8 @@ void f_pong(void *arg);
 void f_paf(void *arg);
 void f_pif(void *arg);
 
+semaphore *sem;
+
 struct rlimit limite;
 
 void start_sched()
@@ -81,6 +83,7 @@ int main(int argc, char *argv[])
 	getrlimit(RLIMIT_STACK, &limite);
 	printf("cur : %lu, max : %lu\n", limite.rlim_cur, limite.rlim_max);
 	*/
+	sem = malloc(sizeof(semaphore));
 	
 	id_counter = 0;
 	runningContexts = 0;
@@ -94,11 +97,14 @@ int main(int argc, char *argv[])
 	create_ctx(STACK_SIZE, f_paf, NULL);
 	create_ctx(STACK_SIZE, f_pif, NULL);
 
+	sem_init(sem, 4);
+	
 	/*
 	 * Initialisation de l'ordo
 	 */ 
 	start_sched();
-
+	
+	printf("Destruction des contextes\n");
 	/*destroy_all_ctx();*/
 	exit(EXIT_SUCCESS);
 }
@@ -227,7 +233,9 @@ void kill_context()
 		/* 
 		 * On quitte l'appli
 		 * TODO : a revoir
+		 * Faire une restitution du contexte initial ?
 		 */
+		free(sem);
 		exit(EXIT_SUCCESS);
 	}
 	else
