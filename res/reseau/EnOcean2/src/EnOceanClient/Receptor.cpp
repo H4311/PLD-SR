@@ -90,6 +90,7 @@ int Receptor::readFrame(int nbFrame) {
 	char* buffer = (char*)malloc(frameSize*sizeof(char));
 	if (nbFrame == 0) {
 		while (getFlag() == true) {
+			waitData();
 			if((n = recvFrame(buffer)) < 0)
 			{
 				cout << "<Receptor> Error - Read | " << n << endl;
@@ -104,6 +105,7 @@ int Receptor::readFrame(int nbFrame) {
 	}
 	else {
 		while (nbFrameRead < nbFrame) {
+			waitData();
 			if((n = recv(sock, buffer, frameSize, 0)) < 0)
 			{
 				cout << "<Erreur> Read | " << n << endl;
@@ -240,6 +242,12 @@ Receptor::~Receptor() {
 //---------------------------------------------------------------- PRIVATE
 
 //------------------------------------------------------ Protected Methods
+void Receptor::waitData() {
+	fd_set set;
+	FD_ZERO(&set);
+	FD_SET(sock, &set);
+	select(FD_SETSIZE, &set, NULL, NULL, NULL);
+}
 
 int Receptor::recvFrame(char* buffer) {
 	int n;
@@ -253,6 +261,7 @@ int Receptor::sendFrame(const char* buffer) {
 	int n;
 	pthread_mutex_lock(&mutexSock);
 	n = send(sock, buffer, frameSize, 0);
+	cout << "<Receptor> Frame sent : " << buffer << ".\n";
 	pthread_mutex_unlock(&mutexSock);
 	return n;
 }

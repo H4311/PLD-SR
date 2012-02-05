@@ -22,10 +22,10 @@
  */
 int main(int argc, char *argv[]) {
 	cout << "Testprogram started...\n";
-	//string adresse = "134.214.105.28";
-	//int port = 5000;
+//	string adresse = "134.214.105.28";
+//	int port = 5000;
 	string adresse = "127.0.0.1";
-	int port = 5005;
+	int port = 5014;
 
 	EnOCeanBaseSimulator simulator = EnOCeanBaseSimulator();
 
@@ -151,8 +151,9 @@ int main(int argc, char *argv[]) {
 //	Emettor em = Emettor();
 //	em.open(adresse.c_str(), port);
 
-	enocean_data_structure frame = EnOceanActuatorAirConditioning::toFrame(1,true,0,0,40);
-	recep.pushFrame(&frame);
+	enocean_data_structure* frame = new enocean_data_structure();
+	EnOceanSensorAPI::toFrame_AirConditioning(frame, 1,true,0,0,40);
+	recep.pushFrame(frame);
 
 	for (;;) {
 //		simulator.addSensor(&sensorSimu1);
@@ -166,7 +167,7 @@ int main(int argc, char *argv[]) {
 
 
 //
-//	PeriphTable table = PeriphTable();
+//	DeviceTable table = DeviceTable();
 //	table.add((EnOceanSensorAPI::SensorId)0x00893378, (EnOceanCallbackFunction)EnOceanSensorAPI::analyseTempSensor_EEP_07_02_05);
 //	table.add((EnOceanSensorAPI::SensorId)0x0021CBE3, (EnOceanCallbackFunction)EnOceanSensorAPI::analyseRockerSwitch_F6_02_01);
 //	table.add((EnOceanSensorAPI::SensorId)0x0001B592, (EnOceanCallbackFunction)EnOceanSensorAPI::analyseContactSensor_D5_00_01);
@@ -174,16 +175,26 @@ int main(int argc, char *argv[]) {
 //
 //	EnOceanMsgQueue msgQueue = EnOceanMsgQueue();
 //
-//
 //	EnOceanAnalyser analyser = EnOceanAnalyser(&table, &msgQueue);
 //	analyser.run();
 //
-//	EnOceanReceptor recep = EnOceanReceptor(&msgQueue);
+//	blocking_queue<string> msgToSend = blocking_queue<string>();
+//	EnOceanReceptor recep = EnOceanReceptor(&msgQueue, &msgToSend);
 //	recep.open(adresse.c_str(), port);
 //	recep.run();
 //
+//	int i = 0;
 //	for (;;) {
-//		usleep(5000000);
+//		i++;
+//		string* msg = new string();
+//		if (i%2 == 0) {
+//			*msg = "A55A6B0570000000FF9F1E0630D2";
+//		} else {
+//			*msg = "A55A6B0550000000FF9F1E0630D2";
+//		}
+//		msgToSend.push(msg);
+//		cout << "<MAIN> Message to be sent : " << *msg <<".\n";
+//		usleep(3000000);
 //	}
 
 	cout << "Fin\n";

@@ -30,6 +30,16 @@ int DeviceTable::add(EnOceanSensorAPI::SensorId id, EnOceanCallbackFunction cf) 
 	return n;
 } //----- End of add
 
+bool DeviceTable::del(EnOceanSensorAPI::SensorId id) {
+	bool ret;
+	pthread_mutex_lock(&mutex);
+	map<EnOceanSensorAPI::SensorId, EnOceanCallbackFunction>::iterator it = drivers.find(id);
+	ret = (it != drivers.end());
+	drivers.erase(it);
+	pthread_mutex_unlock(&mutex);
+	return ret;
+} //----- End of del
+
 EnOceanCallbackFunction DeviceTable::find(EnOceanSensorAPI::SensorId id) {
 	pthread_mutex_lock(&mutex);
 	map<EnOceanSensorAPI::SensorId, EnOceanCallbackFunction>::const_iterator hop = drivers.find(id);
@@ -37,7 +47,7 @@ EnOceanCallbackFunction DeviceTable::find(EnOceanSensorAPI::SensorId id) {
 	pthread_mutex_unlock(&mutex);
 	return ret;
 
-} //----- End of read
+} //----- End of find
 
 
 

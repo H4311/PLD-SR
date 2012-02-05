@@ -103,17 +103,19 @@ void EnOCeanBaseSimulator::addSensor(SensorSimulator* sensor) {
 	pthread_mutex_unlock(&mutex);
 }
 
-void EnOCeanBaseSimulator::delSensor(EnOceanSensorAPI::SensorId id) {
+bool EnOCeanBaseSimulator::delSensor(EnOceanSensorAPI::SensorId id) {
 	pthread_mutex_lock(&mutex);
 
 	for (vector<SensorSimulator*>::iterator it=sensors.begin() ; it < sensors.end(); it++ )
     {
 		if ((*it)->getId() == (EnOceanSensorAPI::SensorId)id) {
 			sensors.erase(it);
-			return;
+			pthread_mutex_unlock(&mutex);
+			return true;
 		}
 	}
 	pthread_mutex_unlock(&mutex);
+	return false;
 }
 
 int EnOCeanBaseSimulator::countSensors() {
@@ -130,17 +132,19 @@ void EnOCeanBaseSimulator::addActuator(Actuator* a) {
 	pthread_mutex_unlock(&mutex);
 }
 
-void EnOCeanBaseSimulator::delActuator(int id) {
+bool EnOCeanBaseSimulator::delActuator(int id) {
 	pthread_mutex_lock(&mutex);
 
 	for (vector<Actuator*>::iterator it=actuators.begin() ; it < actuators.end(); it++ )
     {
 		if ((*it)->getID() == id) {
 			actuators.erase(it);
-			return;
+			pthread_mutex_unlock(&mutex);
+			return true;
 		}
 	}
 	pthread_mutex_unlock(&mutex);
+	return false;
 }
 
 int EnOCeanBaseSimulator::countActuators() {

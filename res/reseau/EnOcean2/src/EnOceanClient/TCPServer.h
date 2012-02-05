@@ -1,22 +1,23 @@
+
 /*************************************************************************
-                           EnOceanActuatorLight  -  description
+                           TCPServer  -  description
                              -------------------
-    Creation             : 29 Jan. 2012
+    Creation             : 08 Jan. 2012
     Copyright            : (C) 2012 by H4311 - Benjamin PLANCHE (BPE)
 *************************************************************************/
 
-//------- Definition - <EnOceanActuatorLight> (EnOceanActuatorLight.h file) --------
+//------- Definition - <TCPServer> (TCPServer.h file) --------
 
-#ifndef ENOCEANACTUATORLAMP_H_
-#define ENOCEANACTUATORLAMP_H_
+#ifndef TCP_SERVER_H_
+#define TCP_SERVER_H_
 
 //---------------------------------------------------------------- INCLUDE
 
 //--------------------------------------------------------- System Include
 using namespace std;
-#include <vector>
+#include <string.h>
+#include <pthread.h>
 //------------------------------------------------------ Personnal Include
-#include "EnOceanActuator.h"
 
 //------------------------------------------------------------- Constantes
 
@@ -24,11 +25,11 @@ using namespace std;
 
 //------------------------------------------------------------------------
 // Description :
-//		Element simulating air conditioning, which can edit the value of some EnOcean sensors (Temp & Humi).
+//		Analyses the frame provided by the server, and extracts the informations from them, for the chosen sensors.
 //
 //------------------------------------------------------------------------
 
-class EnOceanActuatorLight : public EnOceanActuator
+class TCPServer
 {
 //----------------------------------------------------------------- PUBLIC
 
@@ -37,11 +38,33 @@ public:
 
 //--------------------------------------------------------- Public Methods
 
-	void setIlluminance(float e);
-	float getIlluminance();
+	int openSocket(int port);
+	// Manual :
+    //		Open the socket.
 
-	float update();
-	void set(enocean_data_structure *frame);
+	int acceptClient();
+	// Manual :
+    //		Accept a client connection.
+    // Contract :
+    //		open()
+	//		Connexion du client en lecture avant en écriture !
+
+	int writeClient(char* msg, int length);
+	// Manual :
+	//		Write to the client.
+	// Contract :
+	//		open() & accept()
+
+	int readClient(char* msg, int length);
+	int readClientJSON(string msg);
+	// Manual :
+	//		Read from the client.
+	// Contract :
+	//		open() & accept()
+
+	void waitData();
+	int closeClient();
+	int closeSocket();
 
 
 //------------------------------------------------- Static public Methods
@@ -50,8 +73,8 @@ public:
 
 //-------------------------------------------------- Builder / Destructor
 
-	EnOceanActuatorLight(int id, float enerCoef, float temp, float luxMin, float luxMax);
-	virtual ~EnOceanActuatorLight();
+	TCPServer();
+	virtual ~TCPServer();
 
 //---------------------------------------------------------------- PRIVATE
 
@@ -64,10 +87,9 @@ private:
 protected:
 //-------------------------------------------------- Protected Attributes
 
-	float illuminance;
-	float luxMin;
-	float luxMax;
-
+	int sockfd;
+	int sockClient;
+	pthread_mutex_t mutex;
 
 private:
 //----------------------------------------------------- Private Attributes
@@ -83,4 +105,4 @@ private:
 //------------------------------ Other definition, depending on this class
 
 
-#endif /* ENOCEANACTUATORLAMP_H_ */
+#endif /* TCP_SERVER_H_ */

@@ -14,6 +14,10 @@ RM := rm -rf
 -include src/Simulator/Sensors/subdir.mk
 -include src/Simulator/Model/subdir.mk
 -include src/Simulator/Actuators/subdir.mk
+-include src/Libs/jsoncpp-src-amalgamation0.6.0-rc2/subdir.mk
+-include src/Libs/jsoncpp-src-0.5.0/buildscons/linux-gcc-4.6.1/src/test_lib_json/subdir.mk
+-include src/Libs/jsoncpp-src-0.5.0/buildscons/linux-gcc-4.6.1/src/lib_json/subdir.mk
+-include src/Libs/jsoncpp-src-0.5.0/buildscons/linux-gcc-4.6.1/src/jsontestrunner/subdir.mk
 -include src/EnOceanClient/subdir.mk
 -include src/subdir.mk
 -include src/Devices/subdir.mk

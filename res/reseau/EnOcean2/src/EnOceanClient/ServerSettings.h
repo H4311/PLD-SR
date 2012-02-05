@@ -1,34 +1,37 @@
 /*************************************************************************
-                           EnOceanActuatorLight  -  description
+                           ServerSettings  -  description
                              -------------------
-    Creation             : 29 Jan. 2012
+    Creation             : 05 Febr. 2012
     Copyright            : (C) 2012 by H4311 - Benjamin PLANCHE (BPE)
 *************************************************************************/
 
-//------- Definition - <EnOceanActuatorLight> (EnOceanActuatorLight.h file) --------
+//------- Definition - <ServerSettings> (ServerSettings.h file) --------
 
-#ifndef ENOCEANACTUATORLAMP_H_
-#define ENOCEANACTUATORLAMP_H_
+#ifndef SERVERSETTINGS_H_
+#define SERVERSETTINGS_H_
 
 //---------------------------------------------------------------- INCLUDE
 
 //--------------------------------------------------------- System Include
 using namespace std;
+#include <pthread.h>
 #include <vector>
 //------------------------------------------------------ Personnal Include
-#include "EnOceanActuator.h"
-
+#include "../Devices/EnOceanSensorAPI.h"
+#include "../Devices/DeviceTable.h"
+#include "../Simulator/EnOCeanBaseSimulator.h"
+#include "TCPServer.h"
 //------------------------------------------------------------- Constantes
 
 //------------------------------------------------------------------ Types
 
 //------------------------------------------------------------------------
 // Description :
-//		Element simulating air conditioning, which can edit the value of some EnOcean sensors (Temp & Humi).
+//		Server receiving order from the Web server, to add/delete/edit the sensors actuators.
 //
 //------------------------------------------------------------------------
 
-class EnOceanActuatorLight : public EnOceanActuator
+class ServerSettings
 {
 //----------------------------------------------------------------- PUBLIC
 
@@ -37,11 +40,27 @@ public:
 
 //--------------------------------------------------------- Public Methods
 
-	void setIlluminance(float e);
-	float getIlluminance();
+	float updateSensors();
 
-	float update();
-	void set(enocean_data_structure *frame);
+	int openSocket(int port);
+		// Manual :
+	    //		Open the socket.
+
+	int acceptClient();
+	// Manual :
+	//		Accept a client connection.
+	// Contract :
+	//		open()
+
+	int closeClient();
+	int closeSocket();
+
+	int readClient(char* msg, int length);
+
+	int getFlag();
+
+	void run();
+	void stop();
 
 
 //------------------------------------------------- Static public Methods
@@ -50,8 +69,8 @@ public:
 
 //-------------------------------------------------- Builder / Destructor
 
-	EnOceanActuatorLight(int id, float enerCoef, float temp, float luxMin, float luxMax);
-	virtual ~EnOceanActuatorLight();
+	ServerSettings(DeviceTable* sensors, blocking_queue<string>* msgToSend, EnOCeanBaseSimulator* simu);
+	virtual ~ServerSettings();
 
 //---------------------------------------------------------------- PRIVATE
 
@@ -63,17 +82,18 @@ private:
 
 protected:
 //-------------------------------------------------- Protected Attributes
-
-	float illuminance;
-	float luxMin;
-	float luxMax;
-
-
+	DeviceTable* sensors;
+	blocking_queue<string>* msgToSend;
+	EnOCeanBaseSimulator* simu;
+	pthread_mutex_t mutex;
+	TCPServer server;
+	pthread_t thread_Receive;
+	int flag;
 private:
 //----------------------------------------------------- Private Attributes
 
 //--------------------------------------------------------- Friend Classes
-
+	friend void* ServerSettingsThread_Receive(void* param);
 //-------------------------------------------------------- Private Classes
 
 //---------------------------------------------------------- Private Types
@@ -81,6 +101,6 @@ private:
 };
 
 //------------------------------ Other definition, depending on this class
+void* ServerSettingsThread_Receive(void* param);
 
-
-#endif /* ENOCEANACTUATORLAMP_H_ */
+#endif /* SERVERSETTINGS_H_ */

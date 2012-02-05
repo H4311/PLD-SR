@@ -70,7 +70,7 @@ void SensorSimulatorTempHumi::update() {
 
 
 //-------------------------------------------------- Builder / Destructor
-SensorSimulatorTempHumi::SensorSimulatorTempHumi(int id, Room* r, float tMin, float tMax) : SensorSimulator(id,r), tempMin(tMin), tempMax(tMax) {
+SensorSimulatorTempHumi::SensorSimulatorTempHumi(int id, Room* r, float tMin, float tMax) : SensorSimulator(id, EnOceanSensorAPI::ORG_4BS, r), tempMin(tMin), tempMax(tMax) {
 	frame.DATA_BYTE0 = 0xA; // Data frame + Temp� sensor available.
 	EnOceanSensorAPI::setHumidity(&frame, room->getHumidity());
 	EnOceanSensorAPI::setTemperature(&frame, room->getTemperature(), tempMin, tempMax);

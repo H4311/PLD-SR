@@ -35,8 +35,9 @@ class EnOceanSensorAPI
 {
 public :
 	typedef int32_t SensorId;
-	typedef enum {ACT_A1 = 0, ACT_A0 = 1, ACT_B1 = 2, ACT_B0 = 3} RockerSwitchAction;
+	typedef enum { ACT_A1 = 0, ACT_A0 = 1, ACT_B1 = 2, ACT_B0 = 3} RockerSwitchAction;
 	typedef enum { PRESSED = 0, RELEASED = 1} RockerSwitchEnergyBow;
+	typedef enum { ORG_RPS = 5, ORG_1BS = 6, ORG_4BS = 7} ORG;
 	
 	static const unsigned int FRAME_SIZE = 28;
 
@@ -47,6 +48,32 @@ public :
 	
 	static SensorId getID(enocean_data_structure* frame);
 	static void setID(enocean_data_structure* frame, SensorId id);
+
+	static bool checkSyncBytes(enocean_data_structure* frame);
+	static void fillSyncBytes(enocean_data_structure* frame);
+
+	static void fillHSeqLengthBytes(enocean_data_structure * frame, bool receivedMsg);
+
+	static ORG getORG(enocean_data_structure* frame);
+	static void setORG(enocean_data_structure* frame, ORG org);
+
+	static int getRepeater(enocean_data_structure* frame);
+	static void setRepeater(enocean_data_structure* frame, int rep);
+
+	static bool checkSum(enocean_data_structure* frame);
+	static void setCheckSum(enocean_data_structure* frame);
+
+	static bool checkValidity(enocean_data_structure* frame, ORG org);
+	static void setHeader(enocean_data_structure* frame, ORG org, bool received);
+
+// ---- ACTUATOR ----
+	static void toFrame_Actuator(enocean_data_structure* frame, EnOceanSensorAPI::SensorId id, int type, bool switchOn, float value);
+
+	static void toFrame_Switch(enocean_data_structure* frame, SensorId id, bool switchOn);
+	static void toFrame_AirConditioning(enocean_data_structure* frame, SensorId id, bool on, float temp, float tempMin, float tempMax);
+	static void toFrame_Light(enocean_data_structure* frame, SensorId id, bool on, float val, float minL, float maxL);
+	static void toFrame_Aeration(enocean_data_structure* frame, SensorId id, bool on, float val, float valMin, float valMax);
+
 
 // ---- CONTACT SENSOR ----
 	static string analyseContactSensor_D5_00_01(enocean_data_structure* frame);

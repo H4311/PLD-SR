@@ -31,6 +31,7 @@ void SensorSimulator::update() {
 
 void SensorSimulator::getFrame(char* buffer) {
 	update();
+	EnOceanSensorAPI::setCheckSum(&frame);
 	EnOceanSensorAPI::toString(&frame, buffer);
 }
 
@@ -45,7 +46,7 @@ Room* SensorSimulator::getRoom() {
 
 
 //-------------------------------------------------- Builder / Destructor
-SensorSimulator::SensorSimulator(int i, Room* r): id(i), room(r){
+SensorSimulator::SensorSimulator(int i, EnOceanSensorAPI::ORG org, Room* r): id(i), room(r){
 	EnOceanSensorAPI::setID(&frame, id);
 	frame.SYNC_BYTE1 = 0;
 	frame.SYNC_BYTE2 = 0;
@@ -57,6 +58,7 @@ SensorSimulator::SensorSimulator(int i, Room* r): id(i), room(r){
 	frame.DATA_BYTE0 = 0; ///< Data Byte 0
 	frame.STATUS = 0; ///< Status field
 	frame.CHECKSUM = 0;
+	EnOceanSensorAPI::setHeader(&frame, org, true);
 	pthread_mutex_init(&mutex, NULL);
 } //----- End of SensorSimulator
 

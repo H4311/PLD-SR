@@ -28,6 +28,10 @@ src/Simulator \
 src/Simulator/Sensors \
 src/Simulator/Model \
 src/Simulator/Actuators \
+src/Libs/jsoncpp-src-amalgamation0.6.0-rc2 \
+src/Libs/jsoncpp-src-0.5.0/buildscons/linux-gcc-4.6.1/src/test_lib_json \
+src/Libs/jsoncpp-src-0.5.0/buildscons/linux-gcc-4.6.1/src/lib_json \
+src/Libs/jsoncpp-src-0.5.0/buildscons/linux-gcc-4.6.1/src/jsontestrunner \
 src/EnOceanClient \
 src \
 src/Devices \

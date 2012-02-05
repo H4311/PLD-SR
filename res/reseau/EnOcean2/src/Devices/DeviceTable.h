@@ -49,6 +49,13 @@ public:
     // Contract :
     //		/
 
+	bool del(EnOceanSensorAPI::SensorId id);
+	// Manual :
+	//		Delete a driver from the list. Return true if deleted.
+	// Contract :
+	//		/
+
+
 	EnOceanCallbackFunction find(EnOceanSensorAPI::SensorId id);
 	// Manual :
     //		Returns the Process-function corresponding to the device's id (or NULL if not found).

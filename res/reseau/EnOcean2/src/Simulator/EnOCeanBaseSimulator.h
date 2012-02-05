@@ -42,11 +42,11 @@ public:
 //--------------------------------------------------------- Public Methods
 
 	void addSensor(SensorSimulator* sensor);
-	void delSensor(EnOceanSensorAPI::SensorId id);
+	bool delSensor(EnOceanSensorAPI::SensorId id);
 	int countSensors();
 
 	void addActuator(Actuator* sensor);
-	void delActuator(int id);
+	bool delActuator(int id);
 	int countActuators();
 
 	float updateSensors();
