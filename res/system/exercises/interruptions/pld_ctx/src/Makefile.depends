@@ -1,2 +1,2 @@
 main.o: main.c
-ordonnancement.o: ordonnancement.c
+ordonnancement.o: ordonnancement.c ../libhw/include/hw.h

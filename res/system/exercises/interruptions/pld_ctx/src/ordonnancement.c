@@ -3,6 +3,8 @@
 #include <assert.h>
 #include <sys/resource.h>
 
+#include "hw.h"
+
 #define STACK_SIZE 16384
 
 enum ctx_state {INIT, RUNNING, END}; 
@@ -29,7 +31,7 @@ typedef struct ctx_s ctx_s;
  */
 struct semaphore {
 	int count;
-	struct ctx_s *ctx;
+	struct ctx_s *ctx; /* Liste des contextes en attente */
 };
 typedef struct semaphore semaphore;
 
@@ -52,6 +54,7 @@ void display_ctx();
 void switch_to_ctx(struct ctx_s *ctx); 
 void start_ctx();
 void yield(void);
+void kill_context();
 void destroy_all_ctx();
 
 void sem_init(semaphore *sem, unsigned int val);
@@ -108,10 +111,16 @@ int init_ctx(struct ctx_s *ctx, int stack_size, func_t f, void *args)
     {
 		ctx->id = ++id_counter;
 		ctx->state = INIT;
-		ctx->esp = ctx->stack+stack_size;
-		ctx->ebp = ctx->stack+stack_size;
+		ctx->esp = (int)ctx->stack+stack_size;
+		ctx->ebp = (int)ctx->stack+stack_size;
 		ctx->f = f;
 		ctx->args = args;
+		return 0;
+	}
+	else
+	{
+		printf("Erreur initialisation du contexte\n");
+		return -1;
 	}
 }
 
@@ -121,7 +130,7 @@ int create_ctx(int stack_size, func_t f, void *args)
 	if (!new_ctx)
 	{
 		printf("Erreur création du contexte\n");
-		return 0;
+		return -1;
 	}
 	else
 	{
@@ -141,6 +150,7 @@ int create_ctx(int stack_size, func_t f, void *args)
 		}    
 		
 	}
+	return 0;
 	
 }
 
@@ -197,12 +207,12 @@ void start_ctx()
     kill_context();
 }
 
+/* Kill le contexte courant */
 void kill_context()
 {
+	ctx_s *ctx = curr_ctx;
 	irq_disable();
-	ctx_s *ctx;
-	ctx = curr_ctx;
-	
+		
 	/* Recherche du context précédent le contexte courant*/
 	while (ctx->next_ctx != curr_ctx)
 	{
@@ -234,26 +244,34 @@ void kill_context()
 }
 
 
+/* Sémaphore déjà créé */
 void sem_init(semaphore *sem, unsigned int val)
 {	
 	sem->count = val;
 	sem->ctx = NULL;
 }
 
-
+/* semGive */
 void sem_up(semaphore *sem)
 {
+	/* incrémente le semaphore */
+	sem->count++;
+	if (sem->count <=0)
+	{
 		
-	
+	}
 	
 }
 
-
+/* semTake (wait) */
 void sem_down(semaphore *sem)
 {
 	/* Décrémente le sémaphore */
 	sem->count--;
-	
+	if (sem->count <=0)
+	{
+		
+	}
 }
 
 
@@ -317,13 +335,10 @@ void destroy_all_ctx()
 	curr_ctx = first_ctx;
 	while (curr_ctx != NULL)
 	{
-		//printf("Contexte %d à détruire\n", curr_ctx->id);
 		temp_ctx = curr_ctx->next_ctx ;
 		if (temp_ctx != NULL)
 			printf("Prochain Contexte à détruire : %d\n", temp_ctx->id);
-		//printf("Destruction du contexte %d ... ", curr_ctx->id);
 		free(curr_ctx);
-		//printf("... réussie !\n");
 		curr_ctx = temp_ctx;
 	} 
 	
