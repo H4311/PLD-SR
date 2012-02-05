@@ -17,6 +17,7 @@ function sqlAsyncQuery(db, query, callbackAsync, callbackEnd) {
 	result.fields = [];
 	result.count = 0;
 	result.hits = [];
+	console.log("Query : " + query.toString());
 	db.query(query)
 		.on('field', function(f) {
 			result.fields.push(f.name);
@@ -57,6 +58,6 @@ exports.query = sqlQuery;
 exports.dumpResult = sqlDumpResult;
 
 // Utilisation :
-//var db = sqlCreateClient("localhost", "root", "root", "test");
+//var db = sqlCreateClient("localhost", "rithm", "rithm", "pld");
 //sqlQuery(db, "select 1+1,2,3,'4',length('hello')", function(result) {sqlDumpResult(result);});
 //sqlClose(db);

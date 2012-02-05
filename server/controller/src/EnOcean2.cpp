@@ -17,6 +17,8 @@
 #include "Simulator/Model/Room.h"
 #include <pthread.h>
 #include <unistd.h>
+#include <mysql/mysql.h>
+#include "Bdd/mysqlinsert.h"
 /**
  * main? Don't know, what main does ;)
  */
@@ -26,6 +28,9 @@ int main(int argc, char *argv[]) {
 	//int port = 5000;
 	string adresse = "127.0.0.1";
 	int port = 5005;
+
+	//Only one time in the program, to init the lib
+	mysql_library_init(0, NULL, NULL);
 
 	EnOCeanBaseSimulator simulator = EnOCeanBaseSimulator();
 
@@ -185,6 +190,9 @@ int main(int argc, char *argv[]) {
 //	for (;;) {
 //		usleep(5000000);
 //	}
+
+	//Only one time in the prog, to close the lib
+	mysql_library_end();
 
 	cout << "Fin\n";
 
