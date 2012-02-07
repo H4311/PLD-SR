@@ -13,27 +13,23 @@
 			$.post(rest + '/sensors',
 			  '{"sensors":[{"id":"1", "from":"2012/01/01 00:00:00"}]}',
 			  function(data) {
-				$("#sensors").html(JSON.stringify(data));
+				var records = data["records"];
+				var codeToInsert = "<ul>";	
+				for (var i in records) {
+					codeToInsert += "<li>Capteur " + i + " : <ol>";
+					for (var j in records[i]) {
+						codeToInsert += "<li>" + records[i][j].time + " : "  + records[i][j].value + "</li>";
+					}
+					codeToInsert += "</ol></li>";
+				}
+				codeToInsert += "</ul>";
+				$("#sensors").html(codeToInsert);	
 			  },
 			  "json");
-
-			/*
-			$.ajax({
-				type: 'POST',
-				url: rest + '/sensors',
-				data: '{"sensors":[{"id":"1", "from":"2012/01/01 00:00:00"}]}',
-				crossDomain: true,
-				processData: false,
-				success: function(data) {
-					$("#sensors").html(JSON.stringify(data));
-				},
-				dataType: "json"
-			});
-			*/
 		}
 
 		$("#getSensorsButtons").click(getSensors);
-		getSensors();
+		getSensors(); // initially retrieves sensors values on first time.
 	});
 	</script>
 </head>
