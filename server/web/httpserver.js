@@ -2,19 +2,33 @@ var http = require("http");
 var url = require("url");
 var staticserve = require("./staticserve");
 
-function route(handlers, pathname, query, postData, resp) {
+function routeBasic(handlers, pathname, query, postData, resp, defaultHandler) {
 	if (typeof handlers[pathname] === 'function') {
 		console.log("Route received for : " + pathname);
 		handlers[pathname](query, postData, resp);
 	} else	{
-		console.log("No route found for : " + pathname + ". Trying static serving...");
-		staticserve.serve(pathname, resp);
+		console.log("No route found for : " + pathname + ". Trying default handler...");
+		//staticserve.serve(pathname, resp);
+		if (defaultHandler !== undefined) {
+			defaultHandler(pathname, resp);
+		}
 	}
 }
 
-function httpStart(port, handlers) {
+function routeService(handlers, pathname, query, postData, resp) {
+	routeBasic(handlers, pathname, query, postData, resp, function() {
+		resp.writeHead(403); // forbidden access when you try to access services
+		resp.end();	
+	});
+}
+
+function routeHttp(handlers, pathname, query, postData, resp) {
+	routeBasic(handlers, pathname, query, postData, resp, staticserve.serve);
+}
+
+function httpStart(port, handlers, routeFunction) {
 	function onRequest(req, resp) {
-		var method = req.method;				// GET;POST;PUT;DELETE
+		var method = req.method;		// GET;POST;PUT;DELETE
 		var urlObj = url.parse(req.url, true);	// Parse the url AND the query
 		var pathname = urlObj.pathname;
 		var query = urlObj.query;
@@ -28,7 +42,7 @@ function httpStart(port, handlers) {
 		});
 
 		req.addListener("end", function() {
-			route(handlers, pathname, query, postData, resp);
+			routeFunction(handlers, pathname, query, postData, resp);
 		});
 	}
 	
@@ -37,3 +51,5 @@ function httpStart(port, handlers) {
 }
 
 exports.start = httpStart;
+exports.routeService = routeService;
+exports.routeHttp = routeHttp;
