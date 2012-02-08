@@ -49,6 +49,8 @@ public:
 
 //------------------------------------------------- Static public Methods
 
+	static SensorSimulator* createSensorSimulator(int id, int type, Room* room);
+
 //------------------------------------------------------------- Operators
 
 //-------------------------------------------------- Builder / Destructor

@@ -155,6 +155,49 @@ int EnOCeanBaseSimulator::countActuators() {
 	return ret;
 }
 
+void EnOCeanBaseSimulator::addRoom(Room* r) {
+	pthread_mutex_lock(&mutex);
+	rooms.push_back(r);
+	pthread_mutex_unlock(&mutex);
+}
+
+bool EnOCeanBaseSimulator::delRoom(int id) {
+	pthread_mutex_lock(&mutex);
+
+	for (vector<Room*>::iterator it=rooms.begin() ; it < rooms.end(); it++ )
+    {
+		if ((*it)->getId() == id) {
+			rooms.erase(it);
+			pthread_mutex_unlock(&mutex);
+			return true;
+		}
+	}
+	pthread_mutex_unlock(&mutex);
+	return false;
+}
+
+int EnOCeanBaseSimulator::countRooms() {
+	int ret;
+	pthread_mutex_lock(&mutex);
+	ret = rooms.size();
+	pthread_mutex_unlock(&mutex);
+	return ret;
+}
+
+Room* EnOCeanBaseSimulator::findRoom(int id) {
+	Room* r = NULL;
+	pthread_mutex_lock(&mutex);
+	for (vector<Room*>::iterator it=rooms.begin() ; it < rooms.end(); it++ )
+	{
+		if ((*it)->getId() == id) {
+			r = (*it);
+			break;
+		}
+	}
+	pthread_mutex_unlock(&mutex);
+	return r;
+}
+
 float EnOCeanBaseSimulator::updateSensors() {
 	float conso;
 	pthread_mutex_lock(&mutex);

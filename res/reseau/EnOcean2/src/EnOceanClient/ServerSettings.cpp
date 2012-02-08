@@ -63,7 +63,72 @@ void* ServerSettingsThread_Receive (void* param) {
 				//				3 -> Set Actuator		Needed values : ID, type, on/off, value
 
 			if (idAction == 1) {
+				int type = root.get("t", 0).asInt();
+				const Json::Value arrayRooms = root["s"];
+#ifdef SIMULATION
+				bool simulated = root.get("sim", false).asBool();
+#endif
+				int typeDevice = (type >> 24); // If the type starts with an "1" or more, it's an actuator ; else it's a sensor.
+				if (typeDevice == 0) { // SENSOR
+					// Add to the DB :
+					// TO DO:
+					//		ADD TO THE MYSQL DB !
 
+					// Add to the "driver" :
+					pthread_mutex_lock(&(server->mutex));
+					EnOceanSensorAPI::EnOceanCallbackFunction translator = EnOceanSensorAPI::getFunctionPerType(type);
+					if (translator != NULL) {
+						server->sensors->add(idDevice, translator);
+						cout << "<Server Settings> Sensor n°" << idDevice << " - Added !\n";
+#ifdef SIMULATION
+						if (simulated) {
+							Room* room = server->simu->findRoom(arrayRooms.asInt());
+							server->simu->addSensor(SensorSimulator::createSensorSimulator(idDevice, type, room));
+							cout << "<Server Settings> Simulated Sensor n°" << idDevice << " - Created !\n";
+						}
+#endif
+					}
+
+					pthread_mutex_unlock(&(server->mutex));
+				}
+				else if (typeDevice == 1) { // ACTUATOR
+					// Add to the DB :
+					// TO DO:
+					//		ADD TO THE MYSQL DB !
+					cout << "<Server Settings> Actuator n°" << idDevice << " - Added !\n";
+#ifdef SIMULATION
+					if (simulated) {
+						pthread_mutex_lock(&(server->mutex));
+						Actuator* simAc = Actuator::createActuator(idDevice, type);
+						for (unsigned int i = 0; i < arrayRooms.size(); ++i ) {
+							Room* room = server->simu->findRoom(arrayRooms[i].asInt());
+							if (room != NULL) {
+								simAc->addRoom(room);
+							}
+						}
+
+						server->simu->addActuator(simAc);
+						cout << "<Server Settings> Simulated Actuator n°" << idDevice << " - Created !\n";
+						pthread_mutex_unlock(&(server->mutex));
+					}
+#endif
+				}
+#ifdef SIMULATION
+				else if ((typeDevice == 2) && simulated) { // SIMULATED EVENT
+					pthread_mutex_lock(&(server->mutex));
+					Actuator* simAc = Actuator::createActuator(idDevice, type);
+					for (unsigned int i = 0; i < arrayRooms.size(); ++i ) {
+						Room* room = server->simu->findRoom(arrayRooms[i].asInt());
+						if (room != NULL) {
+							simAc->addRoom(room);
+						}
+					}
+
+					server->simu->addActuator(simAc);
+					cout << "<Server Settings> Simulated Event n°" << idDevice << " - Created !\n";
+					pthread_mutex_unlock(&(server->mutex));
+				}
+#endif
 			}
 			else if (idAction == 2) {
 				pthread_mutex_lock(&(server->mutex));
@@ -71,24 +136,28 @@ void* ServerSettingsThread_Receive (void* param) {
 					// TO DO:
 					//		DELETE FROM THE MYSQL DB !
 					cout << "<Server Settings> Sensor n°" << idDevice << " - Deleted !\n";
+#ifdef SIMULATION
 					if (server->simu->delSensor(idDevice)) {
 						cout << "<Server Settings> Simulated Sensor n°" << idDevice << " - Deleted !\n";
 					}
+#endif
 				}
 				else { // If we are deleting an actuator :
 					// TO DO:
 					//		DELETE FROM THE MYSQL DB !
 					cout << "<Server Settings> Actuator n°" << idDevice << " - Deleted !\n";
+#ifdef SIMULATION
 					if (server->simu->delActuator(idDevice)) {
 						cout << "<Server Settings> Simulated Actuator n°" << idDevice << " - Deleted !\n";
 					}
+#endif
 				}
 				pthread_mutex_unlock(&(server->mutex));
 			}
 			else if (idAction == 3) {
 				int type = root.get("t", 0).asInt();
-				bool on = root.get("o", false).asBool();
-				float value = (double)root.get("v", 0.0).asDouble();
+				bool on = root.get("e", false).asBool();
+				float value = (float)root.get("v", 0.0).asDouble();
 				enocean_data_structure frame;
 				EnOceanSensorAPI::toFrame_Actuator(&frame, (EnOceanSensorAPI::SensorId)idDevice, type, on, value);
 				char buffer[EnOceanSensorAPI::FRAME_SIZE];
@@ -155,7 +224,15 @@ void ServerSettings::stop() {
 
 
 //-------------------------------------------------- Builder / Destructor
-ServerSettings::ServerSettings(DeviceTable* sens,  blocking_queue<string>* msg, EnOCeanBaseSimulator* sim): sensors(sens), msgToSend(msg), simu(sim){
+ServerSettings::ServerSettings(DeviceTable* sens,  blocking_queue<string>* msg
+#ifdef SIMULATION
+		, EnOCeanBaseSimulator* sim
+#endif
+): sensors(sens), msgToSend(msg)
+#ifdef SIMULATION
+, simu(sim)
+#endif
+{
 	pthread_mutex_init(&mutex, NULL);
 	flag = 0;
 } //----- End of ServerSettings

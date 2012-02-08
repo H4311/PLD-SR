@@ -35,6 +35,8 @@ class EnOceanSensorAPI
 {
 public :
 	typedef int32_t SensorId;
+	typedef string (*EnOceanCallbackFunction)(enocean_data_structure* frame);
+
 	typedef enum { ACT_A1 = 0, ACT_A0 = 1, ACT_B1 = 2, ACT_B0 = 3} RockerSwitchAction;
 	typedef enum { PRESSED = 0, RELEASED = 1} RockerSwitchEnergyBow;
 	typedef enum { ORG_RPS = 5, ORG_1BS = 6, ORG_4BS = 7} ORG;
@@ -74,12 +76,14 @@ public :
 	static void toFrame_Light(enocean_data_structure* frame, SensorId id, bool on, float val, float minL, float maxL);
 	static void toFrame_Aeration(enocean_data_structure* frame, SensorId id, bool on, float val, float valMin, float valMax);
 
+// ---- SENSOR ----
+	static EnOceanCallbackFunction getFunctionPerType(int type);
 
 // ---- CONTACT SENSOR ----
-	static string analyseContactSensor_D5_00_01(enocean_data_structure* frame);
+	static string analyseContactSensor_EEP_06_00_01(enocean_data_structure* frame);
 
 // ---- ROCKER SWITCH ----
-	static string analyseRockerSwitch_F6_02_01(enocean_data_structure* frame);
+	static string analyseRockerSwitch_EEP_05_02_01(enocean_data_structure* frame);
 
 // ---- TEMP SENSOR ----
 	static string analyseTempSensor(enocean_data_structure* frame, float minTemp, float maxTemp);

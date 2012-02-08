@@ -16,11 +16,28 @@ using namespace std;
 //------------------------------------------------------ Personnal Include
 #include "SensorSimulator.h"
 #include "../../Devices/EnOceanSensorAPI.h"
+
+# include "SensorSimulatorCO2.h"
+# include "SensorSimulatorLumAndOcc.h"
+# include "SensorSimulatorTempHumi.h"
 //-------------------------------------------------------------- Constants
 
 //----------------------------------------------------------------- PUBLIC
 
 //--------------------------------------------------------- Public Methods
+SensorSimulator* SensorSimulator::createSensorSimulator(int id, int type, Room* room) {
+	switch(type) {
+	case 0x0060001 : { return NULL; }
+	case 0x0050201 : { return NULL; }
+	case 0x0070205 : { return NULL; }
+	case 0x0070401 : { return new SensorSimulatorTempHumi(id, room, 0, 40); }
+	case 0x0070801 : { return new SensorSimulatorLumAndOcc(id, room, 0, 510, 0.0, 5.1); }
+	case 0x0070901 : { return new SensorSimulatorCO2(id, room, 0, 2000); }
+	}
+	return NULL;
+}
+
+
 EnOceanSensorAPI::SensorId SensorSimulator::getId() {
 	return id;
 }

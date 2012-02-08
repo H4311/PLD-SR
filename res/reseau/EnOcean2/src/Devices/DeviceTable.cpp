@@ -22,10 +22,10 @@ using namespace std;
 
 //--------------------------------------------------------- Public Methods
 
-int DeviceTable::add(EnOceanSensorAPI::SensorId id, EnOceanCallbackFunction cf) {
+int DeviceTable::add(EnOceanSensorAPI::SensorId id, EnOceanSensorAPI::EnOceanCallbackFunction cf) {
 	int n;
 	pthread_mutex_lock(&mutex);
-	n = (drivers.insert(pair<EnOceanSensorAPI::SensorId,EnOceanCallbackFunction>(id, cf))).second;
+	n = (drivers.insert(pair<EnOceanSensorAPI::SensorId,EnOceanSensorAPI::EnOceanCallbackFunction>(id, cf))).second;
 	pthread_mutex_unlock(&mutex);
 	return n;
 } //----- End of add
@@ -33,17 +33,17 @@ int DeviceTable::add(EnOceanSensorAPI::SensorId id, EnOceanCallbackFunction cf) 
 bool DeviceTable::del(EnOceanSensorAPI::SensorId id) {
 	bool ret;
 	pthread_mutex_lock(&mutex);
-	map<EnOceanSensorAPI::SensorId, EnOceanCallbackFunction>::iterator it = drivers.find(id);
+	map<EnOceanSensorAPI::SensorId, EnOceanSensorAPI::EnOceanCallbackFunction>::iterator it = drivers.find(id);
 	ret = (it != drivers.end());
 	drivers.erase(it);
 	pthread_mutex_unlock(&mutex);
 	return ret;
 } //----- End of del
 
-EnOceanCallbackFunction DeviceTable::find(EnOceanSensorAPI::SensorId id) {
+EnOceanSensorAPI::EnOceanCallbackFunction DeviceTable::find(EnOceanSensorAPI::SensorId id) {
 	pthread_mutex_lock(&mutex);
-	map<EnOceanSensorAPI::SensorId, EnOceanCallbackFunction>::const_iterator hop = drivers.find(id);
-	EnOceanCallbackFunction ret = (hop != drivers.end())? hop->second : NULL;
+	map<EnOceanSensorAPI::SensorId, EnOceanSensorAPI::EnOceanCallbackFunction>::const_iterator hop = drivers.find(id);
+	EnOceanSensorAPI::EnOceanCallbackFunction ret = (hop != drivers.end())? hop->second : NULL;
 	pthread_mutex_unlock(&mutex);
 	return ret;
 

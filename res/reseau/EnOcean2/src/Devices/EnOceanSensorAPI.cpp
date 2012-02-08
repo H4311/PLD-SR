@@ -248,9 +248,23 @@ using namespace std;
 	}
 
 
-// ---- CONTACT SENSOR ----
+// ---- SENSOR ----
+	EnOceanSensorAPI::EnOceanCallbackFunction EnOceanSensorAPI::getFunctionPerType(int type) {
+		switch(type) {
+		case 0x0060001 : { return analyseContactSensor_EEP_06_00_01; }
+		case 0x0050201 : { return analyseRockerSwitch_EEP_05_02_01; }
+		case 0x0070205 : { return analyseTempSensor_EEP_07_02_05; }
+		case 0x0070401 : { return analyseTempAndHumidSensor_EEP_07_04_01; }
+		case 0x0070801 : { return analyseLumAndOcc_EEP_07_08_01; }
+		case 0x0070901 : { return analyseCO2_EEP_07_09_01; }
+		}
+		return NULL;
+	}
 
-	string EnOceanSensorAPI::analyseContactSensor_D5_00_01(enocean_data_structure* frame) {
+
+
+// ---- CONTACT SENSOR ----
+	string EnOceanSensorAPI::analyseContactSensor_EEP_06_00_01(enocean_data_structure* frame) {
 			if (!checkValidity(frame, ORG_1BS)) { return "Error - Invalid Frame"; }
 			ostringstream oss;
 			bool isLearning, contact;
@@ -263,7 +277,7 @@ using namespace std;
 
 // ---- ROCKER SWITCH ----
 
-	string EnOceanSensorAPI::analyseRockerSwitch_F6_02_01(enocean_data_structure* frame) {
+	string EnOceanSensorAPI::analyseRockerSwitch_EEP_05_02_01(enocean_data_structure* frame) {
 			if (!checkValidity(frame, ORG_RPS)) { return "Error - Invalid Frame"; }
 			ostringstream oss;
 			oss << "< " << getRockerSwitchAction1st(frame) << " | ";

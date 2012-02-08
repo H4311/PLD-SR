@@ -17,6 +17,7 @@ src/EnOceanClient/ServerSettings.d: \
  ../src/EnOceanClient/../Simulator/Actuators/Actuator.h \
  ../src/EnOceanClient/../Simulator/Actuators/../Model/Room.h \
  ../src/EnOceanClient/../Simulator/Actuators/../../Devices/EnOceanSensorAPI.h \
+ ../src/EnOceanClient/../Simulator/Model/Room.h \
  ../src/EnOceanClient/TCPServer.h \
  ../src/EnOceanClient/../Libs/jsoncpp-src-amalgamation0.6.0-rc2/json/json.h
 
@@ -53,6 +54,8 @@ src/EnOceanClient/ServerSettings.d: \
 ../src/EnOceanClient/../Simulator/Actuators/../Model/Room.h:
 
 ../src/EnOceanClient/../Simulator/Actuators/../../Devices/EnOceanSensorAPI.h:
+
+../src/EnOceanClient/../Simulator/Model/Room.h:
 
 ../src/EnOceanClient/TCPServer.h:
 

@@ -23,6 +23,8 @@ using namespace std;
 #include "TCPServer.h"
 //------------------------------------------------------------- Constantes
 
+#define SIMULATION
+
 //------------------------------------------------------------------ Types
 
 //------------------------------------------------------------------------
@@ -69,7 +71,11 @@ public:
 
 //-------------------------------------------------- Builder / Destructor
 
-	ServerSettings(DeviceTable* sensors, blocking_queue<string>* msgToSend, EnOCeanBaseSimulator* simu);
+	ServerSettings(DeviceTable* sensors, blocking_queue<string>* msgToSend
+#ifdef SIMULATION
+			,EnOCeanBaseSimulator* simu
+#endif
+	);
 	virtual ~ServerSettings();
 
 //---------------------------------------------------------------- PRIVATE
@@ -84,7 +90,9 @@ protected:
 //-------------------------------------------------- Protected Attributes
 	DeviceTable* sensors;
 	blocking_queue<string>* msgToSend;
+#ifdef SIMULATION
 	EnOCeanBaseSimulator* simu;
+#endif
 	pthread_mutex_t mutex;
 	TCPServer server;
 	pthread_t thread_Receive;

@@ -19,6 +19,7 @@ src/EnOcean2.d: ../src/EnOcean2.cpp \
  ../src/Simulator/Actuators/Actuator.h \
  ../src/Simulator/Actuators/../Model/Room.h \
  ../src/Simulator/Actuators/../../Devices/EnOceanSensorAPI.h \
+ ../src/Simulator/Model/Room.h \
  ../src/Simulator/Sensors/SensorSimulatorTempHumi.h \
  ../src/Simulator/Sensors/SensorSimulator.h \
  ../src/Simulator/Actuators/EnOceanActuatorAirConditioning.h \
@@ -68,6 +69,8 @@ src/EnOcean2.d: ../src/EnOcean2.cpp \
 ../src/Simulator/Actuators/../Model/Room.h:
 
 ../src/Simulator/Actuators/../../Devices/EnOceanSensorAPI.h:
+
+../src/Simulator/Model/Room.h:
 
 ../src/Simulator/Sensors/SensorSimulatorTempHumi.h:
 

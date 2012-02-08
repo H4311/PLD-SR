@@ -39,7 +39,7 @@ void EnOceanAnalyser::analyse() {
 	long* timestamp;
 	EnOceanSensorAPI::SensorId id;
 	string dataS;
-	EnOceanCallbackFunction translator;
+	EnOceanSensorAPI::EnOceanCallbackFunction translator;
 	cout << "<Analyser> Ready.\n";
 	while ((getFlag() == true) && (messagesQueue->front(data, NULL)) == 0) {
 		cout << "<Analyser> Frame Received.\n";
