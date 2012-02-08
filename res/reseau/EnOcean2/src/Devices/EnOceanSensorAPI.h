@@ -15,6 +15,7 @@
 using namespace std;
 #include <map>
 #include <string>
+#include <mysql/mysql.h>
 //------------------------------------------------------ Personnal Include
 #include "EnOceanProtocol.h"
 
@@ -35,7 +36,7 @@ class EnOceanSensorAPI
 {
 public :
 	typedef int32_t SensorId;
-	typedef string (*EnOceanCallbackFunction)(enocean_data_structure* frame);
+	typedef string (*EnOceanCallbackFunction)(enocean_data_structure* frame, MYSQL* mysql, long long int timestamp);
 
 	typedef enum { ACT_A1 = 0, ACT_A0 = 1, ACT_B1 = 2, ACT_B0 = 3} RockerSwitchAction;
 	typedef enum { PRESSED = 0, RELEASED = 1} RockerSwitchEnergyBow;
@@ -77,29 +78,31 @@ public :
 	static void toFrame_Aeration(enocean_data_structure* frame, SensorId id, bool on, float val, float valMin, float valMax);
 
 // ---- SENSOR ----
-	static EnOceanCallbackFunction getFunctionPerType(int type);
+static EnOceanCallbackFunction getFunctionPerType(int type);
+
 
 // ---- CONTACT SENSOR ----
-	static string analyseContactSensor_EEP_06_00_01(enocean_data_structure* frame);
+	static string analyseContactSensor_EEP_06_00_01(enocean_data_structure* frame, MYSQL* mysql, long long int timestamp);
 
 // ---- ROCKER SWITCH ----
-	static string analyseRockerSwitch_EEP_05_02_01(enocean_data_structure* frame);
+	static string analyseRockerSwitch_EEP_05_02_01(enocean_data_structure* frame, MYSQL* mysql, long long int timestamp);
 
 // ---- TEMP SENSOR ----
-	static string analyseTempSensor(enocean_data_structure* frame, float minTemp, float maxTemp);
-	static string analyseTempSensor_EEP_07_02_05(enocean_data_structure* frame);
+	static string analyseTempSensor(enocean_data_structure* frame, float minTemp, float maxTemp, MYSQL* mysql, long long int timestamp);
+	static string analyseTempSensor_EEP_07_02_05(enocean_data_structure* frame, MYSQL* mysql, long long int timestamp);
 
 // ---- TEMP & HUMID SENSOR ----
-	static string analyseTempAndHumidSensor(enocean_data_structure* frame, float minTemp, float maxTemp);
-	static string analyseTempAndHumidSensor_EEP_07_04_01(enocean_data_structure* frame);
-	
+	static string analyseTempAndHumidSensor(enocean_data_structure* frame, float minTemp, float maxTemp, MYSQL* mysql, long long int timestamp);
+	static string analyseTempAndHumidSensor_EEP_07_04_01(enocean_data_structure* frame, MYSQL* mysql, long long int timestamp);
+
 // ---- LUM & OCC SENSOR ----
-	static string analyseLumAndOcc_EEP_07_08_01(enocean_data_structure* frame);
-	static string analyseLumAndOcc(enocean_data_structure* frame, float minLum, float maxLum, float minV, float maxV);
+	static string analyseLumAndOcc_EEP_07_08_01(enocean_data_structure* frame, MYSQL* mysql, long long int timestamp);
+	static string analyseLumAndOcc(enocean_data_structure* frame, float minLum, float maxLum, float minV, float maxV, MYSQL* mysql, long long int timestamp);
 
 // ---- CO2 GAS SENSOR ----
-	static string analyseCO2_EEP_07_09_01(enocean_data_structure* frame);
-	static string analyseC02(enocean_data_structure* frame, float minPPM, float maxPPM);
+	static string analyseCO2_EEP_07_09_01(enocean_data_structure* frame, MYSQL* mysql, long long int timestamp);
+	static string analyseC02(enocean_data_structure* frame, float minPPM, float maxPPM, MYSQL* mysql, long long int timestamp);
+
 
 // ---- BASIC FUNCTIONS ----
 	static RockerSwitchAction getRockerSwitchAction1st(enocean_data_structure* frame);

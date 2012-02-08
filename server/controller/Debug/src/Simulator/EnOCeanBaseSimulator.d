@@ -10,7 +10,8 @@ src/Simulator/EnOCeanBaseSimulator.d: \
  ../src/Simulator/Actuators/EnOceanActuator.h \
  ../src/Simulator/Actuators/Actuator.h \
  ../src/Simulator/Actuators/../Model/Room.h \
- ../src/Simulator/Actuators/../../Devices/EnOceanSensorAPI.h
+ ../src/Simulator/Actuators/../../Devices/EnOceanSensorAPI.h \
+ ../src/Simulator/Model/Room.h
 
 ../src/Simulator/EnOCeanBaseSimulator.h:
 
@@ -33,3 +34,5 @@ src/Simulator/EnOCeanBaseSimulator.d: \
 ../src/Simulator/Actuators/../Model/Room.h:
 
 ../src/Simulator/Actuators/../../Devices/EnOceanSensorAPI.h:
+
+../src/Simulator/Model/Room.h:

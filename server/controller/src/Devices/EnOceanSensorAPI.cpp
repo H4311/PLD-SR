@@ -14,12 +14,12 @@ using namespace std;
 #include <string>
 #include <sstream>
 #include <stdlib.h>
-#include <mysql/mysql.h>
-//------------------------------------------------------ Personnal Include
-#include "EnOceanSensorAPI.h"
 extern "C" {
 	#include "../Bdd/mysqlinsert.h"
 }
+//------------------------------------------------------ Personnal Include
+#include "EnOceanSensorAPI.h"
+
 //-------------------------------------------------------------- Constants
 
 //----------------------------------------------------------------- PUBLIC
@@ -77,35 +77,221 @@ extern "C" {
 		return id;
 	} //----- End of getEnOceanID
 
+	bool EnOceanSensorAPI::checkSyncBytes(enocean_data_structure* frame) {
+		return ((frame->SYNC_BYTE1 == 0xA5) && (frame->SYNC_BYTE2 == 0x5A));
+	}
+
+	void EnOceanSensorAPI::fillSyncBytes(enocean_data_structure * frame) {
+		frame->SYNC_BYTE2 = 0x5A;
+		frame->SYNC_BYTE1 = 0xA5;
+		return;
+	}
+
+	void EnOceanSensorAPI::fillHSeqLengthBytes(enocean_data_structure * frame, bool receivedMsg) {
+		frame->H_SEQ_LENGTH = receivedMsg?0x0B:0x6B;
+		return;
+	}
+
+	EnOceanSensorAPI::ORG EnOceanSensorAPI::getORG(enocean_data_structure* frame) {
+		return (ORG)frame->ORG;
+	}
+
+	void EnOceanSensorAPI::setORG(enocean_data_structure* frame, ORG org) {
+		frame->ORG = (BYTE)org;
+	}
+
+	int EnOceanSensorAPI::getRepeater(enocean_data_structure* frame) {
+		return frame->STATUS & 15;
+	}
+
+	void EnOceanSensorAPI::setRepeater(enocean_data_structure* frame, int rep) {
+		frame->STATUS &= 240;
+		frame->STATUS |= (rep%16);
+		return;
+	}
+
+	bool EnOceanSensorAPI::checkSum(enocean_data_structure* frame) {
+		int sum = 0;
+		BYTE* byte = (BYTE*)frame;
+		for (unsigned int i = 0; i < 13; i++) {
+			sum += *byte;
+			byte += sizeof(BYTE);
+		}
+		sum = sum & 255; // Getting the last byte of the sum.
+		return (frame->CHECKSUM == sum);
+	}
+
+	void EnOceanSensorAPI::setCheckSum(enocean_data_structure* frame) {
+		int sum = 0;
+		BYTE* byte = (BYTE*)frame;
+		for (unsigned int i = 0; i < 13; i++) {
+			sum += *byte;
+			byte += sizeof(BYTE);
+		}
+		sum = sum & 255; // Getting the last byte of the sum.
+		frame->CHECKSUM = sum;
+		return;
+	}
+
+	bool EnOceanSensorAPI::checkValidity(enocean_data_structure* frame, EnOceanSensorAPI::ORG org) {
+		return (checkSyncBytes(frame) && checkSum(frame) && (getORG(frame) == org));
+	}
+
+	void EnOceanSensorAPI::setHeader(enocean_data_structure* frame, EnOceanSensorAPI::ORG org, bool received) {
+		fillSyncBytes(frame);
+		fillHSeqLengthBytes(frame, received);
+		setORG(frame, org);
+		return;
+	}
+
+
+// ---- ACTUATOR ----
+
+	void EnOceanSensorAPI::toFrame_Actuator(enocean_data_structure* frame, EnOceanSensorAPI::SensorId id, int type, bool switchOn, float value) {
+			switch (type) {
+			// Switch :
+			case 0x1050201 : { toFrame_Switch(frame, id, switchOn); break; }
+
+			// Air Cond :
+			case 0x1070201 : { toFrame_AirConditioning(frame, id, switchOn, value, -40.0, 0.0); break; }
+			case 0x1070202 : { toFrame_AirConditioning(frame, id, switchOn, value, -30.0, 10.0); break; }
+			case 0x1070203 : { toFrame_AirConditioning(frame, id, switchOn, value, -20.0, 20.0); break; }
+			case 0x1070204 : { toFrame_AirConditioning(frame, id, switchOn, value, -10.0, 30.0); break; }
+			case 0x1070205 : { toFrame_AirConditioning(frame, id, switchOn, value, 0.0, 40.0); break; }
+			case 0x1070206 : { toFrame_AirConditioning(frame, id, switchOn, value, 10.0, 50.0); break; }
+			case 0x1070207 : { toFrame_AirConditioning(frame, id, switchOn, value, 20.0, 60.0); break; }
+			case 0x1070208 : { toFrame_AirConditioning(frame, id, switchOn, value, 30.0, 70.0); break; }
+			case 0x1070209 : { toFrame_AirConditioning(frame, id, switchOn, value, 40.0, 80.0); break; }
+			case 0x107020A : { toFrame_AirConditioning(frame, id, switchOn, value, 50.0, 90.0); break; }
+			case 0x107020B : { toFrame_AirConditioning(frame, id, switchOn, value, 60.0, 100.0); break; }
+			case 0x1070210 : { toFrame_AirConditioning(frame, id, switchOn, value, -60.0, 20.0); break; }
+			case 0x1070211 : { toFrame_AirConditioning(frame, id, switchOn, value, -50.0, 30.0); break; }
+			case 0x1070212 : { toFrame_AirConditioning(frame, id, switchOn, value, -40.0, 40.0); break; }
+			case 0x1070213 : { toFrame_AirConditioning(frame, id, switchOn, value, -30.0, 50.0); break; }
+			case 0x1070214 : { toFrame_AirConditioning(frame, id, switchOn, value, -20.0, 60.0); break; }
+			case 0x1070215 : { toFrame_AirConditioning(frame, id, switchOn, value, -10.0, 70.0); break; }
+			case 0x1070216 : { toFrame_AirConditioning(frame, id, switchOn, value, 0.0, 80.0); break; }
+			case 0x1070217 : { toFrame_AirConditioning(frame, id, switchOn, value, 10.0, 90.0); break; }
+			case 0x1070218 : { toFrame_AirConditioning(frame, id, switchOn, value, 20.0, 100.0); break; }
+			case 0x1070219 : { toFrame_AirConditioning(frame, id, switchOn, value, 30.0, 110.0); break; }
+			case 0x107021A : { toFrame_AirConditioning(frame, id, switchOn, value, 40.0, 120.0); break; }
+			case 0x107021B : { toFrame_AirConditioning(frame, id, switchOn, value, 50.0, 130.0); break; }
+
+			// Light :
+			case 0x1070601 : { toFrame_Light(frame, id, switchOn, value, 300.0, 60000.0); break; }
+			case 0x1070602 : { toFrame_Light(frame, id, switchOn, value, 0.0, 1024.0); break; }
+
+			// Aeration :
+			case 0x1070901 : { toFrame_Aeration(frame, id, switchOn, value, 200.0, 1000.0); break; }
+
+			}
+		}
+
+	void EnOceanSensorAPI::toFrame_Switch(enocean_data_structure* frame, EnOceanSensorAPI::SensorId id, bool switchOn) {
+		EnOceanSensorAPI::setID(frame, id);
+		frame->SYNC_BYTE1 = 0;
+		frame->SYNC_BYTE2 = 0;
+		frame->H_SEQ_LENGTH = 0; ///< Header identification and number of octets following the header octet
+		frame->DATA_BYTE3 = (switchOn)? 0x70 : 0x50;
+		frame->DATA_BYTE2 = 0;
+		frame->DATA_BYTE1 = 0; ///< Data Byte 1
+		frame->DATA_BYTE0 = 0; ///< Data Byte 0
+		frame->STATUS = 0x30; ///< Status field
+		frame->CHECKSUM = 0;
+		setHeader(frame, ORG_RPS, false);
+		setCheckSum(frame);
+		return;
+	}
+
+	void  EnOceanSensorAPI::toFrame_AirConditioning(enocean_data_structure* frame, EnOceanSensorAPI::SensorId id, bool on, float temp, float tempMin, float tempMax) {
+		BYTE* byte = (BYTE*)(frame);
+		for (unsigned int i = 0; i < EnOceanSensorAPI::FRAME_SIZE/2; i++) {
+			*byte = 0;
+			byte += sizeof(BYTE);
+		}
+		EnOceanSensorAPI::setID(frame, (EnOceanSensorAPI::SensorId)id);
+		EnOceanSensorAPI::setTemperature(frame, temp, tempMin, tempMax);
+		frame->DATA_BYTE0 = on?(1<<3):(0<<3);
+
+		EnOceanSensorAPI::setHeader(frame, EnOceanSensorAPI::ORG_4BS, false);
+		EnOceanSensorAPI::setCheckSum(frame);
+
+		return;
+	}
+
+	void  EnOceanSensorAPI::toFrame_Light(enocean_data_structure* frame, EnOceanSensorAPI::SensorId id, bool on, float val, float minL, float maxL) {
+		BYTE* byte = (BYTE*)(frame);
+		for (unsigned int i = 0; i < EnOceanSensorAPI::FRAME_SIZE/2; i++) {
+			*byte = 0;
+			byte += sizeof(BYTE);
+		}
+		EnOceanSensorAPI::setID(frame, (EnOceanSensorAPI::SensorId)id);
+		EnOceanSensorAPI::setIlluminance(frame, val, minL, maxL);
+		frame->DATA_BYTE0 = on?(1<<3):(0<<3);
+		EnOceanSensorAPI::setHeader(frame, EnOceanSensorAPI::ORG_4BS, false);
+		EnOceanSensorAPI::setCheckSum(frame);
+
+		return;
+	}
+
+	void  EnOceanSensorAPI::toFrame_Aeration(enocean_data_structure* frame, EnOceanSensorAPI::SensorId id, bool on, float val, float valMin, float valMax) {
+		BYTE* byte = (BYTE*)(frame);
+		for (unsigned int i = 0; i < EnOceanSensorAPI::FRAME_SIZE/2; i++) {
+			*byte = 0;
+			byte += sizeof(BYTE);
+		}
+		EnOceanSensorAPI::setID(frame, (EnOceanSensorAPI::SensorId)id);
+		float multiplyer = (float)(valMax-valMin) / 255.0;
+		frame->DATA_BYTE3 = (BYTE)((val - (float)( (multiplyer>=0)? valMin : valMax )) / multiplyer);
+		frame->DATA_BYTE0 = on?(1<<3):(0<<3);
+		EnOceanSensorAPI::setHeader(frame, EnOceanSensorAPI::ORG_4BS, false);
+		EnOceanSensorAPI::setCheckSum(frame);
+
+		return;
+	}
+
+
+// ---- SENSOR ----
+	EnOceanSensorAPI::EnOceanCallbackFunction EnOceanSensorAPI::getFunctionPerType(int type) {
+		switch(type) {
+		case 0x0060001 : { return analyseContactSensor_EEP_06_00_01; }
+		case 0x0050201 : { return analyseRockerSwitch_EEP_05_02_01; }
+		case 0x0070205 : { return analyseTempSensor_EEP_07_02_05; }
+		case 0x0070401 : { return analyseTempAndHumidSensor_EEP_07_04_01; }
+		case 0x0070801 : { return analyseLumAndOcc_EEP_07_08_01; }
+		case 0x0070901 : { return analyseCO2_EEP_07_09_01; }
+		}
+		return NULL;
+	}
 
 // ---- CONTACT SENSOR ----
 
-	string EnOceanSensorAPI::analyseContactSensor_D5_00_01(enocean_data_structure* frame, MYSQL* mysql, long long int timestamp) {
-			ostringstream oss;
-			bool isLearning, contact;
-			isLearning = (frame->DATA_BYTE0 >> 3) & 0;
-			contact = frame->DATA_BYTE0 & 1;
-			insertMesure(mysql, CAPTEUR_ENOCEAN, (int)getID(frame), timestamp, 0, (contact?1:0));
-			insertMesure(mysql, CAPTEUR_ENOCEAN, (int)getID(frame), timestamp, 1, (isLearning?1:0));
-			oss << "Contact : " << (contact?"Yes":"No") << " | Learning : " << (isLearning?"Yes":"No") << " >";
-			return oss.str();
-		} //----- End of analyseContactSensor_D5_00_01
+	string EnOceanSensorAPI::analyseContactSensor_EEP_06_00_01(enocean_data_structure* frame, MYSQL* mysql, long long int timestamp) {
+		ostringstream oss;
+		bool isLearning, contact;
+		isLearning = (frame->DATA_BYTE0 >> 3) & 0;
+		contact = frame->DATA_BYTE0 & 1;
+		insertMesure(mysql, CAPTEUR_ENOCEAN, (int)getID(frame), timestamp, 0, (contact?1:0));
+		insertMesure(mysql, CAPTEUR_ENOCEAN, (int)getID(frame), timestamp, 1, (isLearning?1:0));
+		oss << "Contact : " << (contact?"Yes":"No") << " | Learning : " << (isLearning?"Yes":"No") << " >";
+		return oss.str();
+	} //----- End of analyseContactSensor_D5_00_01
 
 
 // ---- ROCKER SWITCH ----
 
-	string EnOceanSensorAPI::analyseRockerSwitch_F6_02_01(enocean_data_structure* frame, MYSQL* mysql, long long int timestamp) {
-			ostringstream oss;
-			oss << "< " << getRockerSwitchAction1st(frame) << " | ";
-			oss << getRockerSwitchEnergyBow(frame) << " | ";
-			oss << getRockerSwitchAction2nd(frame) << " | ";
-			oss << isRockerSwitchAction2nd(frame) << " >";
-			insertMesure(mysql, CAPTEUR_ENOCEAN, (int)getID(frame), timestamp, 0, getRockerSwitchAction1st(frame));
-			insertMesure(mysql, CAPTEUR_ENOCEAN, (int)getID(frame), timestamp, 1, getRockerSwitchEnergyBow(frame));
-			insertMesure(mysql, CAPTEUR_ENOCEAN, (int)getID(frame), timestamp, 2, getRockerSwitchAction2nd(frame));
-			insertMesure(mysql, CAPTEUR_ENOCEAN, (int)getID(frame), timestamp, 3, isRockerSwitchAction2nd(frame));
-			return oss.str();
-		} //----- End of analyseRockerSwitch_F6_02_01
+	string EnOceanSensorAPI::analyseRockerSwitch_EEP_05_02_01(enocean_data_structure* frame, MYSQL* mysql, long long int timestamp) {
+		ostringstream oss;
+		oss << "< " << getRockerSwitchAction1st(frame) << " | ";
+		oss << getRockerSwitchEnergyBow(frame) << " | ";
+		oss << getRockerSwitchAction2nd(frame) << " | ";
+		oss << isRockerSwitchAction2nd(frame) << " >";
+		insertMesure(mysql, CAPTEUR_ENOCEAN, (int)getID(frame), timestamp, 0, getRockerSwitchAction1st(frame));
+		insertMesure(mysql, CAPTEUR_ENOCEAN, (int)getID(frame), timestamp, 1, getRockerSwitchEnergyBow(frame));
+		insertMesure(mysql, CAPTEUR_ENOCEAN, (int)getID(frame), timestamp, 2, getRockerSwitchAction2nd(frame));
+		insertMesure(mysql, CAPTEUR_ENOCEAN, (int)getID(frame), timestamp, 3, isRockerSwitchAction2nd(frame));
+		return oss.str();
+	} //----- End of analyseRockerSwitch_F6_02_01
 
 
 // ---- TEMP & HUMID SENSOR ----
@@ -178,6 +364,7 @@ extern "C" {
 			}
 			return oss.str();
 		} //----- End of analyseC02
+
 
 
 // ---- BASIC FUNCTIONS ----
@@ -281,3 +468,4 @@ extern "C" {
 		float multiplyer = (float)(maxPPM-minPPM) / 255.0;
 		frame->DATA_BYTE3 = (BYTE)((val - (float)( (multiplyer>=0)? minPPM : maxPPM )) / multiplyer);
 	}
+

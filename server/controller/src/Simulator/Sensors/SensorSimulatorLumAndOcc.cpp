@@ -106,7 +106,7 @@ void SensorSimulatorLumAndOcc::update() {
 
 
 //-------------------------------------------------- Builder / Destructor
-SensorSimulatorLumAndOcc::SensorSimulatorLumAndOcc(int id, Room* r, float minL, float maxL, float miV, float maV) : SensorSimulator(id, r), minLum(minL), maxLum(maxL), minV(miV), maxV(maV) {
+SensorSimulatorLumAndOcc::SensorSimulatorLumAndOcc(int id, Room* r, float minL, float maxL, float miV, float maV) : SensorSimulator(id, EnOceanSensorAPI::ORG_4BS, r), minLum(minL), maxLum(maxL), minV(miV), maxV(maV) {
 //	illuminance = rand()%(int)(maxLum-minLum) - minLum;
 //	voltage = rand()%(int)(maxV-minV) - minV;
 //	pirStatus = false;

@@ -5,17 +5,14 @@
 # Add inputs and outputs from these tool invocations to the build variables 
 CPP_SRCS += \
 ../src/Devices/DeviceTable.cpp \
-../src/Devices/EnOceanActuatorAPI.cpp \
 ../src/Devices/EnOceanSensorAPI.cpp 
 
 OBJS += \
 ./src/Devices/DeviceTable.o \
-./src/Devices/EnOceanActuatorAPI.o \
 ./src/Devices/EnOceanSensorAPI.o 
 
 CPP_DEPS += \
 ./src/Devices/DeviceTable.d \
-./src/Devices/EnOceanActuatorAPI.d \
 ./src/Devices/EnOceanSensorAPI.d 
 
 

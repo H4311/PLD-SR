@@ -13,9 +13,14 @@
 using namespace std;
 #include <stdio.h>
 #include <iostream>
+#include <mysql/mysql.h>
 
 //------------------------------------------------------ Personnal Include
 #include "EnOceanAnalyser.h"
+extern "C" {
+	#include "../Bdd/mysqlinsert.h"
+}
+
 
 //-------------------------------------------------------------- Constants
 
@@ -34,12 +39,16 @@ void EnOceanAnalyser::setMessagesQueue(EnOceanMsgQueue* mQ) {
 } //----- End of setMessagesQueue
 
 void EnOceanAnalyser::analyse() {
-	pair<enocean_data_structure*, long*>* data;
+	pair<enocean_data_structure*, long long*>* data;
 	enocean_data_structure* frame;
-	long* timestamp;
+	long long* timestamp;
 	EnOceanSensorAPI::SensorId id;
 	string dataS;
 	EnOceanSensorAPI::EnOceanCallbackFunction translator;
+
+	//For each thread :
+	MYSQL* mysql = connectToMysql();
+
 	cout << "<Analyser> Ready.\n";
 	while ((getFlag() == true) && (messagesQueue->front(data, NULL)) == 0) {
 		cout << "<Analyser> Frame Received.\n";
@@ -49,16 +58,19 @@ void EnOceanAnalyser::analyse() {
 		cout << "<Analyser> ID : " << id << endl;
 		if ((translator = periph->find(id)) != NULL) { // If it is a sensor we use :
 			cout << "<Analyser> Sensor identified.\n";
-			dataS = translator(frame);
+			dataS = translator(frame, mysql, *timestamp);
 			cout << "<Analyser> Extraction : " << dataS << " | Time : " << *timestamp << "s.\n"; // TO DO : Log
 		}
+
 		cout << "<Analyser> Frame processed.\n";
 		free(frame);
 		free(timestamp);
 		free(data);
 		messagesQueue->pop();
 	}
-	
+
+	closeMysql(mysql);
+
 } //----- End of analyse
 
 
@@ -104,5 +116,3 @@ EnOceanAnalyser::~EnOceanAnalyser() {
 //---------------------------------------------------------------- PRIVATE
 
 //------------------------------------------------------ Protected Methods
-
-

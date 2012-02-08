@@ -50,6 +50,7 @@ public:
 
 //------------------------------------------------- Static public Methods
 
+	static Actuator* createActuator(int id, int type);
 //------------------------------------------------------------- Operators
 
 //-------------------------------------------------- Builder / Destructor

@@ -103,17 +103,19 @@ void EnOCeanBaseSimulator::addSensor(SensorSimulator* sensor) {
 	pthread_mutex_unlock(&mutex);
 }
 
-void EnOCeanBaseSimulator::delSensor(EnOceanSensorAPI::SensorId id) {
+bool EnOCeanBaseSimulator::delSensor(EnOceanSensorAPI::SensorId id) {
 	pthread_mutex_lock(&mutex);
 
 	for (vector<SensorSimulator*>::iterator it=sensors.begin() ; it < sensors.end(); it++ )
     {
 		if ((*it)->getId() == (EnOceanSensorAPI::SensorId)id) {
 			sensors.erase(it);
-			return;
+			pthread_mutex_unlock(&mutex);
+			return true;
 		}
 	}
 	pthread_mutex_unlock(&mutex);
+	return false;
 }
 
 int EnOCeanBaseSimulator::countSensors() {
@@ -130,17 +132,19 @@ void EnOCeanBaseSimulator::addActuator(Actuator* a) {
 	pthread_mutex_unlock(&mutex);
 }
 
-void EnOCeanBaseSimulator::delActuator(int id) {
+bool EnOCeanBaseSimulator::delActuator(int id) {
 	pthread_mutex_lock(&mutex);
 
 	for (vector<Actuator*>::iterator it=actuators.begin() ; it < actuators.end(); it++ )
     {
 		if ((*it)->getID() == id) {
 			actuators.erase(it);
-			return;
+			pthread_mutex_unlock(&mutex);
+			return true;
 		}
 	}
 	pthread_mutex_unlock(&mutex);
+	return false;
 }
 
 int EnOCeanBaseSimulator::countActuators() {
@@ -149,6 +153,49 @@ int EnOCeanBaseSimulator::countActuators() {
 	ret = actuators.size();
 	pthread_mutex_unlock(&mutex);
 	return ret;
+}
+
+void EnOCeanBaseSimulator::addRoom(Room* r) {
+	pthread_mutex_lock(&mutex);
+	rooms.push_back(r);
+	pthread_mutex_unlock(&mutex);
+}
+
+bool EnOCeanBaseSimulator::delRoom(int id) {
+	pthread_mutex_lock(&mutex);
+
+	for (vector<Room*>::iterator it=rooms.begin() ; it < rooms.end(); it++ )
+    {
+		if ((*it)->getId() == id) {
+			rooms.erase(it);
+			pthread_mutex_unlock(&mutex);
+			return true;
+		}
+	}
+	pthread_mutex_unlock(&mutex);
+	return false;
+}
+
+int EnOCeanBaseSimulator::countRooms() {
+	int ret;
+	pthread_mutex_lock(&mutex);
+	ret = rooms.size();
+	pthread_mutex_unlock(&mutex);
+	return ret;
+}
+
+Room* EnOCeanBaseSimulator::findRoom(int id) {
+	Room* r = NULL;
+	pthread_mutex_lock(&mutex);
+	for (vector<Room*>::iterator it=rooms.begin() ; it < rooms.end(); it++ )
+	{
+		if ((*it)->getId() == id) {
+			r = (*it);
+			break;
+		}
+	}
+	pthread_mutex_unlock(&mutex);
+	return r;
 }
 
 float EnOCeanBaseSimulator::updateSensors() {

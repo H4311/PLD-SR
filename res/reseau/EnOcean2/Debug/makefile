@@ -18,6 +18,7 @@ RM := rm -rf
 -include src/EnOceanClient/subdir.mk
 -include src/subdir.mk
 -include src/Devices/subdir.mk
+-include src/Bdd/subdir.mk
 -include objects.mk
 
 ifneq ($(MAKECMDGOALS),clean)

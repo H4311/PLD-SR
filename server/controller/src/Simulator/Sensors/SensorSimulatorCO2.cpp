@@ -35,7 +35,7 @@ void SensorSimulatorCO2::update() {
 
 
 //-------------------------------------------------- Builder / Destructor
-SensorSimulatorCO2::SensorSimulatorCO2(int id, Room* r, float minp, float maxp) : SensorSimulator(id, r), ppmMin(minp), ppmMax(maxp) {
+SensorSimulatorCO2::SensorSimulatorCO2(int id, Room* r, float minp, float maxp) : SensorSimulator(id, EnOceanSensorAPI::ORG_4BS, r), ppmMin(minp), ppmMax(maxp) {
 	float t = room->getCO2Level();
 	EnOceanSensorAPI::setCO2Level(&frame, t, ppmMin, ppmMax);
 	cout << "<Sensor Simu n°" << id << "> Créé - " << t << "ppm [" << ppmMin << "; " << ppmMax << "]\n";

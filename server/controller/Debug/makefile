@@ -8,16 +8,17 @@ RM := rm -rf
 
 # All of the sources participating in the build are defined here
 -include sources.mk
+-include subdir.mk
 -include src/Trash/subdir.mk
+-include src/Simulator/subdir.mk
 -include src/Simulator/Sensors/subdir.mk
 -include src/Simulator/Model/subdir.mk
 -include src/Simulator/Actuators/subdir.mk
--include src/Simulator/subdir.mk
+-include src/Libs/jsoncpp-src-amalgamation0.6.0-rc2/subdir.mk
 -include src/EnOceanClient/subdir.mk
+-include src/subdir.mk
 -include src/Devices/subdir.mk
 -include src/Bdd/subdir.mk
--include src/subdir.mk
--include subdir.mk
 -include objects.mk
 
 ifneq ($(MAKECMDGOALS),clean)
@@ -52,7 +53,7 @@ all: EnOcean2
 EnOcean2: $(OBJS) $(USER_OBJS)
 	@echo 'Building target: $@'
 	@echo 'Invoking: GCC C++ Linker'
-	g++  -o "EnOcean2" $(OBJS) $(USER_OBJS) $(LIBS)
+	g++  -o"EnOcean2" $(OBJS) $(USER_OBJS) $(LIBS)
 	@echo 'Finished building target: $@'
 	@echo ' '
 

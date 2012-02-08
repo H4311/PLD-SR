@@ -49,11 +49,13 @@ public:
 
 //------------------------------------------------- Static public Methods
 
+	static SensorSimulator* createSensorSimulator(int id, int type, Room* room);
+
 //------------------------------------------------------------- Operators
 
 //-------------------------------------------------- Builder / Destructor
 
-	SensorSimulator(int id, Room* room);
+	SensorSimulator(int id, EnOceanSensorAPI::ORG org, Room* room);
 	virtual ~SensorSimulator();
 
 //---------------------------------------------------------------- PRIVATE
@@ -67,7 +69,8 @@ private:
 protected:
 //-------------------------------------------------- Protected Attributes
 
-	EnOceanSensorAPI::SensorId id;					// ID
+	EnOceanSensorAPI::SensorId id;	// ID
+	EnOceanSensorAPI::ORG org;
 	pthread_mutex_t mutex; 			// Mutex to protect this value
 	enocean_data_structure frame; 	// Frame to ben sent
 	Room *room;						// Room where is the sensor
