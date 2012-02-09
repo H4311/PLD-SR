@@ -6,6 +6,7 @@ htmlHandler = {};
 serviceHandler = {};
 serviceHandler["/sensors"] = services.sensors;
 serviceHandler["/actuators"] = services.actuators;
+serviceHandler["/patients"] = services.patients;
 
 // Start HTML Web Server :
 server.start(8080, htmlHandler, server.routeHttp);

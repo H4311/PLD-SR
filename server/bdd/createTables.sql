@@ -1,6 +1,6 @@
 USE pld;
 
-DROP TABLE IF EXISTS capteurs, mesures, pieces, patients, actionneurs, actionneurSujet;
+DROP TABLE IF EXISTS actionneurs, actionneurSujet, pieces, patients, mesures, capteurs ;
 
 CREATE TABLE actionneurs (
 	id INTEGER PRIMARY KEY AUTO_INCREMENT,
@@ -37,7 +37,7 @@ CREATE TABLE capteurs (
 	isGlobal BOOLEAN,
 	idSujet INTEGER,
 	UNIQUE (type, numeroCapteur),
-	FOREIGN KEY (idPatient) REFERENCES patients (id) 
+	FOREIGN KEY (idSujet) REFERENCES patients (id) 
 );
 
 CREATE TABLE mesures (
