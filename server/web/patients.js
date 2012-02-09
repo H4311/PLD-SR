@@ -8,7 +8,8 @@ function sqlConnect() {
 /*
  * REQUEST :
  * ============================================================================
- *	empty
+ * {} // in order to get all the patients
+ * {"id":1} // in order to retrieve infos on patient 1
  * ============================================================================
  *
  * RESPONSE :
@@ -29,7 +30,7 @@ function sqlConnect() {
 	}
  * ============================================================================
  */
-function getPatients(callback) {
+function getPatients(param, callback) {
 
 	// Construct the SQL query :
 	var sql_req = squel.select()
@@ -39,6 +40,10 @@ function getPatients(callback) {
 		.field("raisonHospitalisation")
 		.field("idPiece")
 		.from("patients");
+		
+	if (param.id) {
+		sql_req.where("id = '" + param.id + "'");
+	}
 	
 	// Send the query to SQL DB :
 	var db = sqlConnect();
@@ -49,7 +54,6 @@ function getPatients(callback) {
 		callback(result);
 		sql.close(db);
 	});
-
 }
 
 exports.getPatients = getPatients;

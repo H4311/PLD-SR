@@ -2,6 +2,7 @@ var mysql = require("mysql-native");
 
 function sqlCreateClient(address, user, passwd, dbname) {
 	var db = mysql.createTCPClient(address);
+	db.set("charset", "utf8");
 	db.auto_prepare = true;
 	db.auth(dbname, user, passwd);
 	return db;
