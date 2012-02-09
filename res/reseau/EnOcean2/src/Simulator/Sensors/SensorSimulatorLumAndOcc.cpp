@@ -17,6 +17,7 @@ using namespace std;
 //------------------------------------------------------ Personnal Include
 #include "SensorSimulatorLumAndOcc.h"
 #include "../../Devices/EnOceanSensorAPI.h"
+#include "../Model/Room.h"
 //-------------------------------------------------------------- Constants
 
 //----------------------------------------------------------------- PUBLIC
@@ -92,7 +93,11 @@ void SensorSimulatorLumAndOcc::update() {
 //	float voltage = t;
 //	if (voltage > maxV) { t = maxV; }
 //	else if (voltage < minV) { t = minV; }
-	float illuminance = room->getLuminosity();
+	float illuminance = 0;
+	Room* room = dynamic_cast<Room*>(subject);
+	if (room != 0) {
+		illuminance = room->getLuminosity();
+	}
 	if (illuminance > maxLum) { illuminance = maxLum; }
 	else if (illuminance < minLum) { illuminance = minLum; }
 	EnOceanSensorAPI::setIlluminance(&frame, illuminance, minLum, maxLum);
@@ -106,12 +111,18 @@ void SensorSimulatorLumAndOcc::update() {
 
 
 //-------------------------------------------------- Builder / Destructor
-SensorSimulatorLumAndOcc::SensorSimulatorLumAndOcc(int id, Room* r, float minL, float maxL, float miV, float maV) : SensorSimulator(id, r), minLum(minL), maxLum(maxL), minV(miV), maxV(maV) {
+SensorSimulatorLumAndOcc::SensorSimulatorLumAndOcc(int id, Subject* r, float minL, float maxL, float miV, float maV) : SensorSimulator(id, EnOceanSensorAPI::ORG_4BS, r), minLum(minL), maxLum(maxL), minV(miV), maxV(maV) {
 //	illuminance = rand()%(int)(maxLum-minLum) - minLum;
 //	voltage = rand()%(int)(maxV-minV) - minV;
 //	pirStatus = false;
 //	occupancy = false;
-	EnOceanSensorAPI::setIlluminance(&frame, room->getLuminosity(), minLum, maxLum);
+	float t = 0;
+	Room* room = dynamic_cast<Room*>(r);
+	if (room != 0) {
+		t = room->getLuminosity();
+	} else { subject = NULL; }
+
+	EnOceanSensorAPI::setIlluminance(&frame, t, minLum, maxLum);
 	EnOceanSensorAPI::setVoltage(&frame, maxV, minV, maxV);
 	EnOceanSensorAPI::setOccupancy(&frame, room->getOccupancy());
 	EnOceanSensorAPI::setPIRStatus(&frame, room->getPIRStatus());

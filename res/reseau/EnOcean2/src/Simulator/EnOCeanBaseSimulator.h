@@ -22,6 +22,7 @@ using namespace std;
 #include "Sensors/SensorSimulator.h"
 #include "ServerSimulator.h"
 #include "Actuators/EnOceanActuator.h"
+#include "Model/Subject.h"
 //------------------------------------------------------------- Constantes
 
 //------------------------------------------------------------------ Types
@@ -42,12 +43,17 @@ public:
 //--------------------------------------------------------- Public Methods
 
 	void addSensor(SensorSimulator* sensor);
-	void delSensor(EnOceanSensorAPI::SensorId id);
+	bool delSensor(EnOceanSensorAPI::SensorId id);
 	int countSensors();
 
 	void addActuator(Actuator* sensor);
-	void delActuator(int id);
+	bool delActuator(int id);
 	int countActuators();
+
+	void addSubject(Subject* sensor);
+	bool delSubject(int id);
+	int countSubjects();
+	Subject* findSubject(int id);
 
 	float updateSensors();
 
@@ -96,6 +102,7 @@ protected:
 //-------------------------------------------------- Protected Attributes
 	vector<SensorSimulator*> sensors;
 	vector<Actuator*> actuators;
+	vector<Subject*> subjects;
 	pthread_mutex_t mutex;
 	ServerSimulator server;
 	pthread_t thread_Send;

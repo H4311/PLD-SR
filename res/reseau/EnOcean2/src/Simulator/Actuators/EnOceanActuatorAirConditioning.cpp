@@ -16,6 +16,7 @@ using namespace std;
 //------------------------------------------------------ Personnal Include
 #include "EnOceanActuatorAirConditioning.h"
 #include "../Sensors/SensorSimulatorTempHumi.h"
+#include "../Model/Room.h"
 //-------------------------------------------------------------- Constants
 
 //----------------------------------------------------------------- PUBLIC
@@ -38,10 +39,13 @@ void EnOceanActuatorAirConditioning::setTemperature(float e) {
 float EnOceanActuatorAirConditioning::update() {
 	pthread_mutex_lock(&mutex);
 	if (on) {
-		for(vector<Room*>::iterator it = rooms.begin(); it != rooms.end(); ++it) {
-			float t= (*it)->getTemperature();
-			float coef = (temperature - t) / t;
-			(*it)->setTemperature(t*(1+coef*energeticCostPerSecond/100.0));
+		for(vector<Subject*>::iterator it = subjects.begin(); it != subjects.end(); ++it) {
+			Room* room = dynamic_cast<Room*>((*it));
+			if (room != 0) {
+				float t= room->getTemperature();
+				float coef = (temperature - t) / t;
+				room->setTemperature(t*(1+coef*energeticCostPerSecond/100.0));
+			}
 		}
 		pthread_mutex_unlock(&mutex);
 		return energeticCostPerSecond;
@@ -60,19 +64,6 @@ void EnOceanActuatorAirConditioning::set(enocean_data_structure* frame)  {
 
 }
 
-enocean_data_structure EnOceanActuatorAirConditioning::toFrame(int id, bool on, float temp, float tempMin, float tempMax) {
-	enocean_data_structure frame;
-	BYTE* byte = (BYTE*)(&frame);
-	for (unsigned int i = 0; i < EnOceanSensorAPI::FRAME_SIZE/2; i++) {
-		*byte = 0;
-		byte += sizeof(BYTE);
-	}
-	EnOceanSensorAPI::setID(&frame, (EnOceanSensorAPI::SensorId)id);
-	EnOceanSensorAPI::setTemperature(&frame, temp, tempMin, tempMax);
-	frame.DATA_BYTE0 = on?(1<<3):(0<<3);
-
-	return frame;
-}
 //------------------------------------------------- Static public Methods
 
 //------------------------------------------------------------- Operators

@@ -44,7 +44,7 @@ void EnOceanAnalyser::analyse() {
 	long long* timestamp;
 	EnOceanSensorAPI::SensorId id;
 	string dataS;
-	EnOceanCallbackFunction translator;
+	EnOceanSensorAPI::EnOceanCallbackFunction translator;
 
 	//For each thread :
 	MYSQL* mysql = connectToMysql();
@@ -68,7 +68,7 @@ void EnOceanAnalyser::analyse() {
 		free(data);
 		messagesQueue->pop();
 	}
-	
+
 	closeMysql(mysql);
 
 } //----- End of analyse
@@ -116,4 +116,3 @@ EnOceanAnalyser::~EnOceanAnalyser() {
 //---------------------------------------------------------------- PRIVATE
 
 //------------------------------------------------------ Protected Methods
-

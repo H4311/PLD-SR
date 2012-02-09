@@ -5,16 +5,19 @@
 # Add inputs and outputs from these tool invocations to the build variables 
 CPP_SRCS += \
 ../src/Trash/Emettor.cpp \
+../src/Trash/EnOceanActuatorAPI.cpp \
 ../src/Trash/EnOceanDevice.cpp \
 ../src/Trash/EnOceanDevice_TempHumi.cpp 
 
 OBJS += \
 ./src/Trash/Emettor.o \
+./src/Trash/EnOceanActuatorAPI.o \
 ./src/Trash/EnOceanDevice.o \
 ./src/Trash/EnOceanDevice_TempHumi.o 
 
 CPP_DEPS += \
 ./src/Trash/Emettor.d \
+./src/Trash/EnOceanActuatorAPI.d \
 ./src/Trash/EnOceanDevice.d \
 ./src/Trash/EnOceanDevice_TempHumi.d 
 
@@ -23,7 +26,7 @@ CPP_DEPS += \
 src/Trash/%.o: ../src/Trash/%.cpp
 	@echo 'Building file: $<'
 	@echo 'Invoking: GCC C++ Compiler'
-	g++ -O0 -g3 -Wall -c -fmessage-length=0 -MMD -MP -MF"$(@:%.o=%.d)" -MT"$(@:%.o=%.d)" -o "$@" "$<"
+	g++ -O0 -g3 -Wall -c -fmessage-length=0 -MMD -MP -MF"$(@:%.o=%.d)" -MT"$(@:%.o=%.d)" -o"$@" "$<"
 	@echo 'Finished building: $<'
 	@echo ' '
 

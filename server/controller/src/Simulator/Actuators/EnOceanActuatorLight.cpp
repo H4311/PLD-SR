@@ -66,19 +66,6 @@ void EnOceanActuatorLight::set(enocean_data_structure* frame)  {
 
 }
 
-enocean_data_structure EnOceanActuatorLight::toFrame(int id, bool on, float val, float minL, float maxL) {
-	enocean_data_structure frame;
-	BYTE* byte = (BYTE*)(&frame);
-	for (unsigned int i = 0; i < EnOceanSensorAPI::FRAME_SIZE/2; i++) {
-		*byte = 0;
-		byte += sizeof(BYTE);
-	}
-	EnOceanSensorAPI::setID(&frame, (EnOceanSensorAPI::SensorId)id);
-	EnOceanSensorAPI::setIlluminance(&frame, val, minL, maxL);
-	frame.DATA_BYTE0 = on?(1<<3):(0<<3);
-
-	return frame;
-}
 //------------------------------------------------- Static public Methods
 
 //------------------------------------------------------------- Operators

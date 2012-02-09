@@ -26,7 +26,6 @@ using namespace std;
 //------------------------------------------------------------- Constantes
 
 //------------------------------------------------------------------ Types
-typedef string (*EnOceanCallbackFunction)(enocean_data_structure* frame, MYSQL* mysql, long long int timestamp);
 
 //------------------------------------------------------------------------
 // Description :
@@ -43,13 +42,20 @@ public:
 	static const int FRAME_SIZE = 8;
 	static const int QUEUE_SIZE = 0;
 //--------------------------------------------------------- Public Methods
-	int add(EnOceanSensorAPI::SensorId id, EnOceanCallbackFunction funct);
+	int add(EnOceanSensorAPI::SensorId id, EnOceanSensorAPI::EnOceanCallbackFunction funct);
 	// Manual :
     //		Add a driver to the list.
     // Contract :
     //		/
 
-	EnOceanCallbackFunction find(EnOceanSensorAPI::SensorId id);
+	bool del(EnOceanSensorAPI::SensorId id);
+	// Manual :
+	//		Delete a driver from the list. Return true if deleted.
+	// Contract :
+	//		/
+
+
+	EnOceanSensorAPI::EnOceanCallbackFunction find(EnOceanSensorAPI::SensorId id);
 	// Manual :
     //		Returns the Process-function corresponding to the device's id (or NULL if not found).
     // Contract :
@@ -74,7 +80,7 @@ private:
 
 protected:
 //-------------------------------------------------- Protected Attributes
-	map<EnOceanSensorAPI::SensorId, EnOceanCallbackFunction> drivers;
+	map<EnOceanSensorAPI::SensorId, EnOceanSensorAPI::EnOceanCallbackFunction> drivers;
 	pthread_mutex_t mutex;
 
 private:

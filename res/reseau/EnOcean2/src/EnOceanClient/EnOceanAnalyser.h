@@ -85,7 +85,7 @@ public:
 protected:
 //------------------------------------------------------ Protected Methods
 	bool getFlag();
-	
+
 private:
 //----------------------------------------------------- Protected Methods
 

@@ -24,17 +24,21 @@
 <tool id="cdt.managedbuild.tool.gnu.cpp.compiler.exe.debug.431971540" name="GCC C++ Compiler" superClass="cdt.managedbuild.tool.gnu.cpp.compiler.exe.debug">
 <option id="gnu.cpp.compiler.exe.debug.option.optimization.level.2116631399" name="Optimization Level" superClass="gnu.cpp.compiler.exe.debug.option.optimization.level" value="gnu.cpp.compiler.optimization.level.none" valueType="enumerated"/>
 <option id="gnu.cpp.compiler.exe.debug.option.debugging.level.527594456" name="Debug Level" superClass="gnu.cpp.compiler.exe.debug.option.debugging.level" value="gnu.cpp.compiler.debugging.level.max" valueType="enumerated"/>
+<option id="gnu.cpp.compiler.option.other.other.1872877957" name="Other flags" superClass="gnu.cpp.compiler.option.other.other" value="-c -fmessage-length=0 " valueType="string"/>
+<option id="gnu.cpp.compiler.option.include.paths.487124272" name="Include paths (-I)" superClass="gnu.cpp.compiler.option.include.paths" valueType="includePath"/>
 <inputType id="cdt.managedbuild.tool.gnu.cpp.compiler.input.1234510595" superClass="cdt.managedbuild.tool.gnu.cpp.compiler.input"/>
 </tool>
 <tool id="cdt.managedbuild.tool.gnu.c.compiler.exe.debug.1533839471" name="GCC C Compiler" superClass="cdt.managedbuild.tool.gnu.c.compiler.exe.debug">
 <option defaultValue="gnu.c.optimization.level.none" id="gnu.c.compiler.exe.debug.option.optimization.level.1707408787" name="Optimization Level" superClass="gnu.c.compiler.exe.debug.option.optimization.level" valueType="enumerated"/>
 <option id="gnu.c.compiler.exe.debug.option.debugging.level.1523375658" name="Debug Level" superClass="gnu.c.compiler.exe.debug.option.debugging.level" value="gnu.c.debugging.level.max" valueType="enumerated"/>
+<option id="gnu.c.compiler.option.misc.other.1923268951" name="Other flags" superClass="gnu.c.compiler.option.misc.other" value="-c -fmessage-length=0" valueType="string"/>
 <inputType id="cdt.managedbuild.tool.gnu.c.compiler.input.686467037" superClass="cdt.managedbuild.tool.gnu.c.compiler.input"/>
 </tool>
 <tool id="cdt.managedbuild.tool.gnu.c.linker.exe.debug.1655156362" name="GCC C Linker" superClass="cdt.managedbuild.tool.gnu.c.linker.exe.debug"/>
 <tool id="cdt.managedbuild.tool.gnu.cpp.linker.exe.debug.1774266212" name="GCC C++ Linker" superClass="cdt.managedbuild.tool.gnu.cpp.linker.exe.debug">
-<option id="gnu.cpp.link.option.libs.515014937" superClass="gnu.cpp.link.option.libs" valueType="libs">
+<option id="gnu.cpp.link.option.libs.515014937" name="Libraries (-l)" superClass="gnu.cpp.link.option.libs" valueType="libs">
 <listOptionValue builtIn="false" value="pthread"/>
+<listOptionValue builtIn="false" value="mysqlclient"/>
 </option>
 <inputType id="cdt.managedbuild.tool.gnu.cpp.linker.input.1246319841" superClass="cdt.managedbuild.tool.gnu.cpp.linker.input">
 <additionalInput kind="additionalinputdependency" paths="$(USER_OBJS)"/>
@@ -47,7 +51,7 @@
 </toolChain>
 </folderInfo>
 <sourceEntries>
-<entry flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name="src"/>
+<entry excluding="Libs/jsoncpp-src-0.5.0/src" flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name="src"/>
 </sourceEntries>
 </configuration>
 </storageModule>
@@ -511,7 +515,7 @@
 </toolChain>
 </folderInfo>
 <sourceEntries>
-<entry flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name="src"/>
+<entry excluding="Libs/jsoncpp-src-0.5.0/src" flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name="src"/>
 </sourceEntries>
 </configuration>
 </storageModule>

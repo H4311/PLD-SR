@@ -2,7 +2,7 @@ var squel = require("squel");
 var sql = require("./nodesql");
 
 function sqlConnect() {
-	return sql.createClient("localhost", "root", "root", "test");
+	return sql.createClient("localhost", "rithm", "rithm", "pld");
 }
 
 /*
@@ -96,7 +96,7 @@ function getSensorsRecords(param, callback) {
 			var record = {};
 				record.time	= new Date(hit["time"])
 					.toString("yyyy/MM/dd HH:mm:ss");
-				record.value = hit[mesure];
+				record.value = hit["mesure"];
 			response.records[id].push(record);
 		}
 		
@@ -106,3 +106,5 @@ function getSensorsRecords(param, callback) {
 	});
 
 }
+
+exports.getSensorsRecords = getSensorsRecords;

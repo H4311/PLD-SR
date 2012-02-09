@@ -1,4 +1,4 @@
-var model = require("./model");
+var model = require("./sensors");
 
 function error(code, resp) {
 	var result = {};
@@ -17,12 +17,18 @@ function error(code, resp) {
 	resp.end(jsonResult);
 }
 
+// Adds the header indicating all went sucessfully.
+function writeHeaders(resp) {
+	resp.writeHead(200, {"Content-type" : "application/json", 
+			     "Access-Control-Allow-Origin":"*"});
+}
+
 /*
  * SERVICE Sensors
  * Gets records from sensors, allows to specify an interval.
  */
 function serviceSensors(query, post, resp) {
-	resp.writeHead(200, {"Content-type" : "application/json"});
+	writeHeaders(resp);
 	
 	// Parse the json request in POST data :
 	request = JSON.parse(post);
@@ -44,10 +50,34 @@ function serviceSensors(query, post, resp) {
  * Allows to pass values to actuators.
  */
 function serviceActuators(query, post, resp) {
-	resp.writeHead(200, {"Content-type" : "application/json"});
+	writeHeaders(resp);
 	
 	// Parse the json POST request
 	request = JSON.parse(post);
+	if(!request) {
+		error(0, resp);
+		return;
+	}
+	
+	var result = {};
+	
+	var strResult = JSON.stringify(result);
+	resp.end(strResult);
+}
+
+/*
+ * SERVICE Admin
+ * Allows to add/remove sensors/actuators.
+ */
+function serviceAdmin(query, post, resp) {
+	writeHeaders(resp);
+	
+	// Parse the json POST request
+	request = JSON.parse(post);
+	if(!request) {
+		error(0, resp);
+		return;
+	}
 	
 	var result = {};
 	

@@ -28,6 +28,7 @@ src/Simulator \
 src/Simulator/Sensors \
 src/Simulator/Model \
 src/Simulator/Actuators \
+src/Libs/jsoncpp-src-amalgamation0.6.0-rc2 \
 src/EnOceanClient \
 src \
 src/Devices \

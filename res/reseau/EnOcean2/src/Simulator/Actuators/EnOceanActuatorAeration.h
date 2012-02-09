@@ -45,7 +45,6 @@ public:
 
 
 //------------------------------------------------- Static public Methods
-	static enocean_data_structure toFrame(int id, bool on, float power, float powerMin, float powerMax);
 
 //------------------------------------------------------------- Operators
 
@@ -65,9 +64,9 @@ private:
 protected:
 //-------------------------------------------------- Protected Attributes
 
-	float power;		// Chosen power
-	float powerMin;
-	float powerMax;
+	float co2ppm;		// Chosen power
+	float ppmMin;
+	float ppmMax;
 
 private:
 //----------------------------------------------------- Private Attributes
