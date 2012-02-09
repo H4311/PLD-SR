@@ -2,7 +2,7 @@
 var net = require('net');
 
 function connectClient() {
-	return net.connect(1234, "localhost");
+	return net.createConnection(1234, "localhost");
 }
 
 /*
@@ -31,7 +31,13 @@ function addDevice(param, callback) {
 	var client = connectClient();
 	client.on("connect", function() {
 		console.log("[addDevice] Connected to server");
-		client.write(JSON.stringify(query));
+		client.write(JSON.stringify(query), function() {
+			// Construct json response :
+			var response = {};
+			response.status = "ok";
+			callback(response);
+			client.end();
+		});
 	});
 }
 
@@ -45,7 +51,13 @@ function removeDevice(param, callback) {
 	var client = connectClient();
 	client.on("connect", function() {
 		console.log("[addDevice] Connected to server");
-		client.write(JSON.stringify(query));
+		client.write(JSON.stringify(query), function() {
+			// Construct json response :
+			var response = {};
+			response.status = "ok";
+			callback(response);
+			client.end();
+		});
 	});
 }
 
