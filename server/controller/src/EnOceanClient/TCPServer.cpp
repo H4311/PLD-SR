@@ -55,11 +55,11 @@ int TCPServer::openSocket (int port)
 int TCPServer::acceptClient () {
 	int s;
 	pthread_mutex_lock(&mutex);
-	if (sockClient == 0) {
+	if (sockClient <= 0) {
 		struct sockaddr_in cli_addr;
 		socklen_t clilen = sizeof(struct sockaddr_in);
 		s = accept(sockfd, (struct sockaddr *) &cli_addr, &clilen);
-		cout << "<TCP Server> Client accepté.\n";
+		cout << "<TCP Server> Client accepté. " << s << endl;
 		sockClient = s;
 	}
 	else {

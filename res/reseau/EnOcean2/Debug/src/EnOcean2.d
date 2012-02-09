@@ -28,7 +28,9 @@ src/EnOcean2.d: ../src/EnOcean2.cpp \
  ../src/Simulator/Actuators/../Model/Room.h \
  ../src/Simulator/Actuators/../Model/Subject.h \
  ../src/Devices/DeviceTable.h ../src/Devices/EnOceanSensorAPI.h \
- ../src/Simulator/Model/Subject.h
+ ../src/Simulator/Model/Subject.h ../src/EnOceanClient/ServerSettings.h \
+ ../src/EnOceanClient/../Simulator/EnOCeanBaseSimulator.h \
+ ../src/EnOceanClient/TCPServer.h
 
 ../src/EnOceanClient/EnOceanReceptor.h:
 
@@ -93,3 +95,9 @@ src/EnOcean2.d: ../src/EnOcean2.cpp \
 ../src/Devices/EnOceanSensorAPI.h:
 
 ../src/Simulator/Model/Subject.h:
+
+../src/EnOceanClient/ServerSettings.h:
+
+../src/EnOceanClient/../Simulator/EnOCeanBaseSimulator.h:
+
+../src/EnOceanClient/TCPServer.h:

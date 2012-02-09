@@ -9,7 +9,7 @@ MYSQL* connectToMysql() {
 		puts("Erreur de mysql_init");
 	}
 
-	if (!mysql_real_connect(mysql,"localhost","rithm","rithm","pld",0,NULL,0)) {
+	if (!mysql_real_connect(mysql,"localhost","hexanome","hexanome","pld",0,NULL,0)) {
 		fprintf(stderr, "Error: failed to connect to database (%s)\n", mysql_error(mysql));
 	}
 	return mysql;
@@ -19,10 +19,9 @@ void closeMysql(MYSQL* mysql) {
 	mysql_close(mysql);
 }
 
-void insertCapteur(MYSQL* mysql, int type, int numeroCapteur, int idPatient, int isGlobal, int idSujet) {
-	char s[128];
-	sprintf(s, "INSERT INTO capteurs (type, numeroCapteur, idPatient, isGlobal, idSujet) VALUES (%d, %d, %d, %s, %d)",
-			type, numeroCapteur, idPatient, (isGlobal == 1 ? "true" : "false"), idSujet);
+void insertCapteur(MYSQL* mysql, int type, int numeroCapteur) {
+	char s[64];
+	sprintf(s, "INSERT INTO capteurs (type, numeroCapteur) VALUES (%d, %d)", type, numeroCapteur);
 
 	if(mysql_query(mysql, s)) {
 		printf("Erreur: insert (%s)\n", mysql_error(mysql));

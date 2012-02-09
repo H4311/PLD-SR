@@ -184,6 +184,14 @@ extern "C" {
 			// Aeration :
 			case 0x1070901 : { toFrame_Aeration(frame, id, switchOn, value, 200.0, 1000.0); break; }
 
+			// Sprinkler :
+			case 0x1070A01 : { toFrame_Sprinkler(frame, id, switchOn, value, 0.0, 10.0); break; }
+
+			// Pain-killer :
+			case 0x1070B01 : { toFrame_PainKiller(frame, id, switchOn, value, 0.0, 10.0); break; }
+
+			// Defibrillator :
+			case 0x1070C01 : { toFrame_Defibrillator(frame, id, switchOn, value, 0.0, 10.0); break; }
 			}
 		}
 
@@ -250,6 +258,53 @@ extern "C" {
 		return;
 	}
 
+	void  EnOceanSensorAPI::toFrame_Sprinkler(enocean_data_structure* frame, EnOceanSensorAPI::SensorId id, bool on, float val, float valMin, float valMax) {
+		BYTE* byte = (BYTE*)(frame);
+		for (unsigned int i = 0; i < EnOceanSensorAPI::FRAME_SIZE/2; i++) {
+			*byte = 0;
+			byte += sizeof(BYTE);
+		}
+		EnOceanSensorAPI::setID(frame, (EnOceanSensorAPI::SensorId)id);
+		float multiplyer = (float)(valMax-valMin) / 255.0;
+		frame->DATA_BYTE3 = (BYTE)((val - (float)( (multiplyer>=0)? valMin : valMax )) / multiplyer);
+		frame->DATA_BYTE0 = on?(1<<3):(0<<3);
+		EnOceanSensorAPI::setHeader(frame, EnOceanSensorAPI::ORG_4BS, false);
+		EnOceanSensorAPI::setCheckSum(frame);
+
+		return;
+	}
+
+	void  EnOceanSensorAPI::toFrame_PainKiller(enocean_data_structure* frame, EnOceanSensorAPI::SensorId id, bool on, float val, float valMin, float valMax) {
+		BYTE* byte = (BYTE*)(frame);
+		for (unsigned int i = 0; i < EnOceanSensorAPI::FRAME_SIZE/2; i++) {
+			*byte = 0;
+			byte += sizeof(BYTE);
+		}
+		EnOceanSensorAPI::setID(frame, (EnOceanSensorAPI::SensorId)id);
+		float multiplyer = (float)(valMax-valMin) / 255.0;
+		frame->DATA_BYTE3 = (BYTE)((val - (float)( (multiplyer>=0)? valMin : valMax )) / multiplyer);
+		frame->DATA_BYTE0 = on?(1<<3):(0<<3);
+		EnOceanSensorAPI::setHeader(frame, EnOceanSensorAPI::ORG_4BS, false);
+		EnOceanSensorAPI::setCheckSum(frame);
+
+		return;
+	}
+
+	void  EnOceanSensorAPI::toFrame_Defibrillator(enocean_data_structure* frame, EnOceanSensorAPI::SensorId id, bool on, float val, float valMin, float valMax) {
+		BYTE* byte = (BYTE*)(frame);
+		for (unsigned int i = 0; i < EnOceanSensorAPI::FRAME_SIZE/2; i++) {
+			*byte = 0;
+			byte += sizeof(BYTE);
+		}
+		EnOceanSensorAPI::setID(frame, (EnOceanSensorAPI::SensorId)id);
+		float multiplyer = (float)(valMax-valMin) / 255.0;
+		frame->DATA_BYTE3 = (BYTE)((val - (float)( (multiplyer>=0)? valMin : valMax )) / multiplyer);
+		frame->DATA_BYTE0 = on?(1<<3):(0<<3);
+		EnOceanSensorAPI::setHeader(frame, EnOceanSensorAPI::ORG_4BS, false);
+		EnOceanSensorAPI::setCheckSum(frame);
+
+		return;
+	}
 
 // ---- SENSOR ----
 	EnOceanSensorAPI::EnOceanCallbackFunction EnOceanSensorAPI::getFunctionPerType(int type) {
@@ -260,6 +315,7 @@ extern "C" {
 		case 0x0070401 : { return analyseTempAndHumidSensor_EEP_07_04_01; }
 		case 0x0070801 : { return analyseLumAndOcc_EEP_07_08_01; }
 		case 0x0070901 : { return analyseCO2_EEP_07_09_01; }
+		case 0x0070A01 : { return analyseHeartRate_EEP_07_0A_01; }
 		}
 		return NULL;
 	}
@@ -351,20 +407,34 @@ extern "C" {
 
 
 // ---- CO2 GAS SENSOR ----
-		string EnOceanSensorAPI::analyseCO2_EEP_07_09_01(enocean_data_structure* frame, MYSQL* mysql, long long int timestamp) {
-			return analyseC02(frame, 0, 2000, mysql, timestamp);
-		} //----- End of analyseCO2_EEP_07_09_01
+	string EnOceanSensorAPI::analyseCO2_EEP_07_09_01(enocean_data_structure* frame, MYSQL* mysql, long long int timestamp) {
+		return analyseC02(frame, 0, 2000, mysql, timestamp);
+	} //----- End of analyseCO2_EEP_07_09_01
 
-		string EnOceanSensorAPI::analyseC02(enocean_data_structure* frame, float minPPM, float maxPPM, MYSQL* mysql, long long int timestamp) {
-			ostringstream oss;
-			bool dataFrame = (frame->DATA_BYTE0 >> 3) & 1;
-			if (dataFrame) {
-				oss << "< CO2 : " << getCO2Level(frame, minPPM, maxPPM) << "ppm. >";
-				insertMesure(mysql, CAPTEUR_ENOCEAN, (int)getID(frame), timestamp, 0, getCO2Level(frame, minPPM, maxPPM));
-			}
-			return oss.str();
-		} //----- End of analyseC02
+	string EnOceanSensorAPI::analyseC02(enocean_data_structure* frame, float minPPM, float maxPPM, MYSQL* mysql, long long int timestamp) {
+		ostringstream oss;
+		bool dataFrame = (frame->DATA_BYTE0 >> 3) & 1;
+		if (dataFrame) {
+			oss << "< CO2 : " << getCO2Level(frame, minPPM, maxPPM) << "ppm. >";
+			insertMesure(mysql, CAPTEUR_ENOCEAN, (int)getID(frame), timestamp, 0, getCO2Level(frame, minPPM, maxPPM));
+		}
+		return oss.str();
+	} //----- End of analyseC02
 
+
+// ---- HEART RATE SENSOR ----
+	string EnOceanSensorAPI::analyseHeartRate_EEP_07_0A_01(enocean_data_structure* frame, MYSQL* mysql, long long int timestamp) {
+		return analyseHeartRate(frame, 0, 400, mysql, timestamp);
+	} //----- End of analyseHeartRate_EEP_07_0A_01
+	string EnOceanSensorAPI::analyseHeartRate(enocean_data_structure* frame, float minBPM, float maxBPM, MYSQL* mysql, long long int timestamp) {
+		ostringstream oss;
+		bool dataFrame = (frame->DATA_BYTE0 >> 3) & 1;
+		if (dataFrame) {
+			oss << "< Heart-Rate : " << getHeartRate(frame, minBPM, maxBPM) << "bpm. >";
+			insertMesure(mysql, CAPTEUR_ENOCEAN, (int)getID(frame), timestamp, 0, getHeartRate(frame, minBPM, maxBPM));
+		}
+		return oss.str();
+	} //----- End of analyseHeartRate
 
 
 // ---- BASIC FUNCTIONS ----
@@ -467,5 +537,15 @@ extern "C" {
 	void EnOceanSensorAPI::setCO2Level(enocean_data_structure* frame, float val, float minPPM, float maxPPM) {
 		float multiplyer = (float)(maxPPM-minPPM) / 255.0;
 		frame->DATA_BYTE3 = (BYTE)((val - (float)( (multiplyer>=0)? minPPM : maxPPM )) / multiplyer);
+	}
+
+
+	float EnOceanSensorAPI::getHeartRate(enocean_data_structure* frame, float minBPM, float maxBPM) {
+		float multiplyer = (float)(maxBPM-minBPM) / 255.0;
+		return (float)frame->DATA_BYTE3 * multiplyer + (float)( (multiplyer>=0)? minBPM : maxBPM );
+	}
+	void EnOceanSensorAPI::setHeartRate(enocean_data_structure* frame, float val, float minBPM, float maxBPM) {
+		float multiplyer = (float)(maxBPM-minBPM) / 255.0;
+		frame->DATA_BYTE3 = (BYTE)((val - (float)( (multiplyer>=0)? minBPM : maxBPM )) / multiplyer);
 	}
 

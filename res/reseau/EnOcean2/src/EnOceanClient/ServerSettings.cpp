@@ -28,7 +28,8 @@ void* ServerSettingsThread_Receive (void* param) {
 	ServerSettings* server = (ServerSettings*)param;
 
 	// Wait for client :
-	server->acceptClient();
+	 n = server->acceptClient();
+	 if ( n < 0) { return NULL;}
 
 
 	// Sends data from each sensor, sleeping between two sending :
@@ -208,7 +209,7 @@ void ServerSettings::run() {
 	pthread_mutex_lock(&mutex);
 	flag = 0;
 	pthread_mutex_unlock(&mutex);
-	pthread_create(&thread_Receive, NULL, EnOceanBaseSimulatorThread_Receive, this);
+	pthread_create(&thread_Receive, NULL, ServerSettingsThread_Receive, this);
 }
 
 void ServerSettings::stop() {

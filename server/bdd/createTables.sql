@@ -4,6 +4,7 @@ DROP TABLE IF EXISTS actionneurs, actionneurSujet, pieces, patients, mesures, ca
 
 CREATE TABLE actionneurs (
 	id INTEGER PRIMARY KEY AUTO_INCREMENT,
+	numeroActionneur INTEGER,
 	type INTEGER
 );
 

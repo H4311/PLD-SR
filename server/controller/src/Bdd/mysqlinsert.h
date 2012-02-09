@@ -12,7 +12,7 @@ MYSQL* connectToMysql();
 
 void closeMysql(MYSQL* mysql);
 
-void insertCapteur(MYSQL* mysql, int type, int numeroCapteur, int idPatient, int isGlobal, int idSujet);
+void insertCapteur(MYSQL* mysql, int type, int numeroCapteur);
 
 void insertMesure(MYSQL* mysql, int type, int numeroCapteur, long long time, int typeMesure, double mesure);
 

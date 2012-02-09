@@ -33,7 +33,6 @@ public:
 
 //--------------------------------------------------------- Public Methods
 
-	float getCo2Level();
 	void update();
 
 //------------------------------------------------- Static public Methods

@@ -14,6 +14,7 @@ using namespace std;
 #include <iostream>
 //------------------------------------------------------ Personnal Include
 #include "EnOceanActuatorAeration.h"
+#include "../Model/Room.h"
 //-------------------------------------------------------------- Constants
 
 //----------------------------------------------------------------- PUBLIC
@@ -37,10 +38,13 @@ float EnOceanActuatorAeration::update() {
 	pthread_mutex_lock(&mutex);
 	float coef = co2ppm*energeticCostPerSecond;
 	if (on) {
-		for(vector<Room*>::iterator it = rooms.begin(); it != rooms.end(); ++it) {
-			float t= (*it)->getCO2Level();
-			float coef = (co2ppm - t) / t;
-			(*it)->setCO2Level(t*(1+coef*energeticCostPerSecond/100.0));
+		for(vector<Subject*>::iterator it = subjects.begin(); it != subjects.end(); ++it) {
+			Room* room = dynamic_cast<Room*>((*it));
+			if (room != 0) {
+				float t= room->getCO2Level();
+				float coef = (co2ppm - t) / t;
+				room->setCO2Level(t*(1+coef*energeticCostPerSecond/100.0));
+			}
 		}
 		pthread_mutex_unlock(&mutex);
 		return coef;

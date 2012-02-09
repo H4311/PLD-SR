@@ -15,6 +15,7 @@ using namespace std;
 //------------------------------------------------------ Personnal Include
 #include "EnOceanActuatorLight.h"
 #include "../Sensors/SensorSimulatorLumAndOcc.h"
+#include "../Model/Room.h"
 //-------------------------------------------------------------- Constants
 
 //----------------------------------------------------------------- PUBLIC
@@ -51,8 +52,11 @@ float EnOceanActuatorLight::update() {
 	}
 
 	pthread_mutex_lock(&mutex);
-	for(vector<Room*>::iterator it = rooms.begin(); it != rooms.end(); ++it) {
-		(*it)->setLuminosity(naturalLight+(on?illuminance:0));
+	for(vector<Subject*>::iterator it = subjects.begin(); it != subjects.end(); ++it) {
+		Room* room = dynamic_cast<Room*>((*it));
+		if (room != 0) {
+			room->setLuminosity(naturalLight+(on?illuminance:0));
+		}
 	}
 	pthread_mutex_unlock(&mutex);
 	return energeticCostPerSecond*illuminance*(luxMax-luxMin);

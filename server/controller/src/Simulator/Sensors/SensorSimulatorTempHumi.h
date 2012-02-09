@@ -47,7 +47,7 @@ public:
 
 //-------------------------------------------------- Builder / Destructor
 
-	SensorSimulatorTempHumi(int id, Room* r, float tMin, float tMax);
+	SensorSimulatorTempHumi(int id, Subject* r, float tMin, float tMax);
 	virtual ~SensorSimulatorTempHumi();
 
 //---------------------------------------------------------------- PRIVATE
