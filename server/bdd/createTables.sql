@@ -6,7 +6,6 @@ CREATE TABLE capteurs (
 	id INTEGER PRIMARY KEY AUTO_INCREMENT,
 	type INTEGER,
 	numeroCapteur INTEGER,
-	idPatient INTEGER,
 	isGlobal BOOLEAN,
 	idSujet INTEGER,
 	UNIQUE (type, numeroCapteur),
