@@ -1,4 +1,5 @@
-var model = require("./sensors");
+var modelsensors = require("./sensors");
+var modelpatients = require("./patients");
 
 function error(code, resp) {
 	var result = {};
@@ -37,8 +38,8 @@ function serviceSensors(query, post, resp) {
 		return;
 	}
 	
-	// Get the response from the model layer :
-	model.getSensorsRecords(request, function(response) {
+	// Get the response from the modelsensors layer :
+	modelsensors.getSensorsRecords(request, function(response) {
 		// Send the stringified json to client :
 		var strResponse = JSON.stringify(response);
 		resp.end(strResponse);
@@ -85,5 +86,28 @@ function serviceAdmin(query, post, resp) {
 	resp.end(strResult);
 }
 
+/*
+ * SERVICE Patients
+ * Allows to add/remove sensors/actuators.
+ */
+function servicePatients(query, post, resp) {
+	writeHeaders(resp);
+	
+	// Parse the json POST request
+	/*
+	request = JSON.parse(post);
+	if(!request) {
+		error(0, resp);
+		return;
+	}
+	* */
+	
+	modelpatients.getPatients(function(result) {
+		var strResult = JSON.stringify(result);
+		resp.end(strResult);
+	});
+}
+
 exports.sensors = serviceSensors;
 exports.actuators = serviceActuators;
+exports.patients = servicePatients;
