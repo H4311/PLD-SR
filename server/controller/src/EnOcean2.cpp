@@ -14,9 +14,10 @@
 #include <iostream>
 #include "Devices/DeviceTable.h"
 #include "Devices/EnOceanSensorAPI.h"
-#include "Simulator/Model/Room.h"
+#include "Simulator/Model/Subject.h"
 #include <pthread.h>
 #include <unistd.h>
+#include "EnOceanClient/ServerSettings.h"
 /**
  * main? Don't know, what main does ;)
  */
@@ -25,7 +26,7 @@ int main(int argc, char *argv[]) {
 //	string adresse = "134.214.105.28";
 //	int port = 5000;
 	string adresse = "127.0.0.1";
-	int port = 5014;
+	int port = 5003;
 
 	EnOCeanBaseSimulator simulator = EnOCeanBaseSimulator();
 
@@ -128,6 +129,10 @@ int main(int argc, char *argv[]) {
 	EnOceanMsgQueue msgQueue = EnOceanMsgQueue();
 	blocking_queue<string> msgToSend = blocking_queue<string>();
 
+	ServerSettings serverSettings = ServerSettings(&table, &msgToSend, &simulator);
+	serverSettings.openSocket(1234);
+	serverSettings.run();
+
 	EnOceanAnalyser analyser = EnOceanAnalyser(&table, &msgQueue);
 	analyser.run();
 
@@ -136,14 +141,14 @@ int main(int argc, char *argv[]) {
 	recep.run();
 
 	EnOceanActuatorAirConditioning airCond = EnOceanActuatorAirConditioning(1, 10.0, 12, 0, 40);
-	airCond.addRoom(&room1);
-	airCond.addRoom(&room2);
-	airCond.addRoom(&room3);
-	airCond.addRoom(&room4);
+	airCond.addSubject(&room1);
+	airCond.addSubject(&room2);
+	airCond.addSubject(&room3);
+	airCond.addSubject(&room4);
 	airCond.setStatus(true);
 
 	EventActuatorFire fire = EventActuatorFire(2, 5);
-	fire.addRoom(&room1);
+	fire.addSubject(&room1);
 
 	simulator.addActuator(&airCond);
 	simulator.addActuator(&fire);
@@ -154,6 +159,8 @@ int main(int argc, char *argv[]) {
 	enocean_data_structure* frame = new enocean_data_structure();
 	EnOceanSensorAPI::toFrame_AirConditioning(frame, 1,true,0,0,40);
 	recep.pushFrame(frame);
+
+
 
 	for (;;) {
 //		simulator.addSensor(&sensorSimu1);

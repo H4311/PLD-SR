@@ -1,12 +1,11 @@
-
 /*************************************************************************
-                           SensorSimulatorCO2  -  description
+                           SensorSimulatorHeartRate  -  description
                              -------------------
-    Creation             : 30 Jan. 2012
+    Creation             : 09 Feb. 2012
     Copyright            : (C) 2012 by H4311 - Benjamin PLANCHE (BPE)
 *************************************************************************/
 
-//---- Implementation - <SensorSimulatorCO2> (SensorSimulatorCO2.cpp file) -----
+//---- Implementation - <SensorSimulatorHeartRate> (SensorSimulatorHeartRate.cpp file) -----
 
 //---------------------------------------------------------------- INCLUDE
 
@@ -15,23 +14,23 @@ using namespace std;
 #include <stdlib.h>
 #include <iostream>
 //------------------------------------------------------ Personnal Include
-#include "SensorSimulatorCO2.h"
+#include "SensorSimulatorHeartRate.h"
 #include "../../Devices/EnOceanSensorAPI.h"
-#include "../Model/Room.h"
+#include "../Model/Patient.h"
 //-------------------------------------------------------------- Constants
 
 //----------------------------------------------------------------- PUBLIC
 
 //--------------------------------------------------------- Public Methods
-void SensorSimulatorCO2::update() {
-	float co2L = 0;
-	Room* room = dynamic_cast<Room*>(subject);
-	if (room != 0) {
-		co2L = room->getCO2Level();
+void SensorSimulatorHeartRate::update() {
+	float hRate = 0;
+	Patient* patient = dynamic_cast<Patient*>(subject);
+	if (patient != 0) {
+		hRate = patient->getHeartRate();
 	}
-	if (co2L > ppmMax) { co2L = ppmMax; }
-	else if (co2L < ppmMin) { co2L = ppmMin; }
-	EnOceanSensorAPI::setCO2Level(&frame, co2L, ppmMin, ppmMax);
+	if (hRate > rateMax) { hRate = rateMax; }
+	else if (hRate < rateMin) { hRate = rateMin; }
+	EnOceanSensorAPI::setHeartRate(&frame, hRate, rateMin, rateMax);
 }
 
 //------------------------------------------------- Static public Methods
@@ -40,19 +39,19 @@ void SensorSimulatorCO2::update() {
 
 
 //-------------------------------------------------- Builder / Destructor
-SensorSimulatorCO2::SensorSimulatorCO2(int id, Subject* r, float minp, float maxp) : SensorSimulator(id, EnOceanSensorAPI::ORG_4BS, r), ppmMin(minp), ppmMax(maxp) {
+SensorSimulatorHeartRate::SensorSimulatorHeartRate(int id, Subject* r, float minp, float maxp) : SensorSimulator(id, EnOceanSensorAPI::ORG_4BS, r), rateMin(minp), rateMax(maxp) {
 	float t = 0;
-	Room* room = dynamic_cast<Room*>(r);
-	if (room != 0) {
-		t = room->getCO2Level();
+	Patient* patient = dynamic_cast<Patient*>(r);
+	if (patient != 0) {
+		t = patient->getHeartRate();
 	} else { subject = NULL; }
-	EnOceanSensorAPI::setCO2Level(&frame, t, ppmMin, ppmMax);
-	cout << "<Sensor Simu n°" << id << "> Créé - " << t << "ppm [" << ppmMin << "; " << ppmMax << "]\n";
+	EnOceanSensorAPI::setHeartRate(&frame, t, rateMin, rateMax);
+	cout << "<Sensor Simu n°" << id << "> Créé - " << t << "bpm [" << rateMin << "; " << rateMax << "]\n";
 
-} //----- End of SensorSimulatorCO2
+} //----- End of SensorSimulatorHeartRate
 
-SensorSimulatorCO2::~SensorSimulatorCO2() {
-} //----- End of ~SensorSimulatorCO2
+SensorSimulatorHeartRate::~SensorSimulatorHeartRate() {
+} //----- End of ~SensorSimulatorHeartRate
 
 
 //---------------------------------------------------------------- PRIVATE

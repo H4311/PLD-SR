@@ -7,9 +7,6 @@
 
 #include "Room.h"
 
-int Room::getId() {
-	return id;
-}
 
 void Room::addNeigthborRoom(Room* r) {
 	pthread_mutex_lock(&mutex);
@@ -23,20 +20,6 @@ vector<Room*> Room::getNeigthborRooms() {
 	r = neigthborRooms;
 	pthread_mutex_unlock(&mutex);
 	return r;
-}
-
-float Room::getTemperature() {
-	float r;
-	pthread_mutex_lock(&mutex);
-	r = temperature;
-	pthread_mutex_unlock(&mutex);
-	return r;
-}
-
-void Room::setTemperature(float v) {
-	pthread_mutex_lock(&mutex);
-	temperature = v;
-	pthread_mutex_unlock(&mutex);
 }
 
 float Room::getHumidity() {
@@ -110,18 +93,14 @@ void Room::setOccupancy(bool v) {
 }
 
 Room::Room(int i) :
-		id(i),
-		temperature(23),
+		Subject(i, 23, 0),
 		humidity(30),
 		co2Level(400),
 		luminosity(1000),
 		pirStatus(false),
 		occupancy(false) {
 	// TODO Auto-generated constructor stub
-	pthread_mutex_init(&mutex, NULL);
 }
 
 Room::~Room() {
-	// TODO Auto-generated destructor stub
-	pthread_mutex_destroy(&mutex);
 }

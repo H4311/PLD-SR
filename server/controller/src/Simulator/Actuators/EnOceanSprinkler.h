@@ -1,35 +1,35 @@
-
 /*************************************************************************
-                           SensorSimulator  -  description
+                           EnOceanSprinkler  -  description
                              -------------------
-    Creation             : 08 Jan. 2012
+    Creation             : 09 Feb. 2012
     Copyright            : (C) 2012 by H4311 - Benjamin PLANCHE (BPE)
 *************************************************************************/
 
-//------- Definition - <SensorSimulator> (SensorSimulator.h file) --------
+//------- Definition - <EnOceanSprinkler> (EnOceanSprinkler.h file) --------
 
-#ifndef SENSORSIMULATOR_H_
-#define SENSORSIMULATOR_H_
+#ifndef ENOCEANSPRINKLER_H_
+#define ENOCEANSPRINKLER_H_
 
 //---------------------------------------------------------------- INCLUDE
 
 //--------------------------------------------------------- System Include
 using namespace std;
-#include <pthread.h>
+#include <vector>
 //------------------------------------------------------ Personnal Include
-#include "../../Devices/EnOceanSensorAPI.h"
-#include "../Model/Subject.h"
+#include "EnOceanActuator.h"
+#include "EventActuatorFire.h"
+
 //------------------------------------------------------------- Constantes
 
 //------------------------------------------------------------------ Types
 
 //------------------------------------------------------------------------
 // Description :
-//		Analyses the frame provided by the server, and extracts the informations from them, for the chosen sensors.
+//		Element simulating aeration, which can edit the value of some EnOcean sensors (CO2 level).
 //
 //------------------------------------------------------------------------
 
-class SensorSimulator
+class EnOceanSprinkler : public EnOceanActuator
 {
 //----------------------------------------------------------------- PUBLIC
 
@@ -38,25 +38,24 @@ public:
 
 //--------------------------------------------------------- Public Methods
 
-	EnOceanSensorAPI::SensorId getId();
+	void setDebit(float e);
+	float getDebit();
 
-	void getFrame(char* frame);
+	void setFire(EventActuatorFire*f);
+	EventActuatorFire* getFire();
 
-	virtual void update();
-
-	Subject* getSubject();
+	float update();
+	void set(enocean_data_structure *frame);
 
 
 //------------------------------------------------- Static public Methods
-
-	static SensorSimulator* createSensorSimulator(int id, int type, Subject* subject);
 
 //------------------------------------------------------------- Operators
 
 //-------------------------------------------------- Builder / Destructor
 
-	SensorSimulator(int id, EnOceanSensorAPI::ORG org, Subject* subject);
-	virtual ~SensorSimulator();
+	EnOceanSprinkler(int id, float enerCoef, float power, float powerMin, float powerMax);
+	virtual ~EnOceanSprinkler();
 
 //---------------------------------------------------------------- PRIVATE
 
@@ -69,11 +68,10 @@ private:
 protected:
 //-------------------------------------------------- Protected Attributes
 
-	EnOceanSensorAPI::SensorId id;	// ID
-	EnOceanSensorAPI::ORG org;
-	pthread_mutex_t mutex; 			// Mutex to protect this value
-	enocean_data_structure frame; 	// Frame to ben sent
-	Subject *subject;						// Subject where is the sensor
+	float debit;		// Chosen power
+	float debitMin;
+	float debitMax;
+	EventActuatorFire* fire;
 
 private:
 //----------------------------------------------------- Private Attributes
@@ -89,4 +87,4 @@ private:
 //------------------------------ Other definition, depending on this class
 
 
-#endif /* SENSORSIMULATOR_H_ */
+#endif /* ENOCEANSPRINKLER_H_ */

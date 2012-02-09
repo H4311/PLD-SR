@@ -1,35 +1,30 @@
-
 /*************************************************************************
-                           SensorSimulator  -  description
+                           SensorSimulatorHeartRate  -  description
                              -------------------
-    Creation             : 08 Jan. 2012
+    Creation             : 09 Feb. 2012
     Copyright            : (C) 2012 by H4311 - Benjamin PLANCHE (BPE)
 *************************************************************************/
 
-//------- Definition - <SensorSimulator> (SensorSimulator.h file) --------
+//------- Definition - <SensorSimulatorHeartRate> (SensorSimulatorHeartRate.h file) --------
 
-#ifndef SENSORSIMULATOR_H_
-#define SENSORSIMULATOR_H_
+#ifndef ENOCEANSIMULATORHEARTRATE_H_
+#define ENOCEANSIMULATORHEARTRATE_H_
 
 //---------------------------------------------------------------- INCLUDE
 
 //--------------------------------------------------------- System Include
-using namespace std;
-#include <pthread.h>
 //------------------------------------------------------ Personnal Include
-#include "../../Devices/EnOceanSensorAPI.h"
-#include "../Model/Subject.h"
+#include "SensorSimulator.h"
+
 //------------------------------------------------------------- Constantes
 
 //------------------------------------------------------------------ Types
 
 //------------------------------------------------------------------------
-// Description :
-//		Analyses the frame provided by the server, and extracts the informations from them, for the chosen sensors.
-//
+
 //------------------------------------------------------------------------
 
-class SensorSimulator
+class SensorSimulatorHeartRate : public SensorSimulator
 {
 //----------------------------------------------------------------- PUBLIC
 
@@ -38,25 +33,16 @@ public:
 
 //--------------------------------------------------------- Public Methods
 
-	EnOceanSensorAPI::SensorId getId();
-
-	void getFrame(char* frame);
-
-	virtual void update();
-
-	Subject* getSubject();
-
+	void update();
 
 //------------------------------------------------- Static public Methods
-
-	static SensorSimulator* createSensorSimulator(int id, int type, Subject* subject);
 
 //------------------------------------------------------------- Operators
 
 //-------------------------------------------------- Builder / Destructor
 
-	SensorSimulator(int id, EnOceanSensorAPI::ORG org, Subject* subject);
-	virtual ~SensorSimulator();
+	SensorSimulatorHeartRate(int id, Subject* r, float rateMin, float rateMax);
+	virtual ~SensorSimulatorHeartRate();
 
 //---------------------------------------------------------------- PRIVATE
 
@@ -69,11 +55,9 @@ private:
 protected:
 //-------------------------------------------------- Protected Attributes
 
-	EnOceanSensorAPI::SensorId id;	// ID
-	EnOceanSensorAPI::ORG org;
-	pthread_mutex_t mutex; 			// Mutex to protect this value
-	enocean_data_structure frame; 	// Frame to ben sent
-	Subject *subject;						// Subject where is the sensor
+	float rateMin;
+	float rateMax;
+
 
 private:
 //----------------------------------------------------- Private Attributes
@@ -89,4 +73,4 @@ private:
 //------------------------------ Other definition, depending on this class
 
 
-#endif /* SENSORSIMULATOR_H_ */
+#endif /* ENOCEANSIMULATORHEARTRATE_H_ */

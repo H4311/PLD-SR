@@ -51,7 +51,7 @@ public:
 
 //-------------------------------------------------- Builder / Destructor
 
-	SensorSimulatorLumAndOcc(int id, Room* r, float minLum, float maxLum, float minV, float maxV);
+	SensorSimulatorLumAndOcc(int id, Subject* r, float minLum, float maxLum, float minV, float maxV);
 	virtual ~SensorSimulatorLumAndOcc();
 
 //---------------------------------------------------------------- PRIVATE
