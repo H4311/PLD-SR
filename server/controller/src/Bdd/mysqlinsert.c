@@ -38,9 +38,9 @@ void insertMesure(MYSQL* mysql, int type, int numeroCapteur, long long time, int
 	}
 }
 
-void insertActionneur(MYSQL* mysql, int type) {
+void insertActionneur(MYSQL* mysql, int type, int numeroActionneur) {
 	char s[512];
-	sprintf(s, "INSERT INTO actionneurs (type) VALUES (%d)", type);
+	sprintf(s, "INSERT INTO actionneurs (type, numeroActionneur) VALUES (%d, %d)", type, numeroActionneur);
 
 	if(mysql_query(mysql, s)) {
 		printf("Erreur: insert (%s)\n", mysql_error(mysql));
