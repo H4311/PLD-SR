@@ -140,3 +140,5 @@ function getActuatorsList(callback) {
 }
 
 exports.getSensorsRecords = getSensorsRecords;
+exports.getSensorsList = getSensorsList;
+exports.getActuatorsList = getActuatorsList;

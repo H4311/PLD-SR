@@ -2,10 +2,10 @@ var http = require("http");
 var url = require("url");
 var staticserve = require("./staticserve");
 
-function routeBasic(handlers, pathname, query, postData, resp, defaultHandler) {
+function routeBasic(handlers, pathname, method, query, data, resp, defaultHandler) {
 	if (typeof handlers[pathname] === 'function') {
 		console.log("Route received for : " + pathname);
-		handlers[pathname](query, postData, resp);
+		handlers[pathname](method, query, data, resp);
 	} else	{
 		console.log("No route found for : " + pathname + ". Trying default handler...");
 		//staticserve.serve(pathname, resp);
@@ -15,15 +15,15 @@ function routeBasic(handlers, pathname, query, postData, resp, defaultHandler) {
 	}
 }
 
-function routeService(handlers, pathname, query, postData, resp) {
-	routeBasic(handlers, pathname, query, postData, resp, function() {
+function routeService(handlers, pathname, method, query, data, resp) {
+	routeBasic(handlers, pathname, method, query, data, resp, function() {
 		resp.writeHead(403); // forbidden access when you try to access services
 		resp.end();	
 	});
 }
 
-function routeHttp(handlers, pathname, query, postData, resp) {
-	routeBasic(handlers, pathname, query, postData, resp, staticserve.serve);
+function routeHttp(handlers, pathname, method, query, data, resp) {
+	routeBasic(handlers, pathname, method, query, data, resp, staticserve.serve);
 }
 
 function httpStart(port, handlers, routeFunction) {
@@ -36,13 +36,13 @@ function httpStart(port, handlers, routeFunction) {
 		console.log("Request received for " + pathname);
 		req.setEncoding("utf8");
 
-		var postData = "";
+		var data = "";
 		req.addListener("data", function(chunk) {
-			postData += chunk;
+			data += chunk;
 		});
 
 		req.addListener("end", function() {
-			routeFunction(handlers, pathname, query, postData, resp);
+			routeFunction(handlers, pathname, method, query, data, resp);
 		});
 	}
 	
