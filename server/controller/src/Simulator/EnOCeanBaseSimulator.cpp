@@ -155,19 +155,19 @@ int EnOCeanBaseSimulator::countActuators() {
 	return ret;
 }
 
-void EnOCeanBaseSimulator::addRoom(Room* r) {
+void EnOCeanBaseSimulator::addSubject(Subject* r) {
 	pthread_mutex_lock(&mutex);
-	rooms.push_back(r);
+	subjects.push_back(r);
 	pthread_mutex_unlock(&mutex);
 }
 
-bool EnOCeanBaseSimulator::delRoom(int id) {
+bool EnOCeanBaseSimulator::delSubject(int id) {
 	pthread_mutex_lock(&mutex);
 
-	for (vector<Room*>::iterator it=rooms.begin() ; it < rooms.end(); it++ )
+	for (vector<Subject*>::iterator it=subjects.begin() ; it < subjects.end(); it++ )
     {
 		if ((*it)->getId() == id) {
-			rooms.erase(it);
+			subjects.erase(it);
 			pthread_mutex_unlock(&mutex);
 			return true;
 		}
@@ -176,18 +176,18 @@ bool EnOCeanBaseSimulator::delRoom(int id) {
 	return false;
 }
 
-int EnOCeanBaseSimulator::countRooms() {
+int EnOCeanBaseSimulator::countSubjects() {
 	int ret;
 	pthread_mutex_lock(&mutex);
-	ret = rooms.size();
+	ret = subjects.size();
 	pthread_mutex_unlock(&mutex);
 	return ret;
 }
 
-Room* EnOCeanBaseSimulator::findRoom(int id) {
-	Room* r = NULL;
+Subject* EnOCeanBaseSimulator::findSubject(int id) {
+	Subject* r = NULL;
 	pthread_mutex_lock(&mutex);
-	for (vector<Room*>::iterator it=rooms.begin() ; it < rooms.end(); it++ )
+	for (vector<Subject*>::iterator it=subjects.begin() ; it < subjects.end(); it++ )
 	{
 		if ((*it)->getId() == id) {
 			r = (*it);

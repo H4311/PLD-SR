@@ -76,6 +76,9 @@ public :
 	static void toFrame_AirConditioning(enocean_data_structure* frame, SensorId id, bool on, float temp, float tempMin, float tempMax);
 	static void toFrame_Light(enocean_data_structure* frame, SensorId id, bool on, float val, float minL, float maxL);
 	static void toFrame_Aeration(enocean_data_structure* frame, SensorId id, bool on, float val, float valMin, float valMax);
+	static void toFrame_Sprinkler(enocean_data_structure* frame, EnOceanSensorAPI::SensorId id, bool on, float val, float valMin, float valMax);
+	static void toFrame_PainKiller(enocean_data_structure* frame, EnOceanSensorAPI::SensorId id, bool on, float val, float valMin, float valMax);
+	static void toFrame_Defibrillator(enocean_data_structure* frame, EnOceanSensorAPI::SensorId id, bool on, float val, float valMin, float valMax);
 
 // ---- SENSOR ----
 static EnOceanCallbackFunction getFunctionPerType(int type);
@@ -103,6 +106,10 @@ static EnOceanCallbackFunction getFunctionPerType(int type);
 	static string analyseCO2_EEP_07_09_01(enocean_data_structure* frame, MYSQL* mysql, long long int timestamp);
 	static string analyseC02(enocean_data_structure* frame, float minPPM, float maxPPM, MYSQL* mysql, long long int timestamp);
 
+// ---- HEART RATE SENSOR ----
+	static string analyseHeartRate_EEP_07_0A_01(enocean_data_structure* frame, MYSQL* mysql, long long int timestamp);
+	static string analyseHeartRate(enocean_data_structure* frame, float minBPM, float maxBPM, MYSQL* mysql, long long int timestamp);
+
 
 // ---- BASIC FUNCTIONS ----
 	static RockerSwitchAction getRockerSwitchAction1st(enocean_data_structure* frame);
@@ -127,6 +134,9 @@ static EnOceanCallbackFunction getFunctionPerType(int type);
 
 	static float getCO2Level(enocean_data_structure* frame, float minPPM, float maxPPM);
 	static void setCO2Level(enocean_data_structure* frame, float val, float minPPM, float maxPPM);
+
+	static float getHeartRate(enocean_data_structure* frame, float minBPM, float maxBPM);
+	static void setHeartRate(enocean_data_structure* frame, float val, float minBPM, float maxBPM);
 };
 
 //------------------------------ Other definition, depending on this class
