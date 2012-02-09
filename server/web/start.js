@@ -6,6 +6,9 @@ htmlHandler = {};
 serviceHandler = {};
 serviceHandler["/sensors"] = services.sensors;
 serviceHandler["/actuators"] = services.actuators;
+serviceHandler["/list_sensors"] = services.list_sensors;
+serviceHandler["/list_actuators"] = services.list_actuators;
+serviceHandler["/admin"] = services.admin;
 serviceHandler["/patients"] = services.patients;
 
 // Start HTML Web Server :

@@ -71,6 +71,36 @@ function serviceActuators(method, query, data, resp) {
 }
 
 /*
+ * SERVICE list_sensors
+ * Gets list of sensors.
+ */
+function serviceListSensors(method, query, data, resp) {
+	writeHeaders(resp);
+	
+	// Get the response from the modelsensors layer :
+	modelsensors.getSensorsList(function(response) {
+		// Send the stringified json to client :
+		var strResponse = JSON.stringify(response);
+		resp.end(strResponse);
+	});
+}
+
+/*
+ * SERVICE list_actuators
+ * Gets list of actuators.
+ */
+function serviceListActuators(method, query, data, resp) {
+	writeHeaders(resp);
+	
+	// Get the response from the modelsensors layer :
+	modelsensors.getActuatorsList(function(response) {
+		// Send the stringified json to client :
+		var strResponse = JSON.stringify(response);
+		resp.end(strResponse);
+	});
+}
+
+/*
  * SERVICE Admin
  * Allows to add/remove sensors/actuators.
  */
@@ -127,4 +157,7 @@ function servicePatients(method, query, data, resp) {
 
 exports.sensors = serviceSensors;
 exports.actuators = serviceActuators;
+exports.list_sensors = serviceListSensors;
+exports.list_actuators = serviceListActuators;
+exports.admin = serviceAdmin;
 exports.patients = servicePatients;
