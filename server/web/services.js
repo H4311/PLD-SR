@@ -1,4 +1,4 @@
-var model = require("./model");
+var model = require("./sensors");
 
 function error(code, resp) {
 	var result = {};
@@ -54,6 +54,30 @@ function serviceActuators(query, post, resp) {
 	
 	// Parse the json POST request
 	request = JSON.parse(post);
+	if(!request) {
+		error(0, resp);
+		return;
+	}
+	
+	var result = {};
+	
+	var strResult = JSON.stringify(result);
+	resp.end(strResult);
+}
+
+/*
+ * SERVICE Admin
+ * Allows to add/remove sensors/actuators.
+ */
+function serviceAdmin(query, post, resp) {
+	writeHeaders(resp);
+	
+	// Parse the json POST request
+	request = JSON.parse(post);
+	if(!request) {
+		error(0, resp);
+		return;
+	}
 	
 	var result = {};
 	
