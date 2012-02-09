@@ -119,7 +119,7 @@ function serviceAdmin(method, query, data, resp) {
 		case "PUT":
 			adminfct = modeladmin.addDevice;
 			break;
-		case "POST":
+		case "DELETE":
 			adminfct = modeladmin.removeDevice;
 			break;
 		default:
