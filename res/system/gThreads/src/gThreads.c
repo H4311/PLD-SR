@@ -3,6 +3,7 @@
 #include <assert.h>
 
 #include "gThreads.h"
+#include "hw.h"
 
 /**
  * Count id thread
@@ -13,6 +14,16 @@ static gThread *firstThread;
 static gThread *currThread;
 
 /**
+ * Initialisation du matériel
+ */
+void startSched()
+{
+	start_hw();
+	setup_irq(4, yield);
+	yield();
+}
+
+/**
  * Initialize gThread system
  */
 void initSystem() 
@@ -20,6 +31,7 @@ void initSystem()
 	idCounter = 0;
 	firstThread = NULL;
 	currThread = NULL;
+
 }
 
 /**
@@ -34,8 +46,8 @@ int initGThread(struct gThread *thread, char* threadName, int stackSize, gThread
 		thread->name = threadName;
 		thread->state = INIT;
 		thread->context = malloc(sizeof(gContext));
-		(thread->context)->esp = thread->stack+stackSize;
-		(thread->context)->ebp = thread->stack+stackSize;
+		(thread->context)->esp = (int)thread->stack+stackSize;
+		(thread->context)->ebp = (int)thread->stack+stackSize;
 		thread->func = func;
 		thread->args = args;
 		
@@ -81,7 +93,7 @@ int createGThread(char *threadName, gThread_func_t thread, void* args, int stack
 			firstThread->nextThread = newGThread;
 		}  
 	}
-	printf("Création du GThread \"%s\" (n°%d)\n", newGThread->name, newGThread->id);
+	printf("GThread created \"%s\" (n°%d)\n", newGThread->name, newGThread->id);
 	return newGThread->id;
 }
 
@@ -91,7 +103,8 @@ int createGThread(char *threadName, gThread_func_t thread, void* args, int stack
  */
 void switchGThread(gThread *thread)
 {
-	assert(thread->state != END);
+	irq_disable();
+	
     if (currThread)
     {
 		asm("movl %%esp, %0" "\n" "movl %%ebp, %1"
@@ -109,10 +122,13 @@ void switchGThread(gThread *thread)
          "r"(currThread->context->ebp)
     );
     
+    irq_enable();
+    
     if (currThread->state == INIT)
     {
         startGThread();
     }
+    
 } 
 
 /**
@@ -124,11 +140,49 @@ void startGThread()
     currThread->func(currThread->args);  
     /* Thread stopped its routine*/
     currThread->state = END;
-    free(currThread->context);
-    free(currThread->stack);
-	exit(EXIT_SUCCESS);
+    /* Kill current Thread */
+    killCurrThread();
 }
 
+/** 
+ * Kill current context 
+ */
+void killCurrThread()
+{
+	gThread *thread = currThread;
+	irq_disable();
+		
+	/* Recherche du context précédent le contexte courant*/
+	while (thread->nextThread != currThread)
+	{
+		thread = thread->nextThread;
+	}
+
+	/* Un seul contexte restant */
+	if (thread == currThread)
+	{
+		free(currThread->stack);
+		free(currThread);
+		/* 
+		 * On quitte l'appli
+		 * TODO : a revoir
+		 * Faire une restitution du contexte initial ?
+		 */
+		/*free(sem);*/
+		exit(EXIT_SUCCESS);
+	}
+	else
+	{
+		thread->nextThread = currThread->nextThread;
+		free(currThread->stack);
+		free(currThread);
+		currThread = thread;
+		printf("Switching to GThread n°%d\n", currThread->id);
+		irq_enable();
+		/* On continue l'ordo avec le prochain contexte */
+		switchGThread(currThread);
+	}
+}
 
 /**
  * Switch context
@@ -161,7 +215,7 @@ int killGThread(int threadId)
 		if (itThread == NULL)
 			return ERROR;
 	}
-	printf("Destruction du GThread \"%s\" (n°%d)\n", itThread->name, itThread->id);
+	printf("GThread \"%s\" (n°%d) killed\n", itThread->name, itThread->id);
 	/*free(itThread->stack);*/
 	free(itThread);
 	return OK;

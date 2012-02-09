@@ -252,7 +252,7 @@ void kill_context()
 }
 
 
-/* Sémaphore déjà créé */
+/* Sémaphore déjà créé pour l'intialiser*/
 void sem_init(semaphore *sem, unsigned int val)
 {	
 	sem->count = val;
@@ -262,11 +262,13 @@ void sem_init(semaphore *sem, unsigned int val)
 /* semGive */
 void sem_up(semaphore *sem)
 {
-	/* incrémente le semaphore */
 	sem->count++;
 	if (sem->count <=0)
 	{
-		
+		if (sem->ctx != NULL)
+		{
+	
+		}
 	}
 	
 }
@@ -274,11 +276,14 @@ void sem_up(semaphore *sem)
 /* semTake (wait) */
 void sem_down(semaphore *sem)
 {
-	/* Décrémente le sémaphore */
 	sem->count--;
 	if (sem->count <=0)
 	{
-		
+		if (sem->ctx != NULL)
+		{
+			
+			
+		}
 	}
 }
 

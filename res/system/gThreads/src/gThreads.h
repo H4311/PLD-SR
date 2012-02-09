@@ -32,6 +32,11 @@ struct gThread
 typedef struct gThread gThread;
 
 /**
+ * Start scheduler
+ */
+void startSched();
+
+/**
  * System initialization
  */
 void initSystem();
@@ -60,6 +65,11 @@ void switchGThread(struct gThread *thread);
  * Switch context
  */
 void yield();
+
+/**
+ * Kill current thread
+ */
+void killCurrThread();
 
 /**
  * Kill a thread
