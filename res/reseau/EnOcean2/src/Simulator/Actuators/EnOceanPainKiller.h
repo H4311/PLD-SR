@@ -1,30 +1,33 @@
 /*************************************************************************
-                           SensorSimulatorCO2  -  description
+                           EnOceanPainKiller  -  description
                              -------------------
-    Creation             : 30 Jan. 2012
+    Creation             : 09 Feb. 2012
     Copyright            : (C) 2012 by H4311 - Benjamin PLANCHE (BPE)
 *************************************************************************/
 
-//------- Definition - <SensorSimulatorCO2> (SensorSimulatorCO2.h file) --------
+//------- Definition - <EnOceanPainKiller> (EnOceanPainKiller.h file) --------
 
-#ifndef ENOCEANSIMULATORCO2_H_
-#define ENOCEANSIMULATORCO2_H_
+#ifndef ENOCEANPAINKILLER_H_
+#define ENOCEANPAINKILLER_H_
 
 //---------------------------------------------------------------- INCLUDE
 
 //--------------------------------------------------------- System Include
+using namespace std;
 //------------------------------------------------------ Personnal Include
-#include "SensorSimulator.h"
+#include "EnOceanActuator.h"
 
 //------------------------------------------------------------- Constantes
 
 //------------------------------------------------------------------ Types
 
 //------------------------------------------------------------------------
-
+// Description :
+//		Element simulating aeration, which can edit the value of some EnOcean sensors (CO2 level).
+//
 //------------------------------------------------------------------------
 
-class SensorSimulatorCO2 : public SensorSimulator
+class EnOceanPainKiller : public EnOceanActuator
 {
 //----------------------------------------------------------------- PUBLIC
 
@@ -33,7 +36,12 @@ public:
 
 //--------------------------------------------------------- Public Methods
 
-	void update();
+	void setDebit(float e);
+	float getDebit();
+
+	float update();
+	void set(enocean_data_structure *frame);
+
 
 //------------------------------------------------- Static public Methods
 
@@ -41,8 +49,8 @@ public:
 
 //-------------------------------------------------- Builder / Destructor
 
-	SensorSimulatorCO2(int id, Subject* r, float ppmMin, float ppMax);
-	virtual ~SensorSimulatorCO2();
+	EnOceanPainKiller(int id, float enerCoef, float power, float powerMin, float powerMax);
+	virtual ~EnOceanPainKiller();
 
 //---------------------------------------------------------------- PRIVATE
 
@@ -55,9 +63,9 @@ private:
 protected:
 //-------------------------------------------------- Protected Attributes
 
-	float ppmMin;
-	float ppmMax;
-
+	float debit;		// Chosen power
+	float debitMin;
+	float debitMax;
 
 private:
 //----------------------------------------------------- Private Attributes
@@ -73,4 +81,4 @@ private:
 //------------------------------ Other definition, depending on this class
 
 
-#endif /* ENOCEANSIMULATORCO2_H_ */
+#endif /* ENOCEANPAINKILLER_H_ */

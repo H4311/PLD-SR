@@ -1,30 +1,35 @@
 /*************************************************************************
-                           SensorSimulatorCO2  -  description
+                           EventActuatorAgony  -  description
                              -------------------
-    Creation             : 30 Jan. 2012
+    Creation             : 09 Feb. 2012
     Copyright            : (C) 2012 by H4311 - Benjamin PLANCHE (BPE)
 *************************************************************************/
 
-//------- Definition - <SensorSimulatorCO2> (SensorSimulatorCO2.h file) --------
+//------- Definition - <EventActuatorAgony> (EventActuatorAgony.h file) --------
 
-#ifndef ENOCEANSIMULATORCO2_H_
-#define ENOCEANSIMULATORCO2_H_
+#ifndef EVENTACTUATORAGONY_H_
+#define EVENTACTUATORAGONY_H_
 
 //---------------------------------------------------------------- INCLUDE
 
 //--------------------------------------------------------- System Include
+using namespace std;
+#include <vector>
 //------------------------------------------------------ Personnal Include
-#include "SensorSimulator.h"
+#include "EnOceanActuator.h"
+#include "../Model/Patient.h"
 
 //------------------------------------------------------------- Constantes
 
 //------------------------------------------------------------------ Types
 
 //------------------------------------------------------------------------
-
+// Description :
+//		Element simulating aeration, which can edit the value of some EnOcean sensors (CO2 level).
+//
 //------------------------------------------------------------------------
 
-class SensorSimulatorCO2 : public SensorSimulator
+class EventActuatorAgony : public Actuator
 {
 //----------------------------------------------------------------- PUBLIC
 
@@ -33,7 +38,11 @@ public:
 
 //--------------------------------------------------------- Public Methods
 
-	void update();
+	void setPower(float e);
+	float getPower();
+
+	float update();
+
 
 //------------------------------------------------- Static public Methods
 
@@ -41,8 +50,8 @@ public:
 
 //-------------------------------------------------- Builder / Destructor
 
-	SensorSimulatorCO2(int id, Subject* r, float ppmMin, float ppMax);
-	virtual ~SensorSimulatorCO2();
+	EventActuatorAgony(int id, float power);
+	virtual ~EventActuatorAgony();
 
 //---------------------------------------------------------------- PRIVATE
 
@@ -55,10 +64,7 @@ private:
 protected:
 //-------------------------------------------------- Protected Attributes
 
-	float ppmMin;
-	float ppmMax;
-
-
+	float power;		// Chosen power
 private:
 //----------------------------------------------------- Private Attributes
 
@@ -73,4 +79,4 @@ private:
 //------------------------------ Other definition, depending on this class
 
 
-#endif /* ENOCEANSIMULATORCO2_H_ */
+#endif /* EVENTACTUATORAGONY_H_ */

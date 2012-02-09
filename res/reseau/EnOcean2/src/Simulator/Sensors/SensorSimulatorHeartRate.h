@@ -1,14 +1,14 @@
 /*************************************************************************
-                           SensorSimulatorCO2  -  description
+                           SensorSimulatorHeartRate  -  description
                              -------------------
-    Creation             : 30 Jan. 2012
+    Creation             : 09 Feb. 2012
     Copyright            : (C) 2012 by H4311 - Benjamin PLANCHE (BPE)
 *************************************************************************/
 
-//------- Definition - <SensorSimulatorCO2> (SensorSimulatorCO2.h file) --------
+//------- Definition - <SensorSimulatorHeartRate> (SensorSimulatorHeartRate.h file) --------
 
-#ifndef ENOCEANSIMULATORCO2_H_
-#define ENOCEANSIMULATORCO2_H_
+#ifndef ENOCEANSIMULATORHEARTRATE_H_
+#define ENOCEANSIMULATORHEARTRATE_H_
 
 //---------------------------------------------------------------- INCLUDE
 
@@ -24,7 +24,7 @@
 
 //------------------------------------------------------------------------
 
-class SensorSimulatorCO2 : public SensorSimulator
+class SensorSimulatorHeartRate : public SensorSimulator
 {
 //----------------------------------------------------------------- PUBLIC
 
@@ -41,8 +41,8 @@ public:
 
 //-------------------------------------------------- Builder / Destructor
 
-	SensorSimulatorCO2(int id, Subject* r, float ppmMin, float ppMax);
-	virtual ~SensorSimulatorCO2();
+	SensorSimulatorHeartRate(int id, Subject* r, float rateMin, float rateMax);
+	virtual ~SensorSimulatorHeartRate();
 
 //---------------------------------------------------------------- PRIVATE
 
@@ -55,8 +55,8 @@ private:
 protected:
 //-------------------------------------------------- Protected Attributes
 
-	float ppmMin;
-	float ppmMax;
+	float rateMin;
+	float rateMax;
 
 
 private:
@@ -73,4 +73,4 @@ private:
 //------------------------------ Other definition, depending on this class
 
 
-#endif /* ENOCEANSIMULATORCO2_H_ */
+#endif /* ENOCEANSIMULATORHEARTRATE_H_ */
