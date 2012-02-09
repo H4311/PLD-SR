@@ -14,7 +14,7 @@
 #include <iostream>
 #include "Devices/DeviceTable.h"
 #include "Devices/EnOceanSensorAPI.h"
-#include "Simulator/Model/Room.h"
+#include "Simulator/Model/Subject.h"
 #include <pthread.h>
 #include <unistd.h>
 /**
@@ -136,14 +136,14 @@ int main(int argc, char *argv[]) {
 	recep.run();
 
 	EnOceanActuatorAirConditioning airCond = EnOceanActuatorAirConditioning(1, 10.0, 12, 0, 40);
-	airCond.addRoom(&room1);
-	airCond.addRoom(&room2);
-	airCond.addRoom(&room3);
-	airCond.addRoom(&room4);
+	airCond.addSubject(&room1);
+	airCond.addSubject(&room2);
+	airCond.addSubject(&room3);
+	airCond.addSubject(&room4);
 	airCond.setStatus(true);
 
 	EventActuatorFire fire = EventActuatorFire(2, 5);
-	fire.addRoom(&room1);
+	fire.addSubject(&room1);
 
 	simulator.addActuator(&airCond);
 	simulator.addActuator(&fire);

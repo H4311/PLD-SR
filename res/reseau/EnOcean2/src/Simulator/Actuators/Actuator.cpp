@@ -73,26 +73,26 @@ int Actuator::getID() {
 	return id;
 }
 
-void Actuator::addRoom(Room* sensor) {
+void Actuator::addSubject(Subject* sensor) {
 	pthread_mutex_lock(&mutex);
-	rooms.push_back(sensor);
+	subjects.push_back(sensor);
 	pthread_mutex_unlock(&mutex);
 }
 
-void Actuator::delRoom(int id) {
+void Actuator::delSubject(int id) {
 	pthread_mutex_lock(&mutex);
-	for (vector<Room*>::iterator it=rooms.begin() ; it < rooms.end(); it++ )
+	for (vector<Subject*>::iterator it=subjects.begin() ; it < subjects.end(); it++ )
     {
 		if ((*it)->getId() == id) {
-			rooms.erase(it);
+			subjects.erase(it);
 			return;
 		}
 	}
 	pthread_mutex_unlock(&mutex);
 }
 
-int Actuator::countRooms() {
-	return rooms.size();
+int Actuator::countSubjects() {
+	return subjects.size();
 }
 
 

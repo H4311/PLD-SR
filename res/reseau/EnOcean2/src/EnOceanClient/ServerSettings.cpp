@@ -58,13 +58,13 @@ void* ServerSettingsThread_Receive (void* param) {
 			int idDevice = root.get("i", 0).asInt();
 			// Get the action :
 			int idAction = root.get("a", 0).asInt();
-				// idAction :	1 -> Add Device			Needed values : ID, type, Rooms/Peoples, Simulated
+				// idAction :	1 -> Add Device			Needed values : ID, type, Subjects/Peoples, Simulated
 				//				2 -> Delete Device		Needed values : ID
 				//				3 -> Set Actuator		Needed values : ID, type, on/off, value
 
 			if (idAction == 1) {
 				int type = root.get("t", 0).asInt();
-				const Json::Value arrayRooms = root["s"];
+				const Json::Value arraySubjects = root["s"];
 #ifdef SIMULATION
 				bool simulated = root.get("sim", false).asBool();
 #endif
@@ -82,8 +82,8 @@ void* ServerSettingsThread_Receive (void* param) {
 						cout << "<Server Settings> Sensor n°" << idDevice << " - Added !\n";
 #ifdef SIMULATION
 						if (simulated) {
-							Room* room = server->simu->findRoom(arrayRooms.asInt());
-							server->simu->addSensor(SensorSimulator::createSensorSimulator(idDevice, type, room));
+							Subject* subject = server->simu->findSubject(arraySubjects.asInt());
+							server->simu->addSensor(SensorSimulator::createSensorSimulator(idDevice, type, subject));
 							cout << "<Server Settings> Simulated Sensor n°" << idDevice << " - Created !\n";
 						}
 #endif
@@ -100,10 +100,10 @@ void* ServerSettingsThread_Receive (void* param) {
 					if (simulated) {
 						pthread_mutex_lock(&(server->mutex));
 						Actuator* simAc = Actuator::createActuator(idDevice, type);
-						for (unsigned int i = 0; i < arrayRooms.size(); ++i ) {
-							Room* room = server->simu->findRoom(arrayRooms[i].asInt());
-							if (room != NULL) {
-								simAc->addRoom(room);
+						for (unsigned int i = 0; i < arraySubjects.size(); ++i ) {
+							Subject* subject = server->simu->findSubject(arraySubjects[i].asInt());
+							if (subject != NULL) {
+								simAc->addSubject(subject);
 							}
 						}
 
@@ -117,10 +117,10 @@ void* ServerSettingsThread_Receive (void* param) {
 				else if ((typeDevice == 2) && simulated) { // SIMULATED EVENT
 					pthread_mutex_lock(&(server->mutex));
 					Actuator* simAc = Actuator::createActuator(idDevice, type);
-					for (unsigned int i = 0; i < arrayRooms.size(); ++i ) {
-						Room* room = server->simu->findRoom(arrayRooms[i].asInt());
-						if (room != NULL) {
-							simAc->addRoom(room);
+					for (unsigned int i = 0; i < arraySubjects.size(); ++i ) {
+						Subject* subject = server->simu->findSubject(arraySubjects[i].asInt());
+						if (subject != NULL) {
+							simAc->addSubject(subject);
 						}
 					}
 

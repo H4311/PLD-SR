@@ -37,32 +37,36 @@ float EventActuatorFire::update() {
 	pthread_mutex_lock(&mutex);
 	float temp, temp2;
 	vector<Room*> neigthborsTakingFire;
-	for(vector<Room*>::iterator it = rooms.begin(); it != rooms.end(); ++it) {
+	for(vector<Subject*>::iterator it = subjects.begin(); it != subjects.end(); ++it) {
 		temp = (*it)->getTemperature();
 		temp2 = temp*power;
-		(*it)->setHumidity((*it)->getHumidity()/power);
-		if (temp2>5000) {
-			(*it)->setTemperature(5000);
-			(*it)->setCO2Level(4000);
-		}
-		else if ((temp2 < 25) && ((*it)->getHumidity() < 10)) {
-			(*it)->setTemperature(25);
-			cout << "<Actuator Simu n°" << id << "> Fire - Room n°" << (*it)->getId() << " stabilized !\n";
-			rooms.erase(it);
-		}
-		else {
-			(*it)->setTemperature(temp2);
-			(*it)->setCO2Level((*it)->getCO2Level()*power);
-		}
 
-		if ((temp<400) && (temp2>470)) { // Neightbors take fire
-			vector<Room*> neigthbors = (*it)->getNeigthborRooms();
-			neigthborsTakingFire.insert( neigthborsTakingFire.end(), neigthbors.begin(), neigthbors.end() );
-			cout << "<Actuator Simu n°" << id << "> Fire - " << neigthbors.size() << " other rooms took fire !\n";
+		Room* room = dynamic_cast<Room*>((*it));
+		if (room != 0) {
+			room->setHumidity(room->getHumidity()/power);
+			if (temp2>5000) {
+				room->setTemperature(5000);
+				room->setCO2Level(4000);
+			}
+			else if ((temp2 < 25) && (room->getHumidity() < 10)) {
+				room->setTemperature(25);
+				cout << "<Actuator Simu n°" << id << "> Fire - Room n°" << room->getId() << " stabilized !\n";
+				subjects.erase(it);
+			}
+			else {
+				room->setTemperature(temp2);
+				room->setCO2Level(room->getCO2Level()*power);
+			}
+
+			if ((temp<400) && (temp2>470)) { // Neightbors take fire
+				vector<Room*> neigthbors = room->getNeigthborRooms();
+				neigthborsTakingFire.insert( neigthborsTakingFire.end(), neigthbors.begin(), neigthbors.end() );
+				cout << "<Actuator Simu n°" << id << "> Fire - " << neigthbors.size() << " other rooms took fire !\n";
+			}
 		}
 
 	}
-	rooms.insert( rooms.end(), neigthborsTakingFire.begin(), neigthborsTakingFire.end() );
+	subjects.insert( subjects.end(), neigthborsTakingFire.begin(), neigthborsTakingFire.end() );
 	power *= 1.2;
 	pthread_mutex_unlock(&mutex);
 	return 0;

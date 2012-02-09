@@ -22,7 +22,7 @@ using namespace std;
 #include "Sensors/SensorSimulator.h"
 #include "ServerSimulator.h"
 #include "Actuators/EnOceanActuator.h"
-#include "Model/Room.h"
+#include "Model/Subject.h"
 //------------------------------------------------------------- Constantes
 
 //------------------------------------------------------------------ Types
@@ -50,10 +50,10 @@ public:
 	bool delActuator(int id);
 	int countActuators();
 
-	void addRoom(Room* sensor);
-	bool delRoom(int id);
-	int countRooms();
-	Room* findRoom(int id);
+	void addSubject(Subject* sensor);
+	bool delSubject(int id);
+	int countSubjects();
+	Subject* findSubject(int id);
 
 	float updateSensors();
 
@@ -102,7 +102,7 @@ protected:
 //-------------------------------------------------- Protected Attributes
 	vector<SensorSimulator*> sensors;
 	vector<Actuator*> actuators;
-	vector<Room*> rooms;
+	vector<Subject*> subjects;
 	pthread_mutex_t mutex;
 	ServerSimulator server;
 	pthread_t thread_Send;
