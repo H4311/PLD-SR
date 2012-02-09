@@ -120,7 +120,7 @@ function getSensorsList(callback) {
 		// Call the record with json response :
 		callback(result);
 		sql.close(db);
-	}
+	});
 }
 
 function getActuatorsList(callback) {
@@ -136,7 +136,7 @@ function getActuatorsList(callback) {
 		// Call the record with json response :
 		callback(result);
 		sql.close(db);
-	}
+	});
 }
 
 exports.getSensorsRecords = getSensorsRecords;

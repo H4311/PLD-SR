@@ -111,19 +111,17 @@ function serviceAdmin(method, query, data, resp) {
  */
 function servicePatients(method, query, data, resp) {
 	writeHeaders(resp);
-	
+
 	// Parse the json DATA request
-	/*
 	request = JSON.parse(data);
 	if(!request) {
 		error(0, resp);
 		return;
-	}
-	* */
+	}	
 	
-	modelpatients.getPatients(function(result) {
-		var strResult = JSON.stringify(result);
-		resp.end(strResult);
+	modelpatients.getPatients(request, function(result) {
+			var strResult = JSON.stringify(result);
+			resp.end(strResult);
 	});
 }
 
