@@ -94,17 +94,15 @@ function servicePatients(query, post, resp) {
 	writeHeaders(resp);
 	
 	// Parse the json POST request
-	/*
 	request = JSON.parse(post);
 	if(!request) {
 		error(0, resp);
 		return;
-	}
-	* */
+	}	
 	
-	modelpatients.getPatients(function(result) {
-		var strResult = JSON.stringify(result);
-		resp.end(strResult);
+	modelpatients.getPatients(request, function(result) {
+			var strResult = JSON.stringify(result);
+			resp.end(strResult);
 	});
 }
 
