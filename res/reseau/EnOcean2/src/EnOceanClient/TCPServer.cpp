@@ -55,11 +55,11 @@ int TCPServer::openSocket (int port)
 int TCPServer::acceptClient () {
 	int s;
 	pthread_mutex_lock(&mutex);
-	if (sockClient == 0) {
+	if (sockClient <= 0) {
 		struct sockaddr_in cli_addr;
 		socklen_t clilen = sizeof(struct sockaddr_in);
 		s = accept(sockfd, (struct sockaddr *) &cli_addr, &clilen);
-		cout << "<TCP Server> Client accepté.\n";
+		cout << "<TCP Server> Client accepté. " << s << endl;
 		sockClient = s;
 	}
 	else {
@@ -92,20 +92,20 @@ int TCPServer::readClient(char* msg, int length) {
 	return n;
 }
 
-int TCPServer::readClientJSON(string msg) {
+int TCPServer::readClientJSON(string* msg) {
 	char c = 0;
 	int n = 1;
 	pthread_mutex_lock(&mutex);
 	do {
 		n = read(sockClient, &c, 1);
 	} while ((c!='{') && (n>0));
-	if (n<0) { return n; }
+	if (n<=0) { pthread_mutex_unlock(&mutex); return n; }
 
 	int nbAcc = 1;
-	msg = c;
+	*msg = c;
 	do {
 		n = read(sockClient, &c, 1);
-		msg += c;
+		*msg += c;
 		if (c == '{') { nbAcc++; }
 		else if (c == '}') { nbAcc--; }
 	} while ((nbAcc > 0) && (n>0));
@@ -114,7 +114,10 @@ int TCPServer::readClientJSON(string msg) {
 }
 
 int TCPServer::closeClient() {
-	return close(sockClient);
+
+	int n = close(sockClient);
+	sockClient = 0;
+	return n;
 }
 
 int TCPServer::closeSocket() {

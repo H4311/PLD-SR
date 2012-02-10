@@ -16,6 +16,7 @@ using namespace std;
 //------------------------------------------------------ Personnal Include
 #include "EnOceanActuatorAirConditioning.h"
 #include "../Sensors/SensorSimulatorTempHumi.h"
+#include "../Model/Room.h"
 //-------------------------------------------------------------- Constants
 
 //----------------------------------------------------------------- PUBLIC
@@ -38,10 +39,13 @@ void EnOceanActuatorAirConditioning::setTemperature(float e) {
 float EnOceanActuatorAirConditioning::update() {
 	pthread_mutex_lock(&mutex);
 	if (on) {
-		for(vector<Room*>::iterator it = rooms.begin(); it != rooms.end(); ++it) {
-			float t= (*it)->getTemperature();
-			float coef = (temperature - t) / t;
-			(*it)->setTemperature(t*(1+coef*energeticCostPerSecond/100.0));
+		for(vector<Subject*>::iterator it = subjects.begin(); it != subjects.end(); ++it) {
+			Room* room = dynamic_cast<Room*>((*it));
+			if (room != 0) {
+				float t= room->getTemperature();
+				float coef = (temperature - t) / t;
+				room->setTemperature(t*(1+coef*energeticCostPerSecond/100.0));
+			}
 		}
 		pthread_mutex_unlock(&mutex);
 		return energeticCostPerSecond;

@@ -56,7 +56,7 @@ public:
 	//		open() & accept()
 
 	int readClient(char* msg, int length);
-	int readClientJSON(string msg);
+	int readClientJSON(string* msg);
 	// Manual :
 	//		Read from the client.
 	// Contract :

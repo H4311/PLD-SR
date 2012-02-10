@@ -15,7 +15,11 @@ VALUES(1, "Salle 1", "Chambre 1"),
 
 INSERT INTO patients(id, nom, isMan, raisonHospitalisation, idPiece)
 VALUES (1, "Lhaache", false, "Changement de sexe", 1),
-	   (2, "Benjamin", true, "Dédoublage de personnalité", 2);
+	   (2, "Benjamin", true, "Dédoublage de personnalité", 2),
+	   (3, "Tibalt", true, "Découpage des pieds gelés", 1),
+	   (4, "Benjamin", true, "Dédoublage de personnalité", 1),
+	   (5, "Jeremy", true, "Déprime ordonnanceur", 1),
+	   (6, "Dan", true, "Chef de projet PLD SI... Franssement, c'est ssaud, mon frère !", 2);
 
 -- INSERT INTO actionneurSujet(idd, nom, description, isGlobal, idSujet) VALUES ()
 

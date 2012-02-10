@@ -17,13 +17,18 @@ using namespace std;
 //------------------------------------------------------ Personnal Include
 #include "SensorSimulatorCO2.h"
 #include "../../Devices/EnOceanSensorAPI.h"
+#include "../Model/Room.h"
 //-------------------------------------------------------------- Constants
 
 //----------------------------------------------------------------- PUBLIC
 
 //--------------------------------------------------------- Public Methods
 void SensorSimulatorCO2::update() {
-	float co2L = room->getCO2Level();
+	float co2L = 0;
+	Room* room = dynamic_cast<Room*>(subject);
+	if (room != 0) {
+		co2L = room->getCO2Level();
+	}
 	if (co2L > ppmMax) { co2L = ppmMax; }
 	else if (co2L < ppmMin) { co2L = ppmMin; }
 	EnOceanSensorAPI::setCO2Level(&frame, co2L, ppmMin, ppmMax);
@@ -35,8 +40,12 @@ void SensorSimulatorCO2::update() {
 
 
 //-------------------------------------------------- Builder / Destructor
-SensorSimulatorCO2::SensorSimulatorCO2(int id, Room* r, float minp, float maxp) : SensorSimulator(id, EnOceanSensorAPI::ORG_4BS, r), ppmMin(minp), ppmMax(maxp) {
-	float t = room->getCO2Level();
+SensorSimulatorCO2::SensorSimulatorCO2(int id, Subject* r, float minp, float maxp) : SensorSimulator(id, EnOceanSensorAPI::ORG_4BS, r), ppmMin(minp), ppmMax(maxp) {
+	float t = 0;
+	Room* room = dynamic_cast<Room*>(r);
+	if (room != 0) {
+		t = room->getCO2Level();
+	} else { subject = NULL; }
 	EnOceanSensorAPI::setCO2Level(&frame, t, ppmMin, ppmMax);
 	cout << "<Sensor Simu n°" << id << "> Créé - " << t << "ppm [" << ppmMin << "; " << ppmMax << "]\n";
 

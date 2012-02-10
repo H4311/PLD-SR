@@ -25,14 +25,14 @@ using namespace std;
 //----------------------------------------------------------------- PUBLIC
 
 //--------------------------------------------------------- Public Methods
-SensorSimulator* SensorSimulator::createSensorSimulator(int id, int type, Room* room) {
+SensorSimulator* SensorSimulator::createSensorSimulator(int id, int type, Subject* subject) {
 	switch(type) {
 	case 0x0060001 : { return NULL; }
 	case 0x0050201 : { return NULL; }
 	case 0x0070205 : { return NULL; }
-	case 0x0070401 : { return new SensorSimulatorTempHumi(id, room, 0, 40); }
-	case 0x0070801 : { return new SensorSimulatorLumAndOcc(id, room, 0, 510, 0.0, 5.1); }
-	case 0x0070901 : { return new SensorSimulatorCO2(id, room, 0, 2000); }
+	case 0x0070401 : { return new SensorSimulatorTempHumi(id, subject, 0, 40); }
+	case 0x0070801 : { return new SensorSimulatorLumAndOcc(id, subject, 0, 510, 0.0, 5.1); }
+	case 0x0070901 : { return new SensorSimulatorCO2(id, subject, 0, 2000); }
 	}
 	return NULL;
 }
@@ -52,8 +52,8 @@ void SensorSimulator::getFrame(char* buffer) {
 	EnOceanSensorAPI::toString(&frame, buffer);
 }
 
-Room* SensorSimulator::getRoom() {
-	return room;
+Subject* SensorSimulator::getSubject() {
+	return subject;
 }
 
 
@@ -63,7 +63,7 @@ Room* SensorSimulator::getRoom() {
 
 
 //-------------------------------------------------- Builder / Destructor
-SensorSimulator::SensorSimulator(int i, EnOceanSensorAPI::ORG org, Room* r): id(i), room(r){
+SensorSimulator::SensorSimulator(int i, EnOceanSensorAPI::ORG org, Subject* r): id(i), subject(r){
 	EnOceanSensorAPI::setID(&frame, id);
 	frame.SYNC_BYTE1 = 0;
 	frame.SYNC_BYTE2 = 0;

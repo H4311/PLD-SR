@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="utf-8" />
+	<link rel="stylesheet" href="style.css" />
+	<script src="http://code.jquery.com/jquery-1.7.1.js"></script>
+	<script src="common.js"></script>
+	<title>RiTHM - Informations du Patient</title>
+	
+	<script>		
+	var rest = "http://localhost:1337";
+	
+	function presentation(data) {
+		
+		if (data.count == 0) {
+			$("#resume").html("<h2>Ce patient n'existe pas.</h2>");
+		}
+
+		var patient = data.hits[0];
+		var content = '<h2>' + ((patient.isMan) ? "M" : "Mme") + ' ' + 
+			patient.nom + '</h2><div class="chambre">' +
+			'<figure>' +
+				'<img src="images/chambre.jpg" alt="Chambre" width="150"' + 
+				'height="150">' +
+				'Raison de l\'hospitalisation : ' + patient.raisonHospitalisation +
+			'</figure></div>';
+		
+		$("#resume").html(content);
+	}
+	
+	$(document).ready(function() {
+		function getPatients() {
+			$.post(rest + '/patients',
+			  '{}',
+			  presentation,
+			  "json");
+		}
+		
+		function getPatient(id) {
+			$.post(rest + '/patients',
+			  '{"id":'+id+'}',
+			  presentation,
+			  "json");
+		}
+
+		getPatient($.getUrlVar('id')); // initially retrieves patient values on first time.
+		$("#returnLink").attr("href", "room.html?id=" + $.getUrlVar('roomId'));
+	});
+	</script>
+</head>
+
+<body>
+	<div id="wrapper">
+
+	<header id="header" class="branding" role="banner">
+		<hgroup>
+		<div class="retourTdB">
+			<a id="returnLink" href="#">
+			<img src="images/retour.png" alt="image" width="40" height="40"/>
+			</a>
+		</div>
+		<h1>Tableau de Bord<h1>
+		<div class="alerte">
+			<a href="ghome.html">
+			<!--TODO: ref vers la chambre qui pose probleme !! -->
+			<figure>
+				<img src="images/attention2.png" alt="The Alert" width="60" height="50">
+			</figure>
+			</a>
+		</div> 
+		</hgroup>
+	</header>
+	
+	<section id="resume">
+	</section>
+	
+
+	<footer>Copyright</footer>
+</div>
+	
+</body>
+
+</html>

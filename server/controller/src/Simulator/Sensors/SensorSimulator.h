@@ -18,7 +18,7 @@ using namespace std;
 #include <pthread.h>
 //------------------------------------------------------ Personnal Include
 #include "../../Devices/EnOceanSensorAPI.h"
-#include "../Model/Room.h"
+#include "../Model/Subject.h"
 //------------------------------------------------------------- Constantes
 
 //------------------------------------------------------------------ Types
@@ -44,18 +44,18 @@ public:
 
 	virtual void update();
 
-	Room* getRoom();
+	Subject* getSubject();
 
 
 //------------------------------------------------- Static public Methods
 
-	static SensorSimulator* createSensorSimulator(int id, int type, Room* room);
+	static SensorSimulator* createSensorSimulator(int id, int type, Subject* subject);
 
 //------------------------------------------------------------- Operators
 
 //-------------------------------------------------- Builder / Destructor
 
-	SensorSimulator(int id, EnOceanSensorAPI::ORG org, Room* room);
+	SensorSimulator(int id, EnOceanSensorAPI::ORG org, Subject* subject);
 	virtual ~SensorSimulator();
 
 //---------------------------------------------------------------- PRIVATE
@@ -73,7 +73,7 @@ protected:
 	EnOceanSensorAPI::ORG org;
 	pthread_mutex_t mutex; 			// Mutex to protect this value
 	enocean_data_structure frame; 	// Frame to ben sent
-	Room *room;						// Room where is the sensor
+	Subject *subject;						// Subject where is the sensor
 
 private:
 //----------------------------------------------------- Private Attributes

@@ -67,7 +67,6 @@ float EventActuatorFire::update() {
 
 	}
 	subjects.insert( subjects.end(), neigthborsTakingFire.begin(), neigthborsTakingFire.end() );
-	power *= 1.2;
 	pthread_mutex_unlock(&mutex);
 	return 0;
 

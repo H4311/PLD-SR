@@ -17,6 +17,7 @@ using namespace std;
 //------------------------------------------------------ Personnal Include
 #include "SensorSimulatorTempHumi.h"
 #include "../../Devices/EnOceanSensorAPI.h"
+#include "../Model/Room.h"
 //-------------------------------------------------------------- Constants
 
 //----------------------------------------------------------------- PUBLIC
@@ -56,10 +57,15 @@ using namespace std;
 //}
 
 void SensorSimulatorTempHumi::update() {
-	float temperature = room->getTemperature();
+	float temperature, humidity;
+	Room* room = dynamic_cast<Room*>(subject);
+	if (room != 0) {
+		temperature = room->getTemperature();
+		humidity = room->getHumidity();
+	}
 	if (temperature > tempMax) { temperature = tempMax; }
 	else if (temperature < tempMin) { temperature = tempMin; }
-	EnOceanSensorAPI::setHumidity(&frame, room->getHumidity());
+	EnOceanSensorAPI::setHumidity(&frame, humidity);
 	EnOceanSensorAPI::setTemperature(&frame, temperature, tempMin, tempMax);
 }
 
@@ -70,12 +76,18 @@ void SensorSimulatorTempHumi::update() {
 
 
 //-------------------------------------------------- Builder / Destructor
-SensorSimulatorTempHumi::SensorSimulatorTempHumi(int id, Room* r, float tMin, float tMax) : SensorSimulator(id, EnOceanSensorAPI::ORG_4BS, r), tempMin(tMin), tempMax(tMax) {
+SensorSimulatorTempHumi::SensorSimulatorTempHumi(int id, Subject* r, float tMin, float tMax) : SensorSimulator(id, EnOceanSensorAPI::ORG_4BS, r), tempMin(tMin), tempMax(tMax) {
 	frame.DATA_BYTE0 = 0xA; // Data frame + Temp� sensor available.
-	EnOceanSensorAPI::setHumidity(&frame, room->getHumidity());
-	EnOceanSensorAPI::setTemperature(&frame, room->getTemperature(), tempMin, tempMax);
+	float t = 0;
+	float t2 = r->getTemperature();
+	Room* room = dynamic_cast<Room*>(r);
+	if (room != 0) {
+		t = room->getHumidity();
+	} else { subject = NULL; }
+	EnOceanSensorAPI::setHumidity(&frame, t);
+	EnOceanSensorAPI::setTemperature(&frame, t2, tempMin, tempMax);
 
-	cout << "<Sensor Simu n°" << id << "> Créé - " << room->getTemperature() << "°c [" << tempMin << "; " << tempMax << "] - " << room->getHumidity() << "%\n";
+	cout << "<Sensor Simu n°" << id << "> Créé - " << t2 << "°c [" << tempMin << "; " << tempMax << "] - " << t << "%\n";
 
 } //----- End of SensorSimulatorTempHumi
 

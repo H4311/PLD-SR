@@ -33,7 +33,6 @@ public:
 
 //--------------------------------------------------------- Public Methods
 
-	float getCo2Level();
 	void update();
 
 //------------------------------------------------- Static public Methods
@@ -42,7 +41,7 @@ public:
 
 //-------------------------------------------------- Builder / Destructor
 
-	SensorSimulatorCO2(int id, Room* r, float ppmMin, float ppMax);
+	SensorSimulatorCO2(int id, Subject* r, float ppmMin, float ppMax);
 	virtual ~SensorSimulatorCO2();
 
 //---------------------------------------------------------------- PRIVATE
