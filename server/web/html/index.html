@@ -1,12 +1,77 @@
+<!DOCTYPE html>
 <html>
-	<head>
-		<title>RiTHM</title>
-	</head>
-	<body>
-		<h1>Links</h1>
-		<ul>
-				<li><a href="sensors.html">Sensors</a></li>
-				<li><a href="patients.html">Patients</a></li>
-		</ul>
-	</body>
+<head>
+	<meta charset="utf-8" />
+	<link rel="stylesheet" href="style.css" />
+	<script src="http://code.jquery.com/jquery-1.7.1.js"></script>
+	<title>RiTHM</title>
+	
+	<script>
+	var rest = "http://localhost:1337";
+	
+	function presentation(data) {
+		
+		var content = "<h2>Liste des Chambres</h2><ol>";
+		for (var i in data.hits) {
+			var room = data.hits[i];
+			content += '<div class="chambre"><p><a href="room.html?id='
+				+ room.id + '">' + room.nom + '</a></p></div>';
+		}
+		content += "</ol>";
+		
+		$("#liste_chambres").html(content);
+	}
+	
+	$(document).ready(function() {
+		function getRooms() {
+			$.post(rest + '/rooms',
+			  '{}',
+			  presentation,
+			  "json");
+		}
+
+		getRooms(); // initially retrieves patients values on first time.
+	});
+	</script>
+</head>
+
+<body>
+	<div id="wrapper">
+
+	<header id="header" class="branding" role="banner">
+		<hgroup>
+		<div class="retourTdB">
+			<a href="index.html">
+			<img src="images/retour.png" alt="image" width="40" height="40"/>
+			</a>
+		</div>
+		<h1>Tableau de Bord<h1>
+		<div class="alerte">
+			<!--TODO: ref vers la chambre qui pose probleme !! -->
+			<a href="ghome.html">
+			<figure>
+				<img src="images/attention2.png" alt="The Alert" width="60" height="50">
+			</figure>
+			</a>
+		</div> 
+		</hgroup>
+	</header>
+
+	<section id="resume">
+		<h2>RiTHM</h2>
+		<div>
+			<p>Bienvenue sur la page d'accueil de RiTHM. Vous pouvez tout contrôler à partir d'ici.</p>
+		</div>
+	</section>
+	
+	<section id="liste_chambres">
+				
+	</section>
+	
+
+	<footer>Copyright</footer>
+</div>
+	
+</body>
+
 </html>

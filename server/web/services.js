@@ -1,6 +1,7 @@
-var modelsensors = require("./sensors");
-var modelpatients = require("./patients");
-var modeladmin = require("./admin");
+var modelsensors = require("./model/sensors");
+var modelpatients = require("./model/patients");
+var modelrooms = require("./model/rooms");
+var modeladmin = require("./model/admin");
 
 function error(code, resp) {
 	var result = {};
@@ -64,10 +65,12 @@ function serviceActuators(method, query, data, resp) {
 		return;
 	}
 	
-	var result = {};
-	
-	var strResult = JSON.stringify(result);
-	resp.end(strResult);
+	// Get the response from the modeladmin layer :
+	modeladmin.setActuator(request, function(response) {
+		// Send the stringified json to client :
+		var strResponse = JSON.stringify(response);
+		resp.end(strResponse);
+	});
 }
 
 /*
@@ -101,10 +104,10 @@ function serviceListActuators(method, query, data, resp) {
 }
 
 /*
- * SERVICE Admin
+ * SERVICE admin_devices
  * Allows to add/remove sensors/actuators.
  */
-function serviceAdmin(method, query, data, resp) {
+function serviceAdminDevices(method, query, data, resp) {
 	writeHeaders(resp);
 	
 	// Parse the json DATA request
@@ -137,7 +140,7 @@ function serviceAdmin(method, query, data, resp) {
 
 /*
  * SERVICE Patients
- * Allows to add/remove sensors/actuators.
+ * Allows to retrieve patients data.
  */
 function servicePatients(method, query, data, resp) {
 	writeHeaders(resp);
@@ -155,9 +158,30 @@ function servicePatients(method, query, data, resp) {
 	});
 }
 
+/*
+ * SERVICE Rooms
+ * Allows to retrieve rooms data.
+ */
+function serviceRooms(method, query, data, resp) {
+	writeHeaders(resp);
+
+	// Parse the json DATA request
+	request = JSON.parse(data);
+	if(!request) {
+		error(0, resp);
+		return;
+	}	
+	
+	modelrooms.getRooms(request, function(result) {
+			var strResult = JSON.stringify(result);
+			resp.end(strResult);
+	});
+}
+
 exports.sensors = serviceSensors;
 exports.actuators = serviceActuators;
 exports.list_sensors = serviceListSensors;
 exports.list_actuators = serviceListActuators;
-exports.admin = serviceAdmin;
+exports.admin_devices = serviceAdminDevices;
 exports.patients = servicePatients;
+exports.rooms = serviceRooms;

@@ -10,6 +10,7 @@ function sqlConnect() {
  * ============================================================================
  * {} // in order to get all the patients
  * {"id":1} // in order to retrieve infos on patient 1
+ * {"roomId":3} // in order to retrieve infos on patient which are on room 3
  * ============================================================================
  *
  * RESPONSE :
@@ -40,6 +41,10 @@ function getPatients(param, callback) {
 		.field("raisonHospitalisation")
 		.field("idPiece")
 		.from("patients");
+		
+	if (param.roomId) {
+		sql_req.where("idPiece = '" + param.roomId + "'");
+	}
 		
 	if (param.id) {
 		sql_req.where("id = '" + param.id + "'");

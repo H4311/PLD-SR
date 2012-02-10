@@ -10,7 +10,7 @@ Pour utiliser mysql, il faut les deux paquets suivants :
 -> mysql-client
 -> mysql-server
 Commandes :
-sudo apt-get install mysql-client mysql-server
+sudo apt-get install mysql-client mysql-server libmysqlclient-dev
 
 Remarque inutile : Ces deux paquets sont des méta paquets qui pointent vers les paquets de la dernière version de mysql.
 
