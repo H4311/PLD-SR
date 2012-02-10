@@ -65,10 +65,12 @@ function serviceActuators(method, query, data, resp) {
 		return;
 	}
 	
-	var result = {};
-	
-	var strResult = JSON.stringify(result);
-	resp.end(strResult);
+	// Get the response from the modeladmin layer :
+	modeladmin.setActuator(request, function(response) {
+		// Send the stringified json to client :
+		var strResponse = JSON.stringify(response);
+		resp.end(strResponse);
+	});
 }
 
 /*
@@ -102,10 +104,10 @@ function serviceListActuators(method, query, data, resp) {
 }
 
 /*
- * SERVICE Admin
+ * SERVICE admin_devices
  * Allows to add/remove sensors/actuators.
  */
-function serviceAdmin(method, query, data, resp) {
+function serviceAdminDevices(method, query, data, resp) {
 	writeHeaders(resp);
 	
 	// Parse the json DATA request
@@ -180,6 +182,6 @@ exports.sensors = serviceSensors;
 exports.actuators = serviceActuators;
 exports.list_sensors = serviceListSensors;
 exports.list_actuators = serviceListActuators;
-exports.admin = serviceAdmin;
+exports.admin_devices = serviceAdminDevices;
 exports.patients = servicePatients;
 exports.rooms = serviceRooms;
