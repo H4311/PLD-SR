@@ -13,4 +13,9 @@ struct semaphore {
 typedef struct semaphore semaphore;
 
 
+void semInit(semaphore *sem, unsigned int val);
+void semGive(semaphore *sem);
+void semTake(semaphore *sem);
+
+
 #endif

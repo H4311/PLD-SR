@@ -2,16 +2,18 @@
 #include <stdio.h>
 #include <assert.h>
 
+#include "commons.h"
 #include "gThreads.h"
+#include "gSem.h"
 #include "hw.h"
 
 /**
  * Count id thread
  */
-static int idCounter;
+static int idCounter = 0;
 
-static gThread *firstThread;
-static gThread *currThread;
+static gThread *firstThread = NULL;
+static gThread *currThread = NULL;
 
 /**
  * Initialisation du matériel
@@ -31,7 +33,6 @@ void initSystem()
 	idCounter = 0;
 	firstThread = NULL;
 	currThread = NULL;
-
 }
 
 /**
@@ -45,9 +46,8 @@ int initGThread(struct gThread *thread, char* threadName, int stackSize, gThread
 		thread->id = ++idCounter;
 		thread->name = threadName;
 		thread->state = INIT;
-		thread->context = malloc(sizeof(gContext));
-		(thread->context)->esp = (int)thread->stack+stackSize;
-		(thread->context)->ebp = (int)thread->stack+stackSize;
+		thread->esp = (int)thread->stack+stackSize;
+		thread->ebp = (int)thread->stack+stackSize;
 		thread->func = func;
 		thread->args = args;
 		
@@ -66,10 +66,6 @@ int initGThread(struct gThread *thread, char* threadName, int stackSize, gThread
 int createGThread(char *threadName, gThread_func_t thread, void* args, int stackSize)
 {
 	gThread *newGThread= malloc(sizeof(gThread));
-	if (idCounter == 0)
-	{
-		initSystem();
-	}
 	
 	if (!newGThread)
 	{
@@ -84,7 +80,8 @@ int createGThread(char *threadName, gThread_func_t thread, void* args, int stack
 		{
 			/* 1st thread */
 			firstThread = newGThread;
-			newGThread->nextThread = newGThread;
+			currThread = firstThread;
+			newGThread->nextThread = newGThread; /* Ring buffer */
 		}
 		else 
 		{
@@ -104,12 +101,12 @@ int createGThread(char *threadName, gThread_func_t thread, void* args, int stack
 void switchGThread(gThread *thread)
 {
 	irq_disable();
-	
+
     if (currThread)
     {
 		asm("movl %%esp, %0" "\n" "movl %%ebp, %1"
-            :"=r"(currThread->context->esp),
-            "=r"(currThread->context->ebp) 
+            :"=r"(currThread->esp),
+            "=r"(currThread->ebp) 
         );
 	}
 	
@@ -118,8 +115,8 @@ void switchGThread(gThread *thread)
     
     asm("movl %0, %%esp" "\n" "movl %1, %%ebp"
         :
-        :"r"(currThread->context->esp),
-         "r"(currThread->context->ebp)
+        :"r"(currThread->esp),
+         "r"(currThread->ebp)
     );
     
     irq_enable();
@@ -149,8 +146,10 @@ void startGThread()
  */
 void killCurrThread()
 {
-	gThread *thread = currThread;
+	gThread *thread;
 	irq_disable();
+	
+	thread = currThread;
 		
 	/* Recherche du context précédent le contexte courant*/
 	while (thread->nextThread != currThread)
@@ -173,14 +172,23 @@ void killCurrThread()
 	}
 	else
 	{
+		if (currThread == firstThread)
+			firstThread = thread;
 		thread->nextThread = currThread->nextThread;
 		free(currThread->stack);
 		free(currThread);
 		currThread = thread;
+		currThread->state = RUNNING;
 		printf("Switching to GThread n°%d\n", currThread->id);
+		
 		irq_enable();
-		/* On continue l'ordo avec le prochain contexte */
-		switchGThread(currThread);
+		
+		asm("movl %0, %%esp" "\n" "movl %1, %%ebp"
+        :
+        :"r"(currThread->esp),
+         "r"(currThread->ebp)
+		);
+
 	}
 }
 
@@ -189,15 +197,7 @@ void killCurrThread()
  */
 void yield()
 {
-	if (currThread != NULL)
-    {
-        switchGThread(currThread->nextThread);
-    }
-    else
-    {
-        switchGThread(firstThread);
-	}
-	
+	switchGThread(currThread->nextThread);
 }
 
 
