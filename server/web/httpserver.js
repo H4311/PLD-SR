@@ -28,7 +28,7 @@ function routeHttp(handlers, pathname, method, query, data, resp) {
 
 function httpStart(port, handlers, routeFunction) {
 	function onRequest(req, resp) {
-		var method = req.method;		// GET;POST;PUT;DELETE
+		var method = req.method;				// GET;POST;PUT;DELETE
 		var urlObj = url.parse(req.url, true);	// Parse the url AND the query
 		var pathname = urlObj.pathname;
 		var query = urlObj.query;
