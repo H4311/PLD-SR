@@ -10,6 +10,7 @@ serviceHandler["/list_sensors"] = services.list_sensors;
 serviceHandler["/list_actuators"] = services.list_actuators;
 serviceHandler["/admin"] = services.admin;
 serviceHandler["/patients"] = services.patients;
+serviceHandler["/rooms"] = services.rooms;
 
 // Start HTML Web Server :
 server.start(8080, htmlHandler, server.routeHttp);

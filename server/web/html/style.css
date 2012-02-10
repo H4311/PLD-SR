@@ -17,10 +17,6 @@ body {
 	padding: 0px;
 }
 
-a, a:visited {
-	color:white;
-}
-
 a:hover {
 	color:grey;
 }

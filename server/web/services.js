@@ -1,5 +1,6 @@
 var modelsensors = require("./sensors");
 var modelpatients = require("./patients");
+var modelrooms = require("./rooms");
 var modeladmin = require("./admin");
 
 function error(code, resp) {
@@ -137,7 +138,7 @@ function serviceAdmin(method, query, data, resp) {
 
 /*
  * SERVICE Patients
- * Allows to add/remove sensors/actuators.
+ * Allows to retrieve patients data.
  */
 function servicePatients(method, query, data, resp) {
 	writeHeaders(resp);
@@ -155,9 +156,30 @@ function servicePatients(method, query, data, resp) {
 	});
 }
 
+/*
+ * SERVICE Rooms
+ * Allows to retrieve rooms data.
+ */
+function serviceRooms(method, query, data, resp) {
+	writeHeaders(resp);
+
+	// Parse the json DATA request
+	request = JSON.parse(data);
+	if(!request) {
+		error(0, resp);
+		return;
+	}	
+	
+	modelrooms.getRooms(request, function(result) {
+			var strResult = JSON.stringify(result);
+			resp.end(strResult);
+	});
+}
+
 exports.sensors = serviceSensors;
 exports.actuators = serviceActuators;
 exports.list_sensors = serviceListSensors;
 exports.list_actuators = serviceListActuators;
 exports.admin = serviceAdmin;
 exports.patients = servicePatients;
+exports.rooms = serviceRooms;

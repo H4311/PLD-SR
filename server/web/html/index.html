@@ -4,41 +4,33 @@
 	<meta charset="utf-8" />
 	<link rel="stylesheet" href="style.css" />
 	<script src="http://code.jquery.com/jquery-1.7.1.js"></script>
-	<title>Application Test</title>
+	<title>RiTHM</title>
 	
 	<script>
 	var rest = "http://localhost:1337";
 	
 	function presentation(data) {
 		
-		var content = "<h2>Liste des Patients</h2><ol>";
+		var content = "<h2>Liste des Chambres</h2><ol>";
 		for (var i in data.hits) {
-			var patient = data.hits[i];
-			content += '<div class="patient"><p><a href="patient.html?id='
-				+ patient.id + '">' + ((patient.isMan) ? "M" : "Mme") 
-				+ " " + patient.nom + '</a></p></div>';
+			var room = data.hits[i];
+			content += '<div class="chambre"><p><a href="room.html?id='
+				+ room.id + '">' + room.nom + '</a></p></div>';
 		}
 		content += "</ol>";
 		
-		$("#liste_patients").html(content);
+		$("#liste_chambres").html(content);
 	}
 	
 	$(document).ready(function() {
-		function getPatients() {
-			$.post(rest + '/patients',
+		function getRooms() {
+			$.post(rest + '/rooms',
 			  '{}',
 			  presentation,
 			  "json");
 		}
-		
-		function getPatient(id) {
-			$.post(rest + '/patients',
-			  '{"id":'+id+'}',
-			  presentation,
-			  "json");
-		}
 
-		getPatients(); // initially retrieves patients values on first time.
+		getRooms(); // initially retrieves patients values on first time.
 	});
 	</script>
 </head>
@@ -49,7 +41,7 @@
 	<header id="header" class="branding" role="banner">
 		<hgroup>
 		<div class="retourTdB">
-			<a href="ghome_principal.html">
+			<a href="index.html">
 			<img src="images/retour.png" alt="image" width="40" height="40"/>
 			</a>
 		</div>
@@ -64,28 +56,15 @@
 		</div> 
 		</hgroup>
 	</header>
-	
-	
-	<!--<nav id=îmainî role=ìnavigationî >
-		<ul>
-		<li><a href=ì#î>Fake Menu</a></li>
-		</ul>
-	</nav>-->
 
-	
 	<section id="resume">
-		<h2>Chambre 226</h2>
-		<div class="chambre">
-			<figure>
-				<img src="images/chambre.jpg" alt="The Meteo"  width="150" height="150">
-				<strong>Temperature ambiante</strong> : 26 Celsius<br />
-				<strong>Nombre de patients</strong> : 5<br />
-				<strong>Luminosite</strong> :  60 Lux<br />
-			</figure>
+		<h2>RiTHM</h2>
+		<div>
+			<p>Bienvenue sur la page d'accueil de RiTHM. Vous pouvez tout contr√¥ler √† partir d'ici.</p>
 		</div>
 	</section>
 	
-	<section id="liste_patients">
+	<section id="liste_chambres">
 				
 	</section>
 	

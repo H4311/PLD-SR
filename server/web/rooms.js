@@ -10,7 +10,6 @@ function sqlConnect() {
  * ============================================================================
  * {} // in order to get all the patients
  * {"id":1} // in order to retrieve infos on patient 1
- * {"roomId":3} // in order to retrieve infos on patient which are on room 3
  * ============================================================================
  *
  * RESPONSE :
@@ -31,20 +30,14 @@ function sqlConnect() {
 	}
  * ============================================================================
  */
-function getPatients(param, callback) {
+function getRooms(param, callback) {
 
 	// Construct the SQL query :
 	var sql_req = squel.select()
 		.field("id")
 		.field("nom")
-		.field("isMan")
-		.field("raisonHospitalisation")
-		.field("idPiece")
-		.from("patients");
-		
-	if (param.roomId) {
-		sql_req.where("idPiece = '" + param.roomId + "'");
-	}
+		.field("description")
+		.from("pieces");
 		
 	if (param.id) {
 		sql_req.where("id = '" + param.id + "'");
@@ -61,4 +54,5 @@ function getPatients(param, callback) {
 	});
 }
 
-exports.getPatients = getPatients;
+exports.getRooms = getRooms;
+
