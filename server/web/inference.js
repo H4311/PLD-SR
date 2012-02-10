@@ -1,29 +1,34 @@
 var squel = require("squel");
-var sql = require("./nodesql");
+var sql = require("./model/nodesql");
 
 var sqlConnect = function() {
 	return sql.createClient("localhost", "rithm", "rithm", "pld");
 }
 
+var recomputeRules = function(result) {
+	for(var i in result.hits) {
+		console.log("Activation de la règle " + result.hits[i].idRegle);
+	}
+}
+
 var lastUpdate = 0;
 
 var boucle = function() {
-	console.log("Bonjour");
 	
 	//Selection des règles
-	var sqlRequest = "SELECT idRegle FROM regleCapteur WHERE idCapteur IN ";
+	var sqlRequest = "SELECT DISTINCT idRegle FROM regleCapteur WHERE idCapteur IN ";
 	sqlRequest += "(SELECT idCapteur FROM mesures WHERE time > " + lastUpdate + ")";
 	
 	var db = sqlConnect();
 	sql.query(db, sqlRequest, function(result) {
-		console.log("Took : " + result.took + "ms\nHits : " + result.count);
+		//console.log("Took : " + result.took + "ms\nHits : " + result.count);
 		
 		lastUpdate = new Date().getTime() * 1000;
 		
-		console.log(result);
+		recomputeRules(result);
+		
 		sql.close(db);
 	});
-
 }
 
 var interval = null;

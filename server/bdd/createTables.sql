@@ -38,7 +38,6 @@ CREATE TABLE capteurs (
 	isGlobal BOOLEAN,
 	idSujet INTEGER,
 	UNIQUE (type, numeroCapteur),
-	FOREIGN KEY (idSujet) REFERENCES patients (id) 
 );
 
 CREATE TABLE mesures (
