@@ -8,7 +8,7 @@ serviceHandler["/sensors"] = services.sensors;
 serviceHandler["/actuators"] = services.actuators;
 serviceHandler["/list_sensors"] = services.list_sensors;
 serviceHandler["/list_actuators"] = services.list_actuators;
-serviceHandler["/admin"] = services.admin;
+serviceHandler["/admin_devices"] = services.admin_devices;
 serviceHandler["/patients"] = services.patients;
 serviceHandler["/rooms"] = services.rooms;
 
