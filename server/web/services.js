@@ -1,7 +1,7 @@
-var modelsensors = require("./sensors");
-var modelpatients = require("./patients");
-var modelrooms = require("./rooms");
-var modeladmin = require("./admin");
+var modelsensors = require("./model/sensors");
+var modelpatients = require("./model/patients");
+var modelrooms = require("./model/rooms");
+var modeladmin = require("./model/admin");
 
 function error(code, resp) {
 	var result = {};
