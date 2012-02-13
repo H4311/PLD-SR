@@ -18,7 +18,7 @@ function sqlAsyncQuery(db, query, callbackAsync, callbackEnd) {
 	result.fields = [];
 	result.count = 0;
 	result.hits = [];
-	console.log("Query : " + query.toString());
+	//console.log("Query : " + query.toString());
 	db.query(query)
 		.on('field', function(f) {
 			result.fields.push(f.name);
