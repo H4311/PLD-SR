@@ -2,15 +2,28 @@
 #include <stdio.h>
 #include <assert.h>
 
+#include "commons.h"
 #include "gThreads.h"
+#include "gSem.h"
+#include "hw.h"
 
 /**
  * Count id thread
  */
-static int idCounter;
+static int idCounter = 0;
 
-static gThread *firstThread;
-static gThread *currThread;
+static gThread *firstThread = NULL;
+static gThread *currThread = NULL;
+
+/**
+ * Initialisation du matériel
+ */
+void startSched()
+{
+	start_hw();
+	setup_irq(4, yield);
+	yield();
+}
 
 /**
  * Initialize gThread system
@@ -33,9 +46,8 @@ int initGThread(struct gThread *thread, char* threadName, int stackSize, gThread
 		thread->id = ++idCounter;
 		thread->name = threadName;
 		thread->state = INIT;
-		thread->context = malloc(sizeof(gContext));
-		(thread->context)->esp = thread->stack+stackSize;
-		(thread->context)->ebp = thread->stack+stackSize;
+		thread->esp = (int)thread->stack+stackSize;
+		thread->ebp = (int)thread->stack+stackSize;
 		thread->func = func;
 		thread->args = args;
 		
@@ -54,10 +66,6 @@ int initGThread(struct gThread *thread, char* threadName, int stackSize, gThread
 int createGThread(char *threadName, gThread_func_t thread, void* args, int stackSize)
 {
 	gThread *newGThread= malloc(sizeof(gThread));
-	if (idCounter == 0)
-	{
-		initSystem();
-	}
 	
 	if (!newGThread)
 	{
@@ -72,7 +80,8 @@ int createGThread(char *threadName, gThread_func_t thread, void* args, int stack
 		{
 			/* 1st thread */
 			firstThread = newGThread;
-			newGThread->nextThread = newGThread;
+			currThread = firstThread;
+			newGThread->nextThread = newGThread; /* Ring buffer */
 		}
 		else 
 		{
@@ -81,7 +90,7 @@ int createGThread(char *threadName, gThread_func_t thread, void* args, int stack
 			firstThread->nextThread = newGThread;
 		}  
 	}
-	printf("Création du GThread \"%s\" (n°%d)\n", newGThread->name, newGThread->id);
+	printf("GThread created \"%s\" (n°%d)\n", newGThread->name, newGThread->id);
 	return newGThread->id;
 }
 
@@ -91,12 +100,13 @@ int createGThread(char *threadName, gThread_func_t thread, void* args, int stack
  */
 void switchGThread(gThread *thread)
 {
-	assert(thread->state != END);
+	irq_disable();
+
     if (currThread)
     {
 		asm("movl %%esp, %0" "\n" "movl %%ebp, %1"
-            :"=r"(currThread->context->esp),
-            "=r"(currThread->context->ebp) 
+            :"=r"(currThread->esp),
+            "=r"(currThread->ebp) 
         );
 	}
 	
@@ -105,14 +115,17 @@ void switchGThread(gThread *thread)
     
     asm("movl %0, %%esp" "\n" "movl %1, %%ebp"
         :
-        :"r"(currThread->context->esp),
-         "r"(currThread->context->ebp)
+        :"r"(currThread->esp),
+         "r"(currThread->ebp)
     );
+    
+    irq_enable();
     
     if (currThread->state == INIT)
     {
         startGThread();
     }
+    
 } 
 
 /**
@@ -124,26 +137,67 @@ void startGThread()
     currThread->func(currThread->args);  
     /* Thread stopped its routine*/
     currThread->state = END;
-    free(currThread->context);
-    free(currThread->stack);
-	exit(EXIT_SUCCESS);
+    /* Kill current Thread */
+    killCurrThread();
 }
 
+/** 
+ * Kill current context 
+ */
+void killCurrThread()
+{
+	gThread *thread;
+	irq_disable();
+	
+	thread = currThread;
+		
+	/* Recherche du context précédent le contexte courant*/
+	while (thread->nextThread != currThread)
+	{
+		thread = thread->nextThread;
+	}
+
+	/* Un seul contexte restant */
+	if (thread == currThread)
+	{
+		free(currThread->stack);
+		free(currThread);
+		/* 
+		 * On quitte l'appli
+		 * TODO : a revoir
+		 * Faire une restitution du contexte initial ?
+		 */
+		/*free(sem);*/
+		exit(EXIT_SUCCESS);
+	}
+	else
+	{
+		if (currThread == firstThread)
+			firstThread = thread;
+		thread->nextThread = currThread->nextThread;
+		free(currThread->stack);
+		free(currThread);
+		currThread = thread;
+		currThread->state = RUNNING;
+		printf("Switching to GThread n°%d\n", currThread->id);
+		
+		irq_enable();
+		
+		asm("movl %0, %%esp" "\n" "movl %1, %%ebp"
+        :
+        :"r"(currThread->esp),
+         "r"(currThread->ebp)
+		);
+
+	}
+}
 
 /**
  * Switch context
  */
 void yield()
 {
-	if (currThread != NULL)
-    {
-        switchGThread(currThread->nextThread);
-    }
-    else
-    {
-        switchGThread(firstThread);
-	}
-	
+	switchGThread(currThread->nextThread);
 }
 
 
@@ -161,7 +215,7 @@ int killGThread(int threadId)
 		if (itThread == NULL)
 			return ERROR;
 	}
-	printf("Destruction du GThread \"%s\" (n°%d)\n", itThread->name, itThread->id);
+	printf("GThread \"%s\" (n°%d) killed\n", itThread->name, itThread->id);
 	/*free(itThread->stack);*/
 	free(itThread);
 	return OK;

@@ -11,7 +11,7 @@ LIBS    = -L$(LIBDIR) -l$(LIBNAME)
 ###------------------------------
 ### Main targets 
 ###------------------------------------------------------------
-BINARIES= main
+BINARIES= appli
 
 all: $(BINARIES)
 
@@ -30,7 +30,7 @@ Makefile.depends:
 
 include Makefile.depends
 
-main: main.o ordonnancement.o $(LIBFILE)
+appli: appli.o gContext.o gThreads.o gSem.o $(LIBFILE)
 
 
 ###------------------------------
