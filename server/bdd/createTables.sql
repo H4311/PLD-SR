@@ -1,6 +1,6 @@
 USE pld;
 
-DROP TABLE IF EXISTS alertes, regleCapteur, regles, regleEvent, events, actionneurs, actionneurSujet, pieces, patients, mesures, capteurs ;
+DROP TABLE IF EXISTS alertes, regleCapteur, regleActionneur, regles, regleEvent, events, actionneurs, actionneurSujet, pieces, patients, mesures, capteurs;
 
 CREATE TABLE actionneurs (
 	id INTEGER PRIMARY KEY AUTO_INCREMENT,
@@ -80,6 +80,16 @@ CREATE TABLE regleCapteur (
 	finIntervalle REAL,
 	FOREIGN KEY (idRegle) REFERENCES regles (id),
 	FOREIGN KEY (idCapteur) REFERENCES capteurs (id)
+);
+
+CREATE TABLE regleActionneur (
+	id INTEGER PRIMARY KEY AUTO_INCREMENT,
+	idRegle INTEGER,
+	idActionneur INTEGER,
+	valeur REAL,
+	isActive BOOLEAN,
+	FOREIGN KEY (idRegle) REFERENCES regles (id),
+	FOREIGN KEY (idActionneur) REFERENCES Actionneur (id)
 );
 
 CREATE TABLE alertes (

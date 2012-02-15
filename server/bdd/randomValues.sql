@@ -6,7 +6,7 @@ DELETE FROM patients;
 DELETE FROM pieces;
 DELETE FROM actionneurs;
 
-INSERT INTO actionneurs(id, type)
+INSERT INTO actionneurs(numeroActionneur, type)
 VALUES(1, 0x1070901);
 
 INSERT INTO pieces(id, nom, description)
