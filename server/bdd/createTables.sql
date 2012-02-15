@@ -37,7 +37,7 @@ CREATE TABLE capteurs (
 	numeroCapteur INTEGER,
 	isGlobal BOOLEAN,
 	idSujet INTEGER,
-	UNIQUE (type, numeroCapteur),
+	UNIQUE (type, numeroCapteur)
 );
 
 CREATE TABLE mesures (
