@@ -1,8 +1,44 @@
 var squel = require("squel");
 var sql = require("./model/nodesql");
+var admin = require("./model/admin");
 
 var sqlConnect = function() {
 	return sql.createClient("localhost", "rithm", "rithm", "pld");
+}
+
+var triggerActionneurs = function(result) {
+	//console.log("Took : " + result.took + "ms\nHits : " + result.count);
+	//console.log(result);
+	for(var i in result.hits) {
+	
+		if(result.count != 1) {
+			console.log("[recomputeRules] E: Count différent de 1");
+		} else if(result.hits[0].nbFalse == 0) {
+			console.log("Règle " + result.hits[0].regle + " déclenchée");
+		
+			var sqlRequest = "";
+			sqlRequest += "SELECT numeroActionneur AS id, type AS type, isActive AS active , valeur AS value ";
+			sqlRequest += "FROM regleActionneur RA INNER JOIN actionneurs A ON RA.idActionneur = A.id ";
+			sqlRequest += "WHERE idRegle = " + result.hits[0].regle;
+		
+			var db = sqlConnect();
+			sql.query(db, sqlRequest, function(result) {
+				console.log("Took : " + result.took + "ms\nHits : " + result.count);
+				
+				for(var j in result.hits) {
+					//Récupérer les elem de la requete pour les mettre dans param !
+					console.log("Capteur " + result.hits[j].id + " de type " + result.hits[j].type + " est actif:" + result.hits[j].active + " de valeur " + result.hits[j].value + ".");
+			
+					admin.setActuator(result.hits[i], function(result) {
+						console.log("Retour de function setActuator : " + result);
+					});
+				}
+			
+				sql.close(db);
+			});
+		
+		}
+	}
 }
 
 var recomputeRules = function(result) {
@@ -21,17 +57,7 @@ var recomputeRules = function(result) {
 		
 		var db = sqlConnect();
 		sql.query(db, sqlRequest, function(result) {
-			//console.log("Took : " + result.took + "ms\nHits : " + result.count);
-			//console.log(result);
-			
-			if(result.count != 1) {
-				console.log("[recomputeRules] E: Count différent de 1");
-			}
-			
-			if(result.hits[0].nbFalse == 0) {
-				console.log("Règle " + result.hits[0].regle + " déclenchée");
-			}
-			
+			triggerActionneurs(result);	
 			sql.close(db);
 		});
 	}
