@@ -14,9 +14,11 @@
 		
 		if (data.count == 0) {
 			$("#resume").html("<h2>Ce patient n'existe pas.</h2>");
+			return;
 		}
 
 		var patient = data.hits[0];
+		getSensors(patient.id);
 		var content = '<h2>' + ((patient.isMan) ? "M" : "Mme") + ' ' + 
 			patient.nom + '</h2><div class="chambre">' +
 			'<figure>' +
@@ -28,28 +30,42 @@
 		$("#resume").html(content);
 	}
 	
+	function presentationSensors(data) {
+		if (data.count == 0) {
+			$("#sensors").html("<h2>Ce patient ne génère aucune données.</h2>");
+			return;
+		}
+		
+		var content = "";
+		for(var i in data.hits) {
+			var sensor = data.hits[i];
+			content+="<h3>Capteur :"+sensor["numeroCapteur"]+"</h3>"
+			$("#sensors").html(content);
+		}
+	}
+	
+	function getPatients() {
+		$.post(rest + '/patients',
+		  '{}',
+		  presentation,
+		  "json");
+	}
+	
+	function getPatient(id) {
+		$.post(rest + '/patients',
+		  '{"id":'+id+'}',
+		  presentation,
+		  "json");
+	}
+	
+	function getSensors(idPatient) {
+		$.post(rest + '/list_sensors',
+		  '{"id":'+idPatient+'}',
+		  presentationSensors,
+		  "json");
+	}
+	
 	$(document).ready(function() {
-		function getPatients() {
-			$.post(rest + '/patients',
-			  '{}',
-			  presentation,
-			  "json");
-		}
-		
-		function getPatient(id) {
-			$.post(rest + '/patients',
-			  '{"id":'+id+'}',
-			  presentation,
-			  "json");
-		}
-		
-		function getSensors(idPatient) {
-			$.post(rest + '/list_sensors',
-			  '{"id":'+id+'}',
-			  presentation,
-			  "json");
-		}
-
 		var idPatient = $.getUrlVar('id')
 		getPatient(idPatient); // initially retrieves patient values on first time.
 		$("#returnLink").attr("href", "room.html?id=" + $.getUrlVar('roomId'));
@@ -82,6 +98,8 @@
 	<section id="resume">
 	</section>
 	
+	<section id="sensors">
+	</section>
 
 	<footer>Copyright</footer>
 </div>
