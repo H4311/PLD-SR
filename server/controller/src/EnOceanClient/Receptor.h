@@ -90,6 +90,7 @@ public:
 
 protected:
 //------------------------------------------------------ Protected Methods
+
 	virtual void frame_receive(char* buffer) = 0;
 	// Manual :
     //		Processes the receipt of a complete frame.

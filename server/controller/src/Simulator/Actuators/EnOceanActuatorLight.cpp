@@ -15,6 +15,7 @@ using namespace std;
 //------------------------------------------------------ Personnal Include
 #include "EnOceanActuatorLight.h"
 #include "../Sensors/SensorSimulatorLumAndOcc.h"
+#include "../Model/Room.h"
 //-------------------------------------------------------------- Constants
 
 //----------------------------------------------------------------- PUBLIC
@@ -51,8 +52,11 @@ float EnOceanActuatorLight::update() {
 	}
 
 	pthread_mutex_lock(&mutex);
-	for(vector<Room*>::iterator it = rooms.begin(); it != rooms.end(); ++it) {
-		(*it)->setLuminosity(naturalLight+(on?illuminance:0));
+	for(vector<Subject*>::iterator it = subjects.begin(); it != subjects.end(); ++it) {
+		Room* room = dynamic_cast<Room*>((*it));
+		if (room != 0) {
+			room->setLuminosity(naturalLight+(on?illuminance:0));
+		}
 	}
 	pthread_mutex_unlock(&mutex);
 	return energeticCostPerSecond*illuminance*(luxMax-luxMin);
@@ -66,19 +70,6 @@ void EnOceanActuatorLight::set(enocean_data_structure* frame)  {
 
 }
 
-enocean_data_structure EnOceanActuatorLight::toFrame(int id, bool on, float val, float minL, float maxL) {
-	enocean_data_structure frame;
-	BYTE* byte = (BYTE*)(&frame);
-	for (unsigned int i = 0; i < EnOceanSensorAPI::FRAME_SIZE/2; i++) {
-		*byte = 0;
-		byte += sizeof(BYTE);
-	}
-	EnOceanSensorAPI::setID(&frame, (EnOceanSensorAPI::SensorId)id);
-	EnOceanSensorAPI::setIlluminance(&frame, val, minL, maxL);
-	frame.DATA_BYTE0 = on?(1<<3):(0<<3);
-
-	return frame;
-}
 //------------------------------------------------- Static public Methods
 
 //------------------------------------------------------------- Operators

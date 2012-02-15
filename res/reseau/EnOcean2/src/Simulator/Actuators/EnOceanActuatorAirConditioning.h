@@ -46,7 +46,6 @@ public:
 
 
 //------------------------------------------------- Static public Methods
-	static enocean_data_structure toFrame(int id, bool on, float temp, float tempMin, float tempMax);
 
 //------------------------------------------------------------- Operators
 

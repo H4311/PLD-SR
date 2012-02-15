@@ -18,7 +18,7 @@ using namespace std;
 #include <vector>
 #include <pthread.h>
 //------------------------------------------------------ Personnal Include
-#include "../Model/Room.h"
+#include "../Model/Subject.h"
 //------------------------------------------------------------- Constantes
 
 //------------------------------------------------------------------ Types
@@ -40,9 +40,9 @@ public:
 
 	int getID();
 
-	void addRoom(Room* room);
-	void delRoom(int id);
-	int countRooms();
+	void addSubject(Subject* s);
+	void delSubject(int id);
+	int countSubjects();
 
 	virtual float update() = 0;
 
@@ -50,6 +50,7 @@ public:
 
 //------------------------------------------------- Static public Methods
 
+	static Actuator* createActuator(int id, int type);
 //------------------------------------------------------------- Operators
 
 //-------------------------------------------------- Builder / Destructor
@@ -69,7 +70,7 @@ protected:
 //-------------------------------------------------- Protected Attributes
 
 	int id;
-	vector<Room*> rooms;
+	vector<Subject*> subjects;
 	pthread_mutex_t mutex; 			// Mutex to protect this value
 
 private:

@@ -13,19 +13,24 @@ src/EnOcean2.d: ../src/EnOcean2.cpp \
  ../src/Simulator/../Devices/EnOceanSensorAPI.h \
  ../src/Simulator/Sensors/SensorSimulator.h \
  ../src/Simulator/Sensors/../../Devices/EnOceanSensorAPI.h \
- ../src/Simulator/Sensors/../Model/Room.h \
+ ../src/Simulator/Sensors/../Model/Subject.h \
  ../src/Simulator/ServerSimulator.h \
  ../src/Simulator/Actuators/EnOceanActuator.h \
  ../src/Simulator/Actuators/Actuator.h \
- ../src/Simulator/Actuators/../Model/Room.h \
+ ../src/Simulator/Actuators/../Model/Subject.h \
  ../src/Simulator/Actuators/../../Devices/EnOceanSensorAPI.h \
+ ../src/Simulator/Model/Subject.h \
  ../src/Simulator/Sensors/SensorSimulatorTempHumi.h \
  ../src/Simulator/Sensors/SensorSimulator.h \
  ../src/Simulator/Actuators/EnOceanActuatorAirConditioning.h \
  ../src/Simulator/Actuators/EnOceanActuator.h \
  ../src/Simulator/Actuators/EventActuatorFire.h \
+ ../src/Simulator/Actuators/../Model/Room.h \
+ ../src/Simulator/Actuators/../Model/Subject.h \
  ../src/Devices/DeviceTable.h ../src/Devices/EnOceanSensorAPI.h \
- ../src/Simulator/Model/Room.h
+ ../src/Simulator/Model/Subject.h ../src/EnOceanClient/ServerSettings.h \
+ ../src/EnOceanClient/../Simulator/EnOCeanBaseSimulator.h \
+ ../src/EnOceanClient/TCPServer.h
 
 ../src/EnOceanClient/EnOceanReceptor.h:
 
@@ -57,7 +62,7 @@ src/EnOcean2.d: ../src/EnOcean2.cpp \
 
 ../src/Simulator/Sensors/../../Devices/EnOceanSensorAPI.h:
 
-../src/Simulator/Sensors/../Model/Room.h:
+../src/Simulator/Sensors/../Model/Subject.h:
 
 ../src/Simulator/ServerSimulator.h:
 
@@ -65,9 +70,11 @@ src/EnOcean2.d: ../src/EnOcean2.cpp \
 
 ../src/Simulator/Actuators/Actuator.h:
 
-../src/Simulator/Actuators/../Model/Room.h:
+../src/Simulator/Actuators/../Model/Subject.h:
 
 ../src/Simulator/Actuators/../../Devices/EnOceanSensorAPI.h:
+
+../src/Simulator/Model/Subject.h:
 
 ../src/Simulator/Sensors/SensorSimulatorTempHumi.h:
 
@@ -79,8 +86,18 @@ src/EnOcean2.d: ../src/EnOcean2.cpp \
 
 ../src/Simulator/Actuators/EventActuatorFire.h:
 
+../src/Simulator/Actuators/../Model/Room.h:
+
+../src/Simulator/Actuators/../Model/Subject.h:
+
 ../src/Devices/DeviceTable.h:
 
 ../src/Devices/EnOceanSensorAPI.h:
 
-../src/Simulator/Model/Room.h:
+../src/Simulator/Model/Subject.h:
+
+../src/EnOceanClient/ServerSettings.h:
+
+../src/EnOceanClient/../Simulator/EnOCeanBaseSimulator.h:
+
+../src/EnOceanClient/TCPServer.h:

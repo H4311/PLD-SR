@@ -1,3 +1,5 @@
 *.o
 gThread
 *.swp
+*~
+*node_modules/

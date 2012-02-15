@@ -2,19 +2,33 @@ var http = require("http");
 var url = require("url");
 var staticserve = require("./staticserve");
 
-function route(handlers, pathname, query, postData, resp) {
+function routeBasic(handlers, pathname, method, query, data, resp, defaultHandler) {
 	if (typeof handlers[pathname] === 'function') {
 		console.log("Route received for : " + pathname);
-		handlers[pathname](query, postData, resp);
+		handlers[pathname](method, query, data, resp);
 	} else	{
-		console.log("No route found for : " + pathname + ". Trying static serving...");
-		staticserve.serve(pathname, resp);
+		console.log("No route found for : " + pathname + ". Trying default handler...");
+		//staticserve.serve(pathname, resp);
+		if (defaultHandler !== undefined) {
+			defaultHandler(pathname, resp);
+		}
 	}
 }
 
-function httpStart(port, handlers) {
+function routeService(handlers, pathname, method, query, data, resp) {
+	routeBasic(handlers, pathname, method, query, data, resp, function() {
+		resp.writeHead(403); // forbidden access when you try to access services
+		resp.end();	
+	});
+}
+
+function routeHttp(handlers, pathname, method, query, data, resp) {
+	routeBasic(handlers, pathname, method, query, data, resp, staticserve.serve);
+}
+
+function httpStart(port, handlers, routeFunction) {
 	function onRequest(req, resp) {
-		var method = req.method;				// GET;POST;PUT;DELETE
+		var method = req.method;		// GET;POST;PUT;DELETE
 		var urlObj = url.parse(req.url, true);	// Parse the url AND the query
 		var pathname = urlObj.pathname;
 		var query = urlObj.query;
@@ -22,13 +36,13 @@ function httpStart(port, handlers) {
 		console.log("Request received for " + pathname);
 		req.setEncoding("utf8");
 
-		var postData = "";
+		var data = "";
 		req.addListener("data", function(chunk) {
-			postData += chunk;
+			data += chunk;
 		});
 
 		req.addListener("end", function() {
-			route(handlers, pathname, query, postData, resp);
+			routeFunction(handlers, pathname, method, query, data, resp);
 		});
 	}
 	
@@ -37,3 +51,5 @@ function httpStart(port, handlers) {
 }
 
 exports.start = httpStart;
+exports.routeService = routeService;
+exports.routeHttp = routeHttp;
