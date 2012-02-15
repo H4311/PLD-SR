@@ -42,8 +42,16 @@
 			  presentation,
 			  "json");
 		}
+		
+		function getSensors(idPatient) {
+			$.post(rest + '/list_sensors',
+			  '{"id":'+id+'}',
+			  presentation,
+			  "json");
+		}
 
-		getPatient($.getUrlVar('id')); // initially retrieves patient values on first time.
+		var idPatient = $.getUrlVar('id')
+		getPatient(idPatient); // initially retrieves patient values on first time.
 		$("#returnLink").attr("href", "room.html?id=" + $.getUrlVar('roomId'));
 	});
 	</script>

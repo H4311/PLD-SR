@@ -36,7 +36,6 @@ struct semaphore {
 typedef struct semaphore semaphore;
 
 static int id_counter;
-static int runningContexts;
 
 static ctx_s *curr_ctx;
 /* 
@@ -74,7 +73,7 @@ struct rlimit limite;
 void start_sched()
 {
 	start_hw();
-	setup_irq(4, yield);
+	setup_irq(1, yield);
 	yield();
 }
 
@@ -101,7 +100,6 @@ int main(int argc, char *argv[])
 	sem = malloc(sizeof(semaphore));
 	
 	id_counter = 0;
-	runningContexts = 0;
 	curr_ctx = NULL;
 	first_ctx = NULL;
 	/*
@@ -134,8 +132,8 @@ int init_ctx(struct ctx_s *ctx, int stack_size, func_t f, void *args)
     {
 		ctx->id = ++id_counter;
 		ctx->state = INIT;
-		ctx->esp = (int)ctx->stack+stack_size;
-		ctx->ebp = (int)ctx->stack+stack_size;
+		ctx->esp = (long)ctx->stack+stack_size;
+		ctx->ebp = (long)ctx->stack+stack_size;
 		ctx->f = f;
 		ctx->args = args;
 		return 0;
@@ -242,7 +240,7 @@ void kill_context()
 	
 	ctx = curr_ctx;
 	
-	/* Recherche du context précédent le contexte courant*/
+	/* Recherche du contexte précédent le contexte courant*/
 	while (ctx->next_ctx != curr_ctx)
 	{
 		ctx = ctx->next_ctx;
@@ -273,14 +271,14 @@ void kill_context()
 		curr_ctx->state = RUNNING;
 		printf("Passage au Thread n°%d\n", curr_ctx->id);
 		
+		/*
 		asm("movl %0, %%esp" "\n" "movl %1, %%ebp"
         :
         :"r"(curr_ctx->esp),
          "r"(curr_ctx->ebp)
 		);
-		
-		irq_enable();
-		
+		* */
+		yield();
 	}
 }
 
@@ -331,7 +329,6 @@ void f_ping(void *args)
 		puts("B");
 		puts("C");
 		*/
-		sleep(1);
 		printf("ctx %d (i=%d)\n", curr_ctx->id, i);
 	}
 }
@@ -345,7 +342,6 @@ void f_pong(void *args)
 		puts("1");
 		puts("2");
 		*/
-		sleep(1);
 		printf("ctx %d (i=%d)\n", curr_ctx->id, i);
 	}
 }
@@ -359,7 +355,6 @@ void f_paf(void *args)
 		puts("y");
 		puts("z");
 		*/
-		sleep(1);
 		printf("ctx %d (i=%d)\n", curr_ctx->id, i);
 	}
 }
@@ -374,7 +369,6 @@ void f_pif(void *args)
 		puts("i");
 		puts("f");
 		*/
-		sleep(1);
 		printf("ctx %d (i=%d)\n", curr_ctx->id, i);
 	}
 }

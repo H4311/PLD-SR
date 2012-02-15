@@ -75,17 +75,48 @@ function serviceActuators(method, query, data, resp) {
 
 /*
  * SERVICE list_sensors
- * Gets list of sensors.
+ *
+ * REQUEST :
+ * ============================================================================
+{
+	“id” : 112
+}
+ * ============================================================================
+ *
+ * RESPONSE :
+ * ============================================================================
+{
+	“sensors” : [
+			{
+				“...” : “...”,	// Cf. BDD
+				“...” : “...”
+			},
+			{
+				“...” : “...”,
+				“...” : “...”
+			}
+	]
+}
+ * ============================================================================
  */
 function serviceListSensors(method, query, data, resp) {
 	writeHeaders(resp);
 	
-	// Get the response from the modelsensors layer :
-	modelsensors.getSensorsList(function(response) {
-		// Send the stringified json to client :
-		var strResponse = JSON.stringify(response);
-		resp.end(strResponse);
-	});
+	if(data.id) {
+		// Get the response from the modelsensors layer :
+		modelsensors.getSensorsListByPatient(data.id, function(response) {
+			// Send the stringified json to client :
+			var strResponse = JSON.stringify(response);
+			resp.end(strResponse);
+		});
+	} else {
+		// Get the response from the modelsensors layer :
+		modelsensors.getSensorsList(function(response) {
+			// Send the stringified json to client :
+			var strResponse = JSON.stringify(response);
+			resp.end(strResponse);
+		});
+	}
 }
 
 /*
@@ -178,6 +209,26 @@ function serviceRooms(method, query, data, resp) {
 	});
 }
 
+/*
+ * SERVICE Alerts
+ * Allows to retrieve alerts from the database.
+ */
+function serviceAlerts(method, query, data, resp) {
+	writeHeaders(resp);
+
+	// Parse the json DATA request
+	request = JSON.parse(data);
+	if(!request) {
+		error(0, resp);
+		return;
+	}
+	
+	modelrooms.getAlerts(request, function(result) {
+			var strResult = JSON.stringify(result);
+			resp.end(strResult);
+	});
+}
+
 exports.sensors = serviceSensors;
 exports.actuators = serviceActuators;
 exports.list_sensors = serviceListSensors;
@@ -185,3 +236,4 @@ exports.list_actuators = serviceListActuators;
 exports.admin_devices = serviceAdminDevices;
 exports.patients = servicePatients;
 exports.rooms = serviceRooms;
+exports.alerts = serviceAlerts;

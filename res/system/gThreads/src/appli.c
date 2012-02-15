@@ -14,7 +14,7 @@ void idle(void *args)
 void letters(void *args)
 {
 	int i;
-	for (i = 0; i<50;i++)
+	for (i = 0; i<11; i++)
 	{
 		puts("A");
 		puts("B");
@@ -39,7 +39,7 @@ void numbers(void *args)
 void others(void *args)
 {
 	int i;
-	for (i = 0; i<50; ++i) 
+	for (i = 0; i<13; ++i) 
 	{
 		puts("+");
 		puts("-");
@@ -53,12 +53,15 @@ int main()
 	/*
 	 * Create two threads
 	 */
-	
-	/*createGThread("idleThread", idle, NULL, STACK_SIZE);*/
-	createGThread("letters", letters, NULL, STACK_SIZE);
 	createGThread("numbers", numbers, NULL, STACK_SIZE);
+	createGThread("letters", letters, NULL, STACK_SIZE);
+	createGThread("others", others, NULL, STACK_SIZE);
+	createGThread("idleThread", idle, NULL, STACK_SIZE);
 	/*createGThread("others", others, NULL, STACK_SIZE);*/
 		
+	/* To be sure they are all welle created */
+	listThreads();
+	
 	sem = malloc(sizeof(semaphore));
 	semInit(sem,0);
 	
@@ -70,5 +73,6 @@ int main()
 	killGThread(lettersId);
 	*/
 	
+	printf("Exit application\n");
 	return 0;
 }
