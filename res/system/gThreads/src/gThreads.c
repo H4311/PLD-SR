@@ -16,7 +16,7 @@ static gThread *firstThread = NULL;
 static gThread *currThread = NULL;
 
 /**
- * Initialisation du matériel
+ * Initialize hardware
  */
 void startSched()
 {
@@ -26,14 +26,21 @@ void startSched()
 }
 
 /**
- * Initialize gThread system
+ * List all threads currently in the task queue
  */
-void initSystem() 
+void listThreads()
 {
-	idCounter = 0;
-	firstThread = NULL;
-	currThread = NULL;
+	int i;
+	gThread *thread;
+	thread = firstThread;
+	for (i=0; i<8; i++)
+	{
+		printf("%d", thread->id);
+		thread = thread->nextThread;
+	}
+	puts("");
 }
+
 
 /**
  * Initialize Thread
@@ -46,8 +53,8 @@ int initGThread(struct gThread *thread, char* threadName, int stackSize, gThread
 		thread->id = ++idCounter;
 		thread->name = threadName;
 		thread->state = INIT;
-		thread->esp = (int)thread->stack+stackSize;
-		thread->ebp = (int)thread->stack+stackSize;
+		thread->esp = (long)thread->stack+stackSize;
+		thread->ebp = (long)thread->stack+stackSize;
 		thread->func = func;
 		thread->args = args;
 		
@@ -55,6 +62,7 @@ int initGThread(struct gThread *thread, char* threadName, int stackSize, gThread
 	}
 	else
 	{
+		printf("Error initializing gThread\n");
 		return ERROR;
 	}
 }
@@ -72,7 +80,7 @@ int createGThread(char *threadName, gThread_func_t thread, void* args, int stack
 		printf("Error creating gThread\n");
 		return 0;
 	}
-	else 
+	else
 	{
 		/*Initialize thread*/
 		initGThread(newGThread, threadName, stackSize, thread, args);
@@ -98,10 +106,10 @@ int createGThread(char *threadName, gThread_func_t thread, void* args, int stack
 /**
  * Thread switching
  */
-void switchGThread(gThread *thread)
+void switchGThread(struct gThread *thread)
 {
 	irq_disable();
-
+	
     if (currThread)
     {
 		asm("movl %%esp, %0" "\n" "movl %%ebp, %1"
@@ -111,14 +119,14 @@ void switchGThread(gThread *thread)
 	}
 	
 	/* Next context*/
-    currThread = thread;
-    
-    asm("movl %0, %%esp" "\n" "movl %1, %%ebp"
-        :
-        :"r"(currThread->esp),
-         "r"(currThread->ebp)
-    );
-    
+	currThread = thread;
+	
+	asm("movl %0, %%esp" "\n" "movl %1, %%ebp"
+		:
+		:"r"(currThread->esp),
+		 "r"(currThread->ebp)
+	);
+   
     irq_enable();
     
     if (currThread->state == INIT)
@@ -179,16 +187,8 @@ void killCurrThread()
 		free(currThread);
 		currThread = thread;
 		currThread->state = RUNNING;
-		printf("Switching to GThread n°%d\n", currThread->id);
-		
-		irq_enable();
-		
-		asm("movl %0, %%esp" "\n" "movl %1, %%ebp"
-        :
-        :"r"(currThread->esp),
-         "r"(currThread->ebp)
-		);
-
+		yield();
+	
 	}
 }
 
@@ -197,6 +197,7 @@ void killCurrThread()
  */
 void yield()
 {
+	irq_disable();
 	switchGThread(currThread->nextThread);
 }
 

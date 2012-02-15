@@ -11,7 +11,6 @@ enum gState {INIT, RUNNING, END};
 
 typedef void (gThread_func_t) (void*);
 
-
 /**
  * GThread structure
  */
@@ -21,8 +20,8 @@ struct gThread
     char *name;
     enum gState state;
     void* stack;
-    int esp;
-    int ebp;
+    long esp;
+    long ebp;
     gContext *context;
 	gThread_func_t *func;
 	void* args;
@@ -30,6 +29,11 @@ struct gThread
 };
 
 typedef struct gThread gThread;
+
+/**
+ * List all threads in the task queue
+ */
+void listThreads();
 
 /**
  * Start scheduler
