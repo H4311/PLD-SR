@@ -123,6 +123,23 @@ function getSensorsList(callback) {
 	});
 }
 
+function getSensorsListByPatient(id, callback) {	
+	// Construct the SQL query :
+	var sql_req = squel.select()
+		.from("capteurs")
+		.where("idSujet = "+id);
+	
+	// Send the query to SQL DB :
+	var db = sqlConnect();
+	sql.query(db, sql_req.toString(), function(result) {
+		console.log("Took : "+result.took+"ms\nHits : "+result.count);
+		
+		// Call the record with json response :
+		callback(result);
+		sql.close(db);
+	});
+}
+
 function getActuatorsList(callback) {
 	// Construct the SQL query :
 	var sql_req = squel.select()
@@ -141,4 +158,5 @@ function getActuatorsList(callback) {
 
 exports.getSensorsRecords = getSensorsRecords;
 exports.getSensorsList = getSensorsList;
+exports.getSensorsListByPatient = getSensorsListByPatient;
 exports.getActuatorsList = getActuatorsList;

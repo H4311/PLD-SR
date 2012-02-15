@@ -75,17 +75,48 @@ function serviceActuators(method, query, data, resp) {
 
 /*
  * SERVICE list_sensors
- * Gets list of sensors.
+ *
+ * REQUEST :
+ * ============================================================================
+{
+	“id” : 112
+}
+ * ============================================================================
+ *
+ * RESPONSE :
+ * ============================================================================
+{
+	“sensors” : [
+			{
+				“...” : “...”,	// Cf. BDD
+				“...” : “...”
+			},
+			{
+				“...” : “...”,
+				“...” : “...”
+			}
+	]
+}
+ * ============================================================================
  */
 function serviceListSensors(method, query, data, resp) {
 	writeHeaders(resp);
 	
-	// Get the response from the modelsensors layer :
-	modelsensors.getSensorsList(function(response) {
-		// Send the stringified json to client :
-		var strResponse = JSON.stringify(response);
-		resp.end(strResponse);
-	});
+	if(data.id) {
+		// Get the response from the modelsensors layer :
+		modelsensors.getSensorsListByPatient(data.id, function(response) {
+			// Send the stringified json to client :
+			var strResponse = JSON.stringify(response);
+			resp.end(strResponse);
+		});
+	} else {
+		// Get the response from the modelsensors layer :
+		modelsensors.getSensorsList(function(response) {
+			// Send the stringified json to client :
+			var strResponse = JSON.stringify(response);
+			resp.end(strResponse);
+		});
+	}
 }
 
 /*
