@@ -6,14 +6,46 @@ var sqlConnect = function() {
 	return sql.createClient("localhost", "rithm", "rithm", "pld");
 }
 
+var throwAlerts = function(regle) {
+	var sqlRequest = "";
+	sqlRequest += "SELECT id, createsAlert ";
+	sqlRequest += "FROM regles ";
+	sqlRequest += "WHERE id = " + regle;
+
+	var db = sqlConnect();
+	sql.query(db, sqlRequest, function(result) {
+		console.log("Took : " + result.took + "ms\nHits : " + result.count);
+		
+		if(result.count != 1) {
+			console.log("[throwAlerts] E: problème pour trouver la règle demandée.");
+		} else {
+			if(result.hits[0].createsAlert) {
+				console.log("Lancement d'une alerte pour la règle " + result.hits[0].id);
+				
+				var sqlRequest = "";
+				sqlRequest += "INSERT INTO alertes (time, idRegle) ";
+				sqlRequest += "VALUES (" + new Date().getTime() * 1000 + ", " + result.hits[0].id + ")";
+
+				var db = sqlConnect();
+				sql.query(db, sqlRequest, function(result) {
+					console.log("Took : " + result.took + "ms\nHits : " + result.count);
+					console.log("Alert done");
+					sql.close(db);
+				});
+				
+			}
+		}
+	
+		sql.close(db);
+	});
+}
+
 var triggerActionneurs = function(result) {
 	//console.log("Took : " + result.took + "ms\nHits : " + result.count);
 	//console.log(result);
 	for(var i in result.hits) {
 	
-		if(result.count != 1) {
-			console.log("[recomputeRules] E: Count différent de 1");
-		} else if(result.hits[0].nbFalse == 0) {
+		if(result.hits[0].nbFalse == 0) {
 			console.log("Règle " + result.hits[0].regle + " déclenchée");
 		
 			var sqlRequest = "";
@@ -36,6 +68,8 @@ var triggerActionneurs = function(result) {
 			
 				sql.close(db);
 			});
+			
+			throwAlerts(result.hits[0].regle);
 		
 		}
 	}
@@ -57,7 +91,11 @@ var recomputeRules = function(result) {
 		
 		var db = sqlConnect();
 		sql.query(db, sqlRequest, function(result) {
-			triggerActionneurs(result);	
+			if(result.count != 1) {
+				console.log("[recomputeRules] E: Count différent de 1");
+			} else {
+				triggerActionneurs(result);
+			}
 			sql.close(db);
 		});
 	}
