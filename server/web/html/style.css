@@ -14,6 +14,7 @@ body {
 	background-color: white;
 	margin: 0px;
 	padding: 0px;
+	background: url('images/background4.png') repeat-y center;
 }
 
 /* -------------------------------------------------------------------------------------------------
@@ -52,7 +53,6 @@ body {
 #wrapper {
     height: auto;
     min-height: 101%; /* have scroll bar always there, so things won't jump around */
-	background: url('images/background4.png') repeat-y center;
 	margin: 0px;
 	padding: 0px;
 }
