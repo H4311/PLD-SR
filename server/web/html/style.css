@@ -22,10 +22,9 @@ body {
 -----------------------------------------------------------------------------------------------------*/
 
 #header{
-	margin-top: -22px;
 	margin-bottom: 60px;
-	padding-top: 20px;
-	height: 100px;
+	padding-top: 1%;
+	height: 80px;
 	background: url('images/background.png') repeat center;
 	text-align: center;
 	
@@ -36,7 +35,7 @@ body {
 
 #header .alerte{
 	float: right;
-	margin-top: -100px;
+	margin-top: -11%;
 	margin-right: 8%;
 }
 
@@ -44,6 +43,7 @@ body {
 	float: left;
 	position: absolute;
 	margin-left: 12%;
+	margin-top: 3%;
 }
 
 /* -------------------------------------------------------------------------------------------------
