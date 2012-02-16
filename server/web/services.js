@@ -35,7 +35,7 @@ function writeHeaders(resp) {
  */
 function serviceSensors(method, query, data, resp) {
 	writeHeaders(resp);
-	
+
 	// Parse the json request in data :
 	request = JSON.parse(data);
 	if(!request) {
@@ -75,17 +75,69 @@ function serviceActuators(method, query, data, resp) {
 
 /*
  * SERVICE list_sensors
- * Gets list of sensors.
+ *
+ * REQUEST :
+ * ============================================================================
+{
+	“idPatient” : 112
+}
+OR
+{
+	“idRoom” : 112
+}
+OR
+{
+}
+ * ============================================================================
+ *
+ * RESPONSE :
+ * ============================================================================
+{
+	“sensors” : [
+			{
+				“...” : “...”,	// Cf. BDD
+				“...” : “...”
+			},
+			{
+				“...” : “...”,
+				“...” : “...”
+			}
+	]
+}
+ * ============================================================================
  */
 function serviceListSensors(method, query, data, resp) {
 	writeHeaders(resp);
 	
-	// Get the response from the modelsensors layer :
-	modelsensors.getSensorsList(function(response) {
-		// Send the stringified json to client :
-		var strResponse = JSON.stringify(response);
-		resp.end(strResponse);
-	});
+	// Parse the json DATA request
+	request = JSON.parse(data);
+	if(!request) {
+		error(0, resp);
+		return;
+	}
+	
+	if(request.idPatient) {
+		// Get the response from the modelsensors layer :
+		modelsensors.getSensorsListByPatient(request.idPatient, function(response) {
+			// Send the stringified json to client :
+			var strResponse = JSON.stringify(response);
+			resp.end(strResponse);
+		});
+	} else if(request.idRoom) {
+		// Get the response from the modelsensors layer :
+		modelsensors.getSensorsListByRoom(request.idRoom, function(response) {
+			// Send the stringified json to client :
+			var strResponse = JSON.stringify(response);
+			resp.end(strResponse);
+		});
+	} else {
+		// Get the response from the modelsensors layer :
+		modelsensors.getSensorsList(function(response) {
+			// Send the stringified json to client :
+			var strResponse = JSON.stringify(response);
+			resp.end(strResponse);
+		});
+	}
 }
 
 /*
@@ -178,6 +230,26 @@ function serviceRooms(method, query, data, resp) {
 	});
 }
 
+/*
+ * SERVICE Alerts
+ * Allows to retrieve alerts from the database.
+ */
+function serviceAlerts(method, query, data, resp) {
+	writeHeaders(resp);
+
+	// Parse the json DATA request
+	request = JSON.parse(data);
+	if(!request) {
+		error(0, resp);
+		return;
+	}
+	
+	modelrooms.getAlerts(request, function(result) {
+			var strResult = JSON.stringify(result);
+			resp.end(strResult);
+	});
+}
+
 exports.sensors = serviceSensors;
 exports.actuators = serviceActuators;
 exports.list_sensors = serviceListSensors;
@@ -185,3 +257,4 @@ exports.list_actuators = serviceListActuators;
 exports.admin_devices = serviceAdminDevices;
 exports.patients = servicePatients;
 exports.rooms = serviceRooms;
+exports.alerts = serviceAlerts;

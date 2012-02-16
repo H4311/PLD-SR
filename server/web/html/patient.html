@@ -4,19 +4,65 @@
 	<meta charset="utf-8" />
 	<link rel="stylesheet" href="style.css" />
 	<script src="http://code.jquery.com/jquery-1.7.1.js"></script>
+	<script type="text/javascript" src="https://www.google.com/jsapi"></script>
 	<script src="common.js"></script>
 	<title>RiTHM - Informations du Patient</title>
 	
-	<script>		
+	<script>
+	google.load("visualization", "1", {packages:["corechart"]});
+	google.setOnLoadCallback(loadGCharts);
+	
+	var gChartsSettings = {
+		loaded: false,
+		options: {
+			width: 500,
+			height: 300,
+			animation: {
+				duration: 500,
+				easing: 'in'
+			}
+		}
+	}
+
 	var rest = "http://localhost:1337";
 	
-	function presentation(data) {
+	function loadGCharts() {
+		gChartsSettings.loaded = true;
+	}
+	
+	function initChart(data) {
+		
+	}
+	
+	function updateChart(sensorId, values) {
+		
+	}
+	
+	function presentationSensors(data) {
+		if (data.count == 0) {
+			$("#sensors").html("<h2>Ce patient ne génère aucune données.</h2>");
+			return;
+		}
+		
+		var content = "";
+		for(var i in data.hits) {
+			var sensor = data.hits[i];
+			content+="<h3>Capteur :"+sensor.numeroCapteur+"<div id=\"chart_"+sensor.id+"\"></div></h3>"
+			$("#sensors").html(content);
+			getSensorValues(sensor.id, initChart, new Date().getTime() - 3600000);
+		}
+	}
+	
+	function presentationPatient(data) {
 		
 		if (data.count == 0) {
 			$("#resume").html("<h2>Ce patient n'existe pas.</h2>");
+			return;
 		}
 
 		var patient = data.hits[0];
+		getSensors(patient.id, presentationSensors);
+		
 		var content = '<h2>' + ((patient.isMan) ? "M" : "Mme") + ' ' + 
 			patient.nom + '</h2><div class="chambre">' +
 			'<figure>' +
@@ -28,56 +74,90 @@
 		$("#resume").html(content);
 	}
 	
-	$(document).ready(function() {
-		function getPatients() {
-			$.post(rest + '/patients',
-			  '{}',
-			  presentation,
-			  "json");
-		}
+	function getPatients(callback) {
+		$.post(rest + '/patients',
+		  '{}',
+		  callback,
+		  "json");
+	}
+	
+	function getPatient(id, callback) {
+		$.post(rest + '/patients',
+		  '{"id":'+id+'}',
+		  callback,
+		  "json");
+	}
+	
+	function getSensorValues(idSensor, callback, from, to) {
+		var req = {
+			sensors: [
+				{
+					id: idSensor,
+					from: new Date(from).toString("yyyy/MM/dd HH:mm:ss")
+				}
+			]
+		};
+		if(to) req.sensors[0].to =  new Date(to).toString("yyyy/MM/dd HH:mm:ss")
 		
-		function getPatient(id) {
-			$.post(rest + '/patients',
-			  '{"id":'+id+'}',
-			  presentation,
-			  "json");
-		}
-
-		getPatient($.getUrlVar('id')); // initially retrieves patient values on first time.
+		$.post(rest + '/sensors',
+		  JSON.stringify(req),
+		  callback,
+		  "json");
+	}
+	
+	function getSensors(idPatient, callback) {
+		var req = {
+			idPatient: idPatient
+		};
+		$.post(rest + '/list_sensors',
+		  JSON.stringify(req),
+		  callback,
+		  "json");
+	}
+	
+	$(document).ready(function() {
+		var idPatient = $.getUrlVar('id')
+		getPatient(idPatient, presentationPatient); // initially retrieves patient values on first time.
 		$("#returnLink").attr("href", "room.html?id=" + $.getUrlVar('roomId'));
 	});
 	</script>
 </head>
 
 <body>
-	<div id="wrapper">
 
-	<header id="header" class="branding" role="banner">
-		<hgroup>
-		<div class="retourTdB">
-			<a id="returnLink" href="#">
-			<img src="images/retour.png" alt="image" width="40" height="40"/>
-			</a>
-		</div>
-		<h1>Tableau de Bord<h1>
-		<div class="alerte">
-			<a href="ghome.html">
-			<!--TODO: ref vers la chambre qui pose probleme !! -->
-			<figure>
-				<img src="images/attention2.png" alt="The Alert" width="60" height="50">
-			</figure>
-			</a>
-		</div> 
-		</hgroup>
-	</header>
+<header id="header" class="branding" role="banner">
+	<div class="retourTdB">
+		<a href="index.html">
+		<img src="images/retour.png" alt="retour" width="40" height="40"/>
+		</a>
+	</div>
+	<hgroup>
+	<h1>Patient</h1>
+	</hgroup>
+	<div class="alerte">
+		<!--TODO: ref vers la chambre qui pose probleme !! -->
+		<a href="room.html">
+		<figure>
+			<img src="images/attention2.png" alt="alerte" width="60" height="50">
+		</figure>
+		</a>
+	</div> 
+</header>
+
+<div id="wrapper">
 	
 	<section id="resume">
+	
 	</section>
 	
+	<section id="sensors">
+	
+	</section>
 
-	<footer>Copyright</footer>
 </div>
 	
+<footer>Copyright 2012 - Hexanome H4311</footer>
+
 </body>
 
 </html>

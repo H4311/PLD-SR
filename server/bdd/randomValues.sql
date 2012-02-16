@@ -6,7 +6,7 @@ DELETE FROM patients;
 DELETE FROM pieces;
 DELETE FROM actionneurs;
 
-INSERT INTO actionneurs(id, type)
+INSERT INTO actionneurs(numeroActionneur, type)
 VALUES(1, 0x1070901);
 
 INSERT INTO pieces(id, nom, description)
@@ -30,4 +30,5 @@ VALUES (1, 0x0070205, 42, true, 1),
 INSERT INTO mesures(id, idCapteur, time, typeMesure, mesure)
 VALUES (1, 1, 1328817902000, 3, 36),
 	   (2, 1, 1328818243000, 3, 39),
-	   (3, 2, 1328824670000, 3, 37);
+	   (3, 2, 1328824670000, 3, 37),
+	   (4, 2, 1399999999999, 3, 1337);

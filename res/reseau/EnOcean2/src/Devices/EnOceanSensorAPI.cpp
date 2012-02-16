@@ -316,6 +316,7 @@ extern "C" {
 		case 0x0070801 : { return analyseLumAndOcc_EEP_07_08_01; }
 		case 0x0070901 : { return analyseCO2_EEP_07_09_01; }
 		case 0x0070A01 : { return analyseHeartRate_EEP_07_0A_01; }
+		case 0x00A0001 : { return analyseSunSpot; }
 		}
 		return NULL;
 	}
@@ -327,8 +328,8 @@ extern "C" {
 		bool isLearning, contact;
 		isLearning = (frame->DATA_BYTE0 >> 3) & 0;
 		contact = frame->DATA_BYTE0 & 1;
-		insertMesure(mysql, CAPTEUR_ENOCEAN, (int)getID(frame), timestamp, 0, (contact?1:0));
-		insertMesure(mysql, CAPTEUR_ENOCEAN, (int)getID(frame), timestamp, 1, (isLearning?1:0));
+		insertMesure(mysql, CAPTEUR_ENOCEAN, (int)getID(frame), timestamp, CONTACT, (contact?1:0));
+		//insertMesure(mysql, CAPTEUR_ENOCEAN, (int)getID(frame), timestamp, 1, (isLearning?1:0));
 		oss << "Contact : " << (contact?"Yes":"No") << " | Learning : " << (isLearning?"Yes":"No") << " >";
 		return oss.str();
 	} //----- End of analyseContactSensor_D5_00_01
@@ -342,10 +343,12 @@ extern "C" {
 		oss << getRockerSwitchEnergyBow(frame) << " | ";
 		oss << getRockerSwitchAction2nd(frame) << " | ";
 		oss << isRockerSwitchAction2nd(frame) << " >";
-		insertMesure(mysql, CAPTEUR_ENOCEAN, (int)getID(frame), timestamp, 0, getRockerSwitchAction1st(frame));
-		insertMesure(mysql, CAPTEUR_ENOCEAN, (int)getID(frame), timestamp, 1, getRockerSwitchEnergyBow(frame));
-		insertMesure(mysql, CAPTEUR_ENOCEAN, (int)getID(frame), timestamp, 2, getRockerSwitchAction2nd(frame));
-		insertMesure(mysql, CAPTEUR_ENOCEAN, (int)getID(frame), timestamp, 3, isRockerSwitchAction2nd(frame));
+
+		int action = getRockerSwitchAction1st(frame)*16+getRockerSwitchAction2nd(frame);
+		insertMesure(mysql, CAPTEUR_ENOCEAN, (int)getID(frame), timestamp, SWITCH, action);
+//		insertMesure(mysql, CAPTEUR_ENOCEAN, (int)getID(frame), timestamp, 1, getRockerSwitchEnergyBow(frame));
+//		insertMesure(mysql, CAPTEUR_ENOCEAN, (int)getID(frame), timestamp, 2, getRockerSwitchAction2nd(frame));
+//		insertMesure(mysql, CAPTEUR_ENOCEAN, (int)getID(frame), timestamp, 3, isRockerSwitchAction2nd(frame));
 		return oss.str();
 	} //----- End of analyseRockerSwitch_F6_02_01
 
@@ -357,7 +360,7 @@ extern "C" {
 		bool dataFrame = (frame->DATA_BYTE0 >> 3) & 1;
 		if (dataFrame) {
 			oss << "< " << getTemperatureInverted(frame, minTemp, maxTemp) << "�c >";
-			insertMesure(mysql, CAPTEUR_ENOCEAN, (int)getID(frame), timestamp, 0, getTemperatureInverted(frame, minTemp, maxTemp));
+			insertMesure(mysql, CAPTEUR_ENOCEAN, (int)getID(frame), timestamp, TEMPERATURE, getTemperatureInverted(frame, minTemp, maxTemp));
 		}
 		return oss.str();
 	} //----- End of analyseTempSensor
@@ -371,10 +374,10 @@ extern "C" {
 		bool dataFrame = (frame->DATA_BYTE0 >> 3) & 1;
 		if (dataFrame) {
 			if ((frame->DATA_BYTE0 >> 1) & 1) { // If temperature sensor is available :
-				insertMesure(mysql, CAPTEUR_ENOCEAN, (int)getID(frame), timestamp, 0, getTemperature(frame, minTemp, maxTemp));
+				insertMesure(mysql, CAPTEUR_ENOCEAN, (int)getID(frame), timestamp, TEMPERATURE, getTemperature(frame, minTemp, maxTemp));
 				oss << "< " << getTemperature(frame, minTemp, maxTemp) << "�c | ";
 			}
-			insertMesure(mysql, CAPTEUR_ENOCEAN, (int)getID(frame), timestamp, 1, getHumidity(frame));
+			insertMesure(mysql, CAPTEUR_ENOCEAN, (int)getID(frame), timestamp, HUMIDITY, getHumidity(frame));
 			oss << getHumidity(frame) << "% >/n";
 		}
 		return oss.str();
@@ -397,10 +400,10 @@ extern "C" {
 		float volt = getVoltage(frame, minV, maxV);
 		bool pir = getPIRStatus(frame);
 		bool occ = getOccupancy(frame);
-		insertMesure(mysql, CAPTEUR_ENOCEAN, (int)getID(frame), timestamp, 0, getIlluminance(frame, minLum, maxLum));
-		insertMesure(mysql, CAPTEUR_ENOCEAN, (int)getID(frame), timestamp, 1, getVoltage(frame, minV, maxV));
-		insertMesure(mysql, CAPTEUR_ENOCEAN, (int)getID(frame), timestamp, 2, getPIRStatus(frame));
-		insertMesure(mysql, CAPTEUR_ENOCEAN, (int)getID(frame), timestamp, 3, getOccupancy(frame));
+		insertMesure(mysql, CAPTEUR_ENOCEAN, (int)getID(frame), timestamp, LUMINOSITY, getIlluminance(frame, minLum, maxLum));
+//		insertMesure(mysql, CAPTEUR_ENOCEAN, (int)getID(frame), timestamp, 1, getVoltage(frame, minV, maxV));
+//		insertMesure(mysql, CAPTEUR_ENOCEAN, (int)getID(frame), timestamp, 2, getPIRStatus(frame));
+		insertMesure(mysql, CAPTEUR_ENOCEAN, (int)getID(frame), timestamp, OCCUPANCY, getOccupancy(frame));
 		oss << "< Lum : " << lum << "lx | Volt : " << volt << "V | PIR : " << (pir?"ON":"OFF") << " | Occ : " << (occ?"Pressed":"Released");
 		return oss.str();
 	} //----- End of analyseLumAndOcc
@@ -416,7 +419,7 @@ extern "C" {
 		bool dataFrame = (frame->DATA_BYTE0 >> 3) & 1;
 		if (dataFrame) {
 			oss << "< CO2 : " << getCO2Level(frame, minPPM, maxPPM) << "ppm. >";
-			insertMesure(mysql, CAPTEUR_ENOCEAN, (int)getID(frame), timestamp, 0, getCO2Level(frame, minPPM, maxPPM));
+			insertMesure(mysql, CAPTEUR_ENOCEAN, (int)getID(frame), timestamp, CO2, getCO2Level(frame, minPPM, maxPPM));
 		}
 		return oss.str();
 	} //----- End of analyseC02
@@ -431,10 +434,23 @@ extern "C" {
 		bool dataFrame = (frame->DATA_BYTE0 >> 3) & 1;
 		if (dataFrame) {
 			oss << "< Heart-Rate : " << getHeartRate(frame, minBPM, maxBPM) << "bpm. >";
-			insertMesure(mysql, CAPTEUR_ENOCEAN, (int)getID(frame), timestamp, 0, getHeartRate(frame, minBPM, maxBPM));
+			insertMesure(mysql, CAPTEUR_ENOCEAN, (int)getID(frame), timestamp, HEARTRATE, getHeartRate(frame, minBPM, maxBPM));
 		}
 		return oss.str();
 	} //----- End of analyseHeartRate
+
+// ---- SUNSPOT SENSOR ----
+	string EnOceanSensorAPI::analyseSunSpot(enocean_data_structure* frame, MYSQL* mysql, long long int timestamp) {
+		ostringstream oss;
+		float lum = getIlluminance(frame, 0.0, 750.0);
+		float temp = getTemperature(frame, -40.0, 60.0);
+		float mov = getMovement(frame, 0.0, 10.0);
+		insertMesure(mysql, CAPTEUR_SUNSPOT, (int)getID(frame), timestamp, LUMINOSITY, lum);
+		insertMesure(mysql, CAPTEUR_SUNSPOT, (int)getID(frame), timestamp, TEMPERATURE, temp);
+		insertMesure(mysql, CAPTEUR_SUNSPOT, (int)getID(frame), timestamp, MOVEMENT, mov);
+		oss << "< Lum : " << lum << "lx | Temp : " << temp << "°c | Mov : " << mov << " >";
+		return oss.str();
+	} //----- End of analyseSunSpot
 
 
 // ---- BASIC FUNCTIONS ----
@@ -545,6 +561,15 @@ extern "C" {
 		return (float)frame->DATA_BYTE3 * multiplyer + (float)( (multiplyer>=0)? minBPM : maxBPM );
 	}
 	void EnOceanSensorAPI::setHeartRate(enocean_data_structure* frame, float val, float minBPM, float maxBPM) {
+		float multiplyer = (float)(maxBPM-minBPM) / 255.0;
+		frame->DATA_BYTE3 = (BYTE)((val - (float)( (multiplyer>=0)? minBPM : maxBPM )) / multiplyer);
+	}
+
+	float EnOceanSensorAPI::getMovement(enocean_data_structure* frame, float minBPM, float maxBPM) {
+		float multiplyer = (float)(maxBPM-minBPM) / 255.0;
+		return (float)frame->DATA_BYTE3 * multiplyer + (float)( (multiplyer>=0)? minBPM : maxBPM );
+	}
+	void EnOceanSensorAPI::setMovement(enocean_data_structure* frame, float val, float minBPM, float maxBPM) {
 		float multiplyer = (float)(maxBPM-minBPM) / 255.0;
 		frame->DATA_BYTE3 = (BYTE)((val - (float)( (multiplyer>=0)? minBPM : maxBPM )) / multiplyer);
 	}
