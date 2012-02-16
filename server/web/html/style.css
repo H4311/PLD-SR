@@ -294,7 +294,7 @@ body {
     -webkit-border-radius: 10px;
     border-radius: 10px;
 	
-	border: solid black 1;	
+	border: 1px solid black;	
 }
 
 #notifications a:link{
