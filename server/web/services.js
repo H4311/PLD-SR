@@ -35,7 +35,7 @@ function writeHeaders(resp) {
  */
 function serviceSensors(method, query, data, resp) {
 	writeHeaders(resp);
-	
+
 	// Parse the json request in data :
 	request = JSON.parse(data);
 	if(!request) {
@@ -79,7 +79,14 @@ function serviceActuators(method, query, data, resp) {
  * REQUEST :
  * ============================================================================
 {
-	“id” : 112
+	“idPatient” : 112
+}
+OR
+{
+	“idRoom” : 112
+}
+OR
+{
 }
  * ============================================================================
  *
@@ -102,9 +109,23 @@ function serviceActuators(method, query, data, resp) {
 function serviceListSensors(method, query, data, resp) {
 	writeHeaders(resp);
 	
-	if(data.id) {
+	// Parse the json DATA request
+	request = JSON.parse(data);
+	if(!request) {
+		error(0, resp);
+		return;
+	}
+	
+	if(request.idPatient) {
 		// Get the response from the modelsensors layer :
-		modelsensors.getSensorsListByPatient(data.id, function(response) {
+		modelsensors.getSensorsListByPatient(request.idPatient, function(response) {
+			// Send the stringified json to client :
+			var strResponse = JSON.stringify(response);
+			resp.end(strResponse);
+		});
+	} else if(request.idRoom) {
+		// Get the response from the modelsensors layer :
+		modelsensors.getSensorsListByRoom(request.idRoom, function(response) {
 			// Send the stringified json to client :
 			var strResponse = JSON.stringify(response);
 			resp.end(strResponse);

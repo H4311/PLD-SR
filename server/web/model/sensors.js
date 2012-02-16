@@ -79,11 +79,12 @@ function getSensorsRecords(param, callback) {
 		}
 	}
 	sql_req.where(sql_cond);
+	console.log(sql_req.toString());
 	
 	// Send the query to SQL DB :
 	var db = sqlConnect();
 	sql.query(db, sql_req.toString(), function(result) {
-		console.log("Took : "+result.took+"ms\nHits : "+result.count);
+		console.log("Took : "+result.took+"ms - Hits : "+result.count);
 		
 		// Construct json response :
 		var response = {};
@@ -115,7 +116,7 @@ function getSensorsList(callback) {
 	// Send the query to SQL DB :
 	var db = sqlConnect();
 	sql.query(db, sql_req.toString(), function(result) {
-		console.log("Took : "+result.took+"ms\nHits : "+result.count);
+		console.log("Took : "+result.took+"ms - Hits : "+result.count);
 		
 		// Call the record with json response :
 		callback(result);
@@ -127,12 +128,29 @@ function getSensorsListByPatient(id, callback) {
 	// Construct the SQL query :
 	var sql_req = squel.select()
 		.from("capteurs")
-		.where("idSujet = "+id);
+		.where("isGlobal = FALSE AND idSujet = "+id);
 	
 	// Send the query to SQL DB :
 	var db = sqlConnect();
 	sql.query(db, sql_req.toString(), function(result) {
-		console.log("Took : "+result.took+"ms\nHits : "+result.count);
+		console.log("Took : "+result.took+"ms - Hits : "+result.count);
+		
+		// Call the record with json response :
+		callback(result);
+		sql.close(db);
+	});
+}
+
+function getSensorsListByRoom(id, callback) {	
+	// Construct the SQL query :
+	var sql_req = squel.select()
+		.from("capteurs")
+		.where("isGlobal = TRUE AND idSujet = "+id);
+	
+	// Send the query to SQL DB :
+	var db = sqlConnect();
+	sql.query(db, sql_req.toString(), function(result) {
+		console.log("Took : "+result.took+"ms - Hits : "+result.count);
 		
 		// Call the record with json response :
 		callback(result);
@@ -148,7 +166,7 @@ function getActuatorsList(callback) {
 	// Send the query to SQL DB :
 	var db = sqlConnect();
 	sql.query(db, sql_req.toString(), function(result) {
-		console.log("Took : "+result.took+"ms\nHits : "+result.count);
+		console.log("Took : "+result.took+"ms - Hits : "+result.count);
 		
 		// Call the record with json response :
 		callback(result);
@@ -159,4 +177,5 @@ function getActuatorsList(callback) {
 exports.getSensorsRecords = getSensorsRecords;
 exports.getSensorsList = getSensorsList;
 exports.getSensorsListByPatient = getSensorsListByPatient;
+exports.getSensorsListByRoom = getSensorsListByRoom;
 exports.getActuatorsList = getActuatorsList;
