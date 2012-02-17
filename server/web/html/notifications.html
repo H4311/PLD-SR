@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="utf-8" />
+	<link rel="stylesheet" href="style.css" />
+	<script src="jquery/jquery-1.7.1.js"></script>
+	<script src="common.js"></script>
+	<title>Application Test</title>
+	
+	<script>
+	var lastUpdate = new Date(0);
+	var rest = "http://localhost:1337";
+	
+	$(document).ready( function() {
+		window.setInterval(refresh, 1000);
+	});
+	
+	function refresh() {
+		var toDate = new Date();
+		
+		addNotification("test" + dateToString(lastUpdate) + "<br>");
+		var req = {
+			"from" : dateToString(lastUpdate),
+			"to" : dateToString(toDate)
+		};
+		
+		addNotification("Notification x");
+		
+		$.post(rest + '/alerts',
+		  '{}',
+		  handleResponse,
+		  "json");
+		
+		lastUpdate = toDate;
+	}
+	
+	function handleResponse(data) {
+		if(data.count > 0) {
+			addNotification("Notification x");
+		}
+	}
+	
+	function dateToString(date) {
+		var s = "";
+		s += date.getFullYear();
+		s += "/";
+		s += twoDigits(date.getMonth());
+		s += "/";
+		s += twoDigits(date.getDay());
+		s += " ";
+		s += twoDigits(date.getHours());
+		s += ":";
+		s += twoDigits(date.getMinutes());
+		s += ":";
+		s += twoDigits(date.getDay());
+		return s;
+	}
+	
+	function twoDigits(nb) {
+		return nb < 10 ? "0" + nb : nb;
+	}
+	
+	function addNotification(notif) {
+		var newElem = "<li><div class=\"info\">" + new Date().getHours() + ":" + new Date().getMinutes() + ":" + new Date().getSeconds() + " " + notif + "</div></li>";
+		$("#listNotifs").html(newElem + $("#listNotifs").html());
+	}
+	</script>
+	
+</head>
+
+<body>
+
+	<header id="header" class="branding" role="banner">
+		<hgroup>
+		<div class="retourTdB">
+			<a href="accueil.html">
+			<img src="images/retour.png" alt="retour" width="40" height="40"/>
+			</a>
+		</div>
+		<h1>Notifications<h1>
+		</hgroup>
+	</header>
+
+	<section id="notifications">
+	<ol id="listNotifs">
+		<!--
+		<li><div class="info">Notification 1</div></li>
+		<li><div class="warning">Notification 2</div></li>
+		<li><div class="info">Notification 3</div></li>
+		-->
+	</ol>
+	</section>
+	
+
+	<footer>Copyright 2012 - Hexanome H4311</footer>
+	
+</body>
+
+</html>
