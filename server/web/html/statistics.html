@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="utf-8" />
+	<link rel="stylesheet" href="style.css" />
+	<script src="http://code.jquery.com/jquery-1.7.1.js"></script>
+	<title>RiTHM</title>
+	<script type="text/javascript" src="https://www.google.com/jsapi"></script>
+    <script type="text/javascript">
+	  // Load the Visualization API and the piechart package.
+	  
+      google.load('visualization', '1.0', {'packages':['corechart']});
+      
+      // Set a callback to run when the Google Visualization API is loaded.
+      //google.setOnLoadCallback(drawChart);
+	  
+	  function updateChart() {
+		var randomnumber = Math.floor(Math.random()*11)
+
+		var data = new google.visualization.DataTable();
+		  data.addColumn('string', 'TimeSensor');
+		  data.addColumn('number', 'Temperature');
+		  data.addRows([
+			['T1', randomnumber+2],
+			['T2', randomnumber-6],
+			['T3', randomnumber], 
+			['T4', randomnumber],
+			['T5', randomnumber+11]
+		  ]);
+		}
+
+	  // Instantiate and draw our chart, passing in some options.
+      $(document).ready( function() {
+	  
+	  var chart = new google.visualization.LineChart(document.getElementById('chart_div'))
+	  
+	  	var randomnumber = Math.floor(Math.random()*11)
+		  // Create the data table.
+		  var data = new google.visualization.DataTable();
+		  data.addColumn('string', 'TimeSensor');
+		  data.addColumn('number', 'Temperature');
+		  data.addRows([
+			['T1', 24],
+			['T2', 29],
+			['T3', randomnumber], 
+			['T4', 25],
+			['T5', 18]
+		  ]);
+		  
+      // Callback that creates and populates a data table, 
+      // instantiates the pie chart, passes in the data and
+      // draws it.
+      var drawChart = function drawChart() {
+		
+
+		  // Set chart options
+		  var options = {title:'Sensor variation the last hour',
+						 width: 400,
+						 height: 300,
+						 vAxis: {title: "Temp"},
+						 hAxis: {title: "Time"},
+						 animation:{
+					duration: 500,
+					easing: 'in'
+			  },
+			};
+
+		  
+		  chart.draw(data, options);
+		};
+		
+		$('#b1').click( drawChart);
+		
+			drawChart();
+			
+		});
+		
+    </script>
+</head>
+
+<body>
+
+<header id="header" class="branding" role="banner">
+	<div class="retourTdB">
+		<a href="index.html">
+		<img src="images/retour.png" alt="image" width="40" height="40"/>
+		</a>
+	</div>
+	<hgroup>
+	<h1>Statistics</h1>
+	</hgroup>
+</header>
+
+<div id="wrapper">
+	
+	<section id="stats">
+		<div id="charts">
+		<h2>Temperature variation</h2>
+		<!--Div that will hold the pie chart-->
+		<div id="chart_div" style="width:400; height:300"></div>
+		<input type="button" id="b1" value="add value" />
+		</div>
+	</section>
+	
+</div>
+
+<footer>Copyright 2012 - Hexanome H4311</footer>
+	
+</body>
+
+</html>

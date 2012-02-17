@@ -23,6 +23,43 @@
 			}
 		}
 	}
+	
+	  var options = {title:'Sensor variation the last hour',
+				 width: 400,
+				 height: 300,
+				 vAxis: {title: "Temp"},
+				 hAxis: {title: "Time"},
+				 animation:{
+			duration: 500,
+			easing: 'in'
+	  },
+	};
+	
+	  // Instantiate and draw our chart, passing in some options.
+      $(document).ready( function() {
+	  
+	  var chart = new google.visualization.LineChart(document.getElementById('chart_div'))
+	  
+	  var randomnumber = Math.floor(Math.random()*11)
+	  // Create the data table.
+	  var data = new google.visualization.DataTable();
+	  data.addColumn('string', 'TimeSensor');
+	  data.addColumn('number', 'Temperature');
+		  
+      // Callback that creates and populates a data table, 
+      // instantiates the pie chart, passes in the data and
+      // draws it.
+      var drawChart = function drawChart() {
+
+		chart.draw(data, options);
+		};
+		
+		/*$('#b1').click( drawChart);*/
+		
+		drawChart();
+			
+		});
+	
 
 	var rest = "http://localhost:1337";
 	
@@ -31,11 +68,19 @@
 	}
 	
 	function initChart(data) {
-		
+		var randomnumber = Math.floor(Math.random()*11)
+
+		var data = new google.visualization.DataTable();
+		  data.addColumn('string', 'TimeSensor');
+		  data.addColumn('number', 'Temperature');
+		  for( var i in data.hits){
+			var mesure = data.hits[i];
+			data.addRows([mesure.time, mesure.value]);
+		  }
 	}
 	
 	function updateChart(sensorId, values) {
-		
+			  	
 	}
 	
 	function presentationSensors(data) {
@@ -49,7 +94,7 @@
 			var sensor = data.hits[i];
 			content+="<h3>Capteur :"+sensor.numeroCapteur+"<div id=\"chart_"+sensor.id+"\"></div></h3>"
 			$("#sensors").html(content);
-			getSensorValues(sensor.id, initChart, new Date().getTime() - 3600000);
+			getSensorValues(sensor.id, initChart, new Date().getTime() - 3600000, sensor.type);
 		}
 	}
 	
@@ -88,12 +133,13 @@
 		  "json");
 	}
 	
-	function getSensorValues(idSensor, callback, from, to) {
+	function getSensorValues(idSensor, callback, from, to, typeMesure) {
 		var req = {
 			sensors: [
 				{
 					id: idSensor,
-					from: new Date(from).toString("yyyy/MM/dd HH:mm:ss")
+					from: new Date(from).toString("yyyy/MM/dd HH:mm:ss"),
+					type: typeMesure
 				}
 			]
 		};
@@ -152,6 +198,15 @@
 	
 	<section id="sensors">
 	
+	</section>
+	
+	<section id="stats">
+		<div id="charts">
+		<h2>Temperature variation</h2>
+		<!--Div that will hold the pie chart-->
+		<div id="chart_div" style="width:400; height:300"></div>
+		<input type="button" id="b1" value="add value" />
+		</div>
 	</section>
 
 </div>
