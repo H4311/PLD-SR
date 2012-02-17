@@ -56,12 +56,13 @@ function getAlerts(param, callback) {
 	// Send the query to SQL DB :
 	var db = sqlConnect();
 	sql.query(db, sql_req.toString(), function(result) {
-		console.log("Took : "+result.took+"ms - Hits : "+result.count);
+		console.log("A Took : "+result.took+"ms - Hits : "+result.count);
 		
 		// Construct json response :
 		var response = {};
 		response.alerts = [];
 		
+		var nbResponseReceived = 0;
 		for(var i in result.hits) {
 			var hit = result.hits[i];
 			var _alert = {};
@@ -70,31 +71,36 @@ function getAlerts(param, callback) {
 			_alert.sensors = [];
 			
 			// Construct second SQL query :
+			if(!hit.id)
+				console.log("BAAAA");
 			sql_req = squel.select()
 				.from("capteurs")
 				.where("id IN ("+squel.select()
 					.field("idCapteur")
 					.from("regleCapteur")
-					.where("idRegle = "+hit.idRegle).toString()
+					.where("idRegle = "+hit.id).toString()
 					+")");
 
 			sql.query(db, sql_req.toString(), function(result2) {
 				console.log("Took : "+result2.took+"ms - Hits : "+result2.count);
 				
 				for(var j in result2.hits) {
-					_alert.sensors.push(result2.hits[j];
+					_alert.sensors.push(result2.hits[j]);
 				}
 
 				// Add the alert to the result :
 				response.alerts.push(_alert);
 
+				nbResponseReceived++;
 				// For the last alert :
-				if(i === (result.count - 1)) {
+				console.log(nbResponseReceived + " " + result.count);
+				if(nbResponseReceived === (result.count - 1)) {
 					// Call the record with json response :
 					callback(response);
 					sql.close(db);
 				}
-			}
+				
+			});
 		}
 	});
 
