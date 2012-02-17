@@ -94,7 +94,7 @@
 			var sensor = data.hits[i];
 			content+="<h3>Capteur :"+sensor.numeroCapteur+"<div id=\"chart_"+sensor.id+"\"></div></h3>"
 			$("#sensors").html(content);
-			getSensorValues(sensor.id, initChart, new Date().getTime() - 3600000, sensor.type);
+			getSensorValues(sensor.id, initChart, 0, new Date().getTime() - 3600000);
 		}
 	}
 	
@@ -133,7 +133,7 @@
 		  "json");
 	}
 	
-	function getSensorValues(idSensor, callback, from, to, typeMesure) {
+	function getSensorValues(idSensor, callback, typeMesure, from, to) {
 		var req = {
 			sensors: [
 				{
