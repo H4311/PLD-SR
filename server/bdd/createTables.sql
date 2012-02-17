@@ -51,13 +51,6 @@ CREATE TABLE mesures (
 
 -- Moteur d'inférence
 
-CREATE TABLE events (
-	id INTEGER PRIMARY KEY AUTO_INCREMENT,
-	idActionneur INTEGER,
-	valeur REAL,
-	FOREIGN KEY (idActionneur) REFERENCES actionneurs (id)
-);
-
 CREATE TABLE regles (
 	id INTEGER PRIMARY KEY AUTO_INCREMENT,
 	nom VARCHAR(32),
