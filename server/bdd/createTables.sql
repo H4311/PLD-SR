@@ -57,14 +57,6 @@ CREATE TABLE regles (
 	createsAlert BOOLEAN
 );
 
-CREATE TABLE regleEvent (
-	id INTEGER PRIMARY KEY AUTO_INCREMENT,
-	idRegle INTEGER,
-	idEvent INTEGER,
-	FOREIGN KEY (idEvent) REFERENCES events (id),
-	FOREIGN KEY (idRegle) REFERENCES regles (id)
-);
-
 CREATE TABLE regleCapteur (
 	id INTEGER PRIMARY KEY AUTO_INCREMENT,
 	idRegle INTEGER,
