@@ -54,11 +54,41 @@
 		chart.draw(data, options);
 		};
 		
-		/*$('#b1').click( drawChart);*/
+		var donnees = {};
+		donnees.hits =
+		{
+		"records" : {
+			"1111111" : [
+							{
+								"time" : "1",
+								"value" : "121122"
+							},
+							{
+								"time" : "2",
+								"value" : "121122"
+							}
+					]
+		}
+		};
+		
+		$('#b1').click( initChart(donnees) );
 		
 		drawChart();
 			
-		});
+	function initChart(data) {
+		var randomnumber = Math.floor(Math.random()*11)
+
+		var datas = new google.visualization.DataTable();
+		datas.addColumn('string', 'TimeSensor');
+		datas.addColumn('number', 'Temperature');
+		for( var i in data.hits){
+			var mesure = data.hits[i];
+			datas.addRows([mesure.time, mesure.value]);
+		}
+		drawChart();
+		}
+		
+	});
 	
 
 	var rest = "http://localhost:1337";
@@ -67,17 +97,7 @@
 		gChartsSettings.loaded = true;
 	}
 	
-	function initChart(data) {
-		var randomnumber = Math.floor(Math.random()*11)
-
-		var data = new google.visualization.DataTable();
-		  data.addColumn('string', 'TimeSensor');
-		  data.addColumn('number', 'Temperature');
-		  for( var i in data.hits){
-			var mesure = data.hits[i];
-			data.addRows([mesure.time, mesure.value]);
-		  }
-	}
+	
 	
 	function updateChart(sensorId, values) {
 			  	
@@ -205,7 +225,7 @@
 		<h2>Temperature variation</h2>
 		<!--Div that will hold the pie chart-->
 		<div id="chart_div" style="width:400; height:300"></div>
-		<input type="button" id="b1" value="add value" />
+		<input type="button" id="b1" value="Push Me"/>
 		</div>
 	</section>
 
