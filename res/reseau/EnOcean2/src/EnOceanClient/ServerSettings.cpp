@@ -17,6 +17,10 @@ using namespace std;
 //------------------------------------------------------ Personnal Include
 #include "ServerSettings.h"
 #include "../Libs/jsoncpp-src-amalgamation0.6.0-rc2/json/json.h"
+extern "C" {
+	#include "../Bdd/mysqlinsert.h"
+}
+
 //-------------------------------------------------------------- Constants
 
 //----------------------------------------------------------------- PUBLIC
@@ -29,6 +33,8 @@ void* ServerSettingsThread_Receive (void* param) {
 	int n;
 	string msg;
 	ServerSettings* server = (ServerSettings*)param;
+
+	MYSQL* mysql = connectToMysql();
 
 	// Wait for client :
 	while((server->getFlag() == 0) && (server->acceptClient() >= 0)) {
@@ -73,9 +79,8 @@ void* ServerSettingsThread_Receive (void* param) {
 		#endif
 						int typeDevice = (type >> 24); // If the type starts with an "1" or more, it's an actuator ; else it's a sensor.
 						if (typeDevice == 0) { // SENSOR
-							// Add to the DB :
-							// TO DO:
-							//		ADD TO THE MYSQL DB !
+							// Insert into DB :
+							insertCapteur(mysql, typeDevice, idDevice, arraySubjects.get("t", 0).asInt(), arraySubjects.get("i", 0).asInt());
 
 							// Add to the "driver" :
 							pthread_mutex_lock(&(server->mutex));
@@ -96,8 +101,15 @@ void* ServerSettingsThread_Receive (void* param) {
 						}
 						else if (typeDevice == 1) { // ACTUATOR
 							// Add to the DB :
-							// TO DO:
-							//		ADD TO THE MYSQL DB !
+							insertActionneur(mysql, idDevice, type);
+							// Add the connexions to the BD :
+							for (unsigned int i = 0; i < arraySubjects.size(); ++i ) {
+								int idSubject = arraySubjects[i].get("i", 0).asInt();
+								int typeSubject = arraySubjects[i].get("t", 0).asInt();
+								char desc = '0';
+								insertActionneurSujet(mysql, idDevice, &desc, typeSubject, idSubject);
+							}
+
 							cout << "<Server Settings> Actuator n°" << idDevice << " - Added !\n";
 		#ifdef SIMULATION
 							if (simulated) {
@@ -178,6 +190,7 @@ void* ServerSettingsThread_Receive (void* param) {
 
 		server->closeClient();
 	}
+	closeMysql(mysql);
 
 	return NULL;
 }//----- End of EnOceanBaseSimulatorThread_Send
