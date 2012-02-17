@@ -2,6 +2,7 @@ var modelsensors = require("./model/sensors");
 var modelpatients = require("./model/patients");
 var modelrooms = require("./model/rooms");
 var modeladmin = require("./model/admin");
+var modelalerts = require("./model/alerts");
 
 function error(code, resp) {
 	var result = {};
@@ -244,7 +245,7 @@ function serviceAlerts(method, query, data, resp) {
 		return;
 	}
 	
-	modelrooms.getAlerts(request, function(result) {
+	modelalerts.getAlerts(request, function(result) {
 			var strResult = JSON.stringify(result);
 			resp.end(strResult);
 	});

@@ -1,23 +1,20 @@
-
 /*************************************************************************
-                           TCPServer  -  description
+                           SensorSimulatorSunSpot  -  description
                              -------------------
-    Creation             : 08 Jan. 2012
+    Creation             : 10 Feb. 2012
     Copyright            : (C) 2012 by H4311 - Benjamin PLANCHE (BPE)
 *************************************************************************/
 
-//------- Definition - <TCPServer> (TCPServer.h file) --------
+//------- Definition - <SensorSimulatorSunSpot> (SensorSimulatorSunSpot.h file) --------
 
-#ifndef TCP_SERVER_H_
-#define TCP_SERVER_H_
+#ifndef SENSORSIMULATORSUNSPOT_H_
+#define SENSORSIMULATORSUNSPOT_H_
 
 //---------------------------------------------------------------- INCLUDE
 
 //--------------------------------------------------------- System Include
-using namespace std;
-#include <string.h>
-#include <pthread.h>
 //------------------------------------------------------ Personnal Include
+#include "SensorSimulator.h"
 
 //------------------------------------------------------------- Constantes
 
@@ -29,7 +26,7 @@ using namespace std;
 //
 //------------------------------------------------------------------------
 
-class TCPServer
+class SensorSimulatorSunSpot : public SensorSimulator
 {
 //----------------------------------------------------------------- PUBLIC
 
@@ -38,43 +35,24 @@ public:
 
 //--------------------------------------------------------- Public Methods
 
-	int openSocket(int port);
-	// Manual :
-    //		Open the socket.
+//	float getIlluminance();
+//	void setIlluminance(float i);
+//	float getVoltage();
+//	void setVoltage(float v);
+//	bool getPIRStatus();
+//	void setPIRStatus(bool h);
+//	bool getOccupancy();
+//	void setOccupancy(bool o);
 
-	int acceptClient();
-	// Manual :
-    //		Accept a client connection.
-    // Contract :
-    //		open()
-	//		Connexion du client en lecture avant en écriture !
-
-	int writeClient(char* msg, int length);
-	// Manual :
-	//		Write to the client.
-	// Contract :
-	//		open() & accept()
-
-	int readClient(char* msg, int length);
-	int readClientJSON(string* msg);
-	// Manual :
-	//		Read from the client.
-	// Contract :
-	//		open() & accept()
-
-	void waitData();
-	int closeClient();
-	int closeSocket();
-
-
+	void update();
 //------------------------------------------------- Static public Methods
 
 //------------------------------------------------------------- Operators
 
 //-------------------------------------------------- Builder / Destructor
 
-	TCPServer();
-	virtual ~TCPServer();
+	SensorSimulatorSunSpot(int id, Subject* r, float minLum, float maxLum, float minTemp, float maxTemp, float minMov, float maxMov);
+	virtual ~SensorSimulatorSunSpot();
 
 //---------------------------------------------------------------- PRIVATE
 
@@ -87,9 +65,16 @@ private:
 protected:
 //-------------------------------------------------- Protected Attributes
 
-	int sockfd;
-	int sockClient;
-	pthread_mutex_t mutex;
+//	float illuminance;
+//	float voltage;
+//	bool pirStatus;
+//	bool occupancy;
+	float minLum;
+	float maxLum;
+	float minTemp;
+	float maxTemp;
+	float minMov;
+	float maxMov;
 
 private:
 //----------------------------------------------------- Private Attributes
@@ -105,4 +90,4 @@ private:
 //------------------------------ Other definition, depending on this class
 
 
-#endif /* TCP_SERVER_H_ */
+#endif /* SENSORSIMULATORSUNSPOT_H_ */

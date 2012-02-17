@@ -92,20 +92,20 @@ int TCPServer::readClient(char* msg, int length) {
 	return n;
 }
 
-int TCPServer::readClientJSON(string msg) {
+int TCPServer::readClientJSON(string* msg) {
 	char c = 0;
 	int n = 1;
 	pthread_mutex_lock(&mutex);
 	do {
 		n = read(sockClient, &c, 1);
 	} while ((c!='{') && (n>0));
-	if (n<0) { return n; }
+	if (n<=0) { pthread_mutex_unlock(&mutex); return n; }
 
 	int nbAcc = 1;
-	msg = c;
+	*msg = c;
 	do {
 		n = read(sockClient, &c, 1);
-		msg += c;
+		*msg += c;
 		if (c == '{') { nbAcc++; }
 		else if (c == '}') { nbAcc--; }
 	} while ((nbAcc > 0) && (n>0));
@@ -114,7 +114,10 @@ int TCPServer::readClientJSON(string msg) {
 }
 
 int TCPServer::closeClient() {
-	return close(sockClient);
+
+	int n = close(sockClient);
+	sockClient = 0;
+	return n;
 }
 
 int TCPServer::closeSocket() {

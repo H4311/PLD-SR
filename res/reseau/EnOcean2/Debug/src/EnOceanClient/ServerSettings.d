@@ -19,7 +19,8 @@ src/EnOceanClient/ServerSettings.d: \
  ../src/EnOceanClient/../Simulator/Actuators/../../Devices/EnOceanSensorAPI.h \
  ../src/EnOceanClient/../Simulator/Model/Subject.h \
  ../src/EnOceanClient/TCPServer.h \
- ../src/EnOceanClient/../Libs/jsoncpp-src-amalgamation0.6.0-rc2/json/json.h
+ ../src/EnOceanClient/../Libs/jsoncpp-src-amalgamation0.6.0-rc2/json/json.h \
+ ../src/EnOceanClient/../Bdd/mysqlinsert.h
 
 ../src/EnOceanClient/ServerSettings.h:
 
@@ -60,3 +61,5 @@ src/EnOceanClient/ServerSettings.d: \
 ../src/EnOceanClient/TCPServer.h:
 
 ../src/EnOceanClient/../Libs/jsoncpp-src-amalgamation0.6.0-rc2/json/json.h:
+
+../src/EnOceanClient/../Bdd/mysqlinsert.h:

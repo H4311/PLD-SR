@@ -19,10 +19,10 @@ void closeMysql(MYSQL* mysql) {
 	mysql_close(mysql);
 }
 
-void insertCapteur(MYSQL* mysql, int type, int numeroCapteur, int idPatient, int isGlobal, int idSujet) {
+void insertCapteur(MYSQL* mysql, int type, int numeroCapteur, int isGlobal, int idSujet) {
 	char s[512];
-	sprintf(s, "INSERT INTO capteurs (type, numeroCapteur, idPatient, isGlobal, idSujet) VALUES (%d, %d, %d, %s, %d)",
-			type, numeroCapteur, idPatient, (isGlobal == 0 ? "false" : "true"), idSujet);
+	sprintf(s, "INSERT INTO capteurs (type, numeroCapteur, isGlobal, idSujet) VALUES (%d, %d, %s, %d)",
+			type, numeroCapteur, (isGlobal == 0 ? "false" : "true"), idSujet);
 
 	if(mysql_query(mysql, s)) {
 		printf("Erreur: insert (%s)\n", mysql_error(mysql));
@@ -38,18 +38,18 @@ void insertMesure(MYSQL* mysql, int type, int numeroCapteur, long long time, int
 	}
 }
 
-void insertActionneur(MYSQL* mysql, int type) {
+void insertActionneur(MYSQL* mysql, int num, int type) {
 	char s[512];
-	sprintf(s, "INSERT INTO actionneurs (type) VALUES (%d)", type);
+	sprintf(s, "INSERT INTO actionneurs (numeroActionneur, type) VALUES (%d, %d)", num, type);
 
 	if(mysql_query(mysql, s)) {
 		printf("Erreur: insert (%s)\n", mysql_error(mysql));
 	}
 }
 
-void insertActionneurSujet(MYSQL* mysql, char* nom, char* description, int isGlobal, int idSujet) {
+void insertActionneurSujet(MYSQL* mysql, int nom, char* description, int isGlobal, int idSujet) {
 	char s[512];
-	sprintf(s, "INSERT INTO actionneurSujet (nom, description, isGlobal, idSujet) VALUES ('%s', '%s', %s, %d)",
+	sprintf(s, "INSERT INTO actionneurSujet (nom, description, isGlobal, idSujet) VALUES ('%d', '%s', %s, %d)",
 			nom, description, (isGlobal == 0 ? "false" : "true"), idSujet);
 
 	if(mysql_query(mysql, s)) {
