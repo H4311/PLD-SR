@@ -14,7 +14,7 @@
 		var content = "<h2>Liste des Chambres</h2><ol>";
 		for (var i in data.hits) {
 			var room = data.hits[i];
-			content += '<div class="chambre"><p><a href="room.html?id='
+			content += '<div class="chambre"><p><a href="room?id='
 				+ room.id + '">' + room.nom + '</a></p></div>';
 		}
 		content += "</ol>";
@@ -25,7 +25,7 @@
 	$(document).ready(function() {
 		function getRooms() {
 			$.post(rest + '/rooms',
-			  '{}',
+			  {"test" : "valeur"},
 			  presentation,
 			  "json");
 		}

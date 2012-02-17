@@ -1,12 +1,19 @@
 var http = require("http");
 var url = require("url");
 var staticserve = require("./staticserve");
+var auth = require("./auth");
 
-function routeBasic(handlers, pathname, method, query, data, resp, defaultHandler) {
+function routeBasic(req, handlers, data, resp, defaultHandler) {
+	var method = req.method;					// GET;POST;PUT;DELETE
+	var urlObj = url.parse(req.url, true);	// Parse the url AND the query
+	var pathname = urlObj.pathname;
+	var query = urlObj.query;
+	console.log("Request received for " + pathname);
+	
 	if (typeof handlers[pathname] === 'function') {
 		console.log("Route received for : " + pathname);
 		handlers[pathname](method, query, data, resp);
-	} else	{
+	} else {
 		console.log("No route found for : " + pathname + ". Trying default handler...");
 		//staticserve.serve(pathname, resp);
 		if (defaultHandler !== undefined) {
@@ -15,25 +22,19 @@ function routeBasic(handlers, pathname, method, query, data, resp, defaultHandle
 	}
 }
 
-function routeService(handlers, pathname, method, query, data, resp) {
-	routeBasic(handlers, pathname, method, query, data, resp, function() {
+function routeService(req, handlers, data, resp) {	
+	routeBasic(req, handlers, data, resp, function() {
 		resp.writeHead(403); // forbidden access when you try to access services
 		resp.end();	
 	});
 }
 
-function routeHttp(handlers, pathname, method, query, data, resp) {
-	routeBasic(handlers, pathname, method, query, data, resp, staticserve.serve);
+function routeHttp(req, handlers, data, resp) {
+	routeBasic(req, handlers, data, resp, staticserve.serve);
 }
 
 function httpStart(port, handlers, routeFunction) {
 	function onRequest(req, resp) {
-		var method = req.method;				// GET;POST;PUT;DELETE
-		var urlObj = url.parse(req.url, true);	// Parse the url AND the query
-		var pathname = urlObj.pathname;
-		var query = urlObj.query;
-		
-		console.log("Request received for " + pathname);
 		req.setEncoding("utf8");
 
 		var data = "";
@@ -42,7 +43,9 @@ function httpStart(port, handlers, routeFunction) {
 		});
 
 		req.addListener("end", function() {
-			routeFunction(handlers, pathname, method, query, data, resp);
+			auth.checkAuth(req, resp, function() {
+				routeFunction(req, handlers, data, resp);
+			});
 		});
 	}
 	

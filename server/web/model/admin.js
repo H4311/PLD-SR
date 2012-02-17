@@ -31,7 +31,7 @@ function addDevice(param, callback) {
 	client.on("connect", function() {
 		console.log("[addDevice] Connected to the server");
 		client.write(JSON.stringify(query), function() {
-			console.log("[removeDevice] message sent to the server");
+			console.log("[addDevice] message sent to the server");
 			// Construct json response :
 			var response = {};
 			response.status = "ok";

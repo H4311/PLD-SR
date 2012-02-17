@@ -121,14 +121,14 @@
 	
 	function getPatients(callback) {
 		$.post(rest + '/patients',
-		  '{}',
+		  {},
 		  callback,
 		  "json");
 	}
 	
 	function getPatient(id, callback) {
 		$.post(rest + '/patients',
-		  '{"id":'+id+'}',
+		  {"id":id},
 		  callback,
 		  "json");
 	}
@@ -146,7 +146,7 @@
 		if(to) req.sensors[0].to =  new Date(to).toString("yyyy/MM/dd HH:mm:ss")
 		
 		$.post(rest + '/sensors',
-		  JSON.stringify(req),
+		  req,
 		  callback,
 		  "json");
 	}
@@ -156,13 +156,13 @@
 			idPatient: idPatient
 		};
 		$.post(rest + '/list_sensors',
-		  JSON.stringify(req),
+		  req,
 		  callback,
 		  "json");
 	}
 	
 	$(document).ready(function() {
-		var idPatient = $.getUrlVar('id')
+		var idPatient = $.getUrlVar('id');
 		getPatient(idPatient, presentationPatient); // initially retrieves patient values on first time.
 		$("#returnLink").attr("href", "room.html?id=" + $.getUrlVar('roomId'));
 	});

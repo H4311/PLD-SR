@@ -39,7 +39,7 @@ function getRooms(param, callback) {
 		.field("description")
 		.from("pieces");
 		
-	if (param.id) {
+	if (param.id != null) {
 		sql_req.where("id = '" + param.id + "'");
 	}
 	

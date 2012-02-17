@@ -25,29 +25,30 @@ function error(code, resp) {
 
 // Adds the header indicating all went sucessfully.
 function writeHeaders(resp) {
-	resp.writeHead(200, {"Content-type" : "application/json", 
-			     "Access-Control-Allow-Origin":"*"});
+	resp.header("Access-Control-Allow-Origin","*");
+}
+
+function parseRequest(req, names) {
+	request = {}
+	for (var n in names) {
+		request[names[n]] = req.param(names[n], null);
+	}
+	console.log("Request : " + JSON.stringify(request))
+	return request;
 }
 
 /*
  * SERVICE Sensors
  * Gets records from sensors, allows to specify an interval.
  */
-function serviceSensors(method, query, data, resp) {
+function serviceSensors(req, resp) {
 	writeHeaders(resp);
-
-	// Parse the json request in data :
-	request = JSON.parse(data);
-	if(!request) {
-		error(0, resp);
-		return;
-	}
 	
+	data = parseRequest(req, ["sensors"]);
 	// Get the response from the modelsensors layer :
-	modelsensors.getSensorsRecords(request, function(response) {
+	modelsensors.getSensorsRecords(data, function(result) {
 		// Send the stringified json to client :
-		var strResponse = JSON.stringify(response);
-		resp.end(strResponse);
+		resp.json(result);
 	});
 }
 
@@ -55,21 +56,14 @@ function serviceSensors(method, query, data, resp) {
  * SERVICE Actuators
  * Allows to pass values to actuators.
  */
-function serviceActuators(method, query, data, resp) {
+function serviceActuators(req, resp) {
 	writeHeaders(resp);
 	
-	// Parse the json DATA request
-	request = JSON.parse(data);
-	if(!request) {
-		error(0, resp);
-		return;
-	}
-	
+	request = parseRequest(req, ["id", "type", "active", "value"]);
 	// Get the response from the modeladmin layer :
 	modeladmin.setActuator(request, function(response) {
 		// Send the stringified json to client :
-		var strResponse = JSON.stringify(response);
-		resp.end(strResponse);
+		resp.json(response);
 	});
 }
 
@@ -106,36 +100,28 @@ OR
 }
  * ============================================================================
  */
-function serviceListSensors(method, query, data, resp) {
+function serviceListSensors(req, resp) {
 	writeHeaders(resp);
 	
-	// Parse the json DATA request
-	request = JSON.parse(data);
-	if(!request) {
-		error(0, resp);
-		return;
-	}
+	request = parseRequest(req, ["idPatient", "idRoom"]);
 	
 	if(request.idPatient) {
 		// Get the response from the modelsensors layer :
 		modelsensors.getSensorsListByPatient(request.idPatient, function(response) {
 			// Send the stringified json to client :
-			var strResponse = JSON.stringify(response);
-			resp.end(strResponse);
+			resp.json(response);
 		});
 	} else if(request.idRoom) {
 		// Get the response from the modelsensors layer :
 		modelsensors.getSensorsListByRoom(request.idRoom, function(response) {
 			// Send the stringified json to client :
-			var strResponse = JSON.stringify(response);
-			resp.end(strResponse);
+			resp.json(response);
 		});
 	} else {
 		// Get the response from the modelsensors layer :
-		modelsensors.getSensorsList(function(response) {
+		modelsensors.getSensorsList(function() {
 			// Send the stringified json to client :
-			var strResponse = JSON.stringify(response);
-			resp.end(strResponse);
+			resp.json(response);
 		});
 	}
 }
@@ -144,14 +130,13 @@ function serviceListSensors(method, query, data, resp) {
  * SERVICE list_actuators
  * Gets list of actuators.
  */
-function serviceListActuators(method, query, data, resp) {
+function serviceListActuators(req, resp) {
 	writeHeaders(resp);
 	
 	// Get the response from the modelsensors layer :
 	modelsensors.getActuatorsList(function(response) {
 		// Send the stringified json to client :
-		var strResponse = JSON.stringify(response);
-		resp.end(strResponse);
+		resp.json(response);
 	});
 }
 
@@ -159,34 +144,27 @@ function serviceListActuators(method, query, data, resp) {
  * SERVICE admin_devices
  * Allows to add/remove sensors/actuators.
  */
-function serviceAdminDevices(method, query, data, resp) {
+function serviceAdminAddDevices(req, resp) {
 	writeHeaders(resp);
 	
-	// Parse the json DATA request
-	request = JSON.parse(data);
-	if(!request) {
-		error(0, resp);
-		return;
-	}
-	
-	var adminfct;
-	switch(method) {
-		case "PUT":
-			adminfct = modeladmin.addDevice;
-			break;
-		case "DELETE":
-			adminfct = modeladmin.removeDevice;
-			break;
-		default:
-			error(1, resp);
-			return;
-	}
+	request = parseRequest(req, ["id", "type"]);
 	
 	// Get the response from the modeladmin layer :
-	adminfct(request, function(response) {
+	modeladmin.addDevice(request, function(response) {
 		// Send the stringified json to client :
-		var strResponse = JSON.stringify(response);
-		resp.end(strResponse);
+		resp.json(response);
+	});
+}
+
+function serviceAdminRemoveDevices(req, resp) {
+	writeHeaders(resp);
+	
+	request = parseRequest(req, ["id"]);
+	
+	// Get the response from the modeladmin layer :
+	modeladmin.removeDevice(request, function(response) {
+		// Send the stringified json to client :
+		resp.json(response);
 	});
 }
 
@@ -194,19 +172,13 @@ function serviceAdminDevices(method, query, data, resp) {
  * SERVICE Patients
  * Allows to retrieve patients data.
  */
-function servicePatients(method, query, data, resp) {
+function servicePatients(req, resp) {
 	writeHeaders(resp);
-
-	// Parse the json DATA request
-	request = JSON.parse(data);
-	if(!request) {
-		error(0, resp);
-		return;
-	}	
 	
-	modelpatients.getPatients(request, function(result) {
-			var strResult = JSON.stringify(result);
-			resp.end(strResult);
+	data = parseRequest(req, ["roomId", "id"]);
+	
+	modelpatients.getPatients(data, function(result) {
+			resp.json(result);
 	});
 }
 
@@ -214,19 +186,11 @@ function servicePatients(method, query, data, resp) {
  * SERVICE Rooms
  * Allows to retrieve rooms data.
  */
-function serviceRooms(method, query, data, resp) {
+function serviceRooms(req, resp) {
 	writeHeaders(resp);
-
-	// Parse the json DATA request
-	request = JSON.parse(data);
-	if(!request) {
-		error(0, resp);
-		return;
-	}	
-	
-	modelrooms.getRooms(request, function(result) {
-			var strResult = JSON.stringify(result);
-			resp.end(strResult);
+	data = parseRequest(req, ["id"]);
+	modelrooms.getRooms(data, function(result) {
+			resp.json(result);
 	});
 }
 
@@ -234,19 +198,14 @@ function serviceRooms(method, query, data, resp) {
  * SERVICE Alerts
  * Allows to retrieve alerts from the database.
  */
-function serviceAlerts(method, query, data, resp) {
+function serviceAlerts(req, resp) {
 	writeHeaders(resp);
 
 	// Parse the json DATA request
-	request = JSON.parse(data);
-	if(!request) {
-		error(0, resp);
-		return;
-	}
+	request = parseRequest(req, ["from", "to"]);
 	
 	modelrooms.getAlerts(request, function(result) {
-			var strResult = JSON.stringify(result);
-			resp.end(strResult);
+		resp.json(result);
 	});
 }
 
@@ -254,7 +213,8 @@ exports.sensors = serviceSensors;
 exports.actuators = serviceActuators;
 exports.list_sensors = serviceListSensors;
 exports.list_actuators = serviceListActuators;
-exports.admin_devices = serviceAdminDevices;
+exports.admin_add_devices = serviceAdminAddDevices;
+exports.admin_remove_devices = serviceAdminRemoveDevices;
 exports.patients = servicePatients;
 exports.rooms = serviceRooms;
 exports.alerts = serviceAlerts;

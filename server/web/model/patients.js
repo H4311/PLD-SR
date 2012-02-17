@@ -42,11 +42,11 @@ function getPatients(param, callback) {
 		.field("idPiece")
 		.from("patients");
 		
-	if (param.roomId) {
+	if (param.roomId != null) {
 		sql_req.where("idPiece = '" + param.roomId + "'");
 	}
 		
-	if (param.id) {
+	if (param.id != null) {
 		sql_req.where("id = '" + param.id + "'");
 	}
 	

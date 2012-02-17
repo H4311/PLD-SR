@@ -48,7 +48,7 @@
 		
 		function getRoom(id) {
 			$.post(rest + '/rooms',
-			  '{"id":' + id + '}',
+			  {"id":id},
 			  presentationRoom,
 			  "json");
 		}
