@@ -12,6 +12,8 @@ CPP_SRCS += \
 ../src/Simulator/Actuators/EnOceanDefibrillator.cpp \
 ../src/Simulator/Actuators/EnOceanPainKiller.cpp \
 ../src/Simulator/Actuators/EnOceanSprinkler.cpp \
+../src/Simulator/Actuators/EventActuatorAgony.cpp \
+../src/Simulator/Actuators/EventActuatorAwakening.cpp \
 ../src/Simulator/Actuators/EventActuatorFire.cpp 
 
 OBJS += \
@@ -23,6 +25,8 @@ OBJS += \
 ./src/Simulator/Actuators/EnOceanDefibrillator.o \
 ./src/Simulator/Actuators/EnOceanPainKiller.o \
 ./src/Simulator/Actuators/EnOceanSprinkler.o \
+./src/Simulator/Actuators/EventActuatorAgony.o \
+./src/Simulator/Actuators/EventActuatorAwakening.o \
 ./src/Simulator/Actuators/EventActuatorFire.o 
 
 CPP_DEPS += \
@@ -34,6 +38,8 @@ CPP_DEPS += \
 ./src/Simulator/Actuators/EnOceanDefibrillator.d \
 ./src/Simulator/Actuators/EnOceanPainKiller.d \
 ./src/Simulator/Actuators/EnOceanSprinkler.d \
+./src/Simulator/Actuators/EventActuatorAgony.d \
+./src/Simulator/Actuators/EventActuatorAwakening.d \
 ./src/Simulator/Actuators/EventActuatorFire.d 
 
 
