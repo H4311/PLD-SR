@@ -13,7 +13,8 @@ function sqlConnect() {
  *		    {
  *		        “id” : “11111111”,
  *		        “from” : “yyyy/MM/dd HH:mm:ss”,
- *		        “to” : “yyyy/MM/dd HH:mm:ss”
+ *		        “to” : “yyyy/MM/dd HH:mm:ss”,
+ 				"type" : 1
  *		    },
  *			{
  *		        “id” : “222AAA1”,
@@ -54,26 +55,29 @@ function getSensorsRecords(param, callback) {
 		.field("idCapteur")
 		.field("time")
 		.field("mesure")
+		.field("typeMesure")
 		.from("mesures");
 	var sql_cond = squel.expr();
 	if(request.sensors) {
 		for(var i in request.sensors) {
 			var sensor = request.sensors[i];
-			if(!sensor.id) break;
-			if(!sensor.from) break;
-			if(!sensor.type) break;
+			if(!sensor.id) continue;
+			if(!sensor.from) continue;
 			
 			var from = Date.parse(sensor.from);
-			if(!from) break;
+			if(!from) continue;
 			
 			sql_cond.or_begin()
 				.and("idCapteur = '"+sensor.id+"'")
 				.and("time > '"+from+"'")
-				.and("typeMesure = '"+type+"'");
+			
+			if(sensor.type) {
+				sql_cond.and("typeMesure = '"+type+"'");
+			}
 			
 			if(sensor.to) {
 				var to = Date.parse(sensor.to);
-				if(!to) break;
+				if(!to) continue;
 				sql_cond.and("time < '"+to+"'");
 			}
 			
@@ -100,6 +104,7 @@ function getSensorsRecords(param, callback) {
 				record.time	= new Date(hit["time"])
 					.toString("yyyy/MM/dd HH:mm:ss");
 				record.value = hit["mesure"];
+				record.type = hit["typeMesure"];
 			response.records[id].push(record);
 		}
 		
