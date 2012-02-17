@@ -61,13 +61,15 @@ function getSensorsRecords(param, callback) {
 			var sensor = request.sensors[i];
 			if(!sensor.id) break;
 			if(!sensor.from) break;
+			if(!sensor.type) break;
 			
 			var from = Date.parse(sensor.from);
 			if(!from) break;
 			
 			sql_cond.or_begin()
 				.and("idCapteur = '"+sensor.id+"'")
-				.and("time > '"+from+"'");
+				.and("time > '"+from+"'")
+				.and("typeMesure = '"+type+"'");
 			
 			if(sensor.to) {
 				var to = Date.parse(sensor.to);
