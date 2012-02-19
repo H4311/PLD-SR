@@ -18,16 +18,13 @@
 	function refresh() {
 		var toDate = new Date();
 		
-		addNotification("test" + dateToString(lastUpdate) + "<br>");
 		var req = {
 			"from" : dateToString(lastUpdate),
 			"to" : dateToString(toDate)
 		};
 		
-		addNotification("Notification x");
-		
 		$.post(rest + '/alerts',
-		  '{}',
+		  JSON.stringify(req),
 		  handleResponse,
 		  "json");
 		
@@ -35,7 +32,8 @@
 	}
 	
 	function handleResponse(data) {
-		if(data.count > 0) {
+		console.log(JSON.stringify(data));
+		for(var i in data.alerts) {
 			addNotification("Notification x");
 		}
 	}
@@ -44,20 +42,21 @@
 		var s = "";
 		s += date.getFullYear();
 		s += "/";
-		s += twoDigits(date.getMonth());
+		s += twoDigits(date.getMonth()+1);
 		s += "/";
-		s += twoDigits(date.getDay());
+		s += twoDigits(date.getDate());
 		s += " ";
 		s += twoDigits(date.getHours());
 		s += ":";
 		s += twoDigits(date.getMinutes());
 		s += ":";
-		s += twoDigits(date.getDay());
+		s += twoDigits(date.getSeconds());
 		return s;
 	}
 	
 	function twoDigits(nb) {
-		return nb < 10 ? "0" + nb : nb;
+		var retour = nb < 10 ? "0" + nb : "" + nb;
+		return retour;
 	}
 	
 	function addNotification(notif) {

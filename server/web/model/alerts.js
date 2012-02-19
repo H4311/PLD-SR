@@ -46,10 +46,10 @@ function getAlerts(param, callback) {
 		.field("r.id", "id")
 		.field("r.nom", "name");
 	var cond = squel.expr()
-		.and("a.time > "+from);
+		.and("a.time > "+from*1000);
 	if(param.to) {
 		var to = Date.parse(param.to);
-		cond.and("a.time < "+to);
+		cond.and("a.time < "+to*1000);
 	}
 	sql_req.where(cond);
 	
