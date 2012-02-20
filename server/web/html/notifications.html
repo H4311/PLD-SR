@@ -34,7 +34,18 @@
 	function handleResponse(data) {
 		console.log(JSON.stringify(data));
 		for(var i in data.alerts) {
-			addNotification("Notification x");
+			var a = data.alerts[i];
+			var notif = "";
+			notif += dateToString(new Date(a.time/1000)) + " : ";
+			notif += "Alerte " + a.id + "</br>Déclenchée par les capteurs : ";
+			for(var j in a.sensors) {
+				if(j != 0) {
+					notif += ", ";
+				}
+				notif += a.sensors[j];
+			}
+			addNotification(notif);
+			
 		}
 	}
 	
@@ -60,7 +71,7 @@
 	}
 	
 	function addNotification(notif) {
-		var newElem = "<li><div class=\"info\">" + new Date().getHours() + ":" + new Date().getMinutes() + ":" + new Date().getSeconds() + " " + notif + "</div></li>";
+		var newElem = "<li><div class=\"warning\">"/* + new Date().getHours() + ":" + new Date().getMinutes() + ":" + new Date().getSeconds() + " "*/ + notif + "</div></li>";
 		$("#listNotifs").html(newElem + $("#listNotifs").html());
 	}
 	</script>

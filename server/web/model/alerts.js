@@ -63,6 +63,7 @@ function getAlerts(param, callback) {
 			response.alerts.push(_alert);
 			response.alerts[i].time = hit["time"];
 			//_alert.name = hit["name"];
+			response.alerts[i].id = hit["idRegle"];
 			response.alerts[i].sensors = [];
 			
 			// Retrieve des capteurs impliqués dans l'alerte
