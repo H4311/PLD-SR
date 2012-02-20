@@ -38,27 +38,20 @@ function getAlerts(param, callback) {
 
 	var from = Date.parse(param.from);
 
-	// Construct the SQL query :
-	var sql_req = squel.select()
-		.from("alertes", "a")
-		.join("regles", "r", squel.expr().and("r.id = a.idRegle"))
-		.field("a.time", "time")
-		.field("r.id", "id")
-		.field("r.nom", "name");
-	var cond = squel.expr()
-		.and("a.time > "+from*1000);
+	// retrieve des alertes déclenchées
+	var sql_req = "";
+	sql_req += "SELECT time, idRegle ";
+	sql_req += "FROM alertes ";
+	sql_req += "WHERE time > " + from*1000 + " ";
 	if(param.to) {
-		var to = Date.parse(param.to);
-		cond.and("a.time < "+to*1000);
-	}
-	sql_req.where(cond);
+		sql_req += "AND time < " + Date.parse(param.to)*1000;
+	}	
 	
-	// Send the query to SQL DB :
 	var db = sqlConnect();
-	sql.query(db, sql_req.toString(), function(result) {
+	sql.query(db, sql_req, function(result) {
 		console.log("A Took : "+result.took+"ms - Hits : "+result.count);
 		
-		// Construct json response :
+		// Construct json response
 		var response = {};
 		response.alerts = [];
 		
@@ -66,37 +59,31 @@ function getAlerts(param, callback) {
 		for(var i in result.hits) {
 			var hit = result.hits[i];
 			var _alert = {};
-			_alert.time = hit["time"];
-			_alert.name = hit["name"];
-			_alert.sensors = [];
+			// Add the alert to the result
+			response.alerts.push(_alert);
+			response.alerts[i].time = hit["time"];
+			//_alert.name = hit["name"];
+			response.alerts[i].sensors = [];
 			
-			// Construct second SQL query :
-			if(!hit.id)
-				console.log("BAAAA");
-			sql_req = squel.select()
-				.from("capteurs")
-				.where("id IN ("+squel.select()
-					.field("idCapteur")
-					.from("regleCapteur")
-					.where("idRegle = "+hit.id).toString()
-					+")");
+			// Retrieve des capteurs impliqués dans l'alerte
+			sql_req = "";
+			sql_req += "SELECT idCapteur, idRegle ";
+			sql_req += "FROM regleCapteur ";
+			sql_req += "WHERE idRegle = " + hit.idRegle;
 
-			sql.query(db, sql_req.toString(), function(result2) {
+			sql.query(db, sql_req, function(result2) {
 				console.log("Took : "+result2.took+"ms - Hits : "+result2.count);
 				
 				for(var j in result2.hits) {
-					_alert.sensors.push(result2.hits[j]);
+					response.alerts[nbResponseReceived].sensors.push(result2.hits[j].idCapteur);
 				}
 
-				// Add the alert to the result :
-				response.alerts.push(_alert);
-
 				nbResponseReceived++;
-				// For the last alert :
-				console.log(nbResponseReceived + " " + result.count);
-				if(nbResponseReceived === (result.count - 1)) {
-					// Call the record with json response :
+				// For the last alert
+				if(nbResponseReceived === result.count) {
+					// Call the record with json response
 					callback(response);
+					console.log(response);
 					sql.close(db);
 				}
 				
