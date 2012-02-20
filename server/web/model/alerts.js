@@ -40,7 +40,7 @@ function getAlerts(param, callback) {
 
 	// retrieve des alertes déclenchées
 	var sql_req = "";
-	sql_req += "SELECT time, idRegle ";
+	sql_req += "SELECT time, idRegle, (SELECT nom FROM regles WHERE id = idRegle) nom ";
 	sql_req += "FROM alertes ";
 	sql_req += "WHERE time > " + from*1000 + " ";
 	if(param.to) {
@@ -62,21 +62,21 @@ function getAlerts(param, callback) {
 			// Add the alert to the result
 			response.alerts.push(_alert);
 			response.alerts[i].time = hit["time"];
-			//_alert.name = hit["name"];
+			response.alerts[i].nom = hit["nom"];
 			response.alerts[i].id = hit["idRegle"];
 			response.alerts[i].sensors = [];
 			
 			// Retrieve des capteurs impliqués dans l'alerte
 			sql_req = "";
-			sql_req += "SELECT idCapteur, idRegle ";
-			sql_req += "FROM regleCapteur ";
-			sql_req += "WHERE idRegle = " + hit.idRegle;
+			sql_req += "SELECT rc.idCapteur, c.type, c.isGlobal ";
+			sql_req += "FROM regleCapteur rc INNER JOIN capteurs c ON rc.idCapteur = c.id ";
+			sql_req += "WHERE rc.idRegle = " + hit.idRegle;
 
 			sql.query(db, sql_req, function(result2) {
 				console.log("Took : "+result2.took+"ms - Hits : "+result2.count);
 				
 				for(var j in result2.hits) {
-					response.alerts[nbResponseReceived].sensors.push(result2.hits[j].idCapteur);
+					response.alerts[nbResponseReceived].sensors.push(result2.hits[j]);
 				}
 
 				nbResponseReceived++;

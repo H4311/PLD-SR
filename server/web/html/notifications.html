@@ -37,12 +37,14 @@
 			var a = data.alerts[i];
 			var notif = "";
 			notif += dateToString(new Date(a.time/1000)) + " : ";
-			notif += "Alerte " + a.id + "</br>Déclenchée par les capteurs : ";
+			notif += "Alerte " + a.id + " (" + a.nom + ")</br>Déclenchée par les capteurs : ";
 			for(var j in a.sensors) {
 				if(j != 0) {
 					notif += ", ";
 				}
-				notif += a.sensors[j];
+				notif += a.sensors[j].idCapteur;
+				notif += " (type:" + a.sensors[j].type;
+				notif += ", global à la pièce:" + (a.sensors[j].isGlobal ? "oui" : "non") + ")";
 			}
 			addNotification(notif);
 			
