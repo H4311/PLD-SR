@@ -8,6 +8,7 @@ CPP_SRCS += \
 ../src/Simulator/Sensors/SensorSimulatorCO2.cpp \
 ../src/Simulator/Sensors/SensorSimulatorHeartRate.cpp \
 ../src/Simulator/Sensors/SensorSimulatorLumAndOcc.cpp \
+../src/Simulator/Sensors/SensorSimulatorSunSpot.cpp \
 ../src/Simulator/Sensors/SensorSimulatorTempHumi.cpp 
 
 OBJS += \
@@ -15,6 +16,7 @@ OBJS += \
 ./src/Simulator/Sensors/SensorSimulatorCO2.o \
 ./src/Simulator/Sensors/SensorSimulatorHeartRate.o \
 ./src/Simulator/Sensors/SensorSimulatorLumAndOcc.o \
+./src/Simulator/Sensors/SensorSimulatorSunSpot.o \
 ./src/Simulator/Sensors/SensorSimulatorTempHumi.o 
 
 CPP_DEPS += \
@@ -22,6 +24,7 @@ CPP_DEPS += \
 ./src/Simulator/Sensors/SensorSimulatorCO2.d \
 ./src/Simulator/Sensors/SensorSimulatorHeartRate.d \
 ./src/Simulator/Sensors/SensorSimulatorLumAndOcc.d \
+./src/Simulator/Sensors/SensorSimulatorSunSpot.d \
 ./src/Simulator/Sensors/SensorSimulatorTempHumi.d 
 
 

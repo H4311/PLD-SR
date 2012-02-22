@@ -83,3 +83,22 @@ CREATE TABLE alertes (
 	idRegle INTEGER,
 	FOREIGN KEY (idRegle) REFERENCES regles (id)
 );
+
+-- Plan de l'hopital
+
+CREATE TABLE salles (
+	id INTEGER PRIMARY KEY AUTO_INCREMENT,
+	nom VARCHAR(64)
+);
+
+CREATE TABLE murs (
+	id INTEGER PRIMARY KEY AUTO_INCREMENT,
+	idSalle INTEGER,
+	x1 INTEGER,
+	y1 INTEGER,
+	x2 INTEGER,
+	y2 INTEGER,
+	ordre INTEGER,
+	isPorte BOOLEAN,
+	FOREIGN KEY (idSalle) REFERENCES salles (id)
+);
