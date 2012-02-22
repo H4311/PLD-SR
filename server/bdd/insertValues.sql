@@ -10,6 +10,8 @@ DELETE FROM pieces;
 DELETE FROM patients;
 DELETE FROM mesures;
 DELETE FROM capteurs;
+DELETE FROM salles;
+DELETE FROM murs;
 
 INSERT INTO actionneurs(numeroActionneur, type)
 VALUES(1, 0x1070901);
@@ -49,3 +51,12 @@ INSERT INTO alertes(time, idRegle) VALUES (1, 100);
 INSERT INTO alertes(time, idRegle) VALUES (10000000000, 101);
 INSERT INTO alertes(time, idRegle) VALUES (100000000000000, 100);
 INSERT INTO alertes(time, idRegle) VALUES (1000000000000000, 101);
+
+INSERT INTO salles(nom) VALUES ('room 1');
+INSERT INTO salles(nom) VALUES ('Salle d\'attente');
+
+INSERT INTO murs(idSalle, x1, y1, x2, y2, ordre, isPorte)
+VALUES ((SELECT id FROM salles WHERE nom = 'Salle d\'attente'), 1, 1, 2, 2, 3, true);
+
+INSERT INTO murs(idSalle, x1, y1, x2, y2, ordre, isPorte)
+VALUES ((SELECT id FROM salles WHERE nom = 'room 1'), 1, 2, 3, 4, 42, true);
