@@ -1,6 +1,6 @@
 USE pld;
 
-DROP TABLE IF EXISTS alertes, regleCapteur, regleActionneur, regles, regleEvent, events, actionneurs, actionneurSujet, pieces, patients, mesures, capteurs;
+DROP TABLE IF EXISTS murs, alertes, regleCapteur, regleActionneur, regles, regleEvent, events, actionneurs, actionneurSujet, pieces, patients, mesures, capteurs;
 
 CREATE TABLE actionneurs (
 	id INTEGER PRIMARY KEY AUTO_INCREMENT,
@@ -86,19 +86,14 @@ CREATE TABLE alertes (
 
 -- Plan de l'hopital
 
-CREATE TABLE salles (
-	id INTEGER PRIMARY KEY AUTO_INCREMENT,
-	nom VARCHAR(64)
-);
-
 CREATE TABLE murs (
 	id INTEGER PRIMARY KEY AUTO_INCREMENT,
-	idSalle INTEGER,
+	idPiece INTEGER,
 	x1 INTEGER,
 	y1 INTEGER,
 	x2 INTEGER,
 	y2 INTEGER,
 	ordre INTEGER,
 	isPorte BOOLEAN,
-	FOREIGN KEY (idSalle) REFERENCES salles (id)
+	FOREIGN KEY (idPiece) REFERENCES pieces (id)
 );
