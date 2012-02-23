@@ -53,6 +53,7 @@ int main()
 	/*
 	 * Create two threads
 	 */
+	 
 	createGThread("numbers", numbers, NULL, STACK_SIZE);
 	createGThread("letters", letters, NULL, STACK_SIZE);
 	createGThread("others", others, NULL, STACK_SIZE);

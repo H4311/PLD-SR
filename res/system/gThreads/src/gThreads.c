@@ -7,6 +7,13 @@
 #include "gSem.h"
 #include "hw.h"
 
+/* 
+ * asm instructions depends on archi type (32 or 64 bits)
+ */
+#if __x86_64__ 
+#define ARCHI64
+#endif
+
 /**
  * Count id thread
  */
@@ -112,21 +119,40 @@ void switchGThread(struct gThread *thread)
 	
     if (currThread)
     {
+        #ifdef ARCHI64
+        asm("movq %%rsp, %0" "\n" "movq %%rbp, %1"
+            :"=r"(currThread->esp),
+            "=r"(currThread->ebp)
+			);
+		#else
+		/*
 		asm("movl %%esp, %0" "\n" "movl %%ebp, %1"
             :"=r"(currThread->esp),
             "=r"(currThread->ebp) 
         );
+        */
+		#endif
 	}
 	
 	/* Next context*/
 	currThread = thread;
 	
+	#ifdef ARCHI64
+	asm("movq %0, %%rsp" "\n" "movq %1, %%rbp"
+            :
+            :"r"(currThread->esp),
+            "r"(currThread->ebp)
+		);
+	#else
+	/*
 	asm("movl %0, %%esp" "\n" "movl %1, %%ebp"
 		:
 		:"r"(currThread->esp),
 		 "r"(currThread->ebp)
 	);
-   
+	*/
+	#endif
+	
     irq_enable();
     
     if (currThread->state == INIT)
