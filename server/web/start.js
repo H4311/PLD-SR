@@ -28,14 +28,22 @@ rest.listen(1337);
 
 // HTML Server config
 var html = express.createServer();
-// Indicates the place where are the static files
+
 html.configure(function() {
-	html.use(express.static(__dirname + '/html'));
+	html.use(express.static(__dirname + '/public'));
 	html.set('views', __dirname + '/views');
+	html.set('view engine', 'ejs');
+});
+
+// Different views of the HTML server :
+
+html.get('/(index)?', function(req, res) {
+	res.render('index', {layout: false});
 });
 
 html.get('/room', function(req, res) {
-	res.render('rooms.ejs', {layout: false, roomId: req.param("id", null)});
+	var roomId = req.param("id", null);
+	res.render('room', {layout: false, roomId: roomId});
 });
 
 html.listen(8080);
