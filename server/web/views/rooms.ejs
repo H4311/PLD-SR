@@ -10,7 +10,7 @@
 	<script>
 	var rest = "http://localhost:1337";
 	var roomId = <%= roomId %>;
-		
+	
 	function presentationRoom(data) {
 		
 		if (data.count == 0) {
@@ -47,15 +47,19 @@
 	$(document).ready(function() {
 		
 		function getRoom(id) {
+			param = {};
+			if(id) param.id = id;
 			$.post(rest + '/rooms',
-			  {"id":id},
-			  presentationRoom,
-			  "json");
+				param,
+				presentationRoom,
+				"json");
 		}
 		
 		function getPatients(id) {
+			param = {};
+			param.roomId = id;
 			$.post(rest + '/patients',
-			'{"roomId": ' + id + '}',
+			param,
 			presentationPatients,
 			"json");
 		}
