@@ -2,6 +2,7 @@ var modelsensors = require("./model/sensors");
 var modelpatients = require("./model/patients");
 var modelrooms = require("./model/rooms");
 var modeladmin = require("./model/admin");
+var modelalerts = require("./model/alerts");
 
 function error(code, resp) {
 	var result = {};
@@ -119,7 +120,7 @@ function serviceListSensors(req, resp) {
 		});
 	} else {
 		// Get the response from the modelsensors layer :
-		modelsensors.getSensorsList(function() {
+		modelsensors.getSensorsList(function(response) {
 			// Send the stringified json to client :
 			resp.json(response);
 		});
@@ -178,7 +179,7 @@ function servicePatients(req, resp) {
 	data = parseRequest(req, ["roomId", "id"]);
 	
 	modelpatients.getPatients(data, function(result) {
-			resp.json(result);
+		resp.json(result);
 	});
 }
 
@@ -190,7 +191,7 @@ function serviceRooms(req, resp) {
 	writeHeaders(resp);
 	data = parseRequest(req, ["id"]);
 	modelrooms.getRooms(data, function(result) {
-			resp.json(result);
+		resp.json(result);
 	});
 }
 
@@ -201,10 +202,9 @@ function serviceRooms(req, resp) {
 function serviceAlerts(req, resp) {
 	writeHeaders(resp);
 
-	// Parse the json DATA request
 	request = parseRequest(req, ["from", "to"]);
 	
-	modelrooms.getAlerts(request, function(result) {
+	modelalerts.getAlerts(request, function(result) {
 		resp.json(result);
 	});
 }

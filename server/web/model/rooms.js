@@ -8,26 +8,13 @@ function sqlConnect() {
 /*
  * REQUEST :
  * ============================================================================
- * {} // in order to get all the patients
- * {"id":1} // in order to retrieve infos on patient 1
+ * {} // in order to get all the rooms
+ * {"id":1} // in order to retrieve infos on room
  * ============================================================================
  *
  * RESPONSE :
  * ============================================================================
- *	{
-	“fields”: [“id”, “nom”, “isMan”, “raisonHospitalisation”, “idPiece”],
-	“count”: 1,
-	“took”: 53,
-	“hits”: [
-		{
-			“id”:1,
-			“nom”: “Lhaache”,
-			“isMan”: false,
-			“raisonHospitalisation”: “Changement de sexe”,
-			“idPiece”: 42
-		}
-		]
-	}
+ *	to be documented
  * ============================================================================
  */
 function getRooms(param, callback) {

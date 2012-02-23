@@ -12,12 +12,13 @@ function sqlConnect() {
  *		“sensors” : [
  *		    {
  *		        “id” : “11111111”,
- *		        “from” : “yyyy/MM/dd HH:mm:ss”,
- *		        “to” : “yyyy/MM/dd HH:mm:ss”
+ *		        “from” : 111202332122,
+ *		        “to” : 111202332122,
+ 				"type" : 1
  *		    },
  *			{
  *		        “id” : “222AAA1”,
- *		        “from” : “yyyy/MM/dd HH:mm:ss”
+ *		        “from” : 111202332122
  *		    }
  *		]
  *	}
@@ -29,18 +30,21 @@ function sqlConnect() {
  *		“records” : {
  *			“1111111” : [
  *				{
- *					“time” : “yyyy/MM/dd HH:mm:ss”,
- *					“value” : “121122”
+ *					“time” : 111202332122,
+ *					“value” : “121122”,
+ *					"type" : 1
  *				},
  *				{
- *					“time” : “yyyy/MM/dd HH:mm:ss”,
- *					“value” : “121122”
+ *					“time” : 111202332122,
+ *					“value” : “121122”,
+ *					"type" : 1
  *				}
  *			],
  *			“222AAA1” : [
  *				{
- *					“time” : “yyyy/MM/dd HH:mm:ss”,
- *					“value” : “TESTEST”
+ *					“time” : 111202332122,
+ *					“value” : “TESTEST”,
+ *					"type" : 1
  *				}
  *			]
  *		}
@@ -54,26 +58,27 @@ function getSensorsRecords(param, callback) {
 		.field("idCapteur")
 		.field("time")
 		.field("mesure")
+		.field("typeMesure")
 		.from("mesures");
 	var sql_cond = squel.expr();
 	if(request.sensors) {
 		for(var i in request.sensors) {
 			var sensor = request.sensors[i];
-			if(!sensor.id) break;
-			if(!sensor.from) break;
-			if(!sensor.type) break;
+			if(!sensor.id) continue;
+			if(!sensor.from) continue;
 			
-			var from = Date.parse(sensor.from);
-			if(!from) break;
+			var from = sensor.from;
 			
 			sql_cond.or_begin()
 				.and("idCapteur = '"+sensor.id+"'")
 				.and("time > '"+from+"'")
-				.and("typeMesure = '"+type+"'");
+			
+			if(sensor.type) {
+				sql_cond.and("typeMesure = '"+type+"'");
+			}
 			
 			if(sensor.to) {
-				var to = Date.parse(sensor.to);
-				if(!to) break;
+				var to = sensor.to;
 				sql_cond.and("time < '"+to+"'");
 			}
 			
@@ -97,9 +102,9 @@ function getSensorsRecords(param, callback) {
 			if(!response.records[id])
 				response.records[id] = [];
 			var record = {};
-				record.time	= new Date(hit["time"])
-					.toString("yyyy/MM/dd HH:mm:ss");
+				record.time	= new Date(hit["time"]).getTime();
 				record.value = hit["mesure"];
+				record.type = hit["typeMesure"];
 			response.records[id].push(record);
 		}
 		

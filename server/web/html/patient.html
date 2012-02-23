@@ -5,7 +5,8 @@
 	<link rel="stylesheet" href="style.css" />
 	<script src="http://code.jquery.com/jquery-1.7.1.js"></script>
 	<script type="text/javascript" src="https://www.google.com/jsapi"></script>
-	<script src="common.js"></script>
+	<script src="script/common.js"></script>
+	<script src="script/sensors.js"></script>
 	<title>RiTHM - Informations du Patient</title>
 	
 	<script>
@@ -17,70 +18,44 @@
 		options: {
 			width: 500,
 			height: 300,
+			vAxis: {title: "Value"},
+			hAxis: {title: "Time"},
 			animation: {
 				duration: 500,
 				easing: 'in'
 			}
 		}
 	}
-	
-	  var options = {title:'Sensor variation the last hour',
-				 width: 400,
-				 height: 300,
-				 vAxis: {title: "Temp"},
-				 hAxis: {title: "Time"},
-				 animation:{
-			duration: 500,
-			easing: 'in'
-	  },
-	};
-	
-	  // Instantiate and draw our chart, passing in some options.
-      $(document).ready( function() {
-	  
-	  var chart = new google.visualization.LineChart(document.getElementById('chart_div'))
-	  
-	  var randomnumber = Math.floor(Math.random()*11)
-	  // Create the data table.
-	  var data = new google.visualization.DataTable();
-	  data.addColumn('string', 'TimeSensor');
-	  data.addColumn('number', 'Temperature');
-		  
-      // Callback that creates and populates a data table, 
-      // instantiates the pie chart, passes in the data and
-      // draws it.
-      var drawChart = function drawChart() {
-
-		chart.draw(data, options);
-		};
-		
-		/*$('#b1').click( drawChart);*/
-		
-		drawChart();
-			
-		});
-	
-
 	var rest = "http://localhost:1337";
 	
 	function loadGCharts() {
 		gChartsSettings.loaded = true;
 	}
 	
-	function initChart(data) {
-		var randomnumber = Math.floor(Math.random()*11)
-
-		var data = new google.visualization.DataTable();
-		  data.addColumn('string', 'TimeSensor');
-		  data.addColumn('number', 'Temperature');
-		  for( var i in data.hits){
-			var mesure = data.hits[i];
-			data.addRows([mesure.time, mesure.value]);
-		  }
+	function drawchart(chart, data) {
+		chart.draw(data, gChartsSettings.options);
 	}
 	
-	function updateChart(sensorId, values) {
-			  	
+	function updateChart(chart, data, sensorId, type, lastTimestamp) {
+		getSensorValues(sensorId, function(data) {
+			
+		}, type, lastTimestamp);
+	}
+	
+	function initChart(data) {
+		for(var sensorId in data.records) {
+			var records = data.records[sensorId];
+			
+			var chart = new google.visualization.LineChart($("#chart_"+sensorId)[0]);
+			var data = new google.visualization.DataTable();
+			data.addColumn('string', 'time');
+			data.addColumn('number', recordtypeToString(records[0].type));
+			for( var i in records) {
+				var record = records[i];
+				data.addRow([record.time.toString(), record.value]);
+			}
+			drawchart(chart, data);
+		}
 	}
 	
 	function presentationSensors(data) {
@@ -92,9 +67,9 @@
 		var content = "";
 		for(var i in data.hits) {
 			var sensor = data.hits[i];
-			content+="<h3>Capteur :"+sensor.numeroCapteur+"<div id=\"chart_"+sensor.id+"\"></div></h3>"
+			content+="<h3>Capteur :"+sensor.numeroCapteur+"</h3><div id=\"chart_"+sensor.id+"\">&nbsp;</div>"
 			$("#sensors").html(content);
-			getSensorValues(sensor.id, initChart, new Date().getTime() - 3600000, sensor.type);
+			getSensorValues(sensor.id, initChart, new Date().getTime() - 3600000);
 		}
 	}
 	
@@ -129,34 +104,6 @@
 	function getPatient(id, callback) {
 		$.post(rest + '/patients',
 		  {"id":id},
-		  callback,
-		  "json");
-	}
-	
-	function getSensorValues(idSensor, callback, from, to, typeMesure) {
-		var req = {
-			sensors: [
-				{
-					id: idSensor,
-					from: new Date(from).toString("yyyy/MM/dd HH:mm:ss"),
-					type: typeMesure
-				}
-			]
-		};
-		if(to) req.sensors[0].to =  new Date(to).toString("yyyy/MM/dd HH:mm:ss")
-		
-		$.post(rest + '/sensors',
-		  req,
-		  callback,
-		  "json");
-	}
-	
-	function getSensors(idPatient, callback) {
-		var req = {
-			idPatient: idPatient
-		};
-		$.post(rest + '/list_sensors',
-		  req,
 		  callback,
 		  "json");
 	}
@@ -198,15 +145,6 @@
 	
 	<section id="sensors">
 	
-	</section>
-	
-	<section id="stats">
-		<div id="charts">
-		<h2>Temperature variation</h2>
-		<!--Div that will hold the pie chart-->
-		<div id="chart_div" style="width:400; height:300"></div>
-		<input type="button" id="b1" value="add value" />
-		</div>
 	</section>
 
 </div>

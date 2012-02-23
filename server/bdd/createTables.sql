@@ -1,6 +1,6 @@
 USE pld;
 
-DROP TABLE IF EXISTS alertes, regleCapteur, regleActionneur, regles, regleEvent, events, actionneurs, actionneurSujet, pieces, patients, mesures, capteurs;
+DROP TABLE IF EXISTS murs, alertes, regleCapteur, regleActionneur, regles, regleEvent, events, actionneurs, actionneurSujet, pieces, patients, mesures, capteurs;
 
 CREATE TABLE actionneurs (
 	id INTEGER PRIMARY KEY AUTO_INCREMENT,
@@ -51,25 +51,10 @@ CREATE TABLE mesures (
 
 -- Moteur d'inférence
 
-CREATE TABLE events (
-	id INTEGER PRIMARY KEY AUTO_INCREMENT,
-	idActionneur INTEGER,
-	valeur REAL,
-	FOREIGN KEY (idActionneur) REFERENCES actionneurs (id)
-);
-
 CREATE TABLE regles (
 	id INTEGER PRIMARY KEY AUTO_INCREMENT,
 	nom VARCHAR(32),
 	createsAlert BOOLEAN
-);
-
-CREATE TABLE regleEvent (
-	id INTEGER PRIMARY KEY AUTO_INCREMENT,
-	idRegle INTEGER,
-	idEvent INTEGER,
-	FOREIGN KEY (idEvent) REFERENCES events (id),
-	FOREIGN KEY (idRegle) REFERENCES regles (id)
 );
 
 CREATE TABLE regleCapteur (
@@ -97,4 +82,18 @@ CREATE TABLE alertes (
 	time BIGINT,
 	idRegle INTEGER,
 	FOREIGN KEY (idRegle) REFERENCES regles (id)
+);
+
+-- Plan de l'hopital
+
+CREATE TABLE murs (
+	id INTEGER PRIMARY KEY AUTO_INCREMENT,
+	idPiece INTEGER,
+	x1 INTEGER,
+	y1 INTEGER,
+	x2 INTEGER,
+	y2 INTEGER,
+	ordre INTEGER,
+	isPorte BOOLEAN,
+	FOREIGN KEY (idPiece) REFERENCES pieces (id)
 );
