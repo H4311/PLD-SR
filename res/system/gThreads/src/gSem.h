@@ -8,7 +8,7 @@
  */
 struct semaphore {
 	int count;
-	struct gThread *threads; /* Liste des contextes en attente */
+	struct gThread *threads; /* Waiting threads list */
 };
 typedef struct semaphore semaphore;
 

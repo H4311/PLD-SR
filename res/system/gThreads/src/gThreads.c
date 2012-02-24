@@ -5,6 +5,7 @@
 #include "commons.h"
 #include "gThreads.h"
 #include "gSem.h"
+
 #include "hw.h"
 
 /* 
@@ -14,7 +15,7 @@
 #define ARCHI64
 #endif
 
-#define TRACE
+/* #define TRACE */
 
 /**
  * Count id thread
@@ -35,7 +36,7 @@ void startSched()
 }
 
 /**
- * List all threads currently in the task queue
+ * List all threads nums currently in the task queue
  */
 void listThreads()
 {
@@ -102,7 +103,7 @@ int createGThread(char *threadName, gThread_func_t thread, void* args, int stack
 		}
 		else 
 		{
-			/* top insertion */
+			/* Top (after firstThread) insertion */
 			newGThread->nextThread = firstThread->nextThread;
 			firstThread->nextThread = newGThread;
 		}  
@@ -165,6 +166,7 @@ void switchGThread(struct gThread *thread)
 	}
 	
 	irq_enable();
+	
     if (currThread->state == INIT)
     {
 		#ifdef TRACE
@@ -183,6 +185,7 @@ void startGThread()
 {
     currThread->state = RUNNING;
     currThread->func(currThread->args);  
+    
     /* Thread stopped its routine*/
     currThread->state = END;
     /* Kill current Thread */
@@ -190,7 +193,11 @@ void startGThread()
 }
 
 /** 
- * Kill current context 
+ * Kill current context :
+ * - free stack memory
+ * - pop thread from thread list
+ *  If it's the last thread, then we call exit
+ *  else we call yield to continue with another thread
  */
 void killCurrThread()
 {
