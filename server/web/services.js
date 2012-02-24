@@ -3,6 +3,7 @@ var modelpatients = require("./model/patients");
 var modelrooms = require("./model/rooms");
 var modeladmin = require("./model/admin");
 var modelalerts = require("./model/alerts");
+var modelmurs = require("./model/murs");
 
 function error(code, resp) {
 	var result = {};
@@ -232,6 +233,26 @@ function serviceRooms(method, query, data, resp) {
 }
 
 /*
+ * SERVICE Murs
+ * Allows to retrieve murs data.
+ */
+function serviceMurs(method, query, data, resp) {
+	writeHeaders(resp);
+
+	// Parse the json DATA request
+	request = JSON.parse(data);
+	if(!request) {
+		error(0, resp);
+		return;
+	}	
+	
+	modelmurs.getMurs(request, function(result) {
+			var strResult = JSON.stringify(result);
+			resp.end(strResult);
+	});
+}
+
+/*
  * SERVICE Alerts
  * Allows to retrieve alerts from the database.
  */
@@ -258,4 +279,5 @@ exports.list_actuators = serviceListActuators;
 exports.admin_devices = serviceAdminDevices;
 exports.patients = servicePatients;
 exports.rooms = serviceRooms;
+exports.murs = serviceMurs;
 exports.alerts = serviceAlerts;

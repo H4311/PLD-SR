@@ -8,8 +8,7 @@ function sqlConnect() {
 /*
  * REQUEST :
  * ============================================================================
- * {} // in order to get all the rooms
- * {"id":1} // in order to retrieve infos on room
+ * {"id":1} // in order to retrieve the murs of room of id 1
  * ============================================================================
  *
  * RESPONSE :
@@ -17,18 +16,15 @@ function sqlConnect() {
  *	to be documented
  * ============================================================================
  */
-function getRooms(param, callback) {
-
-	// Construct the SQL query :
-	var sql_req = squel.select()
-		.field("id")
-		.field("nom")
-		.field("description")
-		.from("pieces");
-		
-	if (param.id) {
-		sql_req.where("id = '" + param.id + "'");
+function getMurs(param, callback) {
+	if(!param.id) {
+		console.log("[Service murs] Erreur : pas d'id spécifié");
+		return;
 	}
+	
+	// Construct the SQL query :
+	var sql_req = "SELECT id, idPiece, x1, y1 ,x2 ,y2 ,ordre, isPorte FROM murs ";
+	sql_req += "WHERE idPiece = " + param.id;
 	
 	// Send the query to SQL DB :
 	var db = sqlConnect();
@@ -41,5 +37,4 @@ function getRooms(param, callback) {
 	});
 }
 
-exports.getRooms = getRooms;
-
+exports.getMurs = getMurs;
