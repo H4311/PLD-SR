@@ -61,7 +61,7 @@ int initGThread(struct gThread *thread, char* threadName, int stackSize, gThread
 		thread->name = threadName;
 		thread->state = INIT;
 		thread->esp = (long)thread->stack+stackSize;
-		thread->ebp = (long)thread->stack+stackSize;
+		thread->ebp = thread->esp;
 		thread->func = func;
 		thread->args = args;
 		
@@ -125,18 +125,23 @@ void switchGThread(struct gThread *thread)
             "=r"(currThread->ebp)
 			);
 		#else
-		/*
 		asm("movl %%esp, %0" "\n" "movl %%ebp, %1"
             :"=r"(currThread->esp),
             "=r"(currThread->ebp) 
         );
-        */
 		#endif
+		
+		printf("Contexte %d enregistré\n", currThread->id);
 	}
 	
 	/* Next context*/
 	currThread = thread;
 	
+	printf("Passe au contexte %d\n", currThread->id);
+	
+	
+	if (currThread->state != INIT)
+	{
 	#ifdef ARCHI64
 	asm("movq %0, %%rsp" "\n" "movq %1, %%rbp"
             :
@@ -144,14 +149,13 @@ void switchGThread(struct gThread *thread)
             "r"(currThread->ebp)
 		);
 	#else
-	/*
 	asm("movl %0, %%esp" "\n" "movl %1, %%ebp"
 		:
 		:"r"(currThread->esp),
 		 "r"(currThread->ebp)
 	);
-	*/
 	#endif
+	}
 	
     irq_enable();
     
@@ -201,7 +205,7 @@ void killCurrThread()
 		 * TODO : a revoir
 		 * Faire une restitution du contexte initial ?
 		 */
-		/*free(sem);*/
+		/*free(sem);*/printf("Après yield explicite\n");
 		exit(EXIT_SUCCESS);
 	}
 	else
@@ -214,7 +218,7 @@ void killCurrThread()
 		currThread = thread;
 		currThread->state = RUNNING;
 		yield();
-	
+		
 	}
 }
 
@@ -224,6 +228,7 @@ void killCurrThread()
 void yield()
 {
 	irq_disable();
+	printf("Current thread: %d, next: %d\n", currThread->id, currThread->nextThread->id);
 	switchGThread(currThread->nextThread);
 }
 

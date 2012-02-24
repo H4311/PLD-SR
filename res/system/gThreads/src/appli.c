@@ -57,7 +57,6 @@ int main()
 	createGThread("numbers", numbers, NULL, STACK_SIZE);
 	createGThread("letters", letters, NULL, STACK_SIZE);
 	createGThread("others", others, NULL, STACK_SIZE);
-	createGThread("idleThread", idle, NULL, STACK_SIZE);
 	/*createGThread("others", others, NULL, STACK_SIZE);*/
 		
 	/* To be sure they are all welle created */
