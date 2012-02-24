@@ -2,7 +2,6 @@
 #define _GTHREADS_H_
 
 #include "commons.h"
-#include "gContext.h"
 
 #define STACK_SIZE 16384
 #define NAME_SIZE 20
@@ -22,7 +21,6 @@ struct gThread
     void* stack;
     long esp;
     long ebp;
-    gContext *context;
 	gThread_func_t *func;
 	void* args;
     struct gThread *nextThread;

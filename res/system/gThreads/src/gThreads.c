@@ -14,6 +14,8 @@
 #define ARCHI64
 #endif
 
+#define TRACE
+
 /**
  * Count id thread
  */
@@ -105,7 +107,9 @@ int createGThread(char *threadName, gThread_func_t thread, void* args, int stack
 			firstThread->nextThread = newGThread;
 		}  
 	}
+	#ifdef TRACE
 	printf("GThread created \"%s\" (n°%d)\n", newGThread->name, newGThread->id);
+	#endif
 	return newGThread->id;
 }
 
@@ -131,14 +135,17 @@ void switchGThread(struct gThread *thread)
         );
 		#endif
 		
+		#ifdef TRACE
 		printf("Contexte %d enregistré\n", currThread->id);
+		#endif
 	}
 	
 	/* Next context*/
 	currThread = thread;
 	
+	#ifdef TRACE
 	printf("Passe au contexte %d\n", currThread->id);
-	
+	#endif
 	
 	if (currThread->state != INIT)
 	{
@@ -157,13 +164,16 @@ void switchGThread(struct gThread *thread)
 	#endif
 	}
 	
-    irq_enable();
-    
+	irq_enable();
     if (currThread->state == INIT)
     {
+		#ifdef TRACE
+		printf("Lancement du thread %d\n", currThread->id);
+		#endif
+		currThread->state = RUNNING;
         startGThread();
     }
-    
+    	
 } 
 
 /**
@@ -205,7 +215,8 @@ void killCurrThread()
 		 * TODO : a revoir
 		 * Faire une restitution du contexte initial ?
 		 */
-		/*free(sem);*/printf("Après yield explicite\n");
+		/*free(sem);*/
+		printf("\nLast thread finished\n");
 		exit(EXIT_SUCCESS);
 	}
 	else
@@ -216,7 +227,6 @@ void killCurrThread()
 		free(currThread->stack);
 		free(currThread);
 		currThread = thread;
-		currThread->state = RUNNING;
 		yield();
 		
 	}
@@ -228,7 +238,9 @@ void killCurrThread()
 void yield()
 {
 	irq_disable();
-	printf("Current thread: %d, next: %d\n", currThread->id, currThread->nextThread->id);
+	#ifdef TRACE
+	printf("\nCurrent thread: %d, next: %d\n", currThread->id, currThread->nextThread->id);
+	#endif
 	switchGThread(currThread->nextThread);
 }
 

@@ -16,9 +16,9 @@ void letters(void *args)
 	int i;
 	for (i = 0; i<11; i++)
 	{
-		puts("A");
-		puts("B");
-		puts("C");
+		printf("A");
+		printf("B");
+		printf("C");
 	}
 	/*semGive(sem);*/
 }
@@ -30,8 +30,8 @@ void numbers(void *args)
 	for (i = 0; i<15 ; i++)
 	/*while(1)*/
 	{
-		puts("1");
-		puts("2");
+		printf("1");
+		printf("2");
 	}
 }
 
@@ -39,12 +39,23 @@ void numbers(void *args)
 void others(void *args)
 {
 	int i;
-	for (i = 0; i<13; ++i) 
+	for (i = 0; i<1300; ++i) 
 	{
-		puts("+");
-		puts("-");
-		puts("*");
-		puts("/");
+		printf("+");
+		printf("-");
+		printf("*");
+		printf("/");
+	}
+}
+
+void stuff(void *args)
+{
+	int i;
+	for (i = 0; i<11; ++i) 
+	{
+		printf("X");
+		printf("Y");
+		printf("Z");
 	}
 }
 
@@ -57,9 +68,10 @@ int main()
 	createGThread("numbers", numbers, NULL, STACK_SIZE);
 	createGThread("letters", letters, NULL, STACK_SIZE);
 	createGThread("others", others, NULL, STACK_SIZE);
+	createGThread("stuff", stuff, NULL, STACK_SIZE);
 	/*createGThread("others", others, NULL, STACK_SIZE);*/
 		
-	/* To be sure they are all welle created */
+	/* To be sure they are all well created */
 	listThreads();
 	
 	sem = malloc(sizeof(semaphore));

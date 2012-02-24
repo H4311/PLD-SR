@@ -30,7 +30,7 @@ Makefile.depends:
 
 include Makefile.depends
 
-appli: appli.o gContext.o gThreads.o gSem.o $(LIBFILE)
+appli: appli.o gThreads.o gSem.o $(LIBFILE)
 
 
 ###------------------------------
