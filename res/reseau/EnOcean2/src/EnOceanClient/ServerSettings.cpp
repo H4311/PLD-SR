@@ -36,10 +36,13 @@ void* ServerSettingsThread_Receive (void* param) {
 
 	MYSQL* mysql = connectToMysql();
 
+	cout << "<Server Settings> Ready.\n";
+
 	// Wait for client :
 	while((server->getFlag() == 0) && (server->acceptClient() >= 0)) {
 
-		// Sends data from each sensor, sleeping between two sending :
+		cout << "<Server Settings> Client accepted.\n";
+
 		while(server->getFlag() == 0) {
 
 			// Waiting for data to be read :

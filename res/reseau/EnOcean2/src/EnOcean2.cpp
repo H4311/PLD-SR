@@ -32,64 +32,61 @@ int main(int argc, char *argv[]) {
 	blocking_queue<string> msgToSendSimulator = blocking_queue<string>();
 
 	string adresseSimulatedSensor = "127.0.0.1";
-	int portSimulatedSensor = 5104;
-
-	Room room1 = Room(1);
-	Room room2 = Room(2);
-	Room room3 = Room(3);
-	Room room4 = Room(4);
-
-	room1.addNeigthborRoom(&room2);
-	room2.addNeigthborRoom(&room3);
-	room3.addNeigthborRoom(&room4);
-
-	EnOCeanBaseSimulator simulator = EnOCeanBaseSimulator();
-	SensorSimulatorTempHumi sensorSimu1 = SensorSimulatorTempHumi(0x012345, &room1, 0, 40);
-	simulator.addSensor(&sensorSimu1);
-
-	SensorSimulatorTempHumi sensorSimu2 = SensorSimulatorTempHumi(0x01, &room2, 0, 40);
-	simulator.addSensor(&sensorSimu2);
-
-	SensorSimulatorTempHumi sensorSimu3 = SensorSimulatorTempHumi(0x02, &room3, 0, 40);
-	simulator.addSensor(&sensorSimu3);
-
-	SensorSimulatorTempHumi sensorSimu4 = SensorSimulatorTempHumi(0x03, &room4, 0, 40);
-	simulator.addSensor(&sensorSimu4);
-
-	SensorSimulatorTempHumi sensorSimu5 = SensorSimulatorTempHumi(0x04, &room1, 0, 40);
-	simulator.addSensor(&sensorSimu5);
-
-	simulator.addSensor(&sensorSimu1);
-	simulator.addSensor(&sensorSimu2);
-	simulator.addSensor(&sensorSimu3);
-	simulator.addSensor(&sensorSimu4);
-	simulator.addSensor(&sensorSimu5);
-
-
-	simulator.openSocket(portSimulatedSensor);
-	simulator.run();
-
-	table.add((EnOceanSensorAPI::SensorId)0x012345, (EnOceanSensorAPI::EnOceanCallbackFunction)EnOceanSensorAPI::analyseTempAndHumidSensor_EEP_07_04_01);
-	table.add((EnOceanSensorAPI::SensorId)0x1, (EnOceanSensorAPI::EnOceanCallbackFunction)EnOceanSensorAPI::analyseTempAndHumidSensor_EEP_07_04_01);
-	table.add((EnOceanSensorAPI::SensorId)0x2, (EnOceanSensorAPI::EnOceanCallbackFunction)EnOceanSensorAPI::analyseTempAndHumidSensor_EEP_07_04_01);
-	table.add((EnOceanSensorAPI::SensorId)0x3, (EnOceanSensorAPI::EnOceanCallbackFunction)EnOceanSensorAPI::analyseTempAndHumidSensor_EEP_07_04_01);
-	table.add((EnOceanSensorAPI::SensorId)0x4, (EnOceanSensorAPI::EnOceanCallbackFunction)EnOceanSensorAPI::analyseTempAndHumidSensor_EEP_07_04_01);
-
-	EnOceanActuatorAirConditioning airCond = EnOceanActuatorAirConditioning(1, 10.0, 12, 0, 40);
-	airCond.addSubject(&room1);
-	airCond.addSubject(&room2);
-	airCond.addSubject(&room3);
-	airCond.addSubject(&room4);
-	airCond.setStatus(true);
-
-	EventActuatorFire fire = EventActuatorFire(2, 5);
-	fire.addSubject(&room1);
-
-	simulator.addActuator(&airCond);
-	simulator.addActuator(&fire);
+	int portSimulatedSensor = 5008;
 //
-//	Emettor em = Emettor();
-//	em.open(adresse.c_str(), port);
+//	Room room1 = Room(1);
+//	Room room2 = Room(2);
+//	Room room3 = Room(3);
+//	Room room4 = Room(4);
+//
+//	room1.addNeigthborRoom(&room2);
+//	room2.addNeigthborRoom(&room3);
+//	room3.addNeigthborRoom(&room4);
+//
+//	EnOCeanBaseSimulator simulator = EnOCeanBaseSimulator();
+//	SensorSimulatorTempHumi sensorSimu1 = SensorSimulatorTempHumi(0x012345, &room1, 0, 40);
+//	simulator.addSensor(&sensorSimu1);
+//
+//	SensorSimulatorTempHumi sensorSimu2 = SensorSimulatorTempHumi(0x01, &room2, 0, 40);
+//	simulator.addSensor(&sensorSimu2);
+//
+//	SensorSimulatorTempHumi sensorSimu3 = SensorSimulatorTempHumi(0x02, &room3, 0, 40);
+//	simulator.addSensor(&sensorSimu3);
+//
+//	SensorSimulatorTempHumi sensorSimu4 = SensorSimulatorTempHumi(0x03, &room4, 0, 40);
+//	simulator.addSensor(&sensorSimu4);
+//
+//	SensorSimulatorTempHumi sensorSimu5 = SensorSimulatorTempHumi(0x04, &room1, 0, 40);
+//	simulator.addSensor(&sensorSimu5);
+//
+//	simulator.addSensor(&sensorSimu1);
+//	simulator.addSensor(&sensorSimu2);
+//	simulator.addSensor(&sensorSimu3);
+//	simulator.addSensor(&sensorSimu4);
+//	simulator.addSensor(&sensorSimu5);
+//
+//
+//	simulator.openSocket(portSimulatedSensor);
+//	simulator.run();
+//
+//	table.add((EnOceanSensorAPI::SensorId)0x012345, (EnOceanSensorAPI::EnOceanCallbackFunction)EnOceanSensorAPI::analyseTempAndHumidSensor_EEP_07_04_01);
+//	table.add((EnOceanSensorAPI::SensorId)0x1, (EnOceanSensorAPI::EnOceanCallbackFunction)EnOceanSensorAPI::analyseTempAndHumidSensor_EEP_07_04_01);
+//	table.add((EnOceanSensorAPI::SensorId)0x2, (EnOceanSensorAPI::EnOceanCallbackFunction)EnOceanSensorAPI::analyseTempAndHumidSensor_EEP_07_04_01);
+//	table.add((EnOceanSensorAPI::SensorId)0x3, (EnOceanSensorAPI::EnOceanCallbackFunction)EnOceanSensorAPI::analyseTempAndHumidSensor_EEP_07_04_01);
+//	table.add((EnOceanSensorAPI::SensorId)0x4, (EnOceanSensorAPI::EnOceanCallbackFunction)EnOceanSensorAPI::analyseTempAndHumidSensor_EEP_07_04_01);
+//
+//	EnOceanActuatorAirConditioning airCond = EnOceanActuatorAirConditioning(1, 10.0, 12, 0, 40);
+//	airCond.addSubject(&room1);
+//	airCond.addSubject(&room2);
+//	airCond.addSubject(&room3);
+//	airCond.addSubject(&room4);
+//	airCond.setStatus(true);
+//
+//	EventActuatorFire fire = EventActuatorFire(2, 5);
+//	fire.addSubject(&room1);
+//
+//	simulator.addActuator(&airCond);
+//	simulator.addActuator(&fire);
 
 
 // ----- ENOCEAN SENSORS
@@ -108,7 +105,7 @@ int main(int argc, char *argv[]) {
 	blocking_queue<string> msgToSend = blocking_queue<string>();
 
 
-// ----- ENOCEAN SENSORS
+// ----- SUNSPOT SENSORS
 
 	//string adresseEnOcean = "134.214.105.28";
 
@@ -119,7 +116,7 @@ int main(int argc, char *argv[]) {
 	table.add((EnOceanSensorAPI::SensorId)0x00005896, (EnOceanSensorAPI::EnOceanCallbackFunction)EnOceanSensorAPI::analyseSunSpot);
 
 
-	ServerSettings serverSettings = ServerSettings(&table, &msgToSendSimulator, NULL);
+	ServerSettings serverSettings = ServerSettings(&table, &msgToSend, NULL);
 	serverSettings.openSocket(1234);
 	serverSettings.run();
 

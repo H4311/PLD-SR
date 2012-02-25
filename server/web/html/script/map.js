@@ -1112,6 +1112,17 @@ var BuildingGenerator = {
 				if (wall.isOpen != null) { wall.isOpen = true; }
 			}
 		}
+		
+		var jqXHRPatients = $.ajax({
+		type: 'PUT',
+		url: rest+'/admin_devices',
+		data: '{"id": 555, "type":459777 , "subject":{"i": 1, "g":0}}',
+		success:  function(data) {
+			alert(JSON.toString(data));
+		},
+		dataType: 'json',
+		async:true
+	});
 
 		// BuildingGenerator.roomLayer.setScale(window.innerWidth/850, (window.innerHeight-130)/480);
 		// BuildingGenerator.pathLayer.setScale(window.innerWidth/850, (window.innerHeight-130)/480);
