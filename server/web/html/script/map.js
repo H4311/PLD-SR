@@ -386,7 +386,7 @@ var BuildingComponents = {}
 		ctx.lineJoin = 'round';
 		ctx.beginPath();
 		for (var i = 0; i < this.walls.length; i++) {
-			if (this.walls[i].type == 0) { // Wall
+			if (this.walls[i].isOpen == null) { // Wall
 				this.walls[i].stroke(ctx);
 			}
 			else { // Door
@@ -1106,6 +1106,11 @@ var BuildingGenerator = {
 			s.setSubject(i, true);
 			s.setMeasure({type: "7", time: new Date(), value: Math.round(Math.random()*1700+300)});
 			BuildingGenerator.roomShapes[i].room.addSensor(s);
+			
+			for (var j in BuildingGenerator.roomShapes[i].room.walls) {
+				var wall = BuildingGenerator.roomShapes[i].room.walls[j];
+				if (wall.isOpen != null) { wall.isOpen = true; }
+			}
 		}
 
 		// BuildingGenerator.roomLayer.setScale(window.innerWidth/850, (window.innerHeight-130)/480);

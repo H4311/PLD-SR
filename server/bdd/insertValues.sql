@@ -65,9 +65,9 @@ INSERT INTO pieces(nom) VALUES ('Bl12');
 INSERT INTO pieces(nom) VALUES ('Dep11');
 
 INSERT INTO murs(idPiece, x1, y1, x2, y2, ordre, isPorte)
-VALUES ((SELECT id FROM pieces WHERE nom = 'Ch111'), 10, 10, 100, 100, 1, false);
+VALUES ((SELECT id FROM pieces WHERE nom = 'Ch111'), 10, 10, 100, 10, 1, false);
 INSERT INTO murs(idPiece, x1, y1, x2, y2, ordre, isPorte)
-VALUES ((SELECT id FROM pieces WHERE nom = 'Ch111'), 100, 10, 100, 100, 2, false);
+VALUES ((SELECT id FROM pieces WHERE nom = 'Ch111'), 100, 10, 100, 40, 2, false);
 INSERT INTO murs(idPiece, x1, y1, x2, y2, ordre, isPorte)
 VALUES ((SELECT id FROM pieces WHERE nom = 'Ch111'), 100, 40, 100, 60, 3, true);
 INSERT INTO murs(idPiece, x1, y1, x2, y2, ordre, isPorte)
@@ -146,41 +146,41 @@ VALUES ((SELECT id FROM pieces WHERE nom = 'Ch116'), 130, 300, 130, 280, 5, true
 INSERT INTO murs(idPiece, x1, y1, x2, y2, ordre, isPorte)
 VALUES ((SELECT id FROM pieces WHERE nom = 'Ch117'), 360, 10, 530, 10, 1, false);
 INSERT INTO murs(idPiece, x1, y1, x2, y2, ordre, isPorte)
-VALUES ((SELECT id FROM pieces WHERE nom = 'Ch117'), 360, 100, 360, 10, 2, false);
+VALUES ((SELECT id FROM pieces WHERE nom = 'Ch117'), 360, 100, 360, 10, 6, false);
 INSERT INTO murs(idPiece, x1, y1, x2, y2, ordre, isPorte)
-VALUES ((SELECT id FROM pieces WHERE nom = 'Ch117'), 530, 100, 360, 100, 3, false);
+VALUES ((SELECT id FROM pieces WHERE nom = 'Ch117'), 530, 100, 360, 100, 5, false);
 INSERT INTO murs(idPiece, x1, y1, x2, y2, ordre, isPorte)
 VALUES ((SELECT id FROM pieces WHERE nom = 'Ch117'), 530, 60, 530, 100, 4, false);
 INSERT INTO murs(idPiece, x1, y1, x2, y2, ordre, isPorte)
-VALUES ((SELECT id FROM pieces WHERE nom = 'Ch117'), 530, 10, 530, 40, 6, false);
+VALUES ((SELECT id FROM pieces WHERE nom = 'Ch117'), 530, 10, 530, 40, 2, false);
 INSERT INTO murs(idPiece, x1, y1, x2, y2, ordre, isPorte)
-VALUES ((SELECT id FROM pieces WHERE nom = 'Ch117'), 530, 40, 530, 60, 5, true);
+VALUES ((SELECT id FROM pieces WHERE nom = 'Ch117'), 530, 40, 530, 60, 3, true);
 
 INSERT INTO murs(idPiece, x1, y1, x2, y2, ordre, isPorte)
 VALUES ((SELECT id FROM pieces WHERE nom = 'Ch118'), 330, 130, 530, 130, 1, false);
 INSERT INTO murs(idPiece, x1, y1, x2, y2, ordre, isPorte)
-VALUES ((SELECT id FROM pieces WHERE nom = 'Ch118'), 330, 240, 330, 130, 2, false);
+VALUES ((SELECT id FROM pieces WHERE nom = 'Ch118'), 330, 240, 330, 130, 6, false);
 INSERT INTO murs(idPiece, x1, y1, x2, y2, ordre, isPorte)
-VALUES ((SELECT id FROM pieces WHERE nom = 'Ch118'), 530, 240, 330, 240, 3, false);
+VALUES ((SELECT id FROM pieces WHERE nom = 'Ch118'), 530, 240, 330, 240, 5, false);
 INSERT INTO murs(idPiece, x1, y1, x2, y2, ordre, isPorte)
 VALUES ((SELECT id FROM pieces WHERE nom = 'Ch118'), 530, 180, 530, 240, 4, false);
 INSERT INTO murs(idPiece, x1, y1, x2, y2, ordre, isPorte)
-VALUES ((SELECT id FROM pieces WHERE nom = 'Ch118'), 530, 130, 530, 160, 6, false);
+VALUES ((SELECT id FROM pieces WHERE nom = 'Ch118'), 530, 130, 530, 160, 2, false);
 INSERT INTO murs(idPiece, x1, y1, x2, y2, ordre, isPorte)
-VALUES ((SELECT id FROM pieces WHERE nom = 'Ch118'), 530, 160, 530, 180, 5, true);
+VALUES ((SELECT id FROM pieces WHERE nom = 'Ch118'), 530, 160, 530, 180, 3, true);
 
 INSERT INTO murs(idPiece, x1, y1, x2, y2, ordre, isPorte)
 VALUES ((SELECT id FROM pieces WHERE nom = 'Ch119'), 330, 240, 530, 240, 1, false);
 INSERT INTO murs(idPiece, x1, y1, x2, y2, ordre, isPorte)
-VALUES ((SELECT id FROM pieces WHERE nom = 'Ch119'), 330, 340, 330, 240, 2, false);
+VALUES ((SELECT id FROM pieces WHERE nom = 'Ch119'), 330, 340, 330, 240, 6, false);
 INSERT INTO murs(idPiece, x1, y1, x2, y2, ordre, isPorte)
-VALUES ((SELECT id FROM pieces WHERE nom = 'Ch119'), 530, 340, 330, 340, 3, false);
+VALUES ((SELECT id FROM pieces WHERE nom = 'Ch119'), 530, 340, 330, 340, 5, false);
 INSERT INTO murs(idPiece, x1, y1, x2, y2, ordre, isPorte)
 VALUES ((SELECT id FROM pieces WHERE nom = 'Ch119'), 530, 300, 530, 340, 4, false);
 INSERT INTO murs(idPiece, x1, y1, x2, y2, ordre, isPorte)
-VALUES ((SELECT id FROM pieces WHERE nom = 'Ch119'), 530, 240, 530, 280, 6, false);
+VALUES ((SELECT id FROM pieces WHERE nom = 'Ch119'), 530, 240, 530, 280, 2, false);
 INSERT INTO murs(idPiece, x1, y1, x2, y2, ordre, isPorte)
-VALUES ((SELECT id FROM pieces WHERE nom = 'Ch119'), 530, 280, 530, 300, 5, true);
+VALUES ((SELECT id FROM pieces WHERE nom = 'Ch119'), 530, 280, 530, 300, 3, true);
 
 INSERT INTO murs(idPiece, x1, y1, x2, y2, ordre, isPorte)
 VALUES ((SELECT id FROM pieces WHERE nom = 'Ch120'), 560, 10, 660, 10, 1, false);
@@ -249,7 +249,7 @@ VALUES ((SELECT id FROM pieces WHERE nom = 'Bl12'), 330, 400, 330, 380, 9, true)
 INSERT INTO murs(idPiece, x1, y1, x2, y2, ordre, isPorte)
 VALUES ((SELECT id FROM pieces WHERE nom = 'Bl12'), 330, 420, 330, 400, 8, false);
 INSERT INTO murs(idPiece, x1, y1, x2, y2, ordre, isPorte)
-VALUES ((SELECT id FROM pieces WHERE nom = 'Bl12'), 370, 420, 370, 420, 7, false);
+VALUES ((SELECT id FROM pieces WHERE nom = 'Bl12'), 370, 420, 330, 420, 7, false);
 INSERT INTO murs(idPiece, x1, y1, x2, y2, ordre, isPorte)
 VALUES ((SELECT id FROM pieces WHERE nom = 'Bl12'), 370, 440, 370, 420, 6, false);
 INSERT INTO murs(idPiece, x1, y1, x2, y2, ordre, isPorte)
