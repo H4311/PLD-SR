@@ -34,8 +34,24 @@ INSERT INTO regleCapteur (idRegle, idCapteur, debutIntervalle, finIntervalle) VA
 INSERT INTO regleActionneur (idRegle, idActionneur, valeur, isActive) VALUES ((SELECT id FROM regles WHERE nom = 'chauffageOFF'), 1, 123456789, true);
 
 INSERT INTO capteurs(id, type, numeroCapteur, isGlobal, idSujet)
-VALUES (1, 0x0070205, 42, true, 1),
-	   (2, 0x0070205, 1337, false, 2);
+VALUES 	(1, 0x0070401, 0x00100001, true, 1),
+		(2, 0x0070401, 0x00100002, true, 2),
+		(3, 0x0070401, 0x00100003, true, 3),
+		(4, 0x0070401, 0x00100004, true, 4),
+		(5, 0x0070401, 0x00100005, true, 5),
+		(6, 0x0070401, 0x00100006, true, 6),
+		(7, 0x0070401, 0x00100007, true, 7),
+		(8, 0x0070401, 0x00100008, true, 8),
+		(9, 0x0070401, 0x00100009, true, 9),
+		(10, 0x0070401, 0x00100010, true, 10),
+		(11, 0x0070401, 0x00100011, true, 11),
+		(12, 0x0070401, 0x00100012, true, 12),
+		(13, 0x0070401, 0x00100013, true, 13),
+		(14, 0x0070401, 0x00100014, true, 14),
+		(15, 0x0070401, 0x00100015, true, 15),
+		(16, 0x0070401, 0x00100016, true, 2),
+		(17, 0x0070401, 0x00100017, true, 2);
+		
 
 INSERT INTO mesures(id, idCapteur, time, typeMesure, mesure)
 VALUES (1, 1, 1328817902000, 3, 36),
