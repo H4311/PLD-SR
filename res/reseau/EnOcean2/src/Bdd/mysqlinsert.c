@@ -33,6 +33,9 @@ void insertMesure(MYSQL* mysql, int type, int numeroCapteur, long long time, int
 	char s[512];
 	sprintf(s, "INSERT INTO mesures (idCapteur, time, typeMesure, mesure) VALUES ((SELECT id FROM capteurs WHERE type=%d AND numeroCapteur=%d),%lld,%d,%f)", type, numeroCapteur, time, typeMesure, mesure);
 
+	printf("<MYSQL>");
+	printf("%s", s);
+	printf("\n");
 	if(mysql_query(mysql, s)) {
 		printf("Erreur: insert (%s)\n", mysql_error(mysql));
 	}

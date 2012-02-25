@@ -1,0 +1,141 @@
+﻿<html>
+ <head>
+	<meta charset="utf-8" />
+	<meta name="author" content="Benjamin Planche" />
+	<!--[if lt IE 9]>
+	<script src="http://html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+	<![endif]-->
+	<title>Rithm - Map</title>
+	<link rel="icon" href="favicon.bmp">
+	<link rel="shortcut icon" href="favicon.ico" >	
+	<script src="jquery/jquery-1.7.1.js" type="text/javascript" charset="utf-8"></script>
+	<script src="common.js"></script>
+	<script src="script/lib/kinetic-v3.7.3.min.js"></script>
+	<script src="script/map.js"></script>
+	<script src="script/color.js"></script>
+	<link href="global.css" media="screen" rel="stylesheet" type="text/css" />
+	<style>
+	
+		#buildingContainer {
+			position: absolute;
+			left: 170px;
+			top: 100px;
+		}
+		
+		#roomDesc, #warningDesc {
+			position: absolute;
+			background-color: #37ad37;
+			-webkit-border-radius:10px;
+			   -moz-border-radius:10px;
+					border-radius:10px;
+			display: none;
+			padding: 3px;
+			border: 1px solid black;
+			color: white;
+		}
+		
+		#roomDesc p {
+			float: left;
+			width: 30px;
+			position: relative;
+			top: 45px;
+			font-weight: bold;
+			font-size: 1.5em;
+			-moz-transform:rotate(-90deg); 
+			-moz-transform-origin: top left;
+			-webkit-transform: rotate(-90deg);
+			-webkit-transform-origin: top left;
+			-o-transform: rotate(-90deg);
+			-o-transform-origin:  top left;
+			filter: progid:DXImageTransform.Microsoft.BasicImage(rotation=-1);
+		}
+		
+		#roomDesc table {
+			float: right;
+		}
+		
+		#roomDesc table tr:nth-child(3) td:nth-child(1) {
+			color: white;
+			font-weight: bold;
+			text-align: center;
+		}
+		
+		#warningDesc {
+			background-color: red;
+		}
+
+	</style>
+	<script type="application/x-javascript">
+		
+		$(document).ready(function() {
+			$('header nav ul').css("width", window.innerWidth-400+"px");
+			$('#buildingContainer').css("left", (window.innerWidth*0.16)+"px");
+			var canvas = document.getElementById('scale');
+			canvas.width = 50;
+			canvas.height = 200;
+			BuildingGenerator.setStage('buildingContainer', window.innerWidth*0.8, window.innerHeight-130, (window.innerWidth*0.16)+10, 100+5);
+			draw();
+			
+			$('input[name="menu"]').click(function() {
+				$('section nav label').removeClass('labelSelected');
+				$('section nav label').addClass('labelUnselected');
+				if (this.checked) {    
+					BuildingGenerator.wantedMeasure = $(this).val();
+					BuildingGenerator.roomLayer.draw();
+					drawGradient(document.getElementById('scale'), BuildingGenerator.minArrays[$(this).val()], BuildingGenerator.maxArrays[$(this).val()], BuildingGenerator.colorArrays[$(this).val()], 8, BuildingGenerator.unitArrays[$(this).val()], 'Température');
+					$('section nav label[for="menu_'+$(this).val()+'"]').addClass('labelSelected');
+					$('section nav label[for="menu_'+$(this).val()+'"]').removeClass('labelUnselected');
+				}
+			});
+
+		});
+
+		
+	</script>
+		
+
+ <body>
+ 
+	<header>
+		<div id="logo">
+			<h1><a href="/">Rithm</a></h1>
+		</div>
+		<nav>
+			<ul>
+				<li class="punch" ><a href="" title="Menu #1">Menu #1</a></li>
+				<li class="punch" ><a href="" title="Menu #2">Menu #2</a></li>
+				<li class="punch" ><a href="" title="Menu #3">Menu #3</a></li>
+				<li class="punch" ><a href="" title="Menu #4">Menu #4</a></li>
+			</ul> 
+		</nav>
+	</header>
+	
+	<section>
+		<nav>
+			<ul>
+				<li><input type = "radio" name = "menu" id = "menu_3" value = "3" checked = "checked" /><label for = "menu_3" class="labelSelected">Temperature</label></li>
+				<li><input type = "radio" name = "menu" id = "menu_4" value = "4" /><label for = "menu_4" class="labelUnselected">Humidity</label></li>
+				<li><input type = "radio" name = "menu" id = "menu_5" value = "5" /><label for = "menu_5" class="labelUnselected">Luminosity</label></li>
+				<li><input type = "radio" name = "menu" id = "menu_7" value = "7" /><label for = "menu_7" class="labelUnselected">CO2 Level</label></li>
+			</ul> 
+			<div>
+				<canvas id="scale"></canvas>
+			</div>
+		</nav>
+		<div id="buildingContainer" ></div>
+		<div id="roomDesc">
+			<p>0</p>
+			<table>
+				<tr><td><img src="images/patient.png" alt="Patients" Title="Patients"/></td> <td>0</td></tr>
+				<tr><td><img src="images/warning2.png" alt="Alertes" Title="Alertes"/></td> <td>0</td></tr>
+				<tr><td colspan=2>0</td></tr>
+			    
+			</table>
+			
+		</div>
+		<p id="warningDesc">
+		</p>
+	</section>
+ </body>
+ </html>
+		
