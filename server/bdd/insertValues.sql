@@ -16,9 +16,6 @@ INSERT INTO actionneurs(numeroActionneur, type)
 VALUES(1, 0x1070901);
 INSERT INTO actionneurs (numeroActionneur, type) VALUES (1337, 42);
 
-INSERT INTO pieces(id, nom, description)
-VALUES(1, "Salle 1", "Chambre 1"),
-	  (2, "Salle 2", "Chambre 2");
 
 INSERT INTO patients(id, nom, isMan, raisonHospitalisation, idPiece)
 VALUES (1, "Lhaache", false, "Changement de sexe", 1),

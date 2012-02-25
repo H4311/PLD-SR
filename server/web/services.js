@@ -4,6 +4,7 @@ var modelrooms = require("./model/rooms");
 var modeladmin = require("./model/admin");
 var modelalerts = require("./model/alerts");
 var modelmurs = require("./model/murs");
+var modelbondsActuators = require("./model/bondsActuators");
 
 function error(code, resp) {
 	var result = {};
@@ -272,6 +273,26 @@ function serviceAlerts(method, query, data, resp) {
 	});
 }
 
+/*
+ * SERVICE BondsActuators
+ * Allows to retrieve the connection between actuators and subjects from the database.
+ */
+function serviceBondsActuators(method, query, data, resp) {
+	writeHeaders(resp);
+
+	// Parse the json DATA request
+	request = JSON.parse(data);
+	if(!request) {
+		error(0, resp);
+		return;
+	}
+	
+	modelbondsActuators.getBondsActuators(request, function(result) {
+			var strResult = JSON.stringify(result);
+			resp.end(strResult);
+	});
+}
+
 exports.sensors = serviceSensors;
 exports.actuators = serviceActuators;
 exports.list_sensors = serviceListSensors;
@@ -281,3 +302,4 @@ exports.patients = servicePatients;
 exports.rooms = serviceRooms;
 exports.murs = serviceMurs;
 exports.alerts = serviceAlerts;
+exports.bondsActuators = serviceBondsActuators;

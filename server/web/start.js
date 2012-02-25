@@ -13,6 +13,7 @@ serviceHandler["/patients"] = services.patients;
 serviceHandler["/rooms"] = services.rooms;
 serviceHandler["/alerts"] = services.alerts;
 serviceHandler["/murs"] = services.murs;
+serviceHandler["/bondsActuators"] = services.bondsActuators;
 
 // Start HTML Web Server :
 server.start(8080, htmlHandler, server.routeHttp);

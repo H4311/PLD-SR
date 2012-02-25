@@ -12,10 +12,19 @@ function InitializeRooms(data) {
 		// Load walls & create Room :
 		$.ajax({
 			type: 'POST',
-			url: test+'/walls',
-			data: '{"id:" '+rooms[i].id+'}',
+			url: rest+'/murs',
+			data: '{"id": '+rooms[i].id+'}',
 			success: function(data) {
-				Rooms[rooms[i].id] = new Room(rooms[i].name, data.hits); 	// Create Room
+				var walls = new Array();
+				for (var j = 0; j<data.hits.length; j++) {
+					if (data.hits[j].isPorte) {
+						walls[j] = new BuildingComponents.Door(data.hits[j].x1, data.hits[j].y1, data.hits[j].x2, data.hits[j].y2);
+					}
+					else {
+						walls[j] = new BuildingComponents.Wall(data.hits[j].x1, data.hits[j].y1, data.hits[j].x2, data.hits[j].y2);
+					}
+				}
+				Rooms[rooms[i].id] = new BuildingComponents.Room(rooms[i].nom, walls); 	// Create Room
 				BuildingGenerator.addRoom(rooms[i].id, Rooms[rooms[i].id]);	// Add to the canvas drawer
 			},
 			dataType: 'json',
@@ -27,32 +36,36 @@ function InitializeRooms(data) {
 function InitializePatients(data) {
 	var patients = data.hits;
 	for (var i = 0; i < patients.length; i++) {
-		Patients[patients[i].id] = new Patient(patients[i].name, patients[i].isMan, patients[i].reasonHosp, patients[i].idRoom);
-		Rooms[patients[i].idRoom].addPatient(Patients[patients[i].id]);
+		Patients[patients[i].id] = new BuildingComponents.Patient(patients[i].name, patients[i].isMan, patients[i].reasonHosp, patients[i].idRoom);
+		Rooms[patients[i].idPiece].addPatient(Patients[patients[i].id]);
 	}
 }
 
 function InitializeSensors(data) {
 	var sensors = data.hits;
+	var yesterday = new Date();
+	yesterday.setDate(yesterday.getDate() - 1);
 	for (var i = 0; i < sensors.length; i++) {
 		// Creating the sensor :
-		Sensors[sensors[i].id] = new Sensor(sensors[i].type);
+		Sensors[sensors[i].id] = new BuildingComponents.Sensor(sensors[i].type);
 		// Creating the bonds with its subject :
 		if (sensors[i].isGlobal != 0) { // Subject == Room
-			Sensors[sensors[i].id].addSubject(Rooms[sensors[i].idSubject].id, sensors[i].isGlobal);
-			Rooms[sensors[i].idSubject].addSensor(Sensors[sensors[i].id]);
+			Sensors[sensors[i].id].setSubject(sensors[i].idSujet, sensors[i].isGlobal);
+			Rooms[sensors[i].idSujet].addSensor(Sensors[sensors[i].id]);
 		}
 		else { // Subject == Patient
-			Sensors[sensors[i].id].addSubject(Patients[sensors[i].idSubject].id, sensors[i].isGlobal);
-			Patients[sensors[i].idSubject].addSensor(Sensors[sensors[i].id]);		
+			Sensors[sensors[i].id].setSubject(sensors[i].idSujet, sensors[i].isGlobal);
+			Patients[sensors[i].idSujet].addSensor(Sensors[sensors[i].id]);		
 		}
+		// Seeking the values of the sensor :
+		getSensorValues(sensors[i].id, InitializeMeasures, yesterday)
 	}
 }
 
 function InitializeActuators(data) {
 	var actuators = data.hits;
 	for (var i = 0; i < actuators.length; i++) {
-		Actuators[actuators[i].id] = new Actuator(actuators[i].type);
+		Actuators[actuators[i].id] = new BuildingComponents.Actuator(actuators[i].type);
 	}
 }
 
@@ -61,11 +74,11 @@ function InitializeBondsActuators(data) {
 	for (var i = 0; i < bonds.length; i++) {
 		// Creating the bonds with its subject :
 		if (bonds[i].isGlobal != 0) { // Subject == Room
-			Actuators[bonds[i].idActuator].addSubject(Rooms[bonds[i].idSubject].id, bonds[i].isGlobal);
+			Actuators[bonds[i].idActuator].addSubject(Rooms[bonds[i].idSujet].id, bonds[i].isGlobal);
 			Rooms[bonds[i].idSubject].addActuator(Actuators[bonds[i].idActuator]);
 		}
 		else { // Subject == Patient
-			Actuators[bonds[i].idActuator].addSubject(Patients[bonds[i].idSubject].id, bonds[i].isGlobal);
+			Actuators[bonds[i].idActuator].addSubject(Patients[bonds[i].idSujet].id, bonds[i].isGlobal);
 			Patients[bonds[i].idSubject].addActuator(Sensors[bonds[i].idActuator]);		
 		}
 	}
@@ -84,7 +97,7 @@ function UpdateMeasures() {
 	for (var i in Sensors) {
 		var jqXHRRooms = $.ajax({
 			type: 'POST',
-			url: test+'/sensors',
+			url: rest+'/sensors',
 			data: '{"sensors" : [ { "id" : "'+i+'", "from" : "'+ /*TODO*/ 0+'"}]}',
 			success: function(data) {
 				var sensor = data.hits[0];
@@ -102,16 +115,16 @@ function Initialize() {
 	// Load Rooms :
 	var jqXHRRooms = $.ajax({
 		type: 'POST',
-		url: test+'/rooms',
+		url: rest+'/rooms',
 		data: '{}',
 		success: InitializeRooms,
 		dataType: 'json',
-		async:true
+		async:false
 	});
 	// Load Patients :
 	var jqXHRPatients = $.ajax({
 		type: 'POST',
-		url: test+'/patients',
+		url: rest+'/patients',
 		data: '{}',
 		success:  function(data) {
 			// Waiting for the Patients & Rooms requests to finished (we need their values) :
@@ -124,7 +137,7 @@ function Initialize() {
 	// Load Sensors :
 	var jqXHRSensors = $.ajax({
 		type: 'POST',
-		url: test+'/list_sensors',
+		url: rest+'/list_sensors',
 		data: '{}',
 		success: function(data) {
 			// Waiting for the Patients & Rooms requests to finished (we need their values) :
@@ -137,7 +150,7 @@ function Initialize() {
 	// Load Actuators :
 	var jqXHRActuators = $.ajax({
 		type: 'POST',
-		url: test+'/list_actuators',
+		url: rest+'/list_actuators',
 		data: '{}',
 		success: InitializeActuators,
 		dataType: 'json',
@@ -147,7 +160,7 @@ function Initialize() {
 	// Load Bonds between actuators and subjects :
 	$.ajax({
 		type: 'POST',
-		url: test+'/list_bondsActuators',
+		url: rest+'/bondsActuators',
 		data: '{}',
 		success: function(data) {
 			// Waiting for the Patients & Rooms & Actuators request to finished (we need their values) :
@@ -158,17 +171,18 @@ function Initialize() {
 	});	
 	
 	// Load Measures :
-	$.ajax({
-		type: 'POST',
-		url: test+'/sensors',
-		data: '{}',
-		success: function(data) {
-			// Waiting for the Patients & Rooms & Actuators request to finished (we need their values) :
-			$.when(jqXHRSensors).then(InitializeMeasures(data) /* if success */, function() { alert('Loading Failed');} /* if failure */);
-		},
-		dataType: 'json',
-		async:true
-	});		
+	//getSensorValues(idSensor, callback, from, to)
+	//$.ajax({
+	//	type: 'POST',
+	//	url: rest+'/sensors',
+	//	data: '{}',
+	//	success: function(data) {
+	//		// Waiting for the Patients & Rooms & Actuators request to finished (we need their values) :
+	//		$.when(jqXHRSensors).then(InitializeMeasures(data) /* if success */, function() { alert('Loading Failed');} /* if failure */);
+	//	},
+	//	dataType: 'json',
+	//	async:true
+	//});		
 }
 
 
@@ -295,11 +309,11 @@ var BuildingComponents = {}
 	
 	BuildingComponents.Room.prototype.scale = function(scaX, scaY) {
 		for (var i = 0; i < this.walls.length; i++) {
-			if (this.walls[i].type == 0) {
-				this.walls[i].wall.scale(scaX, scaY);
+			if (this.walls[i].isOpen == null) {
+				this.walls[i].scale(scaX, scaY);
 			}
 			else {
-				this.walls[i].door.scale(scaX, scaY);
+				this.walls[i].scale(scaX, scaY);
 			}
 		}
 	};
@@ -332,13 +346,13 @@ var BuildingComponents = {}
 	BuildingComponents.Room.prototype.fill = function(ctx, colorRoom) {
 		ctx.beginPath();
 		var x0, y0;
-		if (this.walls[0].type == 0) {
-			x0 = this.walls[0].wall.segmentPlot.x1;
-			y0 = this.walls[0].wall.segmentPlot.y1;
+		if (this.walls[0].isOpen == null) {
+			x0 = this.walls[0].segmentPlot.x1;
+			y0 = this.walls[0].segmentPlot.y1;
 		}
 		else {
-			x0 = this.walls[0].door.plotClosed.segmentPlot.x1;
-			y0 = this.walls[0].door.plotClosed.segmentPlot.y1;
+			x0 = this.walls[0].plotClosed.segmentPlot.x1;
+			y0 = this.walls[0].plotClosed.segmentPlot.y1;
 		}
 		var previousStyle = ctx.fillStyle;
 		
@@ -350,11 +364,11 @@ var BuildingComponents = {}
 		ctx.fillStyle = 'rgb('+color.red+', '+color.green+','+color.blue+')';
 		ctx.moveTo(x0, y0);
 		for (var i = 0; i < this.walls.length; i++) {
-			if (this.walls[i].type == 0) { // Wall
-				this.walls[i].wall.fill(ctx);
+			if (this.walls[i].isOpen == null) { // Wall
+				this.walls[i].fill(ctx);
 			}
 			else { // Door
-				this.walls[i].door.fill(ctx);
+				this.walls[i].fill(ctx);
 			}
 		}
 		ctx.closePath();
@@ -373,14 +387,14 @@ var BuildingComponents = {}
 		ctx.beginPath();
 		for (var i = 0; i < this.walls.length; i++) {
 			if (this.walls[i].type == 0) { // Wall
-				this.walls[i].wall.stroke(ctx);
+				this.walls[i].stroke(ctx);
 			}
 			else { // Door
 				ctx.stroke();
 				ctx.beginPath();
 				ctx.lineWidth = BuildingGenerator.lineWidthDoor;
 				ctx.strokeStyle = BuildingGenerator.colorDoor;  
-				this.walls[i].door.stroke(ctx);
+				this.walls[i].stroke(ctx);
 				ctx.stroke();
 				ctx.beginPath();
 				ctx.lineWidth = lineWidthWall;
@@ -398,7 +412,7 @@ var BuildingComponents = {}
 		previousColor = ctx.fillStyle;
 		ctx.font = size+"pt Calibri";
 		ctx.fillStyle = color;
-		ctx.fillText(this.name, this.walls[0].wall.segmentPlot.x1+10, this.walls[0].wall.segmentPlot.y1+12);
+		ctx.fillText(this.name, this.walls[0].segmentPlot.x1+10, this.walls[0].segmentPlot.y1+12);
 		ctx.font = previousFont;
 		ctx.fillStyle = previousColor;
 	};
@@ -556,7 +570,7 @@ var BuildingComponents = {}
 	BuildingComponents.WarningCircle = function WarningCircle (id, warning) {
 		var shapeW = new Kinetic.Shape(function() {
 			var context = this.getContext();
-			drawCircle(context, this.warning.room.walls[0].wall.segmentPlot.x1+25, this.warning.room.walls[0].wall.segmentPlot.y1+24, 10, 'rgb(200,50,50)');
+			drawCircle(context, this.warning.room.walls[0].segmentPlot.x1+25, this.warning.room.walls[0].segmentPlot.y1+24, 10, 'rgb(200,50,50)');
 		});
 		
 		shapeW.warning = warning;
@@ -610,7 +624,7 @@ var BuildingComponents = {}
 	BuildingComponents.WarningMark = function WarningMark (id, warning) {
 		var shapeW = new Kinetic.Shape(function() {
 			var context = this.getContext();
-			drawExclame(context, this.warning.room.walls[0].wall.segmentPlot.x1+25, this.warning.room.walls[0].wall.segmentPlot.y1+24, 10, 'rgb(255,255,255)');
+			drawExclame(context, this.warning.room.walls[0].segmentPlot.x1+25, this.warning.room.walls[0].segmentPlot.y1+24, 10, 'rgb(255,255,255)');
 		});
 		
 		shapeW.idWarning = id;
@@ -752,322 +766,321 @@ var BuildingGenerator = {
 		
 		
 		
-		var wall1 = {type:0, wall:new BuildingComponents.Wall(10, 10, 100, 10)};
-		var wall21 = {type:0, wall:new BuildingComponents.Wall(100, 10, 100, 40)};
-		var door = {type:1, door:new BuildingComponents.Door(100, 40, 100, 60)};
-		var wall22 = {type:0, wall:new BuildingComponents.Wall(100, 60, 100, 100)};
-		var wall3 = {type:0, wall:new BuildingComponents.Wall(100, 100, 10, 100)};
-		var wall4 = {type:0, wall:new BuildingComponents.Wall(10, 100, 10, 10)};
+		//~ var wall1 = {type:0, wall:new BuildingComponents.Wall(10, 10, 100, 10)};
+		//~ var wall21 = {type:0, wall:new BuildingComponents.Wall(100, 10, 100, 40)};
+		//~ var door = {type:1, door:new BuildingComponents.Door(100, 40, 100, 60)};
+		//~ var wall22 = {type:0, wall:new BuildingComponents.Wall(100, 60, 100, 100)};
+		//~ var wall3 = {type:0, wall:new BuildingComponents.Wall(100, 100, 10, 100)};
+		//~ var wall4 = {type:0, wall:new BuildingComponents.Wall(10, 100, 10, 10)};
 
-		door.door.isOpen = true;
-		var walls = [wall1, wall21, door, wall22, wall3, wall4];
+		//~ door.door.isOpen = true;
+		//~ var walls = [wall1, wall21, door, wall22, wall3, wall4];
 
-		var room = new BuildingComponents.Room("Ch111", walls);
+		//~ var room = new BuildingComponents.Room("Ch111", walls);
 		
-		var wall1_10 = {type:0, wall:new BuildingComponents.Wall(10, 100, 100, 100)};
-		var wall21_10 = {type:0, wall:new BuildingComponents.Wall(100, 100, 100, 150)};
-		var door_10 = {type:1, door:new BuildingComponents.Door(100, 150, 100, 170)};
-		var wall22_10 = {type:0, wall:new BuildingComponents.Wall(100, 170, 100, 240)};
-		var wall3_10 = {type:0, wall:new BuildingComponents.Wall(100, 240, 10, 240)};
-		var wall4_10 = {type:0, wall:new BuildingComponents.Wall(10, 240, 10, 100)};
+		//~ var wall1_10 = {type:0, wall:new BuildingComponents.Wall(10, 100, 100, 100)};
+		//~ var wall21_10 = {type:0, wall:new BuildingComponents.Wall(100, 100, 100, 150)};
+		//~ var door_10 = {type:1, door:new BuildingComponents.Door(100, 150, 100, 170)};
+		//~ var wall22_10 = {type:0, wall:new BuildingComponents.Wall(100, 170, 100, 240)};
+		//~ var wall3_10 = {type:0, wall:new BuildingComponents.Wall(100, 240, 10, 240)};
+		//~ var wall4_10 = {type:0, wall:new BuildingComponents.Wall(10, 240, 10, 100)};
 
-		door_10.door.isOpen = false;
-		var walls_10 = [wall1_10, wall21_10, door_10, wall22_10, wall3_10, wall4_10];
+		//~ door_10.door.isOpen = false;
+		//~ var walls_10 = [wall1_10, wall21_10, door_10, wall22_10, wall3_10, wall4_10];
 
-		var room10 = new BuildingComponents.Room("Ch112", walls_10);
+		//~ var room10 = new BuildingComponents.Room("Ch112", walls_10);
 		
-		var wall1_11 = {type:0, wall:new BuildingComponents.Wall(10, 240, 100, 240)};
-		var wall21_11 = {type:0, wall:new BuildingComponents.Wall(100, 240, 100, 270)};
-		var door_11 = {type:1, door:new BuildingComponents.Door(100, 270, 100, 290)};
-		var wall22_11 = {type:0, wall:new BuildingComponents.Wall(100, 290, 100, 370)};
-		var wall3_11 = {type:0, wall:new BuildingComponents.Wall(100, 370, 10, 370)};
-		var wall4_11 = {type:0, wall:new BuildingComponents.Wall(10, 370, 10, 240)};
+		//~ var wall1_11 = {type:0, wall:new BuildingComponents.Wall(10, 240, 100, 240)};
+		//~ var wall21_11 = {type:0, wall:new BuildingComponents.Wall(100, 240, 100, 270)};
+		//~ var door_11 = {type:1, door:new BuildingComponents.Door(100, 270, 100, 290)};
+		//~ var wall22_11 = {type:0, wall:new BuildingComponents.Wall(100, 290, 100, 370)};
+		//~ var wall3_11 = {type:0, wall:new BuildingComponents.Wall(100, 370, 10, 370)};
+		//~ var wall4_11 = {type:0, wall:new BuildingComponents.Wall(10, 370, 10, 240)};
 
-		door_11.door.isOpen = true;
-		var walls_11 = [wall1_11, wall21_11, door_11, wall22_11, wall3_11, wall4_11];
+		//~ door_11.door.isOpen = true;
+		//~ var walls_11 = [wall1_11, wall21_11, door_11, wall22_11, wall3_11, wall4_11];
 
-		var room11 = new BuildingComponents.Room("Ch113", walls_11);
+		//~ var room11 = new BuildingComponents.Room("Ch113", walls_11);
 		
-		var wall1_2 = {type:0, wall:new BuildingComponents.Wall(130, 10, 270, 10)};
-		var wall2_2 = {type:0, wall:new BuildingComponents.Wall(270, 10, 270, 100)};
-		var wall3_2 = {type:0, wall:new BuildingComponents.Wall(270, 100, 130, 100)};
-		var wall41_2 = {type:0, wall:new BuildingComponents.Wall(130, 100, 130, 60)};
-		var wall42_2 = {type:0, wall:new BuildingComponents.Wall(130, 40, 130, 10)};
-		var door_2 = {type:1, door:new BuildingComponents.Door(130, 60, 130, 40)};
+		//~ var wall1_2 = {type:0, wall:new BuildingComponents.Wall(130, 10, 270, 10)};
+		//~ var wall2_2 = {type:0, wall:new BuildingComponents.Wall(270, 10, 270, 100)};
+		//~ var wall3_2 = {type:0, wall:new BuildingComponents.Wall(270, 100, 130, 100)};
+		//~ var wall41_2 = {type:0, wall:new BuildingComponents.Wall(130, 100, 130, 60)};
+		//~ var wall42_2 = {type:0, wall:new BuildingComponents.Wall(130, 40, 130, 10)};
+		//~ var door_2 = {type:1, door:new BuildingComponents.Door(130, 60, 130, 40)};
 
-		door_2.door.isOpen = true;
-		var walls2 = [wall1_2, wall2_2, wall3_2, wall41_2, door_2, wall42_2];
+		//~ door_2.door.isOpen = true;
+		//~ var walls2 = [wall1_2, wall2_2, wall3_2, wall41_2, door_2, wall42_2];
 
-		var room2 = new BuildingComponents.Room("Ch114", walls2);
+		//~ var room2 = new BuildingComponents.Room("Ch114", walls2);
 		
-		var wall1_21 = {type:0, wall:new BuildingComponents.Wall(130, 130, 300, 130)};
-		var wall2_21 = {type:0, wall:new BuildingComponents.Wall(300, 130, 300, 240)};
-		var wall3_21 = {type:0, wall:new BuildingComponents.Wall(300, 240, 130, 240)};
-		var wall41_21 = {type:0, wall:new BuildingComponents.Wall(130, 240, 130, 180)};
-		var wall42_21 = {type:0, wall:new BuildingComponents.Wall(130, 160, 130, 130)};
-		var door_21 = {type:1, door:new BuildingComponents.Door(130, 180, 130, 160)};
+		//~ var wall1_21 = {type:0, wall:new BuildingComponents.Wall(130, 130, 300, 130)};
+		//~ var wall2_21 = {type:0, wall:new BuildingComponents.Wall(300, 130, 300, 240)};
+		//~ var wall3_21 = {type:0, wall:new BuildingComponents.Wall(300, 240, 130, 240)};
+		//~ var wall41_21 = {type:0, wall:new BuildingComponents.Wall(130, 240, 130, 180)};
+		//~ var wall42_21 = {type:0, wall:new BuildingComponents.Wall(130, 160, 130, 130)};
+		//~ var door_21 = {type:1, door:new BuildingComponents.Door(130, 180, 130, 160)};
 
-		door_21.door.isOpen = true;
-		var walls21 = [wall1_21, wall2_21, wall3_21, wall41_21, door_21, wall42_21];
+		//~ door_21.door.isOpen = true;
+		//~ var walls21 = [wall1_21, wall2_21, wall3_21, wall41_21, door_21, wall42_21];
 
-		var room21 = new BuildingComponents.Room("Ch115", walls21);
+		//~ var room21 = new BuildingComponents.Room("Ch115", walls21);
 		
-		var wall1_22 = {type:0, wall:new BuildingComponents.Wall(130, 240, 300, 240)};
-		var wall2_22 = {type:0, wall:new BuildingComponents.Wall(300, 240, 300, 340)};
-		var wall3_22 = {type:0, wall:new BuildingComponents.Wall(300, 340, 130, 340)};
-		var wall41_22 = {type:0, wall:new BuildingComponents.Wall(130, 340, 130, 300)};
-		var wall42_22 = {type:0, wall:new BuildingComponents.Wall(130, 280, 130, 240)};
-		var door_22 = {type:1, door:new BuildingComponents.Door(130, 300, 130, 280)};
+		//~ var wall1_22 = {type:0, wall:new BuildingComponents.Wall(130, 240, 300, 240)};
+		//~ var wall2_22 = {type:0, wall:new BuildingComponents.Wall(300, 240, 300, 340)};
+		//~ var wall3_22 = {type:0, wall:new BuildingComponents.Wall(300, 340, 130, 340)};
+		//~ var wall41_22 = {type:0, wall:new BuildingComponents.Wall(130, 340, 130, 300)};
+		//~ var wall42_22 = {type:0, wall:new BuildingComponents.Wall(130, 280, 130, 240)};
+		//~ var door_22 = {type:1, door:new BuildingComponents.Door(130, 300, 130, 280)};
 
-		door_22.door.isOpen = true;
-		var walls22 = [wall1_22, wall2_22, wall3_22, wall41_22, door_22, wall42_22];
-		var room22 = new BuildingComponents.Room("Ch116", walls22);
+		//~ door_22.door.isOpen = true;
+		//~ var walls22 = [wall1_22, wall2_22, wall3_22, wall41_22, door_22, wall42_22];
+		//~ var room22 = new BuildingComponents.Room("Ch116", walls22);
 		
-		var wall1_23 = {type:0, wall:new BuildingComponents.Wall(360, 10, 530, 10)};
-		var wall2_23 = {type:0, wall:new BuildingComponents.Wall(360, 100, 360, 10)};
-		var wall3_23 = {type:0, wall:new BuildingComponents.Wall(530, 100, 360, 100)};
-		var wall41_23 = {type:0, wall:new BuildingComponents.Wall(530, 60, 530, 100)};
-		var wall42_23 = {type:0, wall:new BuildingComponents.Wall(530, 10, 530, 40)};
-		var door_23 = {type:1, door:new BuildingComponents.Door(530, 40, 530, 60)};
+		//~ var wall1_23 = {type:0, wall:new BuildingComponents.Wall(360, 10, 530, 10)};
+		//~ var wall2_23 = {type:0, wall:new BuildingComponents.Wall(360, 100, 360, 10)};
+		//~ var wall3_23 = {type:0, wall:new BuildingComponents.Wall(530, 100, 360, 100)};
+		//~ var wall41_23 = {type:0, wall:new BuildingComponents.Wall(530, 60, 530, 100)};
+		//~ var wall42_23 = {type:0, wall:new BuildingComponents.Wall(530, 10, 530, 40)};
+		//~ var door_23 = {type:1, door:new BuildingComponents.Door(530, 40, 530, 60)};
 
-		door_23.door.isOpen = true;
-		var walls23 = [wall1_23, wall42_23, door_23, wall41_23, wall3_23, wall2_23];
+		//~ door_23.door.isOpen = true;
+		//~ var walls23 = [wall1_23, wall42_23, door_23, wall41_23, wall3_23, wall2_23];
 
-		var room23 = new BuildingComponents.Room("Ch117", walls23);
+		//~ var room23 = new BuildingComponents.Room("Ch117", walls23);
 		
-		var wall1_24 = {type:0, wall:new BuildingComponents.Wall(330, 130, 530, 130)};
-		var wall2_24 = {type:0, wall:new BuildingComponents.Wall(330, 240, 330, 130)};
-		var wall3_24 = {type:0, wall:new BuildingComponents.Wall(530, 240, 330, 240)};
-		var wall41_24 = {type:0, wall:new BuildingComponents.Wall(530, 180, 530, 240)};
-		var wall42_24 = {type:0, wall:new BuildingComponents.Wall(530, 130, 530, 160)};
-		var door_24 = {type:1, door:new BuildingComponents.Door(530, 160, 530, 180)};
+		//~ var wall1_24 = {type:0, wall:new BuildingComponents.Wall(330, 130, 530, 130)};
+		//~ var wall2_24 = {type:0, wall:new BuildingComponents.Wall(330, 240, 330, 130)};
+		//~ var wall3_24 = {type:0, wall:new BuildingComponents.Wall(530, 240, 330, 240)};
+		//~ var wall41_24 = {type:0, wall:new BuildingComponents.Wall(530, 180, 530, 240)};
+		//~ var wall42_24 = {type:0, wall:new BuildingComponents.Wall(530, 130, 530, 160)};
+		//~ var door_24 = {type:1, door:new BuildingComponents.Door(530, 160, 530, 180)};
 
-		door_24.door.isOpen = true;
-		var walls24 = [wall1_24, wall42_24, door_24, wall41_24, wall3_24, wall2_24];
+		//~ door_24.door.isOpen = true;
+		//~ var walls24 = [wall1_24, wall42_24, door_24, wall41_24, wall3_24, wall2_24];
 
-		var room24 = new BuildingComponents.Room("Ch118", walls24);
+		//~ var room24 = new BuildingComponents.Room("Ch118", walls24);
 		
-		var wall1_25 = {type:0, wall:new BuildingComponents.Wall(330, 240, 530, 240)};
-		var wall2_25 = {type:0, wall:new BuildingComponents.Wall(330, 340, 330, 240)};
-		var wall3_25 = {type:0, wall:new BuildingComponents.Wall(530, 340, 330, 340)};
-		var wall41_25 = {type:0, wall:new BuildingComponents.Wall(530, 300, 530, 340)};
-		var wall42_25 = {type:0, wall:new BuildingComponents.Wall(530, 240, 530, 280)};
-		var door_25 = {type:1, door:new BuildingComponents.Door(530, 280, 530, 300)};
+		//~ var wall1_25 = {type:0, wall:new BuildingComponents.Wall(330, 240, 530, 240)};
+		//~ var wall2_25 = {type:0, wall:new BuildingComponents.Wall(330, 340, 330, 240)};
+		//~ var wall3_25 = {type:0, wall:new BuildingComponents.Wall(530, 340, 330, 340)};
+		//~ var wall41_25 = {type:0, wall:new BuildingComponents.Wall(530, 300, 530, 340)};
+		//~ var wall42_25 = {type:0, wall:new BuildingComponents.Wall(530, 240, 530, 280)};
+		//~ var door_25 = {type:1, door:new BuildingComponents.Door(530, 280, 530, 300)};
 
-		door_25.door.isOpen = true;
-		var walls25 = [wall1_25, wall42_25, door_25, wall41_25, wall3_25, wall2_25];
+		//~ door_25.door.isOpen = true;
+		//~ var walls25 = [wall1_25, wall42_25, door_25, wall41_25, wall3_25, wall2_25];
 
-		var room25 = new BuildingComponents.Room("Ch119", walls25);
+		//~ var room25 = new BuildingComponents.Room("Ch119", walls25);
 		
 		
-		var wall1_14 = {type:0, wall:new BuildingComponents.Wall(560, 10, 660, 10)};
-		var wall21_14 = {type:0, wall:new BuildingComponents.Wall(560, 40, 560, 10)};
-		var door_14 = {type:1, door:new BuildingComponents.Door(560, 60, 560, 40)};
-		var wall22_14 = {type:0, wall:new BuildingComponents.Wall(560, 100, 560, 60)};
-		var wall3_14 = {type:0, wall:new BuildingComponents.Wall(660, 100, 560, 100)};
-		var wall4_14 = {type:0, wall:new BuildingComponents.Wall(660, 10, 660, 100)};
+		//~ var wall1_14 = {type:0, wall:new BuildingComponents.Wall(560, 10, 660, 10)};
+		//~ var wall21_14 = {type:0, wall:new BuildingComponents.Wall(560, 40, 560, 10)};
+		//~ var door_14 = {type:1, door:new BuildingComponents.Door(560, 60, 560, 40)};
+		//~ var wall22_14 = {type:0, wall:new BuildingComponents.Wall(560, 100, 560, 60)};
+		//~ var wall3_14 = {type:0, wall:new BuildingComponents.Wall(660, 100, 560, 100)};
+		//~ var wall4_14 = {type:0, wall:new BuildingComponents.Wall(660, 10, 660, 100)};
 
-		door_14.door.isOpen = true;
-		var walls_14 = [wall1_14, wall4_14, wall3_14, wall22_14, door_14, wall21_14];
+		//~ door_14.door.isOpen = true;
+		//~ var walls_14 = [wall1_14, wall4_14, wall3_14, wall22_14, door_14, wall21_14];
 
-		var room14 = new BuildingComponents.Room("Ch120", walls_14);
+		//~ var room14 = new BuildingComponents.Room("Ch120", walls_14);
 		
-		var wall1_15 = {type:0, wall:new BuildingComponents.Wall(560, 100, 660, 100)};
-		var wall21_15 = {type:0, wall:new BuildingComponents.Wall(560, 150, 560, 100)};
-		var door_15 = {type:1, door:new BuildingComponents.Door(560, 170, 560, 150)};
-		var wall22_15 = {type:0, wall:new BuildingComponents.Wall(560, 240, 560, 170)};
-		var wall3_15 = {type:0, wall:new BuildingComponents.Wall(660, 240, 560, 240)};
-		var wall4_15 = {type:0, wall:new BuildingComponents.Wall(660, 100, 660, 240)};
+		//~ var wall1_15 = {type:0, wall:new BuildingComponents.Wall(560, 100, 660, 100)};
+		//~ var wall21_15 = {type:0, wall:new BuildingComponents.Wall(560, 150, 560, 100)};
+		//~ var door_15 = {type:1, door:new BuildingComponents.Door(560, 170, 560, 150)};
+		//~ var wall22_15 = {type:0, wall:new BuildingComponents.Wall(560, 240, 560, 170)};
+		//~ var wall3_15 = {type:0, wall:new BuildingComponents.Wall(660, 240, 560, 240)};
+		//~ var wall4_15 = {type:0, wall:new BuildingComponents.Wall(660, 100, 660, 240)};
 
-		door_15.door.isOpen = true;
-		var walls_15 = [wall1_15, wall4_15, wall3_15, wall22_15, door_15, wall21_15];
+		//~ door_15.door.isOpen = true;
+		//~ var walls_15 = [wall1_15, wall4_15, wall3_15, wall22_15, door_15, wall21_15];
 
-		var room15 = new BuildingComponents.Room("Ch121", walls_15);
+		//~ var room15 = new BuildingComponents.Room("Ch121", walls_15);
 		
-		var wall1_16 = {type:0, wall:new BuildingComponents.Wall(560, 240, 660, 240)};
-		var wall21_16 = {type:0, wall:new BuildingComponents.Wall(560, 280, 560, 240)};
-		var door_16 = {type:1, door:new BuildingComponents.Door(560, 300, 560, 280)};
-		var wall22_16 = {type:0, wall:new BuildingComponents.Wall(560, 370, 560, 300)};
-		var wall3_16 = {type:0, wall:new BuildingComponents.Wall(660, 370, 560, 370)};
-		var wall4_16 = {type:0, wall:new BuildingComponents.Wall(660, 240, 660, 370)};
+		//~ var wall1_16 = {type:0, wall:new BuildingComponents.Wall(560, 240, 660, 240)};
+		//~ var wall21_16 = {type:0, wall:new BuildingComponents.Wall(560, 280, 560, 240)};
+		//~ var door_16 = {type:1, door:new BuildingComponents.Door(560, 300, 560, 280)};
+		//~ var wall22_16 = {type:0, wall:new BuildingComponents.Wall(560, 370, 560, 300)};
+		//~ var wall3_16 = {type:0, wall:new BuildingComponents.Wall(660, 370, 560, 370)};
+		//~ var wall4_16 = {type:0, wall:new BuildingComponents.Wall(660, 240, 660, 370)};
 
-		door_16.door.isOpen = false;
-		var walls_16 = [wall1_16, wall4_16, wall3_16, wall22_16, door_16, wall21_16];
+		//~ door_16.door.isOpen = false;
+		//~ var walls_16 = [wall1_16, wall4_16, wall3_16, wall22_16, door_16, wall21_16];
 
-		var room16 = new BuildingComponents.Room("Ch122", walls_16);
+		//~ var room16 = new BuildingComponents.Room("Ch122", walls_16);
 
 		
-		var wall11_3 = {type:0, wall:new BuildingComponents.Wall(10, 370, 110, 370)};
-		var wall12_3 = {type:0, wall:new BuildingComponents.Wall(130, 370, 300, 370)};
-		var wall21_3 = {type:0, wall:new BuildingComponents.Wall(300, 370, 300, 380)};
-		var wall22_3 = {type:0, wall:new BuildingComponents.Wall(300, 400, 300, 420)};
-		var wall3_3 = {type:0, wall:new BuildingComponents.Wall(300, 420, 260, 420)};
-		var wall4_3 = {type:0, wall:new BuildingComponents.Wall(260, 420, 260, 440)};
-		var wall5_3 = {type:0, wall:new BuildingComponents.Wall(260, 440, 10, 400)};
-		var wall6_3 = {type:0, wall:new BuildingComponents.Wall(10, 400, 10, 370)};
-		var door_31 = {type:1, door:new BuildingComponents.Door(110, 370, 130, 370)};
-		var door_32 = {type:1, door:new BuildingComponents.Door(300, 380, 300, 400)};
+		//~ var wall11_3 = {type:0, wall:new BuildingComponents.Wall(10, 370, 110, 370)};
+		//~ var wall12_3 = {type:0, wall:new BuildingComponents.Wall(130, 370, 300, 370)};
+		//~ var wall21_3 = {type:0, wall:new BuildingComponents.Wall(300, 370, 300, 380)};
+		//~ var wall22_3 = {type:0, wall:new BuildingComponents.Wall(300, 400, 300, 420)};
+		//~ var wall3_3 = {type:0, wall:new BuildingComponents.Wall(300, 420, 260, 420)};
+		//~ var wall4_3 = {type:0, wall:new BuildingComponents.Wall(260, 420, 260, 440)};
+		//~ var wall5_3 = {type:0, wall:new BuildingComponents.Wall(260, 440, 10, 400)};
+		//~ var wall6_3 = {type:0, wall:new BuildingComponents.Wall(10, 400, 10, 370)};
+		//~ var door_31 = {type:1, door:new BuildingComponents.Door(110, 370, 130, 370)};
+		//~ var door_32 = {type:1, door:new BuildingComponents.Door(300, 380, 300, 400)};
 
-		door_31.door.isOpen = false;
-		door_32.door.isOpen = true;
-		var walls3 = [wall11_3, door_31, wall12_3, wall21_3, door_32, wall22_3, wall3_3, wall4_3, wall5_3, wall6_3];
+		//~ door_31.door.isOpen = false;
+		//~ door_32.door.isOpen = true;
+		//~ var walls3 = [wall11_3, door_31, wall12_3, wall21_3, door_32, wall22_3, wall3_3, wall4_3, wall5_3, wall6_3];
 
-		var room3 = new BuildingComponents.Room("Bl11", walls3);
+		//~ var room3 = new BuildingComponents.Room("Bl11", walls3);
 		
-		var wall1_31 = {type:0, wall:new BuildingComponents.Wall(330, 380, 330, 370)};
-		var door_312 = {type:1, door:new BuildingComponents.Door(330, 400, 330, 380)};
-		var wall11_3 = {type:0, wall:new BuildingComponents.Wall(330, 420, 330, 400)};
-		var wall2_3 = {type:0, wall:new BuildingComponents.Wall(370, 420, 330, 420)};
-		var wall3_3 = {type:0, wall:new BuildingComponents.Wall(370, 440, 370, 420)};
-		var wall4_3 = {type:0, wall:new BuildingComponents.Wall(660, 400, 370, 440)};
-		var wall5_3 = {type:0, wall:new BuildingComponents.Wall(660, 370, 660, 400)};
-		var wall6_3 = {type:0, wall:new BuildingComponents.Wall(430, 370, 660, 370)};
-		var door_311 = {type:1, door:new BuildingComponents.Door(410, 370, 430, 370)};
-		var wall7_3 = {type:0, wall:new BuildingComponents.Wall(330, 370, 410, 370)};		
+		//~ var wall1_31 = {type:0, wall:new BuildingComponents.Wall(330, 380, 330, 370)};
+		//~ var door_312 = {type:1, door:new BuildingComponents.Door(330, 400, 330, 380)};
+		//~ var wall11_3 = {type:0, wall:new BuildingComponents.Wall(330, 420, 330, 400)};
+		//~ var wall2_3 = {type:0, wall:new BuildingComponents.Wall(370, 420, 330, 420)};
+		//~ var wall3_3 = {type:0, wall:new BuildingComponents.Wall(370, 440, 370, 420)};
+		//~ var wall4_3 = {type:0, wall:new BuildingComponents.Wall(660, 400, 370, 440)};
+		//~ var wall5_3 = {type:0, wall:new BuildingComponents.Wall(660, 370, 660, 400)};
+		//~ var wall6_3 = {type:0, wall:new BuildingComponents.Wall(430, 370, 660, 370)};
+		//~ var door_311 = {type:1, door:new BuildingComponents.Door(410, 370, 430, 370)};
+		//~ var wall7_3 = {type:0, wall:new BuildingComponents.Wall(330, 370, 410, 370)};		
 
-		door_311.door.isOpen = true;
-		door_312.door.isOpen = true;
-		var walls31 = [wall7_3, door_311, wall6_3, wall5_3, wall4_3, wall3_3, wall2_3, wall11_3, door_312, wall1_31];
+		//~ door_311.door.isOpen = true;
+		//~ door_312.door.isOpen = true;
+		//~ var walls31 = [wall7_3, door_311, wall6_3, wall5_3, wall4_3, wall3_3, wall2_3, wall11_3, door_312, wall1_31];
 
-		var room31 = new BuildingComponents.Room("Bl12", walls31);
+		//~ var room31 = new BuildingComponents.Room("Bl12", walls31);
 
-		var wall1_90 = {type:0, wall:new BuildingComponents.Wall(270, 10, 360, 10)};
-		var wall2_90 = {type:0, wall:new BuildingComponents.Wall(360, 10, 360, 100)};
-		var wall31_90 = {type:0, wall:new BuildingComponents.Wall(360, 100, 330, 100)};
-		var wall32_90 = {type:0, wall:new BuildingComponents.Wall(300, 100, 270, 100)};
-		var wall4_90 = {type:0, wall:new BuildingComponents.Wall(270, 100, 270, 10)};
-		var door_90 = {type:1, door:new BuildingComponents.Door(330, 100, 300, 100)};
+		//~ var wall1_90 = {type:0, wall:new BuildingComponents.Wall(270, 10, 360, 10)};
+		//~ var wall2_90 = {type:0, wall:new BuildingComponents.Wall(360, 10, 360, 100)};
+		//~ var wall31_90 = {type:0, wall:new BuildingComponents.Wall(360, 100, 330, 100)};
+		//~ var wall32_90 = {type:0, wall:new BuildingComponents.Wall(300, 100, 270, 100)};
+		//~ var wall4_90 = {type:0, wall:new BuildingComponents.Wall(270, 100, 270, 10)};
+		//~ var door_90 = {type:1, door:new BuildingComponents.Door(330, 100, 300, 100)};
 
-		door_90.door.isOpen = false;
-		var walls90 = [wall1_90, wall2_90, wall31_90,door_90, wall32_90, wall4_90];
+		//~ door_90.door.isOpen = false;
+		//~ var walls90 = [wall1_90, wall2_90, wall31_90,door_90, wall32_90, wall4_90];
 
-		var room90 = new BuildingComponents.Room("Dep11", walls90);		
+		//~ var room90 = new BuildingComponents.Room("Dep11", walls90);		
 
-		BuildingGenerator.addRoom(1, room);
-		BuildingGenerator.addRoom(2, room2);
-		BuildingGenerator.addRoom(3, room3);
-		BuildingGenerator.addRoom(15, room31);
-		//BuildingGenerator.addRoom(4, couloir);
-		BuildingGenerator.addRoom(5, room10);
-		BuildingGenerator.addRoom(6, room11);
-		BuildingGenerator.addRoom(7, room21);
-		BuildingGenerator.addRoom(8, room22);
-		BuildingGenerator.addRoom(9, room23);
-		BuildingGenerator.addRoom(10, room24);
-		BuildingGenerator.addRoom(11, room25);
-		BuildingGenerator.addRoom(12, room14);
-		BuildingGenerator.addRoom(13, room15);
-		BuildingGenerator.addRoom(14, room16);
-		BuildingGenerator.addRoom(16, room90);
+		//~ BuildingGenerator.addRoom(1, room);
+		//~ BuildingGenerator.addRoom(2, room2);
+		//~ BuildingGenerator.addRoom(3, room3);
+		//~ BuildingGenerator.addRoom(15, room31);
+		//~ //BuildingGenerator.addRoom(4, couloir);
+		//~ BuildingGenerator.addRoom(5, room10);
+		//~ BuildingGenerator.addRoom(6, room11);
+		//~ BuildingGenerator.addRoom(7, room21);
+		//~ BuildingGenerator.addRoom(8, room22);
+		//~ BuildingGenerator.addRoom(9, room23);
+		//~ BuildingGenerator.addRoom(10, room24);
+		//~ BuildingGenerator.addRoom(11, room25);
+		//~ BuildingGenerator.addRoom(12, room14);
+		//~ BuildingGenerator.addRoom(13, room15);
+		//~ BuildingGenerator.addRoom(14, room16);
+		//~ BuildingGenerator.addRoom(16, room90);
 		
-		room.measures["3"] = 23;
-		room2.measures["3"] = 24;
-		room3.measures["3"] = 26;
-		room31.measures["3"] = 25;
-		room10.measures["3"] = 15;
-		room11.measures["3"] = 18;
-		room21.measures["3"] = 23;
-		room22.measures["3"] = 24;
-		room23.measures["3"] = 27;
-		room24.measures["3"] = 25;
-		room25.measures["3"] = 19;
-		room14.measures["3"] = 30;
-		room15.measures["3"] = 34;
-		room16.measures["3"] = 23;
-		room90.measures["3"] = 12;
+		//~ room.measures["3"] = 23;
+		//~ room2.measures["3"] = 24;
+		//~ room3.measures["3"] = 26;
+		//~ room31.measures["3"] = 25;
+		//~ room10.measures["3"] = 15;
+		//~ room11.measures["3"] = 18;
+		//~ room21.measures["3"] = 23;
+		//~ room22.measures["3"] = 24;
+		//~ room23.measures["3"] = 27;
+		//~ room24.measures["3"] = 25;
+		//~ room25.measures["3"] = 19;
+		//~ room14.measures["3"] = 30;
+		//~ room15.measures["3"] = 34;
+		//~ room16.measures["3"] = 23;
+		//~ room90.measures["3"] = 12;
 		
-		room.measures["4"] = 23;
-		room2.measures["4"] = 60;
-		room3.measures["4"] = 70;
-		room31.measures["4"] = 50;
-		room10.measures["4"] = 55;
-		room11.measures["4"] = 68;
-		room21.measures["4"] = 45;
-		room22.measures["4"] = 40;
-		room23.measures["4"] = 27;
-		room24.measures["4"] = 80;
-		room25.measures["4"] = 85;
-		room14.measures["4"] = 60;
-		room15.measures["4"] = 50;
-		room16.measures["4"] = 55;
-		room90.measures["4"] = 56;
+		//~ room.measures["4"] = 23;
+		//~ room2.measures["4"] = 60;
+		//~ room3.measures["4"] = 70;
+		//~ room31.measures["4"] = 50;
+		//~ room10.measures["4"] = 55;
+		//~ room11.measures["4"] = 68;
+		//~ room21.measures["4"] = 45;
+		//~ room22.measures["4"] = 40;
+		//~ room23.measures["4"] = 27;
+		//~ room24.measures["4"] = 80;
+		//~ room25.measures["4"] = 85;
+		//~ room14.measures["4"] = 60;
+		//~ room15.measures["4"] = 50;
+		//~ room16.measures["4"] = 55;
+		//~ room90.measures["4"] = 56;
 		
-		room.measures["5"] = 230;
-		room2.measures["5"] = 2400;
-		room3.measures["5"] = 260;
-		room31.measures["5"] = 2005;
-		room10.measures["5"] = 900;
-		room11.measures["5"] = 800;
-		room21.measures["5"] = 2230;
-		room22.measures["5"] = 1500;
-		room23.measures["5"] = 1000;
-		room24.measures["5"] = 1200;
-		room25.measures["5"] = 600;
-		room14.measures["5"] = 650;
-		room15.measures["5"] = 2700;
-		room16.measures["5"] = 800;
-		room90.measures["5"] = 890;
+		//~ room.measures["5"] = 230;
+		//~ room2.measures["5"] = 2400;
+		//~ room3.measures["5"] = 260;
+		//~ room31.measures["5"] = 2005;
+		//~ room10.measures["5"] = 900;
+		//~ room11.measures["5"] = 800;
+		//~ room21.measures["5"] = 2230;
+		//~ room22.measures["5"] = 1500;
+		//~ room23.measures["5"] = 1000;
+		//~ room24.measures["5"] = 1200;
+		//~ room25.measures["5"] = 600;
+		//~ room14.measures["5"] = 650;
+		//~ room15.measures["5"] = 2700;
+		//~ room16.measures["5"] = 800;
+		//~ room90.measures["5"] = 890;
 		
-		room.measures["7"] = 500;
-		room2.measures["7"] = 1000;
-		room3.measures["7"] = 1500;
-		room31.measures["7"] = 1200;
-		room10.measures["7"] = 300;
-		room11.measures["7"] = 800;
-		room21.measures["7"] = 600;
-		room22.measures["7"] = 350;
-		room23.measures["7"] = 980;
-		room24.measures["7"] = 800;
-		room25.measures["7"] = 1200;
-		room14.measures["7"] = 700;
-		room15.measures["7"] = 740;
-		room16.measures["7"] = 800;
-		room90.measures["7"] = 890;
+		//~ room.measures["7"] = 500;
+		//~ room2.measures["7"] = 1000;
+		//~ room3.measures["7"] = 1500;
+		//~ room31.measures["7"] = 1200;
+		//~ room10.measures["7"] = 300;
+		//~ room11.measures["7"] = 800;
+		//~ room21.measures["7"] = 600;
+		//~ room22.measures["7"] = 350;
+		//~ room23.measures["7"] = 980;
+		//~ room24.measures["7"] = 800;
+		//~ room25.measures["7"] = 1200;
+		//~ room14.measures["7"] = 700;
+		//~ room15.measures["7"] = 740;
+		//~ room16.measures["7"] = 800;
+		//~ room90.measures["7"] = 890;
 		
 		
 		// AJOUT DE WARNINGS :
-		var warning = new BuildingComponents.Warning(room, 'Danger!');
+		var warning = new BuildingComponents.Warning(BuildingGenerator.roomShapes[1].room, 'Danger!');
 		BuildingGenerator.addWarning(1, warning);	
-		var warning2 = new BuildingComponents.Warning(room22, 'Patient #42 - Fatal Error!');
+		var warning2 = new BuildingComponents.Warning(BuildingGenerator.roomShapes[2].room, 'Patient #42 - Fatal Error!');
 		BuildingGenerator.addWarning(2, warning2);	
-		var warning3 = new BuildingComponents.Warning(room31, 'L\'opération tourne mal !');
+		var warning3 = new BuildingComponents.Warning(BuildingGenerator.roomShapes[3].room, 'L\'opération tourne mal !');
 		BuildingGenerator.addWarning(3, warning3);	
-		var warning4 = new BuildingComponents.Warning(room31, 'Trop tard ...');
+		var warning4 = new BuildingComponents.Warning(BuildingGenerator.roomShapes[3].room, 'Trop tard ...');
 		BuildingGenerator.addWarning(4, warning4);
 		
 		// AJOUT DE PATIENTS :
-		var pat1 = new BuildingComponents.Patient("Arnaud", true, "Cuite sévère", 1);
-		room.addPatient(pat1);
-		var pat2 = new BuildingComponents.Patient("Thibaut", true, "Idem", 1);
-		room.addPatient(pat2);
-		var pat3 = new BuildingComponents.Patient("Jérémy", true, "Idem", 1);
-		room.addPatient(pat3);
-		var pat4 = new BuildingComponents.Patient("Daniel", true, "Idem", 1);
-		room.addPatient(pat4);
-		var pat5 = new BuildingComponents.Patient("Boule", true, "Idem", 2);
-		room2.addPatient(pat5);
-		var pat6 = new BuildingComponents.Patient("Bill", true, "Idem", 2);
-		room2.addPatient(pat6);
-		var pat7 = new BuildingComponents.Patient("Jeanne", false, "Tronchage", 3);
-		room3.addPatient(pat7);
-		var pat8 = new BuildingComponents.Patient("Jeannette", false, "Idem", 6);
-		room10.addPatient(pat8);
-		var pat9 = new BuildingComponents.Patient("Arnaud", true, "Idem", 5);
-		room11.addPatient(pat9);
-		var pat10 = new BuildingComponents.Patient("Arnaud", true, "Idem", 5);
-		room11.addPatient(pat10);
+		//~ var pat1 = new BuildingComponents.Patient("Arnaud", true, "Cuite sévère", 1);
+		//~ room.addPatient(pat1);
+		//~ var pat2 = new BuildingComponents.Patient("Thibaut", true, "Idem", 1);
+		//~ room.addPatient(pat2);
+		//~ var pat3 = new BuildingComponents.Patient("Jérémy", true, "Idem", 1);
+		//~ room.addPatient(pat3);
+		//~ var pat4 = new BuildingComponents.Patient("Daniel", true, "Idem", 1);
+		//~ room.addPatient(pat4);
+		//~ var pat5 = new BuildingComponents.Patient("Boule", true, "Idem", 2);
+		//~ room2.addPatient(pat5);
+		//~ var pat6 = new BuildingComponents.Patient("Bill", true, "Idem", 2);
+		//~ room2.addPatient(pat6);
+		//~ var pat7 = new BuildingComponents.Patient("Jeanne", false, "Tronchage", 3);
+		//~ room3.addPatient(pat7);
+		//~ var pat8 = new BuildingComponents.Patient("Jeannette", false, "Idem", 6);
+		//~ room10.addPatient(pat8);
+		//~ var pat9 = new BuildingComponents.Patient("Arnaud", true, "Idem", 5);
+		//~ room11.addPatient(pat9);
+		//~ var pat10 = new BuildingComponents.Patient("Arnaud", true, "Idem", 5);
+		//~ room11.addPatient(pat10);
 		
 		
 		// AJOUT DE CAPTEURS :
-		var sen1 = new BuildingComponents.Sensor("3");
-		sen1.setSubject(1, true);
-		sen1.setMeasure({type: "3", time: new Date(), value: 30});
-		room.addSensor(sen1);
-		var sen2 = new BuildingComponents.Sensor("3");
-		sen2.setSubject(1, true);
-		sen2.setMeasure({type: "3", time: new Date(), value: 10});
-		room.addSensor(sen2);
-		var sen1 = new BuildingComponents.Sensor("3");
+		//~ var sen1 = new BuildingComponents.Sensor("3");
+		//~ sen1.setSubject(1, true);
+		//~ sen1.setMeasure({type: "3", time: new Date(), value: 30});
+		//~ room.addSensor(sen1);
+		//~ var sen2 = new BuildingComponents.Sensor("3");
+		//~ sen2.setSubject(1, true);
+		//~ sen2.setMeasure({type: "3", time: new Date(), value: 10});
+		//~ room.addSensor(sen2);
 		for (var i in BuildingGenerator.roomShapes) {
 			// Temp & Hum sensor :
 			var s = new BuildingComponents.Sensor("3");

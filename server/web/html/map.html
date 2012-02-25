@@ -11,6 +11,7 @@
 	<script src="jquery/jquery-1.7.1.js" type="text/javascript" charset="utf-8"></script>
 	<script src="common.js"></script>
 	<script src="script/lib/kinetic-v3.7.3.min.js"></script>
+	<script src="script/sensors.js"></script>
 	<script src="script/map.js"></script>
 	<script src="script/color.js"></script>
 	<link href="global.css" media="screen" rel="stylesheet" type="text/css" />
@@ -74,6 +75,8 @@
 			canvas.width = 50;
 			canvas.height = 200;
 			BuildingGenerator.setStage('buildingContainer', window.innerWidth*0.8, window.innerHeight-130, (window.innerWidth*0.16)+10, 100+5);
+
+ 			Initialize();
 			draw();
 			
 			$('input[name="menu"]').click(function() {

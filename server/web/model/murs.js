@@ -25,6 +25,7 @@ function getMurs(param, callback) {
 	// Construct the SQL query :
 	var sql_req = "SELECT id, idPiece, x1, y1 ,x2 ,y2 ,ordre, isPorte FROM murs ";
 	sql_req += "WHERE idPiece = " + param.id;
+	sql_req += " ORDER BY ordre";
 	
 	// Send the query to SQL DB :
 	var db = sqlConnect();
