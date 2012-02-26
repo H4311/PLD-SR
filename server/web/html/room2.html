@@ -2,10 +2,11 @@
 <html>
 <head>
 	<meta charset="utf-8" />
-	<link rel="stylesheet" href="style.css" />
+	<link rel="stylesheet" href="global.css" />
 	<script src="http://code.jquery.com/jquery-1.7.1.js"></script>
 	<script src="common.js"></script>
 	<title>RiTHM - Page d'accueil</title>
+
 	
 	<script>
 	var rest = "http://localhost:1337";
@@ -31,15 +32,16 @@
 		
 	function presentationPatients(data) {
 		
-		var content = "<h2>Liste des Patients</h2><ol>";
-		for (var i in data.hits) {
-			var patient = data.hits[i];
-			content += '<div class="patient"><p><a href="patient.html?id='
-				+ patient.id + '&roomId=' + roomId + '">' + ((patient.isMan) ? "M." : "Mme.") 
-				+ " " + patient.nom + '</a></p></div>';
+		var content = "";
+		if (data.hits.length == 0) {
+			content += '<li>Pas de patient</li>'
 		}
-		content += "</ol>";
-		
+		else {
+			for (var i in data.hits) {
+				var patient = data.hits[i];
+				content += '<a href="patient.html?id='+ patient.id + '&roomId=' + roomId + '"><li class="labelUnselected">' + ((patient.isMan) ? "M." : "Mme.") + " " + patient.nom + '</li></a>';
+			}
+		}
 		$("#liste_patients").html(content);
 	}
 	
@@ -68,38 +70,31 @@
 
 <body>
 
-<header id="header" class="branding" role="banner">
-	<div class="retourTdB">
-		<a href="index.html">
-		<img src="images/retour.png" alt="retour" width="40" height="40"/>
-		</a>
-	</div>
-	<hgroup>
-	<h1>Room</h1>
-	</hgroup>
-	<div class="alerte">
-		<!--TODO: ref vers la chambre qui pose probleme !! -->
-		<a href="room.html">
-		<figure>
-			<img src="images/attention2.png" alt="alerte" width="60" height="50">
-		</figure>
-		</a>
-	</div> 
+<header>
+		<div id="logo">
+			<h1><a href="index.html">Rithm</a></h1>
+		</div>
+		<nav>
+			<ul>
+				<li class="punch" ><a href="index.html" title="Accueil">Accueil</a></li>
+				<li class="punch" ><a href="" title="Options">Options</a></li>
+				<li class="punch" ><a href="" title="Profil">Profil</a></li>
+				<li class="punch" ><a href="notifications.html" title="Notifications"><img src="images/warning2.png" title="Alertes"/> Notifications</a></li>
+			</ul> 
+		</nav>
 </header>
 
-<div id="wrapper">
-	
-	<section id="resume">
-		
+<section>
+		<nav>
+			<h2>Patients</h2>
+			<ul id="liste_patients">
+				<li>Chargement en cours ...</li>
+			</ul> 
+		</nav>
+		<article id="resume"></article>
 	</section>
 	
-	<section id="liste_patients">
-		
-	</section>
-	
-</div>
-	
-<footer>Copyright 2012 - Hexanome H4311</footer>
+<footer>H4311 &#169; 2011-12</footer>
 	
 </body>
 
