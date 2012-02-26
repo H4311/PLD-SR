@@ -4,34 +4,189 @@
 	<meta charset="utf-8" />
 	<link rel="stylesheet" href="style.css" />
 	<script src="http://code.jquery.com/jquery-1.7.1.js"></script>
-	<title>RiTHM</title>
-	
-	<script>
-	var rest = "http://localhost:1337";
-	
-	function presentation(data) {
-		
-		var content = "<h2>Liste des Chambres</h2><ol>";
-		for (var i in data.hits) {
-			var room = data.hits[i];
-			content += '<div class="chambre"><p><a href="room.html?id='
-				+ room.id + '">' + room.nom + '</a></p></div>';
-		}
-		content += "</ol>";
-		
-		$("#liste_chambres").html(content);
-	}
-	
-	$(document).ready(function() {
-		function getRooms() {
-			$.post(rest + '/rooms',
-			  '{}',
-			  presentation,
-			  "json");
+	<script src="common.js"></script>
+	<script src="script/lib/kinetic-v3.7.3.min.js"></script>
+	<script src="script/sensors.js"></script>
+	<script src="script/map.js"></script>
+	<script src="script/color.js"></script>
+	<style>
+			
+		section {
+			z-index: 40;
 		}
 
-		getRooms(); // initially retrieves patients values on first time.
-	});
+		section nav {
+			padding-top: 90px;
+			padding-bottom: 20px;
+			margin-left: 10px;
+			width: 15%;
+			background: url('images/background.png') repeat center;
+			-moz-box-shadow: 5px 5px 20px #000;
+			   -webkit-box-shadow: 5px 5px 20px #000;
+			      box-shadow: 5px 5px 20px #000;
+			-webkit-border-radius: 10px;
+			   -moz-border-radius: 10px;
+					border-radius:10px;
+			width: 175px;
+		}	
+
+		section nav div {
+			width: 50px;
+			height: 200px;
+			margin: 0px auto;
+			margin-top: 20px;
+			margin-bottom : 10px;
+			border: 1px solid black;
+			-webkit-border-radius:10px;
+			   -moz-border-radius:10px;
+					border-radius:10px;	
+			/*box-shadow*/
+			-webkit-box-shadow:-1px -2px 2px rgba(0,0,0,.4);
+			   -moz-box-shadow:-1px -2px 2px rgba(0,0,0,.4);
+					box-shadow:-1px -2px 2px rgba(0,0,0,.4);					
+		}
+
+		section nav input[type="radio"]
+		{
+		    position: absolute;
+		    filter: alpha(opacity=0);
+		    -moz-opacity: 0;
+		    -webkit-opacity: 0;
+		    opacity: 0;
+		}
+
+		section nav .labelUnselected
+		{
+			display: block;
+			width: 120px;
+			margin-left: -10px;
+			margin-bottom: 10px;
+			text-align: center;
+			position: relative;
+			left: -18px;
+			color:white;
+			font-size: 1.3em;
+			text-shadow:0 -1px 0 black;
+			text-decoration:none;
+			-webkit-border-radius:3px;
+			   -moz-border-radius:3px;
+					border-radius:3px;
+			padding:5px 15px;
+		}
+		section nav .labelUnselected:hover,section nav .labelUnselected:focus{
+			text-shadow:0 1px 2px white;
+			background:rgba(0,0,0,.1);
+			/*box-shadow*/
+			-webkit-box-shadow:0 1px 0 rgba(0,0,0,.4);
+			   -moz-box-shadow:0 1px 0 rgba(0,0,0,.4);
+					box-shadow:0 1px 0 rgba(0,0,0,.4);
+			color:white;
+			outline:none;
+		}
+
+		section nav .labelSelected {
+			display: block;
+			margin-left: -10px;
+			margin-bottom: 10px;
+			width: 120px;
+			text-align: center;
+			position: relative;
+			left: -18px;
+			color:white;
+			font-size: 1.3em;
+			text-shadow:0 -1px 0 black;
+			text-decoration:none;
+			-webkit-border-radius:3px;
+			   -moz-border-radius:3px;
+					border-radius:3px;
+			padding:5px 15px;
+			text-shadow:0 1px 2px white;
+			background:rgba(0,0,0,.4);
+			/*box-shadow*/
+			-webkit-box-shadow:0 1px 0 rgba(0,0,0,.6);
+			   -moz-box-shadow:0 1px 0 rgba(0,0,0,.6);
+					box-shadow:0 1px 0 rgba(0,0,0,.6);
+			color:white;
+			outline:none;
+		}
+	
+		#buildingContainer {
+			position: absolute;
+			left: 170px;
+			top: 100px;
+		}
+		
+		#roomDesc, #warningDesc {
+			position: absolute;
+			background-color: #333;
+			-webkit-border-radius:10px;
+			   -moz-border-radius:10px;
+					border-radius:10px;
+			display: none;
+			padding: 3px;
+			border: 1px solid black;
+			color: white;
+		}
+		
+		#roomDesc p {
+			float: left;
+			width: 30px;
+			position: relative;
+			top: 55px;
+			font-weight: bold;
+			font-size: 1.5em;
+			-moz-transform:rotate(-90deg); 
+			-moz-transform-origin: top left;
+			-webkit-transform: rotate(-90deg);
+			-webkit-transform-origin: top left;
+			-o-transform: rotate(-90deg);
+			-o-transform-origin:  top left;
+			filter: progid:DXImageTransform.Microsoft.BasicImage(rotation=-1);
+		}
+		
+		#roomDesc table {
+			float: right;
+		}
+		
+		#roomDesc table tr:nth-child(3) td:nth-child(1) {
+			color: white;
+			font-weight: bold;
+			text-align: center;
+		}
+		
+		#warningDesc {
+			background-color: red;
+		}
+
+	</style>
+	<title>RiTHM</title>
+	
+	<script type="application/x-javascript">
+		
+		$(document).ready(function() {
+			//$('header nav ul').css("width", window.innerWidth-400+"px");
+			$('#buildingContainer').css("left", (window.innerWidth*0.16)+"px");
+			var canvas = document.getElementById('scale');
+			canvas.width = 50;
+			canvas.height = 200;
+			BuildingGenerator.setStage('buildingContainer', window.innerWidth*0.8, window.innerHeight-130, (window.innerWidth*0.16)+10, 100+5);
+
+ 			Initialize();
+			draw();
+			
+			$('input[name="menu"]').click(function() {
+				$('section nav label').removeClass('labelSelected');
+				$('section nav label').addClass('labelUnselected');
+				if (this.checked) {    
+					BuildingGenerator.wantedMeasure = $(this).val();
+					BuildingGenerator.roomLayer.draw();
+					drawGradient(document.getElementById('scale'), BuildingGenerator.minArrays[$(this).val()], BuildingGenerator.maxArrays[$(this).val()], BuildingGenerator.colorArrays[$(this).val()], 8, BuildingGenerator.unitArrays[$(this).val()], 'Temp�rature');
+					$('section nav label[for="menu_'+$(this).val()+'"]').addClass('labelSelected');
+					$('section nav label[for="menu_'+$(this).val()+'"]').removeClass('labelUnselected');
+				}
+			});
+
+		});
 	</script>
 </head>
 
@@ -55,21 +210,33 @@
 		</a>
 	</div> 
 </header>
-	
-<div id="wrapper">
-
-	<section id="resume">
-		<h2>RiTHM</h2>
-		<div>
-			<p>Bienvenue sur la page d'accueil de RiTHM. Vous pouvez tout contrôler à partir d'ici.</p>
+	<section>
+		<nav>
+			<ul>
+				<li><input type = "radio" name = "menu" id = "menu_3" value = "3" checked = "checked" /><label for = "menu_3" class="labelSelected">Temperature</label></li>
+				<li><input type = "radio" name = "menu" id = "menu_4" value = "4" /><label for = "menu_4" class="labelUnselected">Humidity</label></li>
+				<li><input type = "radio" name = "menu" id = "menu_5" value = "5" /><label for = "menu_5" class="labelUnselected">Luminosity</label></li>
+				<li><input type = "radio" name = "menu" id = "menu_7" value = "7" /><label for = "menu_7" class="labelUnselected">CO2 Level</label></li>
+			</ul> 
+			<div>
+				<canvas id="scale"></canvas>
+			</div>
+		</nav>
+		<div id="buildingContainer" ></div>
+		<div id="roomDesc">
+			<p>0</p>
+			<table>
+				<tr><td><img src="images/patient.png" alt="Patients" Title="Patients"/></td> <td>0</td></tr>
+				<tr><td><img src="images/warning2.png" alt="Alertes" Title="Alertes"/></td> <td>0</td></tr>
+				<tr><td colspan=2>0</td></tr>
+			    
+			</table>
+			
 		</div>
+		<p id="warningDesc">
+		</p>
 	</section>
-	
-	<section id="liste_chambres">
-			<p>Coucou</p>	
-	</section>
-	
-</div>
+
 
 <footer>Copyright 2012 - Hexanome H4311</footer>
 	

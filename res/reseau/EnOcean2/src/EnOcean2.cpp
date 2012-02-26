@@ -165,7 +165,7 @@ int main(int argc, char *argv[]) {
 	table.add((EnOceanSensorAPI::SensorId)0x00005896, (EnOceanSensorAPI::EnOceanCallbackFunction)EnOceanSensorAPI::analyseSunSpot);
 
 
-	ServerSettings serverSettings = ServerSettings(&table, &msgToSend, NULL);
+	ServerSettings serverSettings = ServerSettings(&table, &msgToSendSimulator, simulator);
 	serverSettings.openSocket(1234);
 	serverSettings.run();
 

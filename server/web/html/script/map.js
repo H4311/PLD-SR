@@ -526,7 +526,7 @@ var BuildingComponents = {}
 			$('#roomDesc').css('display', 'none');
 		});
 		shape.on("dblclick", function Click(){
-			alert('TO DO : ouvrir page de description pour la pièce #'+this.idRoom+'.');
+			location.href = 'room.html?id='+ this.idRoom;
 		});
 		shape.room = room;
 		shape.idRoom = id;

@@ -1,5 +1,20 @@
 html, body { height: 100%; color: white; }
 
+::selection {
+	background: #666; /* Safari */
+	}
+::-moz-selection {
+	background: #666; /* Firefox */
+}
+
+ul {
+	list-style-type: none;
+}
+
+a {
+	text-decoration:none;
+}
+
 body {
     font-family: 'Helvetica Neue', 'Helvetica Neue', Helvetica, Arial, sans-serif;
     font-size: 16px;
@@ -403,7 +418,8 @@ footer{
 	background: url('images/background.png') repeat center;
 	text-align: right;
 	padding-right: 50px;
-	position: relative;
+	position: absolute;
+	bottom: 0px;
 }
 
 
