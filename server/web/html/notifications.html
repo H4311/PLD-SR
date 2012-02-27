@@ -10,19 +10,24 @@
 	<script>
 	var lastUpdate = new Date(0);
 	var rest = "http://localhost:1337";
+	var nbRequests = 0;
 	
 	$(document).ready( function() {
 		window.setInterval(refresh, 1000);
 	});
 	
 	function refresh() {
+		if(nbRequests > 0) {
+			console.log('Waiting the end of the last Request');
+			return;
+		}
 		var toDate = new Date();
 		
 		var req = {
 			"from" : dateToString(lastUpdate),
 			"to" : dateToString(toDate)
 		};
-		
+		nbRequests++;
 		$.post(rest + '/alerts',
 		  JSON.stringify(req),
 		  handleResponse,
@@ -49,6 +54,7 @@
 			addNotification(notif);
 			
 		}
+		nbRequests--;
 	}
 	
 	function dateToString(date) {
