@@ -171,6 +171,7 @@ int create_ctx(int stack_size, func_t f, void *args)
 			first_ctx->next_ctx = new_ctx;
 		}    
 	}
+	
 	return 0;
 	
 }
@@ -181,20 +182,36 @@ void switch_to_ctx(struct ctx_s *ctx)
     
     if (curr_ctx)
     {
+		/*
         asm("movl %%esp, %0" "\n" "movl %%ebp, %1"
             :"=r"(curr_ctx->esp),
             "=r"(curr_ctx->ebp) 
         );
+        */
+        
+        asm("movq %%rsp, %0" "\n" "movq %%rbp, %1"
+            :"=r"(curr_ctx->esp),
+            "=r"(curr_ctx->ebp)
+            );
+        
 	}
 	
 	/* Contexte suivant */
     curr_ctx=ctx;
     
+    /*
     asm("movl %0, %%esp" "\n" "movl %1, %%ebp"
         :
         :"r"(curr_ctx->esp),
          "r"(curr_ctx->ebp)
     );
+    */
+    
+    asm("movq %0, %%rsp" "\n" "movq %1, %%rbp"
+            :
+            :"r"(curr_ctx->esp),
+            "r"(curr_ctx->ebp)
+		);
     
     irq_enable();
     

@@ -3,7 +3,9 @@
 #include "gSem.h"
 
 
-/* Sémaphore déjà créé pour l'intialiser*/
+/* 
+ * Semaphore must be created before a call to semInit
+ */
 void semInit(semaphore *sem, unsigned int val)
 {	
 	sem->count = val;

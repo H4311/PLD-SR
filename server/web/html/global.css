@@ -1,0 +1,250 @@
+	
+::selection {
+	background: #94ff91; /* Safari */
+	}
+::-moz-selection {
+	background: #94ff91; /* Firefox */
+}
+
+ul {
+	list-style-type: none;
+}
+
+a {
+	text-decoration:none;
+}
+
+body {
+	margin: 0;
+	padding: 0;
+	background-color: #94ff91;
+}
+header {
+	height: 109px;
+	width: 100%;
+	margin: 0;
+}	
+		
+header nav {
+	position: relative;
+	top: -9px;
+	z-index: 10;
+	width: 100%;
+	height: 109px;
+	background-image: url('images/background_logo.png');
+}
+
+
+#logo {
+	float: left;
+	width: 329px;
+	height: 99px;
+	position: relative;
+	left: 0px;
+	top: 0px;
+	background-image: url('images/logo_sup.png');
+	z-index: 50;
+}
+
+#logo h1 a{
+	color:#29972f;
+	font-size: 2em;
+	font-family: Verdana;
+	position: absolute;
+	top: 0px;
+	left: 170px;
+	text-shadow:0 2px 5px #43f443;
+}
+
+header nav ul{
+	position: relative;
+	left: 329px;
+	top: 50px;
+	margin:0;
+}
+
+header nav li {
+	display: inline-block;
+	margin-left: 20px;
+	width: 15%;
+	min-width: 120px;
+}
+
+header nav li img{
+	vertical-align: top;
+}
+
+header nav li:first-child {
+	margin-left: -220px;
+}
+
+header nav li:last-child a{
+	color: red;
+}
+
+header nav a{
+	color:#29972f;
+	font-size: 1.3em;
+	text-shadow:0 -1px 0 black;
+	-webkit-border-radius:3px;
+	   -moz-border-radius:3px;
+			border-radius:3px;
+	padding:5px 15px;
+}
+header nav a:hover,header nav a:focus{
+	text-shadow:0 1px 2px white;
+	background:rgba(100,200,150,.1);
+	/*box-shadow*/
+	-webkit-box-shadow:0 -1px 0 rgba(0,0,0,.4);
+	   -moz-box-shadow:0 -1px 0 rgba(0,0,0,.4);
+			box-shadow:0 -1px 0 rgba(0,0,0,.4);
+	color:#29972f;
+	outline:none;
+}
+
+section {
+	z-index: 40;
+}
+
+section nav {
+	padding-top: 90px;
+	padding-bottom: 20px;
+	margin-top: 0px;
+	position: relative;
+	top: -10px;
+	width: 15%;
+	background-color: #37ad37;
+	background-image: url('images/logo_inf.png');
+	background-repeat: no-repeat;
+	background-position: left top; 
+	-webkit-border-radius:0 0 10px 10px;
+	   -moz-border-radius:0 0 10px 10px;
+			border-radius:0 0 10px 10px;
+	width: 175px;
+}	
+
+section nav div {
+	width: 50px;
+	height: 200px;
+	margin: 0px auto;
+	margin-top: 20px;
+	margin-bottom : 10px;
+	border: 1px solid black;
+	-webkit-border-radius:10px;
+	   -moz-border-radius:10px;
+			border-radius:10px;	
+	/*box-shadow*/
+	-webkit-box-shadow:-1px -2px 2px rgba(0,0,0,.4);
+	   -moz-box-shadow:-1px -2px 2px rgba(0,0,0,.4);
+			box-shadow:-1px -2px 2px rgba(0,0,0,.4);					
+}
+
+section nav input[type="radio"]
+{
+    position: absolute;
+    filter: alpha(opacity=0);
+    -moz-opacity: 0;
+    -webkit-opacity: 0;
+    opacity: 0;
+}
+
+section nav .labelUnselected
+{
+	display: block;
+	margin-left: -10px;
+	margin-bottom: 10px;
+	width: 120px;
+	text-align: center;
+	position: relative;
+	left: -18px;
+	color:white;
+	font-size: 1.3em;
+	text-shadow:0 -1px 0 black;
+	text-decoration:none;
+	-webkit-border-radius:3px;
+	   -moz-border-radius:3px;
+			border-radius:3px;
+	padding:5px 15px;
+}
+
+section nav .labelUnselected:hover,section nav .labelUnselected:focus{
+	text-shadow:0 1px 2px white;
+	background:rgba(0,0,0,.1);
+	/*box-shadow*/
+	-webkit-box-shadow:0 1px 0 rgba(0,0,0,.4);
+	   -moz-box-shadow:0 1px 0 rgba(0,0,0,.4);
+			box-shadow:0 1px 0 rgba(0,0,0,.4);
+	color:white;
+	outline:none;
+}
+
+section nav .labelSelected {
+	display: block;
+	margin-left: -10px;
+	margin-bottom: 10px;
+	width: 120px;
+	text-align: center;
+	position: relative;
+	left: -18px;
+	color:white;
+	font-size: 1.3em;
+	text-shadow:0 -1px 0 black;
+	text-decoration:none;
+	-webkit-border-radius:3px;
+	   -moz-border-radius:3px;
+			border-radius:3px;
+	padding:5px 15px;
+	text-shadow:0 1px 2px white;
+	background:rgba(0,0,0,.4);
+	/*box-shadow*/
+	-webkit-box-shadow:0 1px 0 rgba(0,0,0,.6);
+	   -moz-box-shadow:0 1px 0 rgba(0,0,0,.6);
+			box-shadow:0 1px 0 rgba(0,0,0,.6);
+	color:white;
+	outline:none;
+}
+
+footer {
+	width: 100%;
+	height: 10px;
+	margin: 0px auto;
+	font-size: 0.7em;
+	border-top: 1px solid black;
+	text-align: center;
+	position: absolute;
+	bottom: 10px;	
+}
+
+
+/* ---------------- ROOM ---------------- */
+section nav .labelUnselected a
+{
+	font-size: 80%;
+	color:white;
+}
+
+section nav h2
+{
+	width: 120px;
+	margin: 0px auto;
+	color:#29972f;
+	text-shadow:0 -1px 1px black;
+	text-align: center;
+}
+
+body {
+	overflow: hidden;
+}
+
+#resume {
+	position: absolute;
+	left: 200px;
+	top: 100px;
+	width: 500px;
+}
+
+#resume h2 {
+	font-size: 2em;
+	color:#29972f;
+	text-shadow:0 -1px 1px black;	
+}

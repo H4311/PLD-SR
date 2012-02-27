@@ -25,6 +25,7 @@ function addDevice(param, callback) {
 		query.a = 1;
 		query.i = param.id;
 		query.t = param.type;
+		query.s = param.subject;
 		
 	// Send the query :
 	var client = connectClient();

@@ -3,7 +3,7 @@ LIBNAME=hw
 LIBFILE=$(ROOTDIR)/lib/lib$(LIBNAME).a
 
 CC      = gcc
-CFLAGS  = -Wall -pedantic -m32 -ggdb #-ansi -g -DNDEBUG
+CFLAGS  = -Wall -pedantic -ggdb  #-m32 -ansi -g -DNDEBUG
 LIBDIR  = $(ROOTDIR)/lib
 INCDIR  = -I$(ROOTDIR)/include
 LIBS    = -L$(LIBDIR) -l$(LIBNAME)
@@ -30,7 +30,7 @@ Makefile.depends:
 
 include Makefile.depends
 
-appli: appli.o gContext.o gThreads.o gSem.o $(LIBFILE)
+appli: appli.o gThreads.o gSem.o $(LIBFILE)
 
 
 ###------------------------------

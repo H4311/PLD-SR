@@ -16,11 +16,10 @@ void letters(void *args)
 	int i;
 	for (i = 0; i<11; i++)
 	{
-		puts("A");
-		puts("B");
-		puts("C");
+		printf("A");
+		printf("B");
+		printf("C");
 	}
-	/*semGive(sem);*/
 }
 
 void numbers(void *args)
@@ -30,8 +29,8 @@ void numbers(void *args)
 	for (i = 0; i<15 ; i++)
 	/*while(1)*/
 	{
-		puts("1");
-		puts("2");
+		printf("1");
+		printf("2");
 	}
 }
 
@@ -41,10 +40,47 @@ void others(void *args)
 	int i;
 	for (i = 0; i<13; ++i) 
 	{
-		puts("+");
-		puts("-");
-		puts("*");
-		puts("/");
+		printf("+");
+		printf("-");
+		printf("*");
+		printf("/");
+	}
+}
+
+void stuff(void *args)
+{
+	int i;
+	for (i = 0; i<11; ++i) 
+	{
+		printf("X");
+		printf("Y");
+		printf("Z");
+	}
+}
+
+void infiniteLol()
+{
+	int i;
+	for (;;i++)
+	{
+		puts("lol");
+	}
+	
+}
+
+void infiniteTruc()
+{
+	while(1)
+	{
+		puts("truc");
+	}
+}
+
+void infiniteCoucou()
+{
+	while(1)
+	{
+		puts("coucou");
 	}
 }
 
@@ -53,13 +89,21 @@ int main()
 	/*
 	 * Create two threads
 	 */
+	/*
 	createGThread("numbers", numbers, NULL, STACK_SIZE);
 	createGThread("letters", letters, NULL, STACK_SIZE);
 	createGThread("others", others, NULL, STACK_SIZE);
-	createGThread("idleThread", idle, NULL, STACK_SIZE);
+	createGThread("stuff", stuff, NULL, STACK_SIZE);
+	createGThread("inifi", infiniteCoucou, NULL, STACK_SIZE);
+	*/
+	
+	createGThread("lol", infiniteLol, NULL, STACK_SIZE);
+	createGThread("truc", infiniteTruc, NULL, STACK_SIZE);
+	createGThread("coucou", infiniteCoucou, NULL, STACK_SIZE);
+	
 	/*createGThread("others", others, NULL, STACK_SIZE);*/
 		
-	/* To be sure they are all welle created */
+	/* To be sure they are all well created */
 	listThreads();
 	
 	sem = malloc(sizeof(semaphore));

@@ -4,7 +4,7 @@
 CC = gcc
 AR = ar
 RANLIB = ranlib
-CFLAGS = -Wall -pedantic -m32 -g
+CFLAGS = -Wall -pedantic -g #-m32
 
 INSTALLDIR = ../libhw
 

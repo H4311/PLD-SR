@@ -1,5 +1,3 @@
-appli.o: appli.c gThreads.h commons.h gContext.h gSem.h
-gContext.o: gContext.c gContext.h
-gSem.o: gSem.c gSem.h gThreads.h commons.h gContext.h
-gThreads.o: gThreads.c commons.h gThreads.h gContext.h gSem.h \
- ../libhw/include/hw.h
+appli.o: appli.c gThreads.h commons.h gSem.h
+gSem.o: gSem.c gSem.h gThreads.h commons.h
+gThreads.o: gThreads.c commons.h gThreads.h gSem.h ../libhw/include/hw.h

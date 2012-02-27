@@ -17,6 +17,8 @@ serviceHandler["/list_actuators"] = services.list_actuators;
 serviceHandler["/patients"] = services.patients;
 serviceHandler["/rooms"] = services.rooms;
 serviceHandler["/alerts"] = services.alerts;
+serviceHandler["/murs"] = services.murs;
+serviceHandler["/bondsActuators"] = services.bondsActuators;
 
 for (var url in serviceHandler) {
 	rest.post(url, serviceHandler[url]);
