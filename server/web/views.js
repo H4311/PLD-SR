@@ -80,7 +80,12 @@ function viewPatient(req, res) {
 	});
 }
 
+function viewNotfound(req, res) {
+	res.render('404', {title: "Page non trouvée"});
+}
+
 exports.index = viewIndex;
 exports.room = viewRoom;
 exports.patient = viewPatient;
 exports.login = viewLogin;
+exports.notfound = viewNotfound;
