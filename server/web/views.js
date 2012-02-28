@@ -1,4 +1,5 @@
 var modelrooms = require("./model/rooms");
+var modelpatients = require("./model/patients");
 
 function error(code, resp) {
 	var result = {};
@@ -33,26 +34,20 @@ function parseRequest(req, names) {
  * VIEW Room
  */
 function viewRoom(req, res) {
-	data = parseRequest(req, ["id"]);
-	// Get model data
-	modelrooms.getRooms(data, function(result) {
-		var roomDetails=result.hits[0];
-		res.render('room', {title: "Chambre", roomDetails: roomDetails});
-	});
+    var id = req.param("id", null);
+    var req = {"id":id};
+   
+    // Get rooms details
+    modelrooms.getRooms(req, function(result) {
+        var roomDetails=result.hits[0];
+        var req = {"roomId":id};
+       
+        // Get patients list
+        modelpatients.getPatients(req, function(result) {
+            var patients = result.hits;
+            res.render('room', {title: "Chambre", roomDetails: roomDetails, patients: patients});
+        });
+    });
 }
-
-
-/*
- * SERVICE Rooms
- * Allows to retrieve rooms data.
- */
-/*function serviceRooms(req, resp) {
-	writeHeaders(resp);
-	data = parseRequest(req, ["id"]);
-	modelrooms.getRooms(data, function(result) {
-		resp.json(result);
-	});
-}*/
-
 
 exports.room = viewRoom;
