@@ -1,48 +1,48 @@
 
 function getSensorValues(idSensor, callback, from, to) {
-		var req = {
-			sensors: [
-				{
-					id: idSensor,
-					from: new Date(from).getTime(),
-				}
-			]
-		};
-		if(to) req.sensors[0].to =  new Date(to).getTime()
-		
-		$.post(rest + '/sensors',
-		  JSON.stringify(req),
-		  callback,
-		  "json");
-	}
+	var req = {
+		sensors: [
+			{
+				id: idSensor,
+				from: new Date(from).getTime(),
+			}
+		]
+	};
+	if(to) req.sensors[0].to =  new Date(to).getTime()
 	
-	function getSensorValuesByType(idSensor, callback, typeMesure, from, to) {
-		var req = {
-			sensors: [
-				{
-					id: idSensor,
-					from: new Date(from).getTime(),
-					type: typeMesure
-				}
-			]
-		};
-		if(to) req.sensors[0].to =  new Date(to).getTime()
-		
-		$.post(rest + '/sensors',
-		  JSON.stringify(req),
-		  callback,
-		  "json");
-	}
+	$.post(rest + '/sensors',
+	  JSON.stringify(req),
+	  callback,
+	  "json");
+}
+
+function getSensorValuesByType(idSensor, callback, typeMesure, from, to) {
+	var req = {
+		sensors: [
+			{
+				id: idSensor,
+				from: new Date(from).getTime(),
+				type: typeMesure
+			}
+		]
+	};
+	if(to) req.sensors[0].to =  new Date(to).getTime()
 	
-	function getSensors(idPatient, callback) {
-		var req = {
-			idPatient: idPatient
-		};
-		$.post(rest + '/list_sensors',
-		  JSON.stringify(req),
-		  callback,
-		  "json");
-	}
+	$.post(rest + '/sensors',
+	  JSON.stringify(req),
+	  callback,
+	  "json");
+}
+
+function getSensors(idPatient, callback) {
+	var req = {
+		idPatient: idPatient
+	};
+	$.post(rest + '/list_sensors',
+	  JSON.stringify(req),
+	  callback,
+	  "json");
+}
 
 // TODO create a service to get these values
 function getRecordtypesBySensortype(sensortype) {
