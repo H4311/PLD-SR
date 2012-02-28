@@ -19,6 +19,11 @@ function viewRoom(req, res) {
     // Get rooms details
     modelrooms.getRooms(req, function(result) {
         var roomDetails=result.hits[0];
+        if(!roomDetails) {
+        	res.render('404', {title: "Erreur"});
+        	return;
+        }
+        
         var req = {"roomId":id};
        
         // Get patients list
@@ -48,6 +53,10 @@ function viewPatient(req, res) {
 	// Get model data
 	modelpatients.getPatients(req, function(result) {
 		var patientDetails=result.hits[0];
+		if(!patientDetails) {
+        	res.render('404', {title: "Erreur"});
+        	return;
+        }
 		
 		modelsensors.getSensorsListByPatient(id, function(result) {
             var sensors = result.hits;
@@ -71,7 +80,12 @@ function viewPatient(req, res) {
 	});
 }
 
+function viewNotfound(req, res) {
+	res.render('404', {title: "Page non trouvée"});
+}
+
 exports.index = viewIndex;
 exports.room = viewRoom;
 exports.patient = viewPatient;
 exports.login = viewLogin;
+exports.notfound = viewNotfound;
