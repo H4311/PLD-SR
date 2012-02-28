@@ -46,7 +46,8 @@ html.configure(function() {
 viewHandler = {};
 viewHandler["/(index)?"] = views.index;
 viewHandler["/room"] = views.room;
-viewHandler["/(login)?"] = views.login;
+viewHandler["/patient"] = views.patient;
+viewHandler["/login"] = views.login;
 
 // handler, user, password
 // authModule.init(viewHandler, "rithm", "th!$_!$_th3_rythm_0f_th3_n!ght");

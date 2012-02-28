@@ -1,7 +1,31 @@
-<section id="resume">
-<h2><%= roomDetails.nom %></h2>
-</section>
+<ul class="breadcrumb">
+	<li>
+		<a href="index">Home</a> <span class="divider">/</span>
+	</li>
+	</li>
+		<li class="active">
+		<a href="#">Chambre</a>
+	</li>
+</ul>
 
-<section id="liste_patients">
-	
-</section>
+<div class="hero-unit">
+<h2><%= roomDetails.nom %></h2>
+<p><%= roomDetails.description %></p>
+
+<hr />
+
+<h3>Liste des Patients</h3>
+<table class="table table-condensed">
+	<thead>
+		<tr>
+		<th>Patient</th>
+		<th>Chambre</th>
+		</tr>
+	</thead>
+	<tbody>
+		 <% patients.forEach(function(patient){ %>
+			<tr><td><a href="patient?id=<%= patient.id %>"><i class="icon-user"></i>&nbsp;<%= patient.nom %> </a></td> <td><%= patient.raisonHospitalisation %></td></tr>
+		<% }) %>
+	</tbody>
+</table>
+</div>
