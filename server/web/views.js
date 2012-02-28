@@ -1,4 +1,5 @@
 var modelrooms = require("./model/rooms");
+var modelpatients = require("./model/patients");
 
 /*
  * VIEW Index
@@ -20,5 +21,19 @@ function viewRoom(req, res) {
 	});
 }
 
+/*
+ * VIEW Patient
+ */
+function viewPatient(req, res) {
+	data = req.param("id", null);
+	
+	// Get model data
+	modelpatients.getPatients(data, function(result) {
+		var patientDetails=result.hits[0];
+		res.render('patient', {title: "Patient "+patientDetails.nom, patientDetails: patientDetails});
+	});
+}
+
 exports.index = viewIndex;
 exports.room = viewRoom;
+exports.patient = viewPatient;

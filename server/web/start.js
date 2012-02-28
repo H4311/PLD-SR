@@ -42,6 +42,7 @@ html.configure(function() {
 viewHandler = {};
 viewHandler["/(index)?"] = views.index;
 viewHandler["/room"] = views.room;
+viewHandler["/patient"] = views.patient;
 
 for (var url in viewHandler) {
 	html.get(url, viewHandler[url]);

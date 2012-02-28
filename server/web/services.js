@@ -32,6 +32,7 @@ function writeHeaders(resp) {
 }
 
 function parseRequest(req, names) {
+	console.log(req.body);
 	request = {}
 	for (var n in names) {
 		request[names[n]] = req.param(names[n], null);
