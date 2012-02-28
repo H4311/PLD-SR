@@ -43,9 +43,18 @@ html.get('/(index)?', function(req, res) {
 	res.render('index', {layout: false});
 });
 
-html.get('/room', function(req, res) {
+/*html.get('/room', function(req, res) {
 	var roomId = req.param("id", null);
 	res.render('room', {layout: false, roomId: roomId});
-});
+});*/
+
+var views = require("./views");
+
+viewHandler = {};
+viewHandler["/room"] = views.room;
+
+for (var url in viewHandler) {
+	html.get(url, viewHandler[url]);
+}
 
 html.listen(8080);
