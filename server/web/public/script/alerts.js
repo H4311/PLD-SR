@@ -11,5 +11,5 @@ function fetchAlerts(callback) {
 	}
 	getLastAlerts.lastUpdate = new Date(0);	
 	
-	createComet('alerts', 'POST', getLastAlerts, callback); // Function defined in common.js
+	createComet('alerts', 'POST', 1000, getLastAlerts, callback); // Function defined in common.js
 }

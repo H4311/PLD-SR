@@ -4,8 +4,6 @@ var Patients = new Array();
 var Sensors = new Array();
 var Actuators = new Array();
 
-var rest = "http://localhost:1337";
-
 function InitializeRooms(data) {
 	var rooms = data.hits;
 	for (var i = 0; i < rooms.length; i++) {
@@ -13,18 +11,18 @@ function InitializeRooms(data) {
 		$.ajax({
 			type: 'POST',
 			url: rest+'/murs',
-			data: '{"id": '+rooms[i].id+'}',
+			data: {"id": rooms[i].id},
 			success: function(data) {
 				var walls = new Array();
 				for (var j = 0; j<data.hits.length; j++) {
 					if (data.hits[j].isPorte) {
-						walls[j] = new BuildingComponents.Door(data.hits[j].x1, data.hits[j].y1, data.hits[j].x2, data.hits[j].y2);
+						walls[j] = new RithmObjects.Door(data.hits[j].x1, data.hits[j].y1, data.hits[j].x2, data.hits[j].y2);
 					}
 					else {
-						walls[j] = new BuildingComponents.Wall(data.hits[j].x1, data.hits[j].y1, data.hits[j].x2, data.hits[j].y2);
+						walls[j] = new RithmObjects.Wall(data.hits[j].x1, data.hits[j].y1, data.hits[j].x2, data.hits[j].y2);
 					}
 				}
-				Rooms[rooms[i].id] = new BuildingComponents.Room(rooms[i].nom, walls); 	// Create Room
+				Rooms[rooms[i].id] = new RithmObjects.Room(rooms[i].nom, walls); 	// Create Room
 				BuildingGenerator.addRoom(rooms[i].id, Rooms[rooms[i].id]);	// Add to the canvas drawer
 			},
 			dataType: 'json',
@@ -36,7 +34,7 @@ function InitializeRooms(data) {
 function InitializePatients(data) {
 	var patients = data.hits;
 	for (var i = 0; i < patients.length; i++) {
-		Patients[patients[i].id] = new BuildingComponents.Patient(patients[i].name, patients[i].isMan, patients[i].reasonHosp, patients[i].idRoom);
+		Patients[patients[i].id] = new RithmObjects.Patient(patients[i].name, patients[i].isMan, patients[i].reasonHosp, patients[i].idRoom);
 		Rooms[patients[i].idPiece].addPatient(Patients[patients[i].id]);
 	}
 }
@@ -47,7 +45,7 @@ function InitializeSensors(data) {
 	yesterday.setDate(yesterday.getDate() - 1);
 	for (var i = 0; i < sensors.length; i++) {
 		// Creating the sensor :
-		Sensors[sensors[i].id] = new BuildingComponents.Sensor(sensors[i].type);
+		Sensors[sensors[i].id] = new RithmObjects.Sensor(sensors[i].type);
 		// Creating the bonds with its subject :
 		if (sensors[i].isGlobal != 0) { // Subject == Room
 			Sensors[sensors[i].id].setSubject(sensors[i].idSujet, sensors[i].isGlobal);
@@ -65,7 +63,7 @@ function InitializeSensors(data) {
 function InitializeActuators(data) {
 	var actuators = data.hits;
 	for (var i = 0; i < actuators.length; i++) {
-		Actuators[actuators[i].id] = new BuildingComponents.Actuator(actuators[i].type);
+		Actuators[actuators[i].id] = new RithmObjects.Actuator(actuators[i].type);
 	}
 }
 
@@ -98,7 +96,7 @@ function UpdateMeasures() {
 		var jqXHRRooms = $.ajax({
 			type: 'POST',
 			url: rest+'/sensors',
-			data: '{"sensors" : [ { "id" : "'+i+'", "from" : "'+ /*TODO*/ 0+'"}]}',
+			data: {"sensors" : [ { "id" : i, "from" : /*TODO*/ 0}]},
 			success: function(data) {
 				var sensor = data.hits[0];
 				for (var j = 0; j < sensor.length; j++)  {
@@ -116,7 +114,7 @@ function Initialize() {
 	var jqXHRRooms = $.ajax({
 		type: 'POST',
 		url: rest+'/rooms',
-		data: '{}',
+		data: {},
 		success: InitializeRooms,
 		dataType: 'json',
 		async:false
@@ -125,7 +123,7 @@ function Initialize() {
 	var jqXHRPatients = $.ajax({
 		type: 'POST',
 		url: rest+'/patients',
-		data: '{}',
+		data: {},
 		success:  function(data) {
 			// Waiting for the Patients & Rooms requests to finished (we need their values) :
 			$.when(jqXHRRooms).then(InitializePatients(data) /* if success */, function() { alert('Loading Failed');} /* if failure */);
@@ -138,7 +136,7 @@ function Initialize() {
 	var jqXHRSensors = $.ajax({
 		type: 'POST',
 		url: rest+'/list_sensors',
-		data: '{}',
+		data: {},
 		success: function(data) {
 			// Waiting for the Patients & Rooms requests to finished (we need their values) :
 			$.when(jqXHRRooms, jqXHRPatients).then(InitializeSensors(data) /* if success */, function() { alert('Loading Failed');} /* if failure */);
@@ -151,7 +149,7 @@ function Initialize() {
 	var jqXHRActuators = $.ajax({
 		type: 'POST',
 		url: rest+'/list_actuators',
-		data: '{}',
+		data: {},
 		success: InitializeActuators,
 		dataType: 'json',
 		async:true
@@ -161,7 +159,7 @@ function Initialize() {
 	$.ajax({
 		type: 'POST',
 		url: rest+'/bondsActuators',
-		data: '{}',
+		data: {},
 		success: function(data) {
 			// Waiting for the Patients & Rooms & Actuators request to finished (we need their values) :
 			$.when(jqXHRRooms, jqXHRPatients, jqXHRActuators).then(InitializeBondsActuators(data) /* if success */, function() { alert('Loading Failed');} /* if failure */);
@@ -186,40 +184,42 @@ function Initialize() {
 }
 
 
+// ------------------------------------------------------------------------------------
+// 		 			OBJECTS
+// ------------------------------------------------------------------------------------	
 
-// BUILDING COMPONENTS :
-var BuildingComponents = {}
+var RithmObjects = {}
 
 	// ---------------------
 	// 		 SEGMENT
 	// ---------------------
-	BuildingComponents.Segment = function Segment(x1, y1, x2, y2) {
+	RithmObjects.Segment = function Segment(x1, y1, x2, y2) {
 		this.x1 = x1;
 		this.x2 = x2;
 		this.y1 = y1;
 		this.y2 = y2;
 	};
 
-	BuildingComponents.Segment.prototype.stroke = function SegmentStroke(ctx) {
+	RithmObjects.Segment.prototype.stroke = function SegmentStroke(ctx) {
 		ctx.moveTo(this.x1,this.y1);  
 		ctx.lineTo(this.x2,this.y2);  
 	};
 
-	BuildingComponents.Segment.prototype.scale = function SegmentScale(scaX, scaY) {
+	RithmObjects.Segment.prototype.scale = function SegmentScale(scaX, scaY) {
 		this.x1 = this.x1*scaX;
 		this.y1 = this.y1*scaY;
 		this.x2 = this.x2*scaX;
 		this.y2 = this.y2*scaY;
 	};
 
-	BuildingComponents.Segment.prototype.translate = function SegmentTranslate(x,y) {
+	RithmObjects.Segment.prototype.translate = function SegmentTranslate(x,y) {
 		this.x1 += x;
 		this.x2 += x;
 		this.y1 += y;
 		this.y2 += y;
 	};
 	
-	BuildingComponents.Segment.prototype.copy = function SegmentCopy(seg) {
+	RithmObjects.Segment.prototype.copy = function SegmentCopy(seg) {
 		this.x1 = seg.x1;
 		this.x2 = seg.x2;
 		this.y1 = seg.y1;
@@ -230,74 +230,57 @@ var BuildingComponents = {}
 	// 		   WALL
 	// ---------------------
 
-	BuildingComponents.Wall = function Wall(x1, y1, x2, y2) {
-		this.segment = new BuildingComponents.Segment(x1, y1, x2, y2);
-		this.segmentPlot = new BuildingComponents.Segment(x1, y1, x2, y2);
+	RithmObjects.Wall = function Wall(x1, y1, x2, y2) {
+		this.segment = new RithmObjects.Segment(x1, y1, x2, y2);
+		this.segmentPlot = new RithmObjects.Segment(x1, y1, x2, y2);
 		this.scaleX = 1;
 		this.scaleY = 1;
 		this.origine = [0,0];
 	};
 
-	BuildingComponents.Wall.prototype.scale = function WallScale(scaX, scaY) {
+	RithmObjects.Wall.prototype.scale = function WallScale(scaX, scaY) {
 		this.segmentPlot.scale(scaX/this.scaleX, scaY/this.scaleY);
 		this.scaleX = scaX;
 		this.scaleY = scaY;
 	};
 
-	BuildingComponents.Wall.prototype.translate = function WallTranslate(x,y) {
+	RithmObjects.Wall.prototype.translate = function WallTranslate(x,y) {
 		this.segmentPlot.translate(x-this.origine[0], y-this.origine[1]);
 		this.origine[1] = y;
 		this.origine[0] = x;
 	};
 
-	BuildingComponents.Wall.prototype.stroke = function WallStroke(ctx) {
+	RithmObjects.Wall.prototype.stroke = function WallStroke(ctx) {
 		this.segmentPlot.stroke(ctx);
-	};
-
-	BuildingComponents.Wall.prototype.fill = function WallFill(ctx) {
-		ctx.lineTo(this.segmentPlot.x2, this.segmentPlot.y2);
 	};
 
 	// ---------------------
 	// 		   DOOR
 	// ---------------------
 	
-	BuildingComponents.Door = function Door(x1, y1, x2, y2) {
-		this.plotClosed = new BuildingComponents.Wall(x1, y1, x2, y2);
+	RithmObjects.Door = function Door(x1, y1, x2, y2) {
+		this.plotClosed = new RithmObjects.Wall(x1, y1, x2, y2);
 		var d = Math.sqrt((x1-x2)*(x1-x2)+(y1-y2)*(y1-y2));
 		var angle = Math.acos((x2-x1)/d);
 		if (y2<y1) { angle = -angle; }
 		
-		this.plotOpen = new BuildingComponents.Wall(x1, y1, x1+d*Math.cos(0.785+angle), y1+d*Math.sin(0.785+angle));
+		this.plotOpen = new RithmObjects.Wall(x1, y1, x1+d*Math.cos(0.785+angle), y1+d*Math.sin(0.785+angle));
 		this.isOpen = false;
 		this.roomIn = null;
 		this.roomOut = null;
 	};
 	
-	BuildingComponents.Door.prototype.scale = function DoorScale(scaX, scaY) {
+	RithmObjects.Door.prototype.scale = function DoorScale(scaX, scaY) {
 		this.plotClosed.segmentPlot.scale(scaX, scaY);		
 		this.plotOpen.segmentPlot.scale(scaX, scaY);
 	};
 
-	BuildingComponents.Door.prototype.stroke = function DoorStroke(ctx) {
-		if (this.isOpen) {
-			this.plotOpen.stroke(ctx);
-			ctx.moveTo(this.plotClosed.segmentPlot.x2, this.plotClosed.segmentPlot.y2);
-		}
-		else {
-			this.plotClosed.stroke(ctx);
-		}
-	};
 
-	BuildingComponents.Door.prototype.fill = function DoorFill(ctx) {
-		ctx.lineTo(this.plotClosed.segmentPlot.x2, this.plotClosed.segmentPlot.y2);
-	};
-	
 	// ---------------------
 	// 		   ROOM
 	// ---------------------	
 
-	BuildingComponents.Room = function Room(name, walls) {
+	RithmObjects.Room = function Room(name, walls) {
 		this.name = name;
 		this.walls = walls;
 		this.sensors = new Array();
@@ -307,7 +290,7 @@ var BuildingComponents = {}
 		this.warning = 0;
 	};
 	
-	BuildingComponents.Room.prototype.scale = function(scaX, scaY) {
+	RithmObjects.Room.prototype.scale = function(scaX, scaY) {
 		for (var i = 0; i < this.walls.length; i++) {
 			if (this.walls[i].isOpen == null) {
 				this.walls[i].scale(scaX, scaY);
@@ -318,7 +301,7 @@ var BuildingComponents = {}
 		}
 	};
 	
-	BuildingComponents.Room.prototype.getAverageValue = function(typeValue) {
+	RithmObjects.Room.prototype.getAverageValue = function(typeValue) {
 		var avg = 0;
 		var count = 0;
 		for (var i = 0; i < this.sensors.length; i++) {
@@ -331,96 +314,22 @@ var BuildingComponents = {}
 		else { return null; }
 	};
 	
-	BuildingComponents.Room.prototype.addSensor = function(sensor) {
+	RithmObjects.Room.prototype.addSensor = function(sensor) {
 		this.sensors.push(sensor);
 	};
 
-	BuildingComponents.Room.prototype.addActuator = function(actu) {
+	RithmObjects.Room.prototype.addActuator = function(actu) {
 		this.actuators.push(actu);
 	};
 
-	BuildingComponents.Room.prototype.addPatient = function(pat) {
+	RithmObjects.Room.prototype.addPatient = function(pat) {
 		this.patients.push(pat);
 	};
-
-	BuildingComponents.Room.prototype.fill = function(ctx, colorRoom) {
-		ctx.beginPath();
-		var x0, y0;
-		if (this.walls[0].isOpen == null) {
-			x0 = this.walls[0].segmentPlot.x1;
-			y0 = this.walls[0].segmentPlot.y1;
-		}
-		else {
-			x0 = this.walls[0].plotClosed.segmentPlot.x1;
-			y0 = this.walls[0].plotClosed.segmentPlot.y1;
-		}
-		var previousStyle = ctx.fillStyle;
-		
-		// Updating the wanted value :
-		this.measures[BuildingGenerator.wantedMeasure] = this.getAverageValue(BuildingGenerator.wantedMeasure);
-		
-		var color = ProportionalColor(this.measures[BuildingGenerator.wantedMeasure], BuildingGenerator.minArrays[BuildingGenerator.wantedMeasure], BuildingGenerator.maxArrays[BuildingGenerator.wantedMeasure], BuildingGenerator.colorArrays[BuildingGenerator.wantedMeasure]);
-		
-		ctx.fillStyle = 'rgb('+color.red+', '+color.green+','+color.blue+')';
-		ctx.moveTo(x0, y0);
-		for (var i = 0; i < this.walls.length; i++) {
-			if (this.walls[i].isOpen == null) { // Wall
-				this.walls[i].fill(ctx);
-			}
-			else { // Door
-				this.walls[i].fill(ctx);
-			}
-		}
-		ctx.closePath();
-		ctx.fill();
-		ctx.fillStyle = previousStyle;
-	};
-	
-	BuildingComponents.Room.prototype.stroke = function(ctx) {
-		var colorWall = (this.warning > 0)? BuildingGenerator.colorWallWarning : BuildingGenerator.colorWall;
-		var lineWidthWall = (this.warning > 0)? BuildingGenerator.lineWidthWallWarning : BuildingGenerator.lineWidthWall;
-		var previousWidth = ctx.lineWidth;
-		var previousStyle = ctx.strokeStyle;
-		ctx.lineWidth = lineWidthWall;
-		ctx.strokeStyle = colorWall;  
-		ctx.lineJoin = 'round';
-		ctx.beginPath();
-		for (var i = 0; i < this.walls.length; i++) {
-			if (this.walls[i].isOpen == null) { // Wall
-				this.walls[i].stroke(ctx);
-			}
-			else { // Door
-				ctx.stroke();
-				ctx.beginPath();
-				ctx.lineWidth = BuildingGenerator.lineWidthDoor;
-				ctx.strokeStyle = BuildingGenerator.colorDoor;  
-				this.walls[i].stroke(ctx);
-				ctx.stroke();
-				ctx.beginPath();
-				ctx.lineWidth = lineWidthWall;
-				ctx.strokeStyle = colorWall;  
-			}
-		}
-		ctx.closePath();
-		ctx.stroke();
-		ctx.lineWidth = previousWidth;
-		ctx.strokeStyle = previousStyle;	
-	};
-	
-	BuildingComponents.Room.prototype.printName = function(ctx, color, size) {
-		previousFont = ctx.font;
-		previousColor = ctx.fillStyle;
-		ctx.font = size+"pt Calibri";
-		ctx.fillStyle = color;
-		ctx.fillText(this.name, this.walls[0].segmentPlot.x1+10, this.walls[0].segmentPlot.y1+12);
-		ctx.font = previousFont;
-		ctx.fillStyle = previousColor;
-	};
 	
 	// ---------------------
-	//		 SENSOR
+	//		 SENSOR WITH LOG
 	// ---------------------
-	BuildingComponents.Sensor = function Sensor(type) {
+	RithmObjects.SensorLog = function SensorLog(type) {
 		this.type = type;
 		this.measures = new Array();
 		this.subject = {
@@ -429,12 +338,40 @@ var BuildingComponents = {}
 		};
 	};
 		
-	BuildingComponents.Sensor.prototype.setSubject = function(s, glo) {
+	RithmObjects.SensorLog.prototype.setSubject = function(s, glo) {
 		this.subject.id = s;
 		this.subject.isGlobal = glo;
 	};
 	
-	BuildingComponents.Sensor.prototype.setMeasure = function(measure) {
+	RithmObjects.SensorLog.prototype.setMeasure = function(measure) {
+		if ((this.measures[measure.type] == null) || (this.measures[measure.type]["time"] < measure.time)) {
+			// Updating if it's a new value :
+			this.measures[measure.type] = {"time" : measure.time, "value" : measure.value};
+			// Updating the canvas :
+			if (!this.subject.isGlobal) {
+				BuildingGenerator.roomShapes[this.subject.id].draw();
+			}
+		}
+	};
+	
+	// ---------------------
+	//		 SENSOR
+	// ---------------------
+	RithmObjects.Sensor = function Sensor(type) {
+		this.type = type;
+		this.measures = new Array();
+		this.subject = {
+			id : 0,
+			isGlobal : false
+		};
+	};
+		
+	RithmObjects.Sensor.prototype.setSubject = function(s, glo) {
+		this.subject.id = s;
+		this.subject.isGlobal = glo;
+	};
+	
+	RithmObjects.Sensor.prototype.setMeasure = function(measure) {
 		if ((this.measures[measure.type] == null) || (this.measures[measure.type]["time"] < measure.time)) {
 			// Updating if it's a new value :
 			this.measures[measure.type] = {"time" : measure.time, "value" : measure.value};
@@ -448,12 +385,12 @@ var BuildingComponents = {}
 	// ---------------------
 	// 		 ACTUATOR
 	// ---------------------
-	BuildingComponents.Actuator = function Actuator (type) {
+	RithmObjects.Actuator = function Actuator (type) {
 		this.type = type;
 		this.subjectID = new Array();
 	};
 		
-	BuildingComponents.Actuator.prototype.addSubject = function(s, glo) {
+	RithmObjects.Actuator.prototype.addSubject = function(s, glo) {
 		this.subjectID.push({ id : 0, isGlobal : false});
 	};
 	
@@ -462,7 +399,7 @@ var BuildingComponents = {}
 	// 		 PATIENT
 	// ---------------------	
 	
-	BuildingComponents.Patient = function Patient(name, isMan, reasonHosp, roomID) {
+	RithmObjects.Patient = function Patient(name, isMan, reasonHosp, roomID) {
 		this.name = name;
 		this.isMan = isMan;
 		this.reasonHosp = reasonHosp;
@@ -471,22 +408,67 @@ var BuildingComponents = {}
 		this.actuators = new Array();
 	};
 	
-	BuildingComponents.Patient.prototype.addSensor = function(sensor) {
+	RithmObjects.Patient.prototype.addSensor = function(sensor) {
 		this.sensors.push(sensor);
 	};
 
-	BuildingComponents.Patient.prototype.addActuator = function(actu) {
+	RithmObjects.Patient.prototype.addActuator = function(actu) {
 		this.actuators.push(actu);
 	};
 	
+		
+	// ---------------------
+	// 		 WARNING
+	// ---------------------	
+	RithmObjects.Warning = function Warning (room, content) {
+		this.room = room;
+		room.warning++;
+		this.content = content;
+	};
+	
+	
+// ------------------------------------------------------------------------------------
+// 		 			VIEWS
+// ------------------------------------------------------------------------------------		
 
+var RithmViews = {}
 	// ---------------------
 	// 		 ROOMSHAPE
 	// ---------------------	
-	BuildingComponents.RoomShape = function RoomShape (id, room) {
+	RithmViews.RoomShape = function RoomShape (id, room) {
 		var shape = new Kinetic.Shape(function() {
-			var context = this.getContext();
-			this.room.fill(context, this.color);
+			var ctx = this.getContext();
+			
+			ctx.beginPath();
+			var x0, y0;
+			if (this.room.walls[0].isOpen == null) {
+				x0 = this.room.walls[0].segmentPlot.x1;
+				y0 = this.room.walls[0].segmentPlot.y1;
+			}
+			else {
+				x0 = this.room.walls[0].plotClosed.segmentPlot.x1;
+				y0 = this.room.walls[0].plotClosed.segmentPlot.y1;
+			}
+			var previousStyle = ctx.fillStyle;
+			
+			// Updating the wanted value :
+			this.room.measures[BuildingGenerator.wantedMeasure] = this.room.getAverageValue(BuildingGenerator.wantedMeasure);
+			
+			var color = ProportionalColor(this.room.measures[BuildingGenerator.wantedMeasure], BuildingGenerator.minArrays[BuildingGenerator.wantedMeasure], BuildingGenerator.maxArrays[BuildingGenerator.wantedMeasure], BuildingGenerator.colorArrays[BuildingGenerator.wantedMeasure]);
+			
+			ctx.fillStyle = 'rgb('+color.red+', '+color.green+','+color.blue+')';
+			ctx.moveTo(x0, y0);
+			for (var i = 0; i < this.room.walls.length; i++) {
+				if (this.room.walls[i].isOpen == null) { // Wall
+					ctx.lineTo(this.room.walls[i].segmentPlot.x2, this.room.walls[i].segmentPlot.y2);
+				}
+				else { // Door
+					ctx.lineTo(this.room.walls[i].plotClosed.segmentPlot.x2, this.room.walls[i].plotClosed.segmentPlot.y2);
+				}
+			}
+			ctx.closePath();
+			ctx.fill();
+			ctx.fillStyle = previousStyle;
 		});
 		shape.on("mousemove", function Click(){
 			$('#warningDesc').css('display', 'none');
@@ -533,41 +515,77 @@ var BuildingComponents = {}
 		shape.color = "grey";
 		return shape;
 	};
-	BuildingComponents.RoomShape.prototype = new Kinetic.Shape;
-	BuildingComponents.RoomShape.prototype.constructor = this.RoomShape;
-	BuildingComponents.RoomShape.prototype.parent = Kinetic.Shape.prototype;
+	RithmViews.RoomShape.prototype = new Kinetic.Shape;
+	RithmViews.RoomShape.prototype.constructor = this.RoomShape;
+	RithmViews.RoomShape.prototype.parent = Kinetic.Shape.prototype;
 	
 	// ---------------------
 	// 		 ROOMPATH
 	// ---------------------	
-	BuildingComponents.RoomPath = function RoomPath (room) {
+	RithmViews.RoomPath = function RoomPath (room) {
 		var shape = new Kinetic.Shape(function() {
-			var context = this.getContext();
-			this.room.stroke(context);
-			this.room.printName(context, "black", 8);
+			var ctx = this.getContext();
+			
+			// Stroke :
+			var colorWall = (this.room.warning > 0)? BuildingGenerator.colorWallWarning : BuildingGenerator.colorWall;
+			var lineWidthWall = (this.room.warning > 0)? BuildingGenerator.lineWidthWallWarning : BuildingGenerator.lineWidthWall;
+			var previousWidth = ctx.lineWidth;
+			var previousStyle = ctx.strokeStyle;
+			ctx.lineWidth = lineWidthWall;
+			ctx.strokeStyle = colorWall;  
+			ctx.lineJoin = 'round';
+			ctx.beginPath();
+			for (var i = 0; i < this.room.walls.length; i++) {
+				if (this.room.walls[i].isOpen == null) { // Wall
+					ctx.lineTo(this.room.walls[i].segmentPlot.x2, this.room.walls[i].segmentPlot.y2);
+				}
+				else { // Door
+					ctx.stroke();
+					ctx.beginPath();
+					ctx.lineWidth = BuildingGenerator.lineWidthDoor;
+					ctx.strokeStyle = BuildingGenerator.colorDoor;  
+					
+					if (this.isOpen) {
+						this.plotOpen.stroke(ctx);
+						ctx.lineTo(this.room.walls[i].plotOpen.segmentPlot.x2, this.room.walls[i].plotOpen.segmentPlot.y2);
+						ctx.moveTo(this.room.walls[i].plotClosed.segmentPlot.x2, this.room.walls[i].plotClosed.segmentPlot.y2);
+					}
+					else {
+						ctx.lineTo(this.room.walls[i].plotClosed.segmentPlot.x2, this.room.walls[i].plotClosed.segmentPlot.y2);
+					}
+					
+					ctx.stroke();
+					ctx.beginPath();
+					ctx.lineWidth = lineWidthWall;
+					ctx.strokeStyle = colorWall;  
+				}
+			}
+			ctx.closePath();
+			ctx.stroke();
+			ctx.lineWidth = previousWidth;
+			ctx.strokeStyle = previousStyle;	
+			
+			// Print name :
+			previousFont = ctx.font;
+			previousColor = ctx.fillStyle;
+			ctx.font = size+"pt Calibri";
+			ctx.fillStyle = color;
+			ctx.fillText(this.room.name, this.room.walls[0].segmentPlot.x1+10, this.room.walls[0].segmentPlot.y1+12);
+			ctx.font = previousFont;
+			ctx.fillStyle = previousColor;
 		});
 		shape.room = room;
 		shape.color = "grey";
 		return shape;
 	};
-	BuildingComponents.RoomPath.prototype = new Kinetic.Shape;
-	BuildingComponents.RoomPath.prototype.constructor = this.RoomPath;
-	BuildingComponents.RoomPath.prototype.parent = Kinetic.Shape.prototype;
-
-	
-	// ---------------------
-	// 		 WARNING
-	// ---------------------	
-	BuildingComponents.Warning = function Warning (room, content) {
-		this.room = room;
-		room.warning++;
-		this.content = content;
-	};
+	RithmViews.RoomPath.prototype = new Kinetic.Shape;
+	RithmViews.RoomPath.prototype.constructor = this.RoomPath;
+	RithmViews.RoomPath.prototype.parent = Kinetic.Shape.prototype;
 	
 	// ---------------------
 	// 		 WARNINGCIRCLE
 	// ---------------------	
-	BuildingComponents.WarningCircle = function WarningCircle (id, warning) {
+	RithmObjects.WarningCircle = function WarningCircle (id, warning) {
 		var shapeW = new Kinetic.Shape(function() {
 			var context = this.getContext();
 			drawCircle(context, this.warning.room.walls[0].segmentPlot.x1+25, this.warning.room.walls[0].segmentPlot.y1+24, 10, 'rgb(200,50,50)');
@@ -614,14 +632,14 @@ var BuildingComponents = {}
 		
 		return shapeW;
 	};
-	BuildingComponents.WarningCircle.prototype = new Kinetic.Shape;
-	BuildingComponents.WarningCircle.prototype.constructor = this.WarningCircle;
-	BuildingComponents.WarningCircle.prototype.parent = Kinetic.Shape.prototype;
+	RithmObjects.WarningCircle.prototype = new Kinetic.Shape;
+	RithmObjects.WarningCircle.prototype.constructor = this.WarningCircle;
+	RithmObjects.WarningCircle.prototype.parent = Kinetic.Shape.prototype;
 	
 	// ---------------------
 	// 		 WARNINGMARK
 	// ---------------------	
-	BuildingComponents.WarningMark = function WarningMark (id, warning) {
+	RithmObjects.WarningMark = function WarningMark (id, warning) {
 		var shapeW = new Kinetic.Shape(function() {
 			var context = this.getContext();
 			drawExclame(context, this.warning.room.walls[0].segmentPlot.x1+25, this.warning.room.walls[0].segmentPlot.y1+24, 10, 'rgb(255,255,255)');
@@ -665,9 +683,10 @@ var BuildingComponents = {}
 
 		return shapeW;
 	};
-	BuildingComponents.WarningMark.prototype = new Kinetic.Shape;
-	BuildingComponents.WarningMark.prototype.constructor = this.WarningMark;
-	BuildingComponents.WarningMark.prototype.parent = Kinetic.Shape.prototype;
+	RithmObjects.WarningMark.prototype = new Kinetic.Shape;
+	RithmObjects.WarningMark.prototype.constructor = this.WarningMark;
+	RithmObjects.WarningMark.prototype.parent = Kinetic.Shape.prototype;
+	
 	
 var BuildingGenerator = {
 
@@ -721,14 +740,14 @@ var BuildingGenerator = {
 	},
 	
 	addRoom : function AddRoom(id, room) {
-		this.roomShapes[id] = new BuildingComponents.RoomShape(id, room);
-		var p = new BuildingComponents.RoomPath(room);
+		this.roomShapes[id] = new RithmViews.RoomShape(id, room);
+		var p = new RithmViews.RoomPath(room);
 		this.roomLayer.add(this.roomShapes[id]);
 		this.pathLayer.add(p);
 	},
 	
 	addWarning : function AddWarning(id, warning) {
-		this.warningShapes[id] = [new BuildingComponents.WarningCircle(id, warning), new BuildingComponents.WarningMark(id, warning)];
+		this.warningShapes[id] = [new RithmObjects.WarningCircle(id, warning), new RithmObjects.WarningMark(id, warning)];
 		this.warningLayer.add(this.warningShapes[id][0]);
 		this.warningLayer.add(this.warningShapes[id][1]);
 	},
@@ -766,196 +785,196 @@ var BuildingGenerator = {
 		
 		
 		
-		//~ var wall1 = {type:0, wall:new BuildingComponents.Wall(10, 10, 100, 10)};
-		//~ var wall21 = {type:0, wall:new BuildingComponents.Wall(100, 10, 100, 40)};
-		//~ var door = {type:1, door:new BuildingComponents.Door(100, 40, 100, 60)};
-		//~ var wall22 = {type:0, wall:new BuildingComponents.Wall(100, 60, 100, 100)};
-		//~ var wall3 = {type:0, wall:new BuildingComponents.Wall(100, 100, 10, 100)};
-		//~ var wall4 = {type:0, wall:new BuildingComponents.Wall(10, 100, 10, 10)};
+		//~ var wall1 = {type:0, wall:new RithmObjects.Wall(10, 10, 100, 10)};
+		//~ var wall21 = {type:0, wall:new RithmObjects.Wall(100, 10, 100, 40)};
+		//~ var door = {type:1, door:new RithmObjects.Door(100, 40, 100, 60)};
+		//~ var wall22 = {type:0, wall:new RithmObjects.Wall(100, 60, 100, 100)};
+		//~ var wall3 = {type:0, wall:new RithmObjects.Wall(100, 100, 10, 100)};
+		//~ var wall4 = {type:0, wall:new RithmObjects.Wall(10, 100, 10, 10)};
 
 		//~ door.door.isOpen = true;
 		//~ var walls = [wall1, wall21, door, wall22, wall3, wall4];
 
-		//~ var room = new BuildingComponents.Room("Ch111", walls);
+		//~ var room = new RithmObjects.Room("Ch111", walls);
 		
-		//~ var wall1_10 = {type:0, wall:new BuildingComponents.Wall(10, 100, 100, 100)};
-		//~ var wall21_10 = {type:0, wall:new BuildingComponents.Wall(100, 100, 100, 150)};
-		//~ var door_10 = {type:1, door:new BuildingComponents.Door(100, 150, 100, 170)};
-		//~ var wall22_10 = {type:0, wall:new BuildingComponents.Wall(100, 170, 100, 240)};
-		//~ var wall3_10 = {type:0, wall:new BuildingComponents.Wall(100, 240, 10, 240)};
-		//~ var wall4_10 = {type:0, wall:new BuildingComponents.Wall(10, 240, 10, 100)};
+		//~ var wall1_10 = {type:0, wall:new RithmObjects.Wall(10, 100, 100, 100)};
+		//~ var wall21_10 = {type:0, wall:new RithmObjects.Wall(100, 100, 100, 150)};
+		//~ var door_10 = {type:1, door:new RithmObjects.Door(100, 150, 100, 170)};
+		//~ var wall22_10 = {type:0, wall:new RithmObjects.Wall(100, 170, 100, 240)};
+		//~ var wall3_10 = {type:0, wall:new RithmObjects.Wall(100, 240, 10, 240)};
+		//~ var wall4_10 = {type:0, wall:new RithmObjects.Wall(10, 240, 10, 100)};
 
 		//~ door_10.door.isOpen = false;
 		//~ var walls_10 = [wall1_10, wall21_10, door_10, wall22_10, wall3_10, wall4_10];
 
-		//~ var room10 = new BuildingComponents.Room("Ch112", walls_10);
+		//~ var room10 = new RithmObjects.Room("Ch112", walls_10);
 		
-		//~ var wall1_11 = {type:0, wall:new BuildingComponents.Wall(10, 240, 100, 240)};
-		//~ var wall21_11 = {type:0, wall:new BuildingComponents.Wall(100, 240, 100, 270)};
-		//~ var door_11 = {type:1, door:new BuildingComponents.Door(100, 270, 100, 290)};
-		//~ var wall22_11 = {type:0, wall:new BuildingComponents.Wall(100, 290, 100, 370)};
-		//~ var wall3_11 = {type:0, wall:new BuildingComponents.Wall(100, 370, 10, 370)};
-		//~ var wall4_11 = {type:0, wall:new BuildingComponents.Wall(10, 370, 10, 240)};
+		//~ var wall1_11 = {type:0, wall:new RithmObjects.Wall(10, 240, 100, 240)};
+		//~ var wall21_11 = {type:0, wall:new RithmObjects.Wall(100, 240, 100, 270)};
+		//~ var door_11 = {type:1, door:new RithmObjects.Door(100, 270, 100, 290)};
+		//~ var wall22_11 = {type:0, wall:new RithmObjects.Wall(100, 290, 100, 370)};
+		//~ var wall3_11 = {type:0, wall:new RithmObjects.Wall(100, 370, 10, 370)};
+		//~ var wall4_11 = {type:0, wall:new RithmObjects.Wall(10, 370, 10, 240)};
 
 		//~ door_11.door.isOpen = true;
 		//~ var walls_11 = [wall1_11, wall21_11, door_11, wall22_11, wall3_11, wall4_11];
 
-		//~ var room11 = new BuildingComponents.Room("Ch113", walls_11);
+		//~ var room11 = new RithmObjects.Room("Ch113", walls_11);
 		
-		//~ var wall1_2 = {type:0, wall:new BuildingComponents.Wall(130, 10, 270, 10)};
-		//~ var wall2_2 = {type:0, wall:new BuildingComponents.Wall(270, 10, 270, 100)};
-		//~ var wall3_2 = {type:0, wall:new BuildingComponents.Wall(270, 100, 130, 100)};
-		//~ var wall41_2 = {type:0, wall:new BuildingComponents.Wall(130, 100, 130, 60)};
-		//~ var wall42_2 = {type:0, wall:new BuildingComponents.Wall(130, 40, 130, 10)};
-		//~ var door_2 = {type:1, door:new BuildingComponents.Door(130, 60, 130, 40)};
+		//~ var wall1_2 = {type:0, wall:new RithmObjects.Wall(130, 10, 270, 10)};
+		//~ var wall2_2 = {type:0, wall:new RithmObjects.Wall(270, 10, 270, 100)};
+		//~ var wall3_2 = {type:0, wall:new RithmObjects.Wall(270, 100, 130, 100)};
+		//~ var wall41_2 = {type:0, wall:new RithmObjects.Wall(130, 100, 130, 60)};
+		//~ var wall42_2 = {type:0, wall:new RithmObjects.Wall(130, 40, 130, 10)};
+		//~ var door_2 = {type:1, door:new RithmObjects.Door(130, 60, 130, 40)};
 
 		//~ door_2.door.isOpen = true;
 		//~ var walls2 = [wall1_2, wall2_2, wall3_2, wall41_2, door_2, wall42_2];
 
-		//~ var room2 = new BuildingComponents.Room("Ch114", walls2);
+		//~ var room2 = new RithmObjects.Room("Ch114", walls2);
 		
-		//~ var wall1_21 = {type:0, wall:new BuildingComponents.Wall(130, 130, 300, 130)};
-		//~ var wall2_21 = {type:0, wall:new BuildingComponents.Wall(300, 130, 300, 240)};
-		//~ var wall3_21 = {type:0, wall:new BuildingComponents.Wall(300, 240, 130, 240)};
-		//~ var wall41_21 = {type:0, wall:new BuildingComponents.Wall(130, 240, 130, 180)};
-		//~ var wall42_21 = {type:0, wall:new BuildingComponents.Wall(130, 160, 130, 130)};
-		//~ var door_21 = {type:1, door:new BuildingComponents.Door(130, 180, 130, 160)};
+		//~ var wall1_21 = {type:0, wall:new RithmObjects.Wall(130, 130, 300, 130)};
+		//~ var wall2_21 = {type:0, wall:new RithmObjects.Wall(300, 130, 300, 240)};
+		//~ var wall3_21 = {type:0, wall:new RithmObjects.Wall(300, 240, 130, 240)};
+		//~ var wall41_21 = {type:0, wall:new RithmObjects.Wall(130, 240, 130, 180)};
+		//~ var wall42_21 = {type:0, wall:new RithmObjects.Wall(130, 160, 130, 130)};
+		//~ var door_21 = {type:1, door:new RithmObjects.Door(130, 180, 130, 160)};
 
 		//~ door_21.door.isOpen = true;
 		//~ var walls21 = [wall1_21, wall2_21, wall3_21, wall41_21, door_21, wall42_21];
 
-		//~ var room21 = new BuildingComponents.Room("Ch115", walls21);
+		//~ var room21 = new RithmObjects.Room("Ch115", walls21);
 		
-		//~ var wall1_22 = {type:0, wall:new BuildingComponents.Wall(130, 240, 300, 240)};
-		//~ var wall2_22 = {type:0, wall:new BuildingComponents.Wall(300, 240, 300, 340)};
-		//~ var wall3_22 = {type:0, wall:new BuildingComponents.Wall(300, 340, 130, 340)};
-		//~ var wall41_22 = {type:0, wall:new BuildingComponents.Wall(130, 340, 130, 300)};
-		//~ var wall42_22 = {type:0, wall:new BuildingComponents.Wall(130, 280, 130, 240)};
-		//~ var door_22 = {type:1, door:new BuildingComponents.Door(130, 300, 130, 280)};
+		//~ var wall1_22 = {type:0, wall:new RithmObjects.Wall(130, 240, 300, 240)};
+		//~ var wall2_22 = {type:0, wall:new RithmObjects.Wall(300, 240, 300, 340)};
+		//~ var wall3_22 = {type:0, wall:new RithmObjects.Wall(300, 340, 130, 340)};
+		//~ var wall41_22 = {type:0, wall:new RithmObjects.Wall(130, 340, 130, 300)};
+		//~ var wall42_22 = {type:0, wall:new RithmObjects.Wall(130, 280, 130, 240)};
+		//~ var door_22 = {type:1, door:new RithmObjects.Door(130, 300, 130, 280)};
 
 		//~ door_22.door.isOpen = true;
 		//~ var walls22 = [wall1_22, wall2_22, wall3_22, wall41_22, door_22, wall42_22];
-		//~ var room22 = new BuildingComponents.Room("Ch116", walls22);
+		//~ var room22 = new RithmObjects.Room("Ch116", walls22);
 		
-		//~ var wall1_23 = {type:0, wall:new BuildingComponents.Wall(360, 10, 530, 10)};
-		//~ var wall2_23 = {type:0, wall:new BuildingComponents.Wall(360, 100, 360, 10)};
-		//~ var wall3_23 = {type:0, wall:new BuildingComponents.Wall(530, 100, 360, 100)};
-		//~ var wall41_23 = {type:0, wall:new BuildingComponents.Wall(530, 60, 530, 100)};
-		//~ var wall42_23 = {type:0, wall:new BuildingComponents.Wall(530, 10, 530, 40)};
-		//~ var door_23 = {type:1, door:new BuildingComponents.Door(530, 40, 530, 60)};
+		//~ var wall1_23 = {type:0, wall:new RithmObjects.Wall(360, 10, 530, 10)};
+		//~ var wall2_23 = {type:0, wall:new RithmObjects.Wall(360, 100, 360, 10)};
+		//~ var wall3_23 = {type:0, wall:new RithmObjects.Wall(530, 100, 360, 100)};
+		//~ var wall41_23 = {type:0, wall:new RithmObjects.Wall(530, 60, 530, 100)};
+		//~ var wall42_23 = {type:0, wall:new RithmObjects.Wall(530, 10, 530, 40)};
+		//~ var door_23 = {type:1, door:new RithmObjects.Door(530, 40, 530, 60)};
 
 		//~ door_23.door.isOpen = true;
 		//~ var walls23 = [wall1_23, wall42_23, door_23, wall41_23, wall3_23, wall2_23];
 
-		//~ var room23 = new BuildingComponents.Room("Ch117", walls23);
+		//~ var room23 = new RithmObjects.Room("Ch117", walls23);
 		
-		//~ var wall1_24 = {type:0, wall:new BuildingComponents.Wall(330, 130, 530, 130)};
-		//~ var wall2_24 = {type:0, wall:new BuildingComponents.Wall(330, 240, 330, 130)};
-		//~ var wall3_24 = {type:0, wall:new BuildingComponents.Wall(530, 240, 330, 240)};
-		//~ var wall41_24 = {type:0, wall:new BuildingComponents.Wall(530, 180, 530, 240)};
-		//~ var wall42_24 = {type:0, wall:new BuildingComponents.Wall(530, 130, 530, 160)};
-		//~ var door_24 = {type:1, door:new BuildingComponents.Door(530, 160, 530, 180)};
+		//~ var wall1_24 = {type:0, wall:new RithmObjects.Wall(330, 130, 530, 130)};
+		//~ var wall2_24 = {type:0, wall:new RithmObjects.Wall(330, 240, 330, 130)};
+		//~ var wall3_24 = {type:0, wall:new RithmObjects.Wall(530, 240, 330, 240)};
+		//~ var wall41_24 = {type:0, wall:new RithmObjects.Wall(530, 180, 530, 240)};
+		//~ var wall42_24 = {type:0, wall:new RithmObjects.Wall(530, 130, 530, 160)};
+		//~ var door_24 = {type:1, door:new RithmObjects.Door(530, 160, 530, 180)};
 
 		//~ door_24.door.isOpen = true;
 		//~ var walls24 = [wall1_24, wall42_24, door_24, wall41_24, wall3_24, wall2_24];
 
-		//~ var room24 = new BuildingComponents.Room("Ch118", walls24);
+		//~ var room24 = new RithmObjects.Room("Ch118", walls24);
 		
-		//~ var wall1_25 = {type:0, wall:new BuildingComponents.Wall(330, 240, 530, 240)};
-		//~ var wall2_25 = {type:0, wall:new BuildingComponents.Wall(330, 340, 330, 240)};
-		//~ var wall3_25 = {type:0, wall:new BuildingComponents.Wall(530, 340, 330, 340)};
-		//~ var wall41_25 = {type:0, wall:new BuildingComponents.Wall(530, 300, 530, 340)};
-		//~ var wall42_25 = {type:0, wall:new BuildingComponents.Wall(530, 240, 530, 280)};
-		//~ var door_25 = {type:1, door:new BuildingComponents.Door(530, 280, 530, 300)};
+		//~ var wall1_25 = {type:0, wall:new RithmObjects.Wall(330, 240, 530, 240)};
+		//~ var wall2_25 = {type:0, wall:new RithmObjects.Wall(330, 340, 330, 240)};
+		//~ var wall3_25 = {type:0, wall:new RithmObjects.Wall(530, 340, 330, 340)};
+		//~ var wall41_25 = {type:0, wall:new RithmObjects.Wall(530, 300, 530, 340)};
+		//~ var wall42_25 = {type:0, wall:new RithmObjects.Wall(530, 240, 530, 280)};
+		//~ var door_25 = {type:1, door:new RithmObjects.Door(530, 280, 530, 300)};
 
 		//~ door_25.door.isOpen = true;
 		//~ var walls25 = [wall1_25, wall42_25, door_25, wall41_25, wall3_25, wall2_25];
 
-		//~ var room25 = new BuildingComponents.Room("Ch119", walls25);
+		//~ var room25 = new RithmObjects.Room("Ch119", walls25);
 		
 		
-		//~ var wall1_14 = {type:0, wall:new BuildingComponents.Wall(560, 10, 660, 10)};
-		//~ var wall21_14 = {type:0, wall:new BuildingComponents.Wall(560, 40, 560, 10)};
-		//~ var door_14 = {type:1, door:new BuildingComponents.Door(560, 60, 560, 40)};
-		//~ var wall22_14 = {type:0, wall:new BuildingComponents.Wall(560, 100, 560, 60)};
-		//~ var wall3_14 = {type:0, wall:new BuildingComponents.Wall(660, 100, 560, 100)};
-		//~ var wall4_14 = {type:0, wall:new BuildingComponents.Wall(660, 10, 660, 100)};
+		//~ var wall1_14 = {type:0, wall:new RithmObjects.Wall(560, 10, 660, 10)};
+		//~ var wall21_14 = {type:0, wall:new RithmObjects.Wall(560, 40, 560, 10)};
+		//~ var door_14 = {type:1, door:new RithmObjects.Door(560, 60, 560, 40)};
+		//~ var wall22_14 = {type:0, wall:new RithmObjects.Wall(560, 100, 560, 60)};
+		//~ var wall3_14 = {type:0, wall:new RithmObjects.Wall(660, 100, 560, 100)};
+		//~ var wall4_14 = {type:0, wall:new RithmObjects.Wall(660, 10, 660, 100)};
 
 		//~ door_14.door.isOpen = true;
 		//~ var walls_14 = [wall1_14, wall4_14, wall3_14, wall22_14, door_14, wall21_14];
 
-		//~ var room14 = new BuildingComponents.Room("Ch120", walls_14);
+		//~ var room14 = new RithmObjects.Room("Ch120", walls_14);
 		
-		//~ var wall1_15 = {type:0, wall:new BuildingComponents.Wall(560, 100, 660, 100)};
-		//~ var wall21_15 = {type:0, wall:new BuildingComponents.Wall(560, 150, 560, 100)};
-		//~ var door_15 = {type:1, door:new BuildingComponents.Door(560, 170, 560, 150)};
-		//~ var wall22_15 = {type:0, wall:new BuildingComponents.Wall(560, 240, 560, 170)};
-		//~ var wall3_15 = {type:0, wall:new BuildingComponents.Wall(660, 240, 560, 240)};
-		//~ var wall4_15 = {type:0, wall:new BuildingComponents.Wall(660, 100, 660, 240)};
+		//~ var wall1_15 = {type:0, wall:new RithmObjects.Wall(560, 100, 660, 100)};
+		//~ var wall21_15 = {type:0, wall:new RithmObjects.Wall(560, 150, 560, 100)};
+		//~ var door_15 = {type:1, door:new RithmObjects.Door(560, 170, 560, 150)};
+		//~ var wall22_15 = {type:0, wall:new RithmObjects.Wall(560, 240, 560, 170)};
+		//~ var wall3_15 = {type:0, wall:new RithmObjects.Wall(660, 240, 560, 240)};
+		//~ var wall4_15 = {type:0, wall:new RithmObjects.Wall(660, 100, 660, 240)};
 
 		//~ door_15.door.isOpen = true;
 		//~ var walls_15 = [wall1_15, wall4_15, wall3_15, wall22_15, door_15, wall21_15];
 
-		//~ var room15 = new BuildingComponents.Room("Ch121", walls_15);
+		//~ var room15 = new RithmObjects.Room("Ch121", walls_15);
 		
-		//~ var wall1_16 = {type:0, wall:new BuildingComponents.Wall(560, 240, 660, 240)};
-		//~ var wall21_16 = {type:0, wall:new BuildingComponents.Wall(560, 280, 560, 240)};
-		//~ var door_16 = {type:1, door:new BuildingComponents.Door(560, 300, 560, 280)};
-		//~ var wall22_16 = {type:0, wall:new BuildingComponents.Wall(560, 370, 560, 300)};
-		//~ var wall3_16 = {type:0, wall:new BuildingComponents.Wall(660, 370, 560, 370)};
-		//~ var wall4_16 = {type:0, wall:new BuildingComponents.Wall(660, 240, 660, 370)};
+		//~ var wall1_16 = {type:0, wall:new RithmObjects.Wall(560, 240, 660, 240)};
+		//~ var wall21_16 = {type:0, wall:new RithmObjects.Wall(560, 280, 560, 240)};
+		//~ var door_16 = {type:1, door:new RithmObjects.Door(560, 300, 560, 280)};
+		//~ var wall22_16 = {type:0, wall:new RithmObjects.Wall(560, 370, 560, 300)};
+		//~ var wall3_16 = {type:0, wall:new RithmObjects.Wall(660, 370, 560, 370)};
+		//~ var wall4_16 = {type:0, wall:new RithmObjects.Wall(660, 240, 660, 370)};
 
 		//~ door_16.door.isOpen = false;
 		//~ var walls_16 = [wall1_16, wall4_16, wall3_16, wall22_16, door_16, wall21_16];
 
-		//~ var room16 = new BuildingComponents.Room("Ch122", walls_16);
+		//~ var room16 = new RithmObjects.Room("Ch122", walls_16);
 
 		
-		//~ var wall11_3 = {type:0, wall:new BuildingComponents.Wall(10, 370, 110, 370)};
-		//~ var wall12_3 = {type:0, wall:new BuildingComponents.Wall(130, 370, 300, 370)};
-		//~ var wall21_3 = {type:0, wall:new BuildingComponents.Wall(300, 370, 300, 380)};
-		//~ var wall22_3 = {type:0, wall:new BuildingComponents.Wall(300, 400, 300, 420)};
-		//~ var wall3_3 = {type:0, wall:new BuildingComponents.Wall(300, 420, 260, 420)};
-		//~ var wall4_3 = {type:0, wall:new BuildingComponents.Wall(260, 420, 260, 440)};
-		//~ var wall5_3 = {type:0, wall:new BuildingComponents.Wall(260, 440, 10, 400)};
-		//~ var wall6_3 = {type:0, wall:new BuildingComponents.Wall(10, 400, 10, 370)};
-		//~ var door_31 = {type:1, door:new BuildingComponents.Door(110, 370, 130, 370)};
-		//~ var door_32 = {type:1, door:new BuildingComponents.Door(300, 380, 300, 400)};
+		//~ var wall11_3 = {type:0, wall:new RithmObjects.Wall(10, 370, 110, 370)};
+		//~ var wall12_3 = {type:0, wall:new RithmObjects.Wall(130, 370, 300, 370)};
+		//~ var wall21_3 = {type:0, wall:new RithmObjects.Wall(300, 370, 300, 380)};
+		//~ var wall22_3 = {type:0, wall:new RithmObjects.Wall(300, 400, 300, 420)};
+		//~ var wall3_3 = {type:0, wall:new RithmObjects.Wall(300, 420, 260, 420)};
+		//~ var wall4_3 = {type:0, wall:new RithmObjects.Wall(260, 420, 260, 440)};
+		//~ var wall5_3 = {type:0, wall:new RithmObjects.Wall(260, 440, 10, 400)};
+		//~ var wall6_3 = {type:0, wall:new RithmObjects.Wall(10, 400, 10, 370)};
+		//~ var door_31 = {type:1, door:new RithmObjects.Door(110, 370, 130, 370)};
+		//~ var door_32 = {type:1, door:new RithmObjects.Door(300, 380, 300, 400)};
 
 		//~ door_31.door.isOpen = false;
 		//~ door_32.door.isOpen = true;
 		//~ var walls3 = [wall11_3, door_31, wall12_3, wall21_3, door_32, wall22_3, wall3_3, wall4_3, wall5_3, wall6_3];
 
-		//~ var room3 = new BuildingComponents.Room("Bl11", walls3);
+		//~ var room3 = new RithmObjects.Room("Bl11", walls3);
 		
-		//~ var wall1_31 = {type:0, wall:new BuildingComponents.Wall(330, 380, 330, 370)};
-		//~ var door_312 = {type:1, door:new BuildingComponents.Door(330, 400, 330, 380)};
-		//~ var wall11_3 = {type:0, wall:new BuildingComponents.Wall(330, 420, 330, 400)};
-		//~ var wall2_3 = {type:0, wall:new BuildingComponents.Wall(370, 420, 330, 420)};
-		//~ var wall3_3 = {type:0, wall:new BuildingComponents.Wall(370, 440, 370, 420)};
-		//~ var wall4_3 = {type:0, wall:new BuildingComponents.Wall(660, 400, 370, 440)};
-		//~ var wall5_3 = {type:0, wall:new BuildingComponents.Wall(660, 370, 660, 400)};
-		//~ var wall6_3 = {type:0, wall:new BuildingComponents.Wall(430, 370, 660, 370)};
-		//~ var door_311 = {type:1, door:new BuildingComponents.Door(410, 370, 430, 370)};
-		//~ var wall7_3 = {type:0, wall:new BuildingComponents.Wall(330, 370, 410, 370)};		
+		//~ var wall1_31 = {type:0, wall:new RithmObjects.Wall(330, 380, 330, 370)};
+		//~ var door_312 = {type:1, door:new RithmObjects.Door(330, 400, 330, 380)};
+		//~ var wall11_3 = {type:0, wall:new RithmObjects.Wall(330, 420, 330, 400)};
+		//~ var wall2_3 = {type:0, wall:new RithmObjects.Wall(370, 420, 330, 420)};
+		//~ var wall3_3 = {type:0, wall:new RithmObjects.Wall(370, 440, 370, 420)};
+		//~ var wall4_3 = {type:0, wall:new RithmObjects.Wall(660, 400, 370, 440)};
+		//~ var wall5_3 = {type:0, wall:new RithmObjects.Wall(660, 370, 660, 400)};
+		//~ var wall6_3 = {type:0, wall:new RithmObjects.Wall(430, 370, 660, 370)};
+		//~ var door_311 = {type:1, door:new RithmObjects.Door(410, 370, 430, 370)};
+		//~ var wall7_3 = {type:0, wall:new RithmObjects.Wall(330, 370, 410, 370)};		
 
 		//~ door_311.door.isOpen = true;
 		//~ door_312.door.isOpen = true;
 		//~ var walls31 = [wall7_3, door_311, wall6_3, wall5_3, wall4_3, wall3_3, wall2_3, wall11_3, door_312, wall1_31];
 
-		//~ var room31 = new BuildingComponents.Room("Bl12", walls31);
+		//~ var room31 = new RithmObjects.Room("Bl12", walls31);
 
-		//~ var wall1_90 = {type:0, wall:new BuildingComponents.Wall(270, 10, 360, 10)};
-		//~ var wall2_90 = {type:0, wall:new BuildingComponents.Wall(360, 10, 360, 100)};
-		//~ var wall31_90 = {type:0, wall:new BuildingComponents.Wall(360, 100, 330, 100)};
-		//~ var wall32_90 = {type:0, wall:new BuildingComponents.Wall(300, 100, 270, 100)};
-		//~ var wall4_90 = {type:0, wall:new BuildingComponents.Wall(270, 100, 270, 10)};
-		//~ var door_90 = {type:1, door:new BuildingComponents.Door(330, 100, 300, 100)};
+		//~ var wall1_90 = {type:0, wall:new RithmObjects.Wall(270, 10, 360, 10)};
+		//~ var wall2_90 = {type:0, wall:new RithmObjects.Wall(360, 10, 360, 100)};
+		//~ var wall31_90 = {type:0, wall:new RithmObjects.Wall(360, 100, 330, 100)};
+		//~ var wall32_90 = {type:0, wall:new RithmObjects.Wall(300, 100, 270, 100)};
+		//~ var wall4_90 = {type:0, wall:new RithmObjects.Wall(270, 100, 270, 10)};
+		//~ var door_90 = {type:1, door:new RithmObjects.Door(330, 100, 300, 100)};
 
 		//~ door_90.door.isOpen = false;
 		//~ var walls90 = [wall1_90, wall2_90, wall31_90,door_90, wall32_90, wall4_90];
 
-		//~ var room90 = new BuildingComponents.Room("Dep11", walls90);		
+		//~ var room90 = new RithmObjects.Room("Dep11", walls90);		
 
 		//~ BuildingGenerator.addRoom(1, room);
 		//~ BuildingGenerator.addRoom(2, room2);
@@ -1040,69 +1059,69 @@ var BuildingGenerator = {
 		
 		
 		// AJOUT DE WARNINGS :
-		var warning = new BuildingComponents.Warning(BuildingGenerator.roomShapes[1].room, 'Danger!');
+		var warning = new RithmObjects.Warning(BuildingGenerator.roomShapes[1].room, 'Danger!');
 		BuildingGenerator.addWarning(1, warning);	
-		var warning2 = new BuildingComponents.Warning(BuildingGenerator.roomShapes[2].room, 'Patient #42 - Fatal Error!');
+		var warning2 = new RithmObjects.Warning(BuildingGenerator.roomShapes[2].room, 'Patient #42 - Fatal Error!');
 		BuildingGenerator.addWarning(2, warning2);	
-		var warning3 = new BuildingComponents.Warning(BuildingGenerator.roomShapes[3].room, 'L\'opération tourne mal !');
+		var warning3 = new RithmObjects.Warning(BuildingGenerator.roomShapes[3].room, 'L\'opération tourne mal !');
 		BuildingGenerator.addWarning(3, warning3);	
-		var warning4 = new BuildingComponents.Warning(BuildingGenerator.roomShapes[3].room, 'Trop tard ...');
+		var warning4 = new RithmObjects.Warning(BuildingGenerator.roomShapes[3].room, 'Trop tard ...');
 		BuildingGenerator.addWarning(4, warning4);
 		
 		// AJOUT DE PATIENTS :
-		//~ var pat1 = new BuildingComponents.Patient("Arnaud", true, "Cuite sévère", 1);
+		//~ var pat1 = new RithmObjects.Patient("Arnaud", true, "Cuite sévère", 1);
 		//~ room.addPatient(pat1);
-		//~ var pat2 = new BuildingComponents.Patient("Thibaut", true, "Idem", 1);
+		//~ var pat2 = new RithmObjects.Patient("Thibaut", true, "Idem", 1);
 		//~ room.addPatient(pat2);
-		//~ var pat3 = new BuildingComponents.Patient("Jérémy", true, "Idem", 1);
+		//~ var pat3 = new RithmObjects.Patient("Jérémy", true, "Idem", 1);
 		//~ room.addPatient(pat3);
-		//~ var pat4 = new BuildingComponents.Patient("Daniel", true, "Idem", 1);
+		//~ var pat4 = new RithmObjects.Patient("Daniel", true, "Idem", 1);
 		//~ room.addPatient(pat4);
-		//~ var pat5 = new BuildingComponents.Patient("Boule", true, "Idem", 2);
+		//~ var pat5 = new RithmObjects.Patient("Boule", true, "Idem", 2);
 		//~ room2.addPatient(pat5);
-		//~ var pat6 = new BuildingComponents.Patient("Bill", true, "Idem", 2);
+		//~ var pat6 = new RithmObjects.Patient("Bill", true, "Idem", 2);
 		//~ room2.addPatient(pat6);
-		//~ var pat7 = new BuildingComponents.Patient("Jeanne", false, "Tronchage", 3);
+		//~ var pat7 = new RithmObjects.Patient("Jeanne", false, "Tronchage", 3);
 		//~ room3.addPatient(pat7);
-		//~ var pat8 = new BuildingComponents.Patient("Jeannette", false, "Idem", 6);
+		//~ var pat8 = new RithmObjects.Patient("Jeannette", false, "Idem", 6);
 		//~ room10.addPatient(pat8);
-		//~ var pat9 = new BuildingComponents.Patient("Arnaud", true, "Idem", 5);
+		//~ var pat9 = new RithmObjects.Patient("Arnaud", true, "Idem", 5);
 		//~ room11.addPatient(pat9);
-		//~ var pat10 = new BuildingComponents.Patient("Arnaud", true, "Idem", 5);
+		//~ var pat10 = new RithmObjects.Patient("Arnaud", true, "Idem", 5);
 		//~ room11.addPatient(pat10);
 		
 		
 		// AJOUT DE CAPTEURS :
-		//~ var sen1 = new BuildingComponents.Sensor("3");
+		//~ var sen1 = new RithmObjects.Sensor("3");
 		//~ sen1.setSubject(1, true);
 		//~ sen1.setMeasure({type: "3", time: new Date(), value: 30});
 		//~ room.addSensor(sen1);
-		//~ var sen2 = new BuildingComponents.Sensor("3");
+		//~ var sen2 = new RithmObjects.Sensor("3");
 		//~ sen2.setSubject(1, true);
 		//~ sen2.setMeasure({type: "3", time: new Date(), value: 10});
 		//~ room.addSensor(sen2);
 		for (var i in BuildingGenerator.roomShapes) {
 			// Temp & Hum sensor :
-			var s = new BuildingComponents.Sensor("3");
+			var s = new RithmObjects.Sensor("3");
 			s.setSubject(i, true);
 			s.setMeasure({type: "3", time: new Date(), value: Math.round(Math.random()*40)});
 			s.setMeasure({type: "4", time: new Date(), value: Math.round(Math.random()*100)});
 			BuildingGenerator.roomShapes[i].room.addSensor(s);
 			
 			// Hum sensor :
-			s = new BuildingComponents.Sensor("4");
+			s = new RithmObjects.Sensor("4");
 			s.setSubject(i, true);
 			s.setMeasure({type: "4", time: new Date(), value: Math.round(Math.random()*100)});
 			BuildingGenerator.roomShapes[i].room.addSensor(s);
 			
 			// Lum sensor :
-			s = new BuildingComponents.Sensor("5");
+			s = new RithmObjects.Sensor("5");
 			s.setSubject(i, true);
 			s.setMeasure({type: "5", time: new Date(), value: Math.round(Math.random()*3000)});
 			BuildingGenerator.roomShapes[i].room.addSensor(s);
 			
 			// CO2 sensor :
-			s = new BuildingComponents.Sensor("7");
+			s = new RithmObjects.Sensor("7");
 			s.setSubject(i, true);
 			s.setMeasure({type: "7", time: new Date(), value: Math.round(Math.random()*1700+300)});
 			BuildingGenerator.roomShapes[i].room.addSensor(s);

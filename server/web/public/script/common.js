@@ -1,5 +1,10 @@
 /* This file contains all the functions needed by all the pages. */
 
+// ---- GLOBAL VAR
+var rest = "http://localhost:1337";
+
+
+
 /* This extension allows to retrieve query string parameters. */
 $.extend({
 	  getUrlVars: function(){
@@ -19,12 +24,12 @@ $.extend({
 	});
 
 /* Create Comet service (Long Polling Request) */
-function createComet(service, action, getData, callback) {
+function createComet(service, action, timeOut, getData, callback) {
     function connectComet () {
 	var req = getData();
         $.ajax({
             url: rest + '/' + service,
-            timeout: 100000,
+            timeout: timeOut,
             type: action,
 	    data: req,
 	    dataType: 'json',
