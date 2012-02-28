@@ -32,7 +32,7 @@ function sqlConnect() {
  * ============================================================================
  */
 function getPatients(param, callback) {
-
+	
 	// Construct the SQL query :
 	var sql_req = squel.select()
 		.field("id")

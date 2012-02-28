@@ -1,0 +1,30 @@
+<div class="page-header">
+	<div class="row">
+		<div class="span1">
+			<img src="images/logo.png" alt="RiTHM" />
+		</div>
+		<div class="span11">
+			<h2>Authentification</h2>
+			<form action="/auth" method="post" name="loginForm">
+				<p>
+				<% if (next != null) { %>
+					<input type="hidden" name="next" value="<%= next %>" />
+				<% } %>
+				<label for="idLogin">Login: </label><input id="idLogin" type="text" name="login" required="required"/><br />
+				<label for="idPassword">Password: </label><input id="idPassword" type="password" name="password" required="required"/><br />
+				<label>&nbsp;</label><input type="submit" value="Login" class="submit_login"/>
+				</p>
+			</form>
+		</div>
+	</div>
+</div>
+
+<div class="row">
+
+<section class="span10">
+	<div id="buildingContainer" >		
+	</div>
+</section>
+
+
+</div>
