@@ -1,5 +1,6 @@
 var modelrooms = require("./model/rooms");
 var modelpatients = require("./model/patients");
+var modelsensors = require("./model/sensors");
 
 /*
  * VIEW Index
@@ -41,12 +42,32 @@ function viewLogin(req, res) {
  * VIEW Patient
  */
 function viewPatient(req, res) {
-	data = req.param("id", null);
+	var id = req.param("id", null);
+	var req = {"id":id};
 	
 	// Get model data
-	modelpatients.getPatients(data, function(result) {
+	modelpatients.getPatients(req, function(result) {
 		var patientDetails=result.hits[0];
-		res.render('patient', {title: "Patient "+patientDetails.nom, patientDetails: patientDetails});
+		
+		modelsensors.getSensorsListByPatient(id, function(result) {
+            var sensors = result.hits;
+            var measures = [];
+            
+            for(var i in sensors) {
+            	var sensor = sensors[i];
+            	var types = modelsensors.getRecordtypesBySensortype(sensor.type);
+            	for(var j in types) {
+            		var measure = {
+            			sensorId : sensor.id,
+            			sensorType : sensor.type,
+            			recordType : types[j],
+            			name : modelsensors.recordtypeToString(types[j])
+            		};
+            		measures.push(measure);
+            	}
+            }
+            res.render('patient', {title: "Patient "+patientDetails.nom, patientDetails: patientDetails, measures: measures});
+        });
 	});
 }
 
