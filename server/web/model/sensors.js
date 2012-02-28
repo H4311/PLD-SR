@@ -61,9 +61,9 @@ function getSensorsRecords(param, callback) {
 		.field("typeMesure")
 		.from("mesures");
 	var sql_cond = squel.expr();
-	if(request.sensors) {
-		for(var i in request.sensors) {
-			var sensor = request.sensors[i];
+	if(param.sensors) {
+		for(var i in param.sensors) {
+			var sensor = JSON.parse(param.sensors[i]);
 			if(!sensor.id) continue;
 			if(!sensor.from) continue;
 			
