@@ -20,5 +20,14 @@ function viewRoom(req, res) {
 	});
 }
 
+/*
+ * VIEW Login
+ */
+function viewLogin(req, res) {
+	next = req.param("next", null);
+	res.render('login', {title: "Login", next: next});
+}
+
 exports.index = viewIndex;
 exports.room = viewRoom;
+exports.login = viewLogin;
