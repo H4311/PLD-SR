@@ -1,0 +1,56 @@
+
+body {
+    font-family: 'Helvetica Neue', 'Helvetica Neue', Helvetica, Arial, sans-serif;
+}
+
+/* -------------------------------------------------------------------------------------------------
+----------------						MAP						--------------------------------
+-----------------------------------------------------------------------------------------------------*/
+
+#buildingContainer {
+	position: absolute;
+	left: 170px;
+	top: 100px;
+}
+
+#roomDesc, #warningDesc {
+	position: absolute;
+	background-color: #333;
+	-webkit-border-radius:10px;
+	   -moz-border-radius:10px;
+			border-radius:10px;
+	display: none;
+	padding: 3px;
+	border: 1px solid black;
+	color: white;
+}
+
+#roomDesc p {
+	float: left;
+	width: 30px;
+	position: relative;
+	top: 55px;
+	font-weight: bold;
+	font-size: 1.5em;
+	-moz-transform:rotate(-90deg); 
+	-moz-transform-origin: top left;
+	-webkit-transform: rotate(-90deg);
+	-webkit-transform-origin: top left;
+	-o-transform: rotate(-90deg);
+	-o-transform-origin:  top left;
+	filter: progid:DXImageTransform.Microsoft.BasicImage(rotation=-1);
+}
+
+#roomDesc table {
+	float: right;
+}
+
+#roomDesc table tr:nth-child(3) td:nth-child(1) {
+	color: white;
+	font-weight: bold;
+	text-align: center;
+}
+
+#warningDesc {
+	background-color: red;
+}

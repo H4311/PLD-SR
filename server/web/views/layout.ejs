@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8" />
+<link href="bootstrap/css/bootstrap.css" rel="stylesheet">
+<style type="text/css">
+body {
+	padding-top: 60px;
+	padding-bottom: 40px;
+}
+</style>
+<link href="bootstrap/css/bootstrap-responsive.css" rel="stylesheet">
+<link href="css/style.css" rel="stylesheet">
+<title>RiTHM - <%= title %></title>
+</head>
+
+<body>
+
+<header class="navbar navbar-fixed-top" role="banner">
+<div class="navbar-inner">
+<div class="container">
+
+  <a class="btn btn-navbar" data-toggle="collapse" data-target=".nav-collapse">
+    <span class="icon-bar"></span>
+    <span class="icon-bar"></span>
+    <span class="icon-bar"></span>
+  </a>
+  <a class="brand" href="#">Tableau de bord</a>
+  <div class="nav-collapse">
+    <ul class="nav">
+
+      <li><a href="index"><i class="icon-home icon-white"></i>&nbsp;Accueil</a></li>
+      <li><a href="alerts"><i class="icon-exclamation-sign icon-white"></i>&nbsp;Notifications</a></li>
+      <li><a href="help"><i class="icon-question-sign icon-white"></i>&nbsp;Aide</a></li>
+    </ul>
+  </div>
+</div>
+</div>
+</header>
+
+<div class="container">
+
+<%- body %>
+
+<footer>&copy; Hexanome H4311 - 2012</footer>
+
+</div>
+
+<script src="http://code.jquery.com/jquery-1.7.1.js"></script>
+<script src="bootstrap/js/bootstrap.js"></script>
+<!-- TODO Add JS scripts here -->
+	
+</body>
+
+</html>
