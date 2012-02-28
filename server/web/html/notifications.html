@@ -43,7 +43,8 @@
 		for(var i in data.alerts) {
 			var a = data.alerts[i];
 			var notif = "";
-			notif += dateToString(new Date(a.time/1000)) + " : ";
+			var d = new Date(a.time);
+			notif += dateToString(d) + " : ";
 			notif += "Alerte " + a.id + " (" + a.nom + ")</br>Déclenchée par les capteurs : ";
 			for(var j in a.sensors) {
 				if(j != 0) {
@@ -56,7 +57,7 @@
 			addNotification(notif);
 			
 		}
-		nbRequests--;
+		//~ nbRequests--;
 	}
 
 	

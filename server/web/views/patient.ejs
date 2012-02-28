@@ -19,31 +19,23 @@
 
 <hr />
 
-<h3>Liste des capteurs du patient</h3>
+<h3>Liste des mesures du patient</h3>
 <table class="table table-condensed">
     <thead>
         <tr>
-        <th>Capteur</th>
+        <th>Mesure</th>
         <th>Valeur</th>
+        <th>Historique</th>
         </tr>
     </thead>
     <tbody>
+    	<% measures.forEach(function(measure){ %>
         <tr>
-        <td><i class="icon-user"></i>&nbsp;Arnal</td>
-        <td>Ch213</td>
+        <td><i class="icon-signal"></i>&nbsp;<span class="label label-info"><%= measure.name %></span>&nbsp;Capteur N°<%= measure.sensorId %></td>
+        <td><span class="measure" id="measure_<%= measure.sensorId %>_<%= measure.recordType %>">0</span></td>
+        <td><a href="#" class="histo btn btn-info" id="histo_<%= measure.sensorId %>_<%= measure.recordType %>">Voir l'historique</a></td>
         </tr>
-        <tr>
-        <td><i class="icon-user"></i>&nbsp;Arnal</td>
-        <td>Ch213</td>
-        </tr>
-        <tr>
-        <td><i class="icon-user"></i>&nbsp;Arnal</td>
-        <td>Ch213</td>
-        </tr>
-        <tr>
-        <td><i class="icon-user"></i>&nbsp;Arnal</td>
-        <td>Ch213</td>
-        </tr>
+        <% }) %>
     </tbody>
 </table>
 </div>

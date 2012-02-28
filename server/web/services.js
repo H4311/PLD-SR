@@ -202,11 +202,10 @@ function serviceRooms(req, resp) {
  * SERVICE Murs
  * Allows to retrieve murs data.
  */
-function serviceMurs(method, query, data, resp) {
+function serviceMurs(req, resp) {
 	writeHeaders(resp);
-
 	// Parse the json DATA request
-	request = JSON.parse(data);
+	request = parseRequest(req, ["id"]);
 	if(!request) {
 		error(0, resp);
 		return;
@@ -236,11 +235,11 @@ function serviceAlerts(req, resp) {
  * SERVICE BondsActuators
  * Allows to retrieve the connection between actuators and subjects from the database.
  */
-function serviceBondsActuators(method, query, data, resp) {
+function serviceBondsActuators(req, resp) {
 	writeHeaders(resp);
 
 	// Parse the json DATA request
-	request = JSON.parse(data);
+	request = parseRequest(req, ["id", "subjectId"]);
 	if(!request) {
 		error(0, resp);
 		return;

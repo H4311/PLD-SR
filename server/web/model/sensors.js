@@ -61,9 +61,9 @@ function getSensorsRecords(param, callback) {
 		.field("typeMesure")
 		.from("mesures");
 	var sql_cond = squel.expr();
-	if(request.sensors) {
-		for(var i in request.sensors) {
-			var sensor = request.sensors[i];
+	if(param.sensors) {
+		for(var i in param.sensors) {
+			var sensor = JSON.parse(param.sensors[i]);
 			if(!sensor.id) continue;
 			if(!sensor.from) continue;
 			
@@ -181,8 +181,56 @@ function getActuatorsList(callback) {
 	});
 }
 
+function getRecordtypesBySensortype(sensortype) {
+	switch(sensortype) {
+		case 0x0060001:
+			return [1];
+		case 0x0050201:
+			return [2];
+		case 0x0070205:
+			return [3];
+		case 0x0070401:
+			return [3,4];
+		case 0x0070801:
+			return [5,6];
+		case 0x0070901:
+			return [8];
+		case 0x0070A01:
+			return [9];
+		case 0x00A0001:
+			return [3,5,7];
+	}
+}
+
+function recordtypeToString(recordtype) {
+	switch(recordtype) {
+		case 1:
+			return "contact";
+		case 2:
+			return "bouton";
+		case 3:
+			return "température";
+		case 4:
+			return "humidité";
+		case 5:
+			return "luminosité";
+		case 6:
+			return "présence";
+		case 7:
+			return "mouvement";
+		case 8:
+			return "niveau CO2";
+		case 9:
+			return "rythme cardiaque";
+		default:
+			return "inconnu";
+	}
+}
+
 exports.getSensorsRecords = getSensorsRecords;
 exports.getSensorsList = getSensorsList;
 exports.getSensorsListByPatient = getSensorsListByPatient;
 exports.getSensorsListByRoom = getSensorsListByRoom;
 exports.getActuatorsList = getActuatorsList;
+exports.getRecordtypesBySensortype = getRecordtypesBySensortype;
+exports.recordtypeToString = recordtypeToString;

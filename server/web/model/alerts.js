@@ -37,14 +37,14 @@ function sqlConnect() {
 function getAlerts(param, callback) {
 
 	var from = Date.parse(param.from);
-
+	console.log("Date : "+from);
 	// retrieve des alertes déclenchées
 	var sql_req = "";
 	sql_req += "SELECT time, idRegle, (SELECT nom FROM regles WHERE id = idRegle) nom ";
 	sql_req += "FROM alertes ";
-	sql_req += "WHERE time > " + from*1000 + " ";
+	sql_req += "WHERE time > " + from + " ";
 	if(param.to) {
-		sql_req += "AND time < " + Date.parse(param.to)*1000;
+		sql_req += "AND time < " + Date.parse(param.to);
 	}	
 	
 	var db = sqlConnect();
