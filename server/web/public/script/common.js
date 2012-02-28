@@ -1,7 +1,7 @@
 /* This file contains all the functions needed by all the pages. */
 
 // ---- GLOBAL VAR
-var rest = "https://localhost:1337";
+var rest = "http://localhost:1337";
 
 
 

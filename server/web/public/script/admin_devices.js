@@ -6,8 +6,8 @@ function addDevice(idDevice, type, subject, callback) {
 	};
 	
 	$.ajax({
-		type: 'PUT',
-		url: rest+'/admin_devices',
+		type: 'POST',
+		url: rest+'/add_device',
 		data: JSON.stringify(req),
 		success:  callback,
 		dataType: 'json',
@@ -33,8 +33,8 @@ function deleteDevice(idDevice) {
 	};
 	
 	$.ajax({
-		type: 'DELETE',
-		url: rest+'/admin_devices',
+		type: 'POST',
+		url: rest+'/remove_device',
 		data: JSON.stringify(req),
 		success:  callback,
 		dataType: 'json',
