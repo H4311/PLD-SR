@@ -3,38 +3,40 @@
 <head>
 	<meta charset="utf-8" />
 	<link rel="stylesheet" href="style.css" />
-	<script src="jquery/jquery-1.7.1.js"></script>
-	<script src="common.js"></script>
+	<script src="http://code.jquery.com/jquery-1.7.1.js"></script>
+	<script src="script/common.js"></script>
+	<script src="script/alerts.js"></script>
 	<title>Application Test</title>
 	
 	<script>
-	var lastUpdate = new Date(0);
+	//~ var lastUpdate = new Date(0);
 	var rest = "http://localhost:1337";
-	var nbRequests = 0;
+	fetchAlerts(handleResponse);
+	//~ var nbRequests = 0;
 	
-	$(document).ready( function() {
-		window.setInterval(refresh, 1000);
-	});
+	//~ $(document).ready( function() {
+		//~ window.setInterval(refresh, 1000);
+	//~ });
 	
-	function refresh() {
-		if(nbRequests > 0) {
-			console.log('Waiting the end of the last Request');
-			return;
-		}
-		var toDate = new Date();
+	//~ function refresh() {
+		//~ if(nbRequests > 0) {
+			//~ console.log('Waiting the end of the last Request');
+			//~ return;
+		//~ }
+		//~ var toDate = new Date();
 		
-		var req = {
-			"from" : dateToString(lastUpdate),
-			"to" : dateToString(toDate)
-		};
-		nbRequests++;
-		$.post(rest + '/alerts',
-		  JSON.stringify(req),
-		  handleResponse,
-		  "json");
+		//~ var req = {
+			//~ "from" : dateToString(lastUpdate),
+			//~ "to" : dateToString(toDate)
+		//~ };
+		//~ nbRequests++;
+		//~ $.post(rest + '/alerts',
+		  //~ JSON.stringify(req),
+		  //~ handleResponse,
+		  //~ "json");
 		
-		lastUpdate = toDate;
-	}
+		//~ lastUpdate = toDate;
+	//~ }
 	
 	function handleResponse(data) {
 		console.log(JSON.stringify(data));
@@ -56,27 +58,7 @@
 		}
 		nbRequests--;
 	}
-	
-	function dateToString(date) {
-		var s = "";
-		s += date.getFullYear();
-		s += "/";
-		s += twoDigits(date.getMonth()+1);
-		s += "/";
-		s += twoDigits(date.getDate());
-		s += " ";
-		s += twoDigits(date.getHours());
-		s += ":";
-		s += twoDigits(date.getMinutes());
-		s += ":";
-		s += twoDigits(date.getSeconds());
-		return s;
-	}
-	
-	function twoDigits(nb) {
-		var retour = nb < 10 ? "0" + nb : "" + nb;
-		return retour;
-	}
+
 	
 	function addNotification(notif) {
 		var newElem = "<li><div class=\"warning\">"/* + new Date().getHours() + ":" + new Date().getMinutes() + ":" + new Date().getSeconds() + " "*/ + notif + "</div></li>";

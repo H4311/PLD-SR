@@ -1,33 +1,11 @@
 var modelrooms = require("./model/rooms");
 var modelpatients = require("./model/patients");
 
-function error(code, resp) {
-	var result = {};
-	result.error = {};
-	result.error.code = code;
-	
-	switch(code) {
-		case 0:
-			result.error.msg = "Couldn't parse the JSON";
-			break;
-		case 1:
-			result.error.msg = "Unsupported HTTP/1.1 method for this service";
-			break;
-		default:
-			result.error.msg = "Unknow error";
-	}
-	
-	var jsonResult = JSON.stringify(result);
-	resp.end(jsonResult);
-}
-
-function parseRequest(req, names) {
-	request = {}
-	for (var n in names) {
-		request[names[n]] = req.param(names[n], null);
-	}
-	console.log("Request : " + JSON.stringify(request))
-	return request;
+/*
+ * VIEW Index
+ */
+function viewIndex(req, res) {
+	res.render('index', {title: "Accueil"});
 }
 
 /*
@@ -50,4 +28,15 @@ function viewRoom(req, res) {
     });
 }
 
+
+/*
+ * VIEW Login
+ */
+function viewLogin(req, res) {
+	next = req.param("next", null);
+	res.render('login', {title: "Login", next: next});
+}
+
+exports.index = viewIndex;
 exports.room = viewRoom;
+exports.login = viewLogin;

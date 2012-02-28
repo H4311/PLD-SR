@@ -17,3 +17,48 @@ $.extend({
 		return $.getUrlVars()[name];
 	  }
 	});
+
+/* Create Comet service (Long Polling Request) */
+function createComet(service, action, getData, callback) {
+    function connectComet () {
+	var req = getData();
+        $.ajax({
+            url: rest + '/' + service,
+            timeout: 100000,
+            type: action,
+	    data: JSON.stringify(req),
+	    dataType: 'json',
+            async: true,
+            success: function (data) {
+                    connectComet();
+                    callback(data);
+                },
+            error: function (jqXHR) {
+                        connectComet();
+                }		
+        });
+    }
+    connectComet();
+}
+
+/* Time functions */
+function dateToString(date) {
+	var s = "";
+	s += date.getFullYear();
+	s += "/";
+	s += twoDigits(date.getMonth()+1);
+	s += "/";
+	s += twoDigits(date.getDate());
+	s += " ";
+	s += twoDigits(date.getHours());
+	s += ":";
+	s += twoDigits(date.getMinutes());
+	s += ":";
+	s += twoDigits(date.getSeconds());
+	return s;
+}
+
+function twoDigits(nb) {
+	var retour = nb < 10 ? "0" + nb : "" + nb;
+	return retour;
+}
