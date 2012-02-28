@@ -6,7 +6,13 @@ var modelsensors = require("./model/sensors");
  * VIEW Index
  */
 function viewIndex(req, res) {
-	res.render('index', {title: "Accueil"});
+	var req = {};
+	
+    // Get rooms details
+    modelrooms.getRooms(req, function(result) {
+        var rooms=result.hits;
+        res.render('index', {title: "Accueil", rooms: rooms});
+	});
 }
 
 /*
