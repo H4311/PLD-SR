@@ -23,12 +23,12 @@ serviceHandler["/rooms"] = services.rooms;
 serviceHandler["/alerts"] = services.alerts;
 serviceHandler["/murs"] = services.murs;
 serviceHandler["/bondsActuators"] = services.bondsActuators;
+serviceHandler["/add_device"] = services.admin_add_devices;
+serviceHandler["/remove_device"] = services.admin_remove_devices;
 
 for (var url in serviceHandler) {
 	rest.post(url, serviceHandler[url]);
 }
-rest.put("/admin_devices", services.admin_add_devices);
-rest.delete("/admin_devices", services.admin_remove_devices);
 
 rest.listen(1337);
 
