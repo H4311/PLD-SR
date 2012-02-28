@@ -74,7 +74,7 @@ CREATE TABLE regleActionneur (
 	valeur REAL,
 	isActive BOOLEAN,
 	FOREIGN KEY (idRegle) REFERENCES regles (id),
-	FOREIGN KEY (idActionneur) REFERENCES Actionneur (id)
+	FOREIGN KEY (idActionneur) REFERENCES actionneurs (id)
 );
 
 CREATE TABLE alertes (
