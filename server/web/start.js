@@ -1,4 +1,5 @@
 var express = require("express");
+var fs = require("fs");
 
 var services = require("./services");
 var views = require("./views");
@@ -7,7 +8,10 @@ var authModule = require("./auth").authModule;
 var securityActivated = true;
 
 // REST Server config
-var rest = express.createServer();
+var rest = express.createServer({
+		key: fs.readFileSync('security/server.key'),
+		cert: fs.readFileSync('security/server.crt')
+	});
 rest.configure(function() {
 	rest.use(express.bodyParser()); // retrieves automatically req bodies
 	rest.use(rest.router); // manually defines the routes
@@ -33,7 +37,10 @@ rest.delete("/admin_devices", services.admin_remove_devices);
 rest.listen(1337);
 
 // HTML Server config
-var html = express.createServer();
+var html = express.createServer({
+		key: fs.readFileSync('security/server.key'),
+		cert: fs.readFileSync('security/server.crt')
+	});
 
 html.configure(function() {
 	html.use(express.bodyParser());
