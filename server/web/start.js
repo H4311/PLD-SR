@@ -1,6 +1,7 @@
 var express = require("express");
 
 var services = require("./services");
+var views = require("./views");
 
 // REST Server config
 var rest = express.createServer();
@@ -38,19 +39,8 @@ html.configure(function() {
 });
 
 // Different views of the HTML server :
-
-html.get('/(index)?', function(req, res) {
-	res.render('index', {layout: false});
-});
-
-/*html.get('/room', function(req, res) {
-	var roomId = req.param("id", null);
-	res.render('room', {layout: false, roomId: roomId});
-});*/
-
-var views = require("./views");
-
 viewHandler = {};
+viewHandler["/(index)?"] = views.index;
 viewHandler["/room"] = views.room;
 
 for (var url in viewHandler) {
