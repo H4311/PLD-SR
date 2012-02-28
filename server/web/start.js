@@ -60,6 +60,12 @@ viewHandler["/(index)?"] = views.index;
 viewHandler["/room"] = views.room;
 viewHandler["/patient"] = views.patient;
 viewHandler["/login"] = views.login;
+
+// Need to be put before * otherwise the star rule catches all the
+// requests !
+html.post("/auth", authModule.auth);
+html.get("/logout", authModule.logout);
+
 viewHandler["*"] = views.notfound;
 
 // handler, user, password
@@ -69,7 +75,5 @@ for (var url in viewHandler) {
 	(securityActivated) ? html.get(url, authModule.checkAuth(url))
 						: html.get(url, viewHandler[url]);
 }
-html.post("/auth", authModule.auth);
-html.get("/logout", authModule.logout);
 
 html.listen(8080);
