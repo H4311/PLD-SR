@@ -40,7 +40,7 @@ function viewRoom(req, res) {
  */
 function viewLogin(req, res) {
 	next = req.param("next", null);
-	res.render('login', {title: "Login", next: next});
+	res.render('login', {title: "Login", next: next, error: null});
 }
 
 /*
