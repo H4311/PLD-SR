@@ -5,6 +5,7 @@ var modeladmin = require("./model/admin");
 var modelalerts = require("./model/alerts");
 var modelmurs = require("./model/murs");
 var modelbondsActuators = require("./model/bondsActuators");
+var modelrules = require("./model/rules");
 
 function error(code, resp) {
 	var result = {};
@@ -172,6 +173,23 @@ function serviceAdminRemoveDevices(req, resp) {
 	});
 }
 
+
+/* SERVICE Rules
+ */
+function serviceAddRule(req, resp) {
+	writeHeaders(resp);
+
+	//request = parseRequest(req, ["idRegle", "nom", "createsAlert", "idCapteur", "debIT", "finIT", "idActionneur", "valeur", "isActive"]);
+	request = parseRequest(req, ["nom", "createsAlert"]);
+	// Get the response from the modeladmin layer :
+	modelrules.addRule(request, function(response) {
+		// Send the stringified json to client :
+		resp.json(response);
+	});
+	
+}
+
+
 /*
  * SERVICE Patients
  * Allows to retrieve patients data.
@@ -262,3 +280,4 @@ exports.rooms = serviceRooms;
 exports.murs = serviceMurs;
 exports.alerts = serviceAlerts;
 exports.bondsActuators = serviceBondsActuators;
+exports.rules = serviceAddRule;
