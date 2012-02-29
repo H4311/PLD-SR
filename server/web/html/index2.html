@@ -12,6 +12,8 @@
 	<script src="common.js"></script>
 	<script src="script/lib/kinetic-v3.7.3.min.js"></script>
 	<script src="script/sensors.js"></script>
+	<script src="script/objects.js"></script>
+	<script src="script/views.js"></script>
 	<script src="script/map.js"></script>
 	<script src="script/color.js"></script>
 	<link href="global.css" media="screen" rel="stylesheet" type="text/css" />
@@ -63,6 +65,11 @@
 		#warningDesc {
 			background-color: red;
 		}
+		
+		#log {
+			height: 200px;
+			overflow: scroll;
+		}
 
 	</style>
 	<script type="application/x-javascript">
@@ -73,9 +80,9 @@
 			var canvas = document.getElementById('scale');
 			canvas.width = 50;
 			canvas.height = 200;
-			BuildingGenerator.setStage('buildingContainer', window.innerWidth*0.8, window.innerHeight-130, (window.innerWidth*0.16)+10, 100+5);
+			BuildingGenerator.setStage('buildingContainer', window.innerWidth*0.1, window.innerHeight-500, (window.innerWidth*0.16)+10, 100+5);
 
- 			Initialize();
+ 			//Initialize();
 			draw();
 			
 			$('input[name="menu"]').click(function() {
@@ -136,7 +143,7 @@
 		<p id="warningDesc">
 		</p>
 	</section>
-	
+	<p id="log"></p>
 	<footer>H4311 &#169; 2011-12</footer>
  </body>
  </html>
