@@ -16,6 +16,21 @@ INSERT INTO actionneurs(numeroActionneur, type)
 VALUES(1, 0x1070901);
 INSERT INTO actionneurs (numeroActionneur, type) VALUES (1337, 42);
 
+INSERT INTO pieces(nom) VALUES ('Ch111');
+INSERT INTO pieces(nom) VALUES ('Ch112');
+INSERT INTO pieces(nom) VALUES ('Ch113');
+INSERT INTO pieces(nom) VALUES ('Ch114');
+INSERT INTO pieces(nom) VALUES ('Ch115');
+INSERT INTO pieces(nom) VALUES ('Ch116');
+INSERT INTO pieces(nom) VALUES ('Ch117');
+INSERT INTO pieces(nom) VALUES ('Ch118');
+INSERT INTO pieces(nom) VALUES ('Ch119');
+INSERT INTO pieces(nom) VALUES ('Ch120');
+INSERT INTO pieces(nom) VALUES ('Ch121');
+INSERT INTO pieces(nom) VALUES ('Ch122');
+INSERT INTO pieces(nom) VALUES ('Bl11');
+INSERT INTO pieces(nom) VALUES ('Bl12');
+INSERT INTO pieces(nom) VALUES ('Dep11');
 
 INSERT INTO patients(id, nom, isMan, raisonHospitalisation, idPiece)
 VALUES (1, "Lhaache", false, "Changement de sexe", 1),
@@ -25,13 +40,6 @@ VALUES (1, "Lhaache", false, "Changement de sexe", 1),
 	   (5, "Jeremy", true, "Déprime ordonnanceur", 1),
 	   (6, "Dan", true, "Chef de projet PLD SI... Franssement, c est ssaud, mon frère !", 2);
 
-INSERT INTO regles (id, nom, createsAlert) VALUES (100, 'chauffageON', true);
-INSERT INTO regles (id, nom, createsAlert) VALUES (101, 'chauffageOFF', true);
-
-INSERT INTO regleCapteur (idRegle, idCapteur, debutIntervalle, finIntervalle) VALUES ((SELECT id FROM regles WHERE nom = 'chauffageON'), 1, -10, 18.5);
-INSERT INTO regleCapteur (idRegle, idCapteur, debutIntervalle, finIntervalle) VALUES ((SELECT id FROM regles WHERE nom = 'chauffageOFF'), 1, 18.5, 50);
-
-INSERT INTO regleActionneur (idRegle, idActionneur, valeur, isActive) VALUES ((SELECT id FROM regles WHERE nom = 'chauffageOFF'), 1, 123456789, true);
 
 INSERT INTO capteurs(id, type, numeroCapteur, isGlobal, idSujet)
 VALUES 	(1, 0x0070401, 0x00100001, true, 1),
@@ -51,7 +59,14 @@ VALUES 	(1, 0x0070401, 0x00100001, true, 1),
 		(15, 0x0070401, 0x00100015, true, 15),
 		(16, 0x0070401, 0x00100016, true, 2),
 		(17, 0x0070401, 0x00100017, true, 2);
-		
+
+INSERT INTO regles (id, nom, createsAlert) VALUES (100, 'chauffageON', true);
+INSERT INTO regles (id, nom, createsAlert) VALUES (101, 'chauffageOFF', true);
+
+INSERT INTO regleCapteur (idRegle, idCapteur, debutIntervalle, finIntervalle) VALUES ((SELECT id FROM regles WHERE nom = 'chauffageON'), 1, -10, 18.5);
+INSERT INTO regleCapteur (idRegle, idCapteur, debutIntervalle, finIntervalle) VALUES ((SELECT id FROM regles WHERE nom = 'chauffageOFF'), 1, 18.5, 50);
+
+INSERT INTO regleActionneur (idRegle, idActionneur, valeur, isActive) VALUES ((SELECT id FROM regles WHERE nom = 'chauffageOFF'), 1, 123456789, true);
 
 INSERT INTO mesures(id, idCapteur, time, typeMesure, mesure)
 VALUES (1, 1, 1328817902000, 3, 36),
@@ -63,22 +78,6 @@ INSERT INTO alertes(time, idRegle) VALUES (1, 100);
 INSERT INTO alertes(time, idRegle) VALUES (10000000000, 101);
 INSERT INTO alertes(time, idRegle) VALUES (100000000000000, 100);
 INSERT INTO alertes(time, idRegle) VALUES (1000000000000000, 101);
-
-INSERT INTO pieces(nom) VALUES ('Ch111');
-INSERT INTO pieces(nom) VALUES ('Ch112');
-INSERT INTO pieces(nom) VALUES ('Ch113');
-INSERT INTO pieces(nom) VALUES ('Ch114');
-INSERT INTO pieces(nom) VALUES ('Ch115');
-INSERT INTO pieces(nom) VALUES ('Ch116');
-INSERT INTO pieces(nom) VALUES ('Ch117');
-INSERT INTO pieces(nom) VALUES ('Ch118');
-INSERT INTO pieces(nom) VALUES ('Ch119');
-INSERT INTO pieces(nom) VALUES ('Ch120');
-INSERT INTO pieces(nom) VALUES ('Ch121');
-INSERT INTO pieces(nom) VALUES ('Ch122');
-INSERT INTO pieces(nom) VALUES ('Bl11');
-INSERT INTO pieces(nom) VALUES ('Bl12');
-INSERT INTO pieces(nom) VALUES ('Dep11');
 
 INSERT INTO murs(idPiece, x1, y1, x2, y2, ordre, isPorte)
 VALUES ((SELECT id FROM pieces WHERE nom = 'Ch111'), 10, 10, 100, 10, 1, false);
