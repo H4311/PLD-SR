@@ -181,6 +181,10 @@ function getActuatorsList(callback) {
 	});
 }
 
+function getSensorsTypes() {
+	return [0x0060001, 0x0050201, 0x0070205, 0x0070401, 0x0070801, 0x0070901, 0x0070A01, 0x00A0001];
+}
+
 function getRecordtypesBySensortype(sensortype) {
 	switch(sensortype) {
 		case 0x0060001:
@@ -227,10 +231,23 @@ function recordtypeToString(recordtype) {
 	}
 }
 
+function getSensorsLabels() {
+	var res={};
+	getSensorsTypes().forEach(function(type) {
+		res[type]="";
+		getRecordtypesBySensortype(type).forEach(function(typeSensor) {
+			res[type]+=recordtypeToString(typeSensor)+' ';
+		});
+	});
+	return res;
+}
+
 exports.getSensorsRecords = getSensorsRecords;
 exports.getSensorsList = getSensorsList;
 exports.getSensorsListByPatient = getSensorsListByPatient;
 exports.getSensorsListByRoom = getSensorsListByRoom;
 exports.getActuatorsList = getActuatorsList;
+exports.getSensorsTypes = getSensorsTypes;
 exports.getRecordtypesBySensortype = getRecordtypesBySensortype;
 exports.recordtypeToString = recordtypeToString;
+exports.getSensorsLabels = getSensorsLabels;

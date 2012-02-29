@@ -73,6 +73,9 @@ viewHandler["*"] = views.notfound;
 // handler, user, password
 authModule.init(viewHandler);
 
+// Forms
+html.post("/add_sensor_patient", views.add_sensor_patient);
+
 for (var url in viewHandler) {
 	(securityActivated) ? html.get(url, authModule.checkAuth(url))
 						: html.get(url, viewHandler[url]);

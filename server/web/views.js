@@ -2,6 +2,7 @@ var modelrooms = require("./model/rooms");
 var modelpatients = require("./model/patients");
 var modelalerts = require("./model/alerts");
 var modelsensors = require("./model/sensors");
+var modeladmin = require("./model/admin");
 
 /*
  * VIEW Index
@@ -82,7 +83,8 @@ function viewPatient(req, res) {
             		measures.push(measure);
             	}
             }
-            res.render('patient', {title: "Patient "+patientDetails.nom, patientDetails: patientDetails, measures: measures});
+            var typeLabels = modelsensors.getSensorsLabels();
+            res.render('patient', {title: "Patient "+patientDetails.nom, patientDetails: patientDetails, measures: measures, typeLabels: typeLabels});
         });
 	});
 }
@@ -135,6 +137,27 @@ function viewHelp(req, res) {
 	res.render('help', {title: "Aide"});
 }
 
+/*
+ * VIEW addSensorPatient
+ */
+function addSensorPatient(req, res){
+	var patientId = req.param("id", null);
+	var sensorId = req.param("sensorId", null);
+	var sensorType = req.param("sensorType", null);
+	
+	var data={};
+	data.id = sensorId;
+	data.type = sensorType;
+	data.subject = {
+		i: patientId,
+		g: 0
+	};
+	
+	modeladmin.addDevice(data, function() {
+		viewPatient(req, res);
+	});
+}
+
 exports.index = viewIndex;
 exports.room = viewRoom;
 exports.patient = viewPatient;
@@ -142,3 +165,4 @@ exports.login = viewLogin;
 exports.notif = viewNotif;
 exports.notfound = viewNotfound;
 exports.help = viewHelp;
+exports.add_sensor_patient = addSensorPatient;
