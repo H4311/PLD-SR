@@ -1,6 +1,7 @@
 #include <mysql/mysql.h>
 #include <stdio.h>
 #include <string.h>
+#include <stdlib.h>
 #include "mysqlinsert.h"
 
 MYSQL* connectToMysql() {
@@ -27,6 +28,38 @@ void insertCapteur(MYSQL* mysql, int type, int numeroCapteur, int isGlobal, int 
 	if(mysql_query(mysql, s)) {
 		printf("Erreur: insert (%s)\n", mysql_error(mysql));
 	}
+}
+
+result* getCapteurs(MYSQL* mysql) {
+	MYSQL_RES *mysqlResult;
+	MYSQL_ROW row;
+	int i, j;
+	result* res;
+	
+	mysql_query(mysql, "SELECT type, numeroCapteur, isGlobal, idSujet FROM capteurs");
+	mysqlResult = mysql_store_result(mysql);
+
+	int nfields = mysql_num_fields(mysqlResult);
+	int nrows = mysql_num_rows(mysqlResult);
+	
+	res = (result*) malloc(sizeof(result));
+	res->nbFields = nfields;
+	res->nbRows = nrows;
+	res->tab = (int**) malloc(sizeof(int**)*nrows);
+
+	int cpt = 0;
+	while ((row = mysql_fetch_row(mysqlResult))) {
+		res->tab[cpt] = (int*) malloc(sizeof(int*)*nfields);
+		for(i = 0; i < nfields; i++) {
+			res->tab[cpt][i] = row[i] ? atoi(row[i]) : 0;
+			printf("%s ", row[i] ? row[i] : "NULL");
+		}
+		cpt++;
+		printf("\n");
+	}
+
+	mysql_free_result(mysqlResult);
+	return res;
 }
 
 void insertMesure(MYSQL* mysql, int type, int numeroCapteur, long long time, int typeMesure, double mesure) {

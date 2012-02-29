@@ -8,11 +8,23 @@
 #define CAPTEUR_SUNSPOT 1
 #define CAPTEUR_RSS 2
 
+struct Result {
+	int nbFields;
+	int nbRows;
+	int** tab;
+};
+typedef struct Result result;
+
 MYSQL* connectToMysql();
 
 void closeMysql(MYSQL* mysql);
 
 void insertCapteur(MYSQL* mysql, int type, int numeroCapteur, int isGlobal, int idSujet);
+
+//Fields renvoyés (dans l'ordre et tout en int) :
+//type, numeroCapteur, isGlobal, idSujet
+result* getCapteurs(MYSQL* mysql);
+
 
 void insertMesure(MYSQL* mysql, int type, int numeroCapteur, long long time, int typeMesure, double mesure);
 

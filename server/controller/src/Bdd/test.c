@@ -12,7 +12,7 @@
 //	//For each thread :
 //	MYSQL* mysql = connectToMysql();
 //
-//	insertCapteur(mysql, 1, 4, 5, 2, 3);
+//	/*insertCapteur(mysql, 1, 4, 5, 2, 3);
 //	time_t t;
 //	time(&t);
 //	insertMesure(mysql, 1, 4, t, 2, 5);
@@ -20,6 +20,15 @@
 //	insertActionneurSujet(mysql, "Action action !", "Ca agit..", 1, 10);
 //	insertPieces(mysql, "Chambre", "On dort ici");
 //	insertPatients(mysql, "Joe", 1, "Gelure des orteils", 2);
+//	*/
+//	result* res = getCapteurs(mysql);
+//	int i,j;
+//	for(i=0; i<res->nbRows; i++) {
+//		for(j=0; j<res->nbFields; j++) {
+//			printf("%5d ", res->tab[i][j]);
+//		}
+//		printf("\n");
+//	}
 //
 //	closeMysql(mysql);
 //
