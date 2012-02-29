@@ -61,6 +61,7 @@ viewHandler["/room"] = views.room;
 viewHandler["/patient"] = views.patient;
 viewHandler["/login"] = views.login;
 viewHandler["/help"] = views.help;
+viewHandler["/alerts"] = views.notif;
 
 // Need to be put before * otherwise the star rule catches all the
 // requests !
