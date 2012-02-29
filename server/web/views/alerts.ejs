@@ -1,3 +1,25 @@
+<%
+function dateToString(date) {
+	var s = "";
+	s += date.getFullYear();
+	s += "/";
+	s += twoDigits(date.getMonth()+1);
+	s += "/";
+	s += twoDigits(date.getDate());
+	s += " ";
+	s += twoDigits(date.getHours());
+	s += ":";
+	s += twoDigits(date.getMinutes());
+	s += ":";
+	s += twoDigits(date.getSeconds());
+	return s;
+}
+
+function twoDigits(nb) {
+	var retour = nb < 10 ? "0" + nb : "" + nb;
+	return retour;
+}
+%>
 <ul class="breadcrumb">
 	<li>
 		<a href="index">Home</a> <span class="divider">/</span>
@@ -21,8 +43,8 @@
     <tbody>
 		<% for(var i in notifs.alerts) {
 			var a = notifs.alerts[i];
-			notifTime = dateToString(new Date(a.time/1000)) + " : "; %>
-			<tr><td><i class="icon-time"></i>&nbsp;<%= a.name %></td> <td><%= notifTime %></td></tr>
+			notifTime = dateToString(new Date(a.time/1000)); %>
+			<tr><td><i class="icon-time"></i>&nbsp;<%= a.nom %></td> <td><%= notifTime %></td></tr>
 		<% } %>
     </tbody>
 </table>
