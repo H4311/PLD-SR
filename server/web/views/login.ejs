@@ -5,14 +5,18 @@
 		</div>
 		<div class="span11">
 			<h2>Authentification</h2>
-			<form action="/auth" method="post" name="loginForm">
+			<form class="well form-vertical" action="/auth" method="post">
 				<p>
 				<% if (next != null) { %>
 					<input type="hidden" name="next" value="<%= next %>" />
 				<% } %>
-				<label for="idLogin">Login: </label><input id="idLogin" type="text" name="login" required="required"/><br />
-				<label for="idPassword">Password: </label><input id="idPassword" type="password" name="password" required="required"/><br />
-				<label>&nbsp;</label><input type="submit" value="Login" class="submit_login"/>
+				
+				<% if (error != null) { %>
+					<p><%= error %></p>
+				<% } %>
+				<input type="text" class="input-medium" name="login" required="required" placeholder="Login"/><br />
+				<input type="password" class="input-medium" name="password" required="required" placeholder="Password"/><br />
+				<button type="submit" class="btn-primary">Login</button>
 				</p>
 			</form>
 		</div>
@@ -25,6 +29,5 @@
 	<div id="buildingContainer" >		
 	</div>
 </section>
-
 
 </div>

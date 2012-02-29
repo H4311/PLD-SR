@@ -1,11 +1,17 @@
 var express = require("express");
+var fs = require("fs");
 
 var services = require("./services");
 var views = require("./views");
 var authModule = require("./auth").authModule;
 
+var securityActivated = true;
+
 // REST Server config
-var rest = express.createServer();
+var rest = express.createServer({
+		key: fs.readFileSync('security/server.key'),
+		cert: fs.readFileSync('security/server.crt')
+	});
 rest.configure(function() {
 	rest.use(express.bodyParser()); // retrieves automatically req bodies
 	rest.use(rest.router); // manually defines the routes
@@ -21,25 +27,31 @@ serviceHandler["/rooms"] = services.rooms;
 serviceHandler["/alerts"] = services.alerts;
 serviceHandler["/murs"] = services.murs;
 serviceHandler["/bondsActuators"] = services.bondsActuators;
+serviceHandler["/add_device"] = services.admin_add_devices;
+serviceHandler["/remove_device"] = services.admin_remove_devices;
 
 for (var url in serviceHandler) {
 	rest.post(url, serviceHandler[url]);
 }
-rest.put("/admin_devices", services.admin_add_devices);
-rest.delete("/admin_devices", services.admin_remove_devices);
 
 rest.listen(1337);
 
 // HTML Server config
-var html = express.createServer();
+var html = express.createServer({
+		key: fs.readFileSync('security/server.key'),
+		cert: fs.readFileSync('security/server.crt')
+	});
 
 html.configure(function() {
 	html.use(express.bodyParser());
 	html.use(express.static(__dirname + '/public'));
 	html.set('views', __dirname + '/views');
 	html.set('view engine', 'ejs');
-	html.use(express.cookieParser()); // for session
-	html.use(express.session({ secret: "One does not simply walk into website." }));
+	
+	// Stuff needed for sessions
+	html.use(express.cookieParser());
+	html.use(express.session(
+		{ secret: "One does not simply walk into website." }));
 });
 
 // Different views of the HTML server :
@@ -50,14 +62,19 @@ viewHandler["/patient"] = views.patient;
 viewHandler["/login"] = views.login;
 viewHandler["/alerts"] = views.notif;
 
+// Need to be put before * otherwise the star rule catches all the
+// requests !
+html.post("/auth", authModule.auth);
+html.get("/logout", authModule.logout);
+
+viewHandler["*"] = views.notfound;
+
 // handler, user, password
-// authModule.init(viewHandler, "rithm", "th!$_!$_th3_rythm_0f_th3_n!ght");
+authModule.init(viewHandler);
 
 for (var url in viewHandler) {
-	// html.get(url, authModule.checkAuth(url));
-	html.get(url, viewHandler[url]);
+	(securityActivated) ? html.get(url, authModule.checkAuth(url))
+						: html.get(url, viewHandler[url]);
 }
-//html.post("/auth", authModule.auth);
-//html.get("/logout", authModule.logout);
 
 html.listen(8080);
