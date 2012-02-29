@@ -287,213 +287,213 @@ var BuildingGenerator = {
 		
 		
 		
-		//~ var wall1 = {type:0, wall:new RithmObjects.Wall(10, 10, 100, 10)};
-		//~ var wall21 = {type:0, wall:new RithmObjects.Wall(100, 10, 100, 40)};
-		//~ var door = {type:1, door:new RithmObjects.Door(100, 40, 100, 60)};
-		//~ var wall22 = {type:0, wall:new RithmObjects.Wall(100, 60, 100, 100)};
-		//~ var wall3 = {type:0, wall:new RithmObjects.Wall(100, 100, 10, 100)};
-		//~ var wall4 = {type:0, wall:new RithmObjects.Wall(10, 100, 10, 10)};
+		var wall1 = new RithmObjects.Wall(10, 10, 100, 10);
+		var wall21 = new RithmObjects.Wall(100, 10, 100, 40);
+		var door = new RithmObjects.Door(100, 40, 100, 60);
+		var wall22 = new RithmObjects.Wall(100, 60, 100, 100);
+		var wall3 = new RithmObjects.Wall(100, 100, 10, 100);
+		var wall4 = new RithmObjects.Wall(10, 100, 10, 10);
 
-		//~ door.door.isOpen = true;
-		//~ var walls = [wall1, wall21, door, wall22, wall3, wall4];
+		door.isOpen = true;
+		var walls = [wall1, wall21, door, wall22, wall3, wall4];
 
-		//~ var room = new RithmObjects.Room("Ch111", walls);
+		var room = new RithmObjects.Room("Ch111", walls);
 		
-		//~ var wall1_10 = {type:0, wall:new RithmObjects.Wall(10, 100, 100, 100)};
-		//~ var wall21_10 = {type:0, wall:new RithmObjects.Wall(100, 100, 100, 150)};
-		//~ var door_10 = {type:1, door:new RithmObjects.Door(100, 150, 100, 170)};
-		//~ var wall22_10 = {type:0, wall:new RithmObjects.Wall(100, 170, 100, 240)};
-		//~ var wall3_10 = {type:0, wall:new RithmObjects.Wall(100, 240, 10, 240)};
-		//~ var wall4_10 = {type:0, wall:new RithmObjects.Wall(10, 240, 10, 100)};
+		var wall1_10 = new RithmObjects.Wall(10, 100, 100, 100);
+		var wall21_10 = new RithmObjects.Wall(100, 100, 100, 150);
+		var door_10 = new RithmObjects.Door(100, 150, 100, 170);
+		var wall22_10 = new RithmObjects.Wall(100, 170, 100, 240);
+		var wall3_10 = new RithmObjects.Wall(100, 240, 10, 240);
+		var wall4_10 = new RithmObjects.Wall(10, 240, 10, 100);
 
-		//~ door_10.door.isOpen = false;
-		//~ var walls_10 = [wall1_10, wall21_10, door_10, wall22_10, wall3_10, wall4_10];
+		door_10.isOpen = false;
+		var walls_10 = [wall1_10, wall21_10, door_10, wall22_10, wall3_10, wall4_10];
 
-		//~ var room10 = new RithmObjects.Room("Ch112", walls_10);
+		var room10 = new RithmObjects.Room("Ch112", walls_10);
 		
-		//~ var wall1_11 = {type:0, wall:new RithmObjects.Wall(10, 240, 100, 240)};
-		//~ var wall21_11 = {type:0, wall:new RithmObjects.Wall(100, 240, 100, 270)};
-		//~ var door_11 = {type:1, door:new RithmObjects.Door(100, 270, 100, 290)};
-		//~ var wall22_11 = {type:0, wall:new RithmObjects.Wall(100, 290, 100, 370)};
-		//~ var wall3_11 = {type:0, wall:new RithmObjects.Wall(100, 370, 10, 370)};
-		//~ var wall4_11 = {type:0, wall:new RithmObjects.Wall(10, 370, 10, 240)};
+		var wall1_11 = new RithmObjects.Wall(10, 240, 100, 240);
+		var wall21_11 = new RithmObjects.Wall(100, 240, 100, 270);
+		var door_11 = new RithmObjects.Door(100, 270, 100, 290);
+		var wall22_11 = new RithmObjects.Wall(100, 290, 100, 370);
+		var wall3_11 = new RithmObjects.Wall(100, 370, 10, 370);
+		var wall4_11 = new RithmObjects.Wall(10, 370, 10, 240);
 
-		//~ door_11.door.isOpen = true;
-		//~ var walls_11 = [wall1_11, wall21_11, door_11, wall22_11, wall3_11, wall4_11];
+		door_11.isOpen = true;
+		var walls_11 = [wall1_11, wall21_11, door_11, wall22_11, wall3_11, wall4_11];
 
-		//~ var room11 = new RithmObjects.Room("Ch113", walls_11);
+		var room11 = new RithmObjects.Room("Ch113", walls_11);
 		
-		//~ var wall1_2 = {type:0, wall:new RithmObjects.Wall(130, 10, 270, 10)};
-		//~ var wall2_2 = {type:0, wall:new RithmObjects.Wall(270, 10, 270, 100)};
-		//~ var wall3_2 = {type:0, wall:new RithmObjects.Wall(270, 100, 130, 100)};
-		//~ var wall41_2 = {type:0, wall:new RithmObjects.Wall(130, 100, 130, 60)};
-		//~ var wall42_2 = {type:0, wall:new RithmObjects.Wall(130, 40, 130, 10)};
-		//~ var door_2 = {type:1, door:new RithmObjects.Door(130, 60, 130, 40)};
+		var wall1_2 = new RithmObjects.Wall(130, 10, 270, 10);
+		var wall2_2 = new RithmObjects.Wall(270, 10, 270, 100);
+		var wall3_2 = new RithmObjects.Wall(270, 100, 130, 100);
+		var wall41_2 = new RithmObjects.Wall(130, 100, 130, 60);
+		var wall42_2 = new RithmObjects.Wall(130, 40, 130, 10);
+		var door_2 = new RithmObjects.Door(130, 60, 130, 40);
 
-		//~ door_2.door.isOpen = true;
-		//~ var walls2 = [wall1_2, wall2_2, wall3_2, wall41_2, door_2, wall42_2];
+		door_2.isOpen = true;
+		var walls2 = [wall1_2, wall2_2, wall3_2, wall41_2, door_2, wall42_2];
 
-		//~ var room2 = new RithmObjects.Room("Ch114", walls2);
+		var room2 = new RithmObjects.Room("Ch114", walls2);
 		
-		//~ var wall1_21 = {type:0, wall:new RithmObjects.Wall(130, 130, 300, 130)};
-		//~ var wall2_21 = {type:0, wall:new RithmObjects.Wall(300, 130, 300, 240)};
-		//~ var wall3_21 = {type:0, wall:new RithmObjects.Wall(300, 240, 130, 240)};
-		//~ var wall41_21 = {type:0, wall:new RithmObjects.Wall(130, 240, 130, 180)};
-		//~ var wall42_21 = {type:0, wall:new RithmObjects.Wall(130, 160, 130, 130)};
-		//~ var door_21 = {type:1, door:new RithmObjects.Door(130, 180, 130, 160)};
+		var wall1_21 = new RithmObjects.Wall(130, 130, 300, 130);
+		var wall2_21 = new RithmObjects.Wall(300, 130, 300, 240);
+		var wall3_21 = new RithmObjects.Wall(300, 240, 130, 240);
+		var wall41_21 = new RithmObjects.Wall(130, 240, 130, 180);
+		var wall42_21 = new RithmObjects.Wall(130, 160, 130, 130);
+		var door_21 = new RithmObjects.Door(130, 180, 130, 160);
 
-		//~ door_21.door.isOpen = true;
-		//~ var walls21 = [wall1_21, wall2_21, wall3_21, wall41_21, door_21, wall42_21];
+		door_21.isOpen = true;
+		var walls21 = [wall1_21, wall2_21, wall3_21, wall41_21, door_21, wall42_21];
 
-		//~ var room21 = new RithmObjects.Room("Ch115", walls21);
+		var room21 = new RithmObjects.Room("Ch115", walls21);
 		
-		//~ var wall1_22 = {type:0, wall:new RithmObjects.Wall(130, 240, 300, 240)};
-		//~ var wall2_22 = {type:0, wall:new RithmObjects.Wall(300, 240, 300, 340)};
-		//~ var wall3_22 = {type:0, wall:new RithmObjects.Wall(300, 340, 130, 340)};
-		//~ var wall41_22 = {type:0, wall:new RithmObjects.Wall(130, 340, 130, 300)};
-		//~ var wall42_22 = {type:0, wall:new RithmObjects.Wall(130, 280, 130, 240)};
-		//~ var door_22 = {type:1, door:new RithmObjects.Door(130, 300, 130, 280)};
+		var wall1_22 = new RithmObjects.Wall(130, 240, 300, 240);
+		var wall2_22 = new RithmObjects.Wall(300, 240, 300, 340);
+		var wall3_22 = new RithmObjects.Wall(300, 340, 130, 340);
+		var wall41_22 = new RithmObjects.Wall(130, 340, 130, 300);
+		var wall42_22 = new RithmObjects.Wall(130, 280, 130, 240);
+		var door_22 = new RithmObjects.Door(130, 300, 130, 280);
 
-		//~ door_22.door.isOpen = true;
-		//~ var walls22 = [wall1_22, wall2_22, wall3_22, wall41_22, door_22, wall42_22];
-		//~ var room22 = new RithmObjects.Room("Ch116", walls22);
+		door_22.isOpen = true;
+		var walls22 = [wall1_22, wall2_22, wall3_22, wall41_22, door_22, wall42_22];
+		var room22 = new RithmObjects.Room("Ch116", walls22);
 		
-		//~ var wall1_23 = {type:0, wall:new RithmObjects.Wall(360, 10, 530, 10)};
-		//~ var wall2_23 = {type:0, wall:new RithmObjects.Wall(360, 100, 360, 10)};
-		//~ var wall3_23 = {type:0, wall:new RithmObjects.Wall(530, 100, 360, 100)};
-		//~ var wall41_23 = {type:0, wall:new RithmObjects.Wall(530, 60, 530, 100)};
-		//~ var wall42_23 = {type:0, wall:new RithmObjects.Wall(530, 10, 530, 40)};
-		//~ var door_23 = {type:1, door:new RithmObjects.Door(530, 40, 530, 60)};
+		var wall1_23 = new RithmObjects.Wall(360, 10, 530, 10);
+		var wall2_23 = new RithmObjects.Wall(360, 100, 360, 10);
+		var wall3_23 = new RithmObjects.Wall(530, 100, 360, 100);
+		var wall41_23 = new RithmObjects.Wall(530, 60, 530, 100);
+		var wall42_23 = new RithmObjects.Wall(530, 10, 530, 40);
+		var door_23 = new RithmObjects.Door(530, 40, 530, 60);
 
-		//~ door_23.door.isOpen = true;
-		//~ var walls23 = [wall1_23, wall42_23, door_23, wall41_23, wall3_23, wall2_23];
+		door_23.isOpen = true;
+		var walls23 = [wall1_23, wall42_23, door_23, wall41_23, wall3_23, wall2_23];
 
-		//~ var room23 = new RithmObjects.Room("Ch117", walls23);
+		var room23 = new RithmObjects.Room("Ch117", walls23);
 		
-		//~ var wall1_24 = {type:0, wall:new RithmObjects.Wall(330, 130, 530, 130)};
-		//~ var wall2_24 = {type:0, wall:new RithmObjects.Wall(330, 240, 330, 130)};
-		//~ var wall3_24 = {type:0, wall:new RithmObjects.Wall(530, 240, 330, 240)};
-		//~ var wall41_24 = {type:0, wall:new RithmObjects.Wall(530, 180, 530, 240)};
-		//~ var wall42_24 = {type:0, wall:new RithmObjects.Wall(530, 130, 530, 160)};
-		//~ var door_24 = {type:1, door:new RithmObjects.Door(530, 160, 530, 180)};
+		var wall1_24 = new RithmObjects.Wall(330, 130, 530, 130);
+		var wall2_24 = new RithmObjects.Wall(330, 240, 330, 130);
+		var wall3_24 = new RithmObjects.Wall(530, 240, 330, 240);
+		var wall41_24 = new RithmObjects.Wall(530, 180, 530, 240);
+		var wall42_24 = new RithmObjects.Wall(530, 130, 530, 160);
+		var door_24 = new RithmObjects.Door(530, 160, 530, 180);
 
-		//~ door_24.door.isOpen = true;
-		//~ var walls24 = [wall1_24, wall42_24, door_24, wall41_24, wall3_24, wall2_24];
+		door_24.isOpen = true;
+		var walls24 = [wall1_24, wall42_24, door_24, wall41_24, wall3_24, wall2_24];
 
-		//~ var room24 = new RithmObjects.Room("Ch118", walls24);
+		var room24 = new RithmObjects.Room("Ch118", walls24);
 		
-		//~ var wall1_25 = {type:0, wall:new RithmObjects.Wall(330, 240, 530, 240)};
-		//~ var wall2_25 = {type:0, wall:new RithmObjects.Wall(330, 340, 330, 240)};
-		//~ var wall3_25 = {type:0, wall:new RithmObjects.Wall(530, 340, 330, 340)};
-		//~ var wall41_25 = {type:0, wall:new RithmObjects.Wall(530, 300, 530, 340)};
-		//~ var wall42_25 = {type:0, wall:new RithmObjects.Wall(530, 240, 530, 280)};
-		//~ var door_25 = {type:1, door:new RithmObjects.Door(530, 280, 530, 300)};
+		var wall1_25 = new RithmObjects.Wall(330, 240, 530, 240);
+		var wall2_25 = new RithmObjects.Wall(330, 340, 330, 240);
+		var wall3_25 = new RithmObjects.Wall(530, 340, 330, 340);
+		var wall41_25 = new RithmObjects.Wall(530, 300, 530, 340);
+		var wall42_25 = new RithmObjects.Wall(530, 240, 530, 280);
+		var door_25 = new RithmObjects.Door(530, 280, 530, 300);
 
-		//~ door_25.door.isOpen = true;
-		//~ var walls25 = [wall1_25, wall42_25, door_25, wall41_25, wall3_25, wall2_25];
+		door_25.isOpen = true;
+		var walls25 = [wall1_25, wall42_25, door_25, wall41_25, wall3_25, wall2_25];
 
-		//~ var room25 = new RithmObjects.Room("Ch119", walls25);
+		var room25 = new RithmObjects.Room("Ch119", walls25);
 		
 		
-		//~ var wall1_14 = {type:0, wall:new RithmObjects.Wall(560, 10, 660, 10)};
-		//~ var wall21_14 = {type:0, wall:new RithmObjects.Wall(560, 40, 560, 10)};
-		//~ var door_14 = {type:1, door:new RithmObjects.Door(560, 60, 560, 40)};
-		//~ var wall22_14 = {type:0, wall:new RithmObjects.Wall(560, 100, 560, 60)};
-		//~ var wall3_14 = {type:0, wall:new RithmObjects.Wall(660, 100, 560, 100)};
-		//~ var wall4_14 = {type:0, wall:new RithmObjects.Wall(660, 10, 660, 100)};
+		var wall1_14 = new RithmObjects.Wall(560, 10, 660, 10);
+		var wall21_14 = new RithmObjects.Wall(560, 40, 560, 10);
+		var door_14 = new RithmObjects.Door(560, 60, 560, 40);
+		var wall22_14 = new RithmObjects.Wall(560, 100, 560, 60);
+		var wall3_14 = new RithmObjects.Wall(660, 100, 560, 100);
+		var wall4_14 = new RithmObjects.Wall(660, 10, 660, 100);
 
-		//~ door_14.door.isOpen = true;
-		//~ var walls_14 = [wall1_14, wall4_14, wall3_14, wall22_14, door_14, wall21_14];
+		door_14.isOpen = true;
+		var walls_14 = [wall1_14, wall4_14, wall3_14, wall22_14, door_14, wall21_14];
 
-		//~ var room14 = new RithmObjects.Room("Ch120", walls_14);
+		var room14 = new RithmObjects.Room("Ch120", walls_14);
 		
-		//~ var wall1_15 = {type:0, wall:new RithmObjects.Wall(560, 100, 660, 100)};
-		//~ var wall21_15 = {type:0, wall:new RithmObjects.Wall(560, 150, 560, 100)};
-		//~ var door_15 = {type:1, door:new RithmObjects.Door(560, 170, 560, 150)};
-		//~ var wall22_15 = {type:0, wall:new RithmObjects.Wall(560, 240, 560, 170)};
-		//~ var wall3_15 = {type:0, wall:new RithmObjects.Wall(660, 240, 560, 240)};
-		//~ var wall4_15 = {type:0, wall:new RithmObjects.Wall(660, 100, 660, 240)};
+		var wall1_15 = new RithmObjects.Wall(560, 100, 660, 100);
+		var wall21_15 = new RithmObjects.Wall(560, 150, 560, 100);
+		var door_15 = new RithmObjects.Door(560, 170, 560, 150);
+		var wall22_15 = new RithmObjects.Wall(560, 240, 560, 170);
+		var wall3_15 = new RithmObjects.Wall(660, 240, 560, 240);
+		var wall4_15 = new RithmObjects.Wall(660, 100, 660, 240);
 
-		//~ door_15.door.isOpen = true;
-		//~ var walls_15 = [wall1_15, wall4_15, wall3_15, wall22_15, door_15, wall21_15];
+		door_15.isOpen = true;
+		var walls_15 = [wall1_15, wall4_15, wall3_15, wall22_15, door_15, wall21_15];
 
-		//~ var room15 = new RithmObjects.Room("Ch121", walls_15);
+		var room15 = new RithmObjects.Room("Ch121", walls_15);
 		
-		//~ var wall1_16 = {type:0, wall:new RithmObjects.Wall(560, 240, 660, 240)};
-		//~ var wall21_16 = {type:0, wall:new RithmObjects.Wall(560, 280, 560, 240)};
-		//~ var door_16 = {type:1, door:new RithmObjects.Door(560, 300, 560, 280)};
-		//~ var wall22_16 = {type:0, wall:new RithmObjects.Wall(560, 370, 560, 300)};
-		//~ var wall3_16 = {type:0, wall:new RithmObjects.Wall(660, 370, 560, 370)};
-		//~ var wall4_16 = {type:0, wall:new RithmObjects.Wall(660, 240, 660, 370)};
+		var wall1_16 = new RithmObjects.Wall(560, 240, 660, 240);
+		var wall21_16 = new RithmObjects.Wall(560, 280, 560, 240);
+		var door_16 = new RithmObjects.Door(560, 300, 560, 280);
+		var wall22_16 = new RithmObjects.Wall(560, 370, 560, 300);
+		var wall3_16 = new RithmObjects.Wall(660, 370, 560, 370);
+		var wall4_16 = new RithmObjects.Wall(660, 240, 660, 370);
 
-		//~ door_16.door.isOpen = false;
-		//~ var walls_16 = [wall1_16, wall4_16, wall3_16, wall22_16, door_16, wall21_16];
+		door_16.isOpen = false;
+		var walls_16 = [wall1_16, wall4_16, wall3_16, wall22_16, door_16, wall21_16];
 
-		//~ var room16 = new RithmObjects.Room("Ch122", walls_16);
+		var room16 = new RithmObjects.Room("Ch122", walls_16);
 
 		
-		//~ var wall11_3 = {type:0, wall:new RithmObjects.Wall(10, 370, 110, 370)};
-		//~ var wall12_3 = {type:0, wall:new RithmObjects.Wall(130, 370, 300, 370)};
-		//~ var wall21_3 = {type:0, wall:new RithmObjects.Wall(300, 370, 300, 380)};
-		//~ var wall22_3 = {type:0, wall:new RithmObjects.Wall(300, 400, 300, 420)};
-		//~ var wall3_3 = {type:0, wall:new RithmObjects.Wall(300, 420, 260, 420)};
-		//~ var wall4_3 = {type:0, wall:new RithmObjects.Wall(260, 420, 260, 440)};
-		//~ var wall5_3 = {type:0, wall:new RithmObjects.Wall(260, 440, 10, 400)};
-		//~ var wall6_3 = {type:0, wall:new RithmObjects.Wall(10, 400, 10, 370)};
-		//~ var door_31 = {type:1, door:new RithmObjects.Door(110, 370, 130, 370)};
-		//~ var door_32 = {type:1, door:new RithmObjects.Door(300, 380, 300, 400)};
+		var wall11_3 = new RithmObjects.Wall(10, 370, 110, 370);
+		var wall12_3 = new RithmObjects.Wall(130, 370, 300, 370);
+		var wall21_3 = new RithmObjects.Wall(300, 370, 300, 380);
+		var wall22_3 = new RithmObjects.Wall(300, 400, 300, 420);
+		var wall3_3 = new RithmObjects.Wall(300, 420, 260, 420);
+		var wall4_3 = new RithmObjects.Wall(260, 420, 260, 440);
+		var wall5_3 = new RithmObjects.Wall(260, 440, 10, 400);
+		var wall6_3 = new RithmObjects.Wall(10, 400, 10, 370);
+		var door_31 = new RithmObjects.Door(110, 370, 130, 370);
+		var door_32 = new RithmObjects.Door(300, 380, 300, 400);
 
-		//~ door_31.door.isOpen = false;
-		//~ door_32.door.isOpen = true;
-		//~ var walls3 = [wall11_3, door_31, wall12_3, wall21_3, door_32, wall22_3, wall3_3, wall4_3, wall5_3, wall6_3];
+		door_31.isOpen = false;
+		door_32.isOpen = true;
+		var walls3 = [wall11_3, door_31, wall12_3, wall21_3, door_32, wall22_3, wall3_3, wall4_3, wall5_3, wall6_3];
 
-		//~ var room3 = new RithmObjects.Room("Bl11", walls3);
+		var room3 = new RithmObjects.Room("Bl11", walls3);
 		
-		//~ var wall1_31 = {type:0, wall:new RithmObjects.Wall(330, 380, 330, 370)};
-		//~ var door_312 = {type:1, door:new RithmObjects.Door(330, 400, 330, 380)};
-		//~ var wall11_3 = {type:0, wall:new RithmObjects.Wall(330, 420, 330, 400)};
-		//~ var wall2_3 = {type:0, wall:new RithmObjects.Wall(370, 420, 330, 420)};
-		//~ var wall3_3 = {type:0, wall:new RithmObjects.Wall(370, 440, 370, 420)};
-		//~ var wall4_3 = {type:0, wall:new RithmObjects.Wall(660, 400, 370, 440)};
-		//~ var wall5_3 = {type:0, wall:new RithmObjects.Wall(660, 370, 660, 400)};
-		//~ var wall6_3 = {type:0, wall:new RithmObjects.Wall(430, 370, 660, 370)};
-		//~ var door_311 = {type:1, door:new RithmObjects.Door(410, 370, 430, 370)};
-		//~ var wall7_3 = {type:0, wall:new RithmObjects.Wall(330, 370, 410, 370)};		
+		var wall1_31 = new RithmObjects.Wall(330, 380, 330, 370);
+		var door_312 = new RithmObjects.Door(330, 400, 330, 380);
+		var wall11_3 = new RithmObjects.Wall(330, 420, 330, 400);
+		var wall2_3 = new RithmObjects.Wall(370, 420, 330, 420);
+		var wall3_3 = new RithmObjects.Wall(370, 440, 370, 420);
+		var wall4_3 = new RithmObjects.Wall(660, 400, 370, 440);
+		var wall5_3 = new RithmObjects.Wall(660, 370, 660, 400);
+		var wall6_3 = new RithmObjects.Wall(430, 370, 660, 370);
+		var door_311 = new RithmObjects.Door(410, 370, 430, 370);
+		var wall7_3 = new RithmObjects.Wall(330, 370, 410, 370);		
 
-		//~ door_311.door.isOpen = true;
-		//~ door_312.door.isOpen = true;
-		//~ var walls31 = [wall7_3, door_311, wall6_3, wall5_3, wall4_3, wall3_3, wall2_3, wall11_3, door_312, wall1_31];
+		door_311.isOpen = true;
+		door_312.isOpen = true;
+		var walls31 = [wall7_3, door_311, wall6_3, wall5_3, wall4_3, wall3_3, wall2_3, wall11_3, door_312, wall1_31];
 
-		//~ var room31 = new RithmObjects.Room("Bl12", walls31);
+		var room31 = new RithmObjects.Room("Bl12", walls31);
 
-		//~ var wall1_90 = {type:0, wall:new RithmObjects.Wall(270, 10, 360, 10)};
-		//~ var wall2_90 = {type:0, wall:new RithmObjects.Wall(360, 10, 360, 100)};
-		//~ var wall31_90 = {type:0, wall:new RithmObjects.Wall(360, 100, 330, 100)};
-		//~ var wall32_90 = {type:0, wall:new RithmObjects.Wall(300, 100, 270, 100)};
-		//~ var wall4_90 = {type:0, wall:new RithmObjects.Wall(270, 100, 270, 10)};
-		//~ var door_90 = {type:1, door:new RithmObjects.Door(330, 100, 300, 100)};
+		var wall1_90 = new RithmObjects.Wall(270, 10, 360, 10);
+		var wall2_90 = new RithmObjects.Wall(360, 10, 360, 100);
+		var wall31_90 = new RithmObjects.Wall(360, 100, 330, 100);
+		var wall32_90 = new RithmObjects.Wall(300, 100, 270, 100);
+		var wall4_90 = new RithmObjects.Wall(270, 100, 270, 10);
+		var door_90 = new RithmObjects.Door(330, 100, 300, 100);
 
-		//~ door_90.door.isOpen = false;
-		//~ var walls90 = [wall1_90, wall2_90, wall31_90,door_90, wall32_90, wall4_90];
+		door_90.isOpen = false;
+		var walls90 = [wall1_90, wall2_90, wall31_90,door_90, wall32_90, wall4_90];
 
-		//~ var room90 = new RithmObjects.Room("Dep11", walls90);		
+		var room90 = new RithmObjects.Room("Dep11", walls90);		
 
-		//~ BuildingGenerator.addRoom(1, room);
-		//~ BuildingGenerator.addRoom(2, room2);
-		//~ BuildingGenerator.addRoom(3, room3);
-		//~ BuildingGenerator.addRoom(15, room31);
-		//~ //BuildingGenerator.addRoom(4, couloir);
-		//~ BuildingGenerator.addRoom(5, room10);
-		//~ BuildingGenerator.addRoom(6, room11);
-		//~ BuildingGenerator.addRoom(7, room21);
-		//~ BuildingGenerator.addRoom(8, room22);
-		//~ BuildingGenerator.addRoom(9, room23);
-		//~ BuildingGenerator.addRoom(10, room24);
-		//~ BuildingGenerator.addRoom(11, room25);
-		//~ BuildingGenerator.addRoom(12, room14);
-		//~ BuildingGenerator.addRoom(13, room15);
-		//~ BuildingGenerator.addRoom(14, room16);
-		//~ BuildingGenerator.addRoom(16, room90);
+		BuildingGenerator.addRoom(1, room);
+		BuildingGenerator.addRoom(2, room2);
+		BuildingGenerator.addRoom(3, room3);
+		BuildingGenerator.addRoom(4, room31);
+		//BuildingGenerator.addRoom(4, couloir);
+		BuildingGenerator.addRoom(5, room10);
+		BuildingGenerator.addRoom(6, room11);
+		BuildingGenerator.addRoom(7, room21);
+		BuildingGenerator.addRoom(8, room22);
+		BuildingGenerator.addRoom(9, room23);
+		BuildingGenerator.addRoom(10, room24);
+		BuildingGenerator.addRoom(11, room25);
+		BuildingGenerator.addRoom(12, room14);
+		BuildingGenerator.addRoom(13, room15);
+		BuildingGenerator.addRoom(14, room16);
+		BuildingGenerator.addRoom(15, room90);
 		
 		//~ room.measures["3"] = 23;
 		//~ room2.measures["3"] = 24;
@@ -602,6 +602,8 @@ var BuildingGenerator = {
 		//~ sen2.setSubject(1, true);
 		//~ sen2.setMeasure({type: "3", time: new Date(), value: 10});
 		//~ room.addSensor(sen2);
+		var numC=0;
+		$('body').html("<p></p>");
 		for (var i in BuildingGenerator.roomShapes) {
 			// Temp & Hum sensor :
 			var s = new RithmObjects.Sensor("3");
@@ -632,6 +634,17 @@ var BuildingGenerator = {
 				var wall = BuildingGenerator.roomShapes[i].room.walls[j];
 				if (wall.isOpen != null) { wall.isOpen = true; }
 			}
+			
+			$("body p").append('INSERT INTO capteurs(type, numeroCapteur, isGlobal, idSujet) VALUES ('+0x0070401+','+(1048599+numC)+', 1, (SELECT id FROM pld.pieces WHERE nom="'+BuildingGenerator.roomShapes[i].room.name+'"));<br\>');
+			numC++;
+			$("body p").append('INSERT INTO capteurs(type, numeroCapteur, isGlobal, idSujet) VALUES ('+0x0070801+','+(1048599+numC)+', 1, (SELECT id FROM pld.pieces WHERE nom="'+BuildingGenerator.roomShapes[i].room.name+'"));<br\>');
+			numC++;
+			$("body p").append('INSERT INTO capteurs(type, numeroCapteur, isGlobal, idSujet) VALUES ('+0x0060001+','+(1048599+numC)+', 1,(SELECT id FROM pld.pieces WHERE nom="'+BuildingGenerator.roomShapes[i].room.name+'"));<br\>');
+			numC++;
+			$("body p").append('INSERT INTO capteurs(type, numeroCapteur, isGlobal, idSujet) VALUES ('+0x0050201+','+(1048599+numC)+', 1, (SELECT id FROM pld.pieces WHERE nom="'+BuildingGenerator.roomShapes[i].room.name+'"));<br\>');
+			numC++;
+			$("body p").append('INSERT INTO capteurs(type, numeroCapteur, isGlobal, idSujet) VALUES ('+0x0070901+','+(1048599+numC)+', 1, (SELECT id FROM pld.pieces WHERE nom="'+BuildingGenerator.roomShapes[i].room.name+'"));<br\>');
+			numC++;
 		}
 		
 		

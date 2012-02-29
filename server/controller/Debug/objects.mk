@@ -4,4 +4,4 @@
 
 USER_OBJS :=
 
-LIBS := -lpthread -lmysqlclient
+LIBS := -lpthread -lmysqlclient_r
