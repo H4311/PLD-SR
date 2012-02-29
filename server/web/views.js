@@ -90,8 +90,13 @@ function viewNotfound(req, res) {
 	res.render('404', {title: "Page non trouvée"});
 }
 
+function viewHelp(req, res) {
+	res.render('help', {title: "Aide"});
+}
+
 exports.index = viewIndex;
 exports.room = viewRoom;
 exports.patient = viewPatient;
 exports.login = viewLogin;
 exports.notfound = viewNotfound;
+exports.help = viewHelp;

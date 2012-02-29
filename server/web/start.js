@@ -60,6 +60,7 @@ viewHandler["/(index)?"] = views.index;
 viewHandler["/room"] = views.room;
 viewHandler["/patient"] = views.patient;
 viewHandler["/login"] = views.login;
+viewHandler["/help"] = views.help;
 
 // Need to be put before * otherwise the star rule catches all the
 // requests !
