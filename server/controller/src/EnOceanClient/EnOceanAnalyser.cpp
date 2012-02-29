@@ -47,6 +47,7 @@ void EnOceanAnalyser::analyse() {
 	EnOceanSensorAPI::EnOceanCallbackFunction translator;
 
 	//For each thread :
+	sleep(1);
 	MYSQL* mysql = connectToMysql();
 
 	cout << "<Analyser> Ready.\n";

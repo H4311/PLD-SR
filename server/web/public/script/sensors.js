@@ -1,4 +1,4 @@
-function fetchSensorLog(idSensor, sensorLog) {
+function fetchSensorLog(idSensor, sensorLog, callback) {
 	function getLastMeasures() {
 		var toDate = new Date();
 	
@@ -20,7 +20,12 @@ function fetchSensorLog(idSensor, sensorLog) {
 			sensorLog.addMeasure(measure);
 		}
 	}
-	createComet('sensors', 'POST', 1000, getLastMeasures, addValues); // Function defined in common.js
+	
+	function callBackFinal(data) {
+		addValues(data);
+		callback(sensorLog);
+	}
+	createComet('sensors', 'POST', 1000, getLastMeasures, callBackFinal); // Function defined in common.js
 }
 
 function getSensorValues(idSensor, callback, from, to) {
