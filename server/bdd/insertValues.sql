@@ -279,6 +279,9 @@ VALUES (1, "Lhaache", false, "Changement de sexe", (SELECT id FROM pld.pieces WH
 	   (5, "Jeremy", true, "Déprime ordonnanceur", (SELECT id FROM pld.pieces WHERE nom="Ch112")),
 	   (6, "Dan", true, "Chef de projet PLD SI... Franssement, c est ssaud, mon frère !", (SELECT id FROM pld.pieces WHERE nom="Ch113"));
 
+INSERT INTO capteurs(type, numeroCapteur, isGlobal, idSujet) VALUES (1,1, 0, 3);
+INSERT INTO mesures (idCapteur, time, typeMesure, mesure) VALUES (1, (SELECT UNIX_TIMESTAMP()*1000), 1, 42);
+
 INSERT INTO capteurs(type, numeroCapteur, isGlobal, idSujet) VALUES (459777,1048599, 1, (SELECT id FROM pld.pieces WHERE nom="Ch111"));
 INSERT INTO capteurs(type, numeroCapteur, isGlobal, idSujet) VALUES (460801,1048600, 1, (SELECT id FROM pld.pieces WHERE nom="Ch111"));
 INSERT INTO capteurs(type, numeroCapteur, isGlobal, idSujet) VALUES (393217,1048601, 1,(SELECT id FROM pld.pieces WHERE nom="Ch111"));
