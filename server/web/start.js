@@ -48,6 +48,7 @@ viewHandler["/(index)?"] = views.index;
 viewHandler["/room"] = views.room;
 viewHandler["/patient"] = views.patient;
 viewHandler["/login"] = views.login;
+viewHandler["/alerts"] = views.notif;
 
 // handler, user, password
 // authModule.init(viewHandler, "rithm", "th!$_!$_th3_rythm_0f_th3_n!ght");
