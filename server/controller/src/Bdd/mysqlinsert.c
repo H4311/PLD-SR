@@ -13,6 +13,11 @@ MYSQL* connectToMysql() {
 	if (!mysql_real_connect(mysql,"localhost","rithm","rithm","pld",0,NULL,0)) {
 		fprintf(stderr, "Error: failed to connect to database (%s)\n", mysql_error(mysql));
 	}
+	
+	if(mysql_query(mysql, "SET NAMES 'utf8'")) {
+		printf("Erreur: SET NAMES 'utf8' (%s)\n", mysql_error(mysql));
+	}
+	
 	return mysql;
 }
 

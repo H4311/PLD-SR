@@ -1,5 +1,7 @@
 USE pld;
 
+SET NAMES 'utf8';
+
 DELETE FROM alertes;
 DELETE FROM regleCapteur;
 DELETE FROM regleActionneur;
