@@ -29,6 +29,7 @@ serviceHandler["/murs"] = services.murs;
 serviceHandler["/bondsActuators"] = services.bondsActuators;
 serviceHandler["/add_device"] = services.admin_add_devices;
 serviceHandler["/remove_device"] = services.admin_remove_devices;
+serviceHandler["/rules"] = services.rules;
 
 for (var url in serviceHandler) {
 	rest.post(url, serviceHandler[url]);

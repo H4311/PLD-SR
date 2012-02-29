@@ -1,5 +1,7 @@
 USE pld;
 
+SET NAMES 'utf8';
+
 DELETE FROM alertes;
 DELETE FROM regleCapteur;
 DELETE FROM regleActionneur;
@@ -18,7 +20,7 @@ INSERT INTO actionneurs (numeroActionneur, type) VALUES (1337, 42);
 
 
 
-
+/*
 INSERT INTO regles (id, nom, createsAlert) VALUES (100, 'chauffageON', true);
 INSERT INTO regles (id, nom, createsAlert) VALUES (101, 'chauffageOFF', true);
 
@@ -38,6 +40,7 @@ INSERT INTO alertes(time, idRegle) VALUES (1, 100);
 INSERT INTO alertes(time, idRegle) VALUES (10000000000, 101);
 INSERT INTO alertes(time, idRegle) VALUES (100000000000000, 100);
 INSERT INTO alertes(time, idRegle) VALUES (1000000000000000, 101);
+*/
 
 INSERT INTO pieces(nom) VALUES ('Ch111');
 INSERT INTO pieces(nom) VALUES ('Ch112');
@@ -276,6 +279,9 @@ VALUES (1, "Lhaache", false, "Changement de sexe", (SELECT id FROM pld.pieces WH
 	   (5, "Jeremy", true, "Déprime ordonnanceur", (SELECT id FROM pld.pieces WHERE nom="Ch112")),
 	   (6, "Dan", true, "Chef de projet PLD SI... Franssement, c est ssaud, mon frère !", (SELECT id FROM pld.pieces WHERE nom="Ch113"));
 
+INSERT INTO capteurs(id, type, numeroCapteur, isGlobal, idSujet) VALUES (1, 0x0070205,1, 0, 3);
+INSERT INTO mesures (idCapteur, time, typeMesure, mesure) VALUES (1, (SELECT UNIX_TIMESTAMP()*1000), 1, 42);
+
 INSERT INTO capteurs(type, numeroCapteur, isGlobal, idSujet) VALUES (459777,1048599, 1, (SELECT id FROM pld.pieces WHERE nom="Ch111"));
 INSERT INTO capteurs(type, numeroCapteur, isGlobal, idSujet) VALUES (460801,1048600, 1, (SELECT id FROM pld.pieces WHERE nom="Ch111"));
 INSERT INTO capteurs(type, numeroCapteur, isGlobal, idSujet) VALUES (393217,1048601, 1,(SELECT id FROM pld.pieces WHERE nom="Ch111"));
@@ -351,7 +357,3 @@ INSERT INTO capteurs(type, numeroCapteur, isGlobal, idSujet) VALUES (460801,1048
 INSERT INTO capteurs(type, numeroCapteur, isGlobal, idSujet) VALUES (393217,1048671, 1,(SELECT id FROM pld.pieces WHERE nom="Dep11"));
 INSERT INTO capteurs(type, numeroCapteur, isGlobal, idSujet) VALUES (328193,1048672, 1, (SELECT id FROM pld.pieces WHERE nom="Dep11"));
 INSERT INTO capteurs(type, numeroCapteur, isGlobal, idSujet) VALUES (461057,1048673, 1, (SELECT id FROM pld.pieces WHERE nom="Dep11"));
-
-
-
-
