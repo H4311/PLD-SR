@@ -80,7 +80,7 @@ void* ServerSettingsThread_Receive (void* param) {
 						int typeDevice = (type >> 24); // If the type starts with an "1" or more, it's an actuator ; else it's a sensor.
 						if (typeDevice == 0) { // SENSOR
 							// Insert into DB :
-							insertCapteur(mysql, typeDevice, idDevice, arraySubjects.get("t", 0).asInt(), arraySubjects.get("i", 0).asInt());
+							insertCapteur(mysql, type, idDevice, arraySubjects.get("t", 0).asInt(), arraySubjects.get("i", 0).asInt());
 
 							// Add to the "driver" :
 							pthread_mutex_lock(&(server->mutex));
@@ -180,6 +180,9 @@ void* ServerSettingsThread_Receive (void* param) {
 						pthread_mutex_lock(&(server->mutex));
 						server->msgToSend->push(new string(buffer));
 						pthread_mutex_unlock(&(server->mutex));
+					}
+					else {
+						cout << "<Server Settings> Error - Unknown Service.\n";
 					}
 				} catch (exception e) {
 					 cout << "<Server Settings> Error - Parsing | Message : " << msg  << " | Error : " << e.what() << endl;

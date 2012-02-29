@@ -33,7 +33,7 @@ void insertCapteur(MYSQL* mysql, int type, int numeroCapteur, int isGlobal, int 
 result* getCapteurs(MYSQL* mysql) {
 	MYSQL_RES *mysqlResult;
 	MYSQL_ROW row;
-	int i, j;
+	int i;
 	result* res;
 	
 	mysql_query(mysql, "SELECT type, numeroCapteur, isGlobal, idSujet FROM capteurs");

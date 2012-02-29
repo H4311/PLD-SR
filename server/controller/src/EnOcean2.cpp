@@ -120,7 +120,7 @@ int main(int argc, char *argv[]) {
 	blocking_queue<string> msgToSend = blocking_queue<string>();
 
 	ServerSettings serverSettings = ServerSettings(&table, &msgToSendSimulator, NULL);
-	serverSettings.openSocket(1234);
+	serverSettings.openSocket(1235);
 	serverSettings.run();
 
 	EnOceanAnalyser analyser = EnOceanAnalyser(&table, &msgQueue);

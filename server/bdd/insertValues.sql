@@ -1,5 +1,7 @@
 USE pld;
 
+SET NAMES 'utf8';
+
 DELETE FROM alertes;
 DELETE FROM regleCapteur;
 DELETE FROM regleActionneur;
@@ -16,6 +18,29 @@ INSERT INTO actionneurs(numeroActionneur, type)
 VALUES(1, 0x1070901);
 INSERT INTO actionneurs (numeroActionneur, type) VALUES (1337, 42);
 
+
+
+
+INSERT INTO regles (id, nom, createsAlert) VALUES (100, 'chauffageON', true);
+INSERT INTO regles (id, nom, createsAlert) VALUES (101, 'chauffageOFF', true);
+
+INSERT INTO regleCapteur (idRegle, idCapteur, debutIntervalle, finIntervalle) VALUES ((SELECT id FROM regles WHERE nom = 'chauffageON'), 1, -10, 18.5);
+INSERT INTO regleCapteur (idRegle, idCapteur, debutIntervalle, finIntervalle) VALUES ((SELECT id FROM regles WHERE nom = 'chauffageOFF'), 1, 18.5, 50);
+
+INSERT INTO regleActionneur (idRegle, idActionneur, valeur, isActive) VALUES ((SELECT id FROM regles WHERE nom = 'chauffageOFF'), 1, 123456789, true);
+		
+
+INSERT INTO mesures(id, idCapteur, time, typeMesure, mesure)
+VALUES (1, 1, 1328817902000, 3, 36),
+	   (2, 1, 1328818243000, 3, 39),
+	   (3, 2, 1328824670000, 3, 37),
+	   (4, 2, 1399999999999, 3, 1337);
+	   
+INSERT INTO alertes(time, idRegle) VALUES (1, 100);
+INSERT INTO alertes(time, idRegle) VALUES (10000000000, 101);
+INSERT INTO alertes(time, idRegle) VALUES (100000000000000, 100);
+INSERT INTO alertes(time, idRegle) VALUES (1000000000000000, 101);
+
 INSERT INTO pieces(nom) VALUES ('Ch111');
 INSERT INTO pieces(nom) VALUES ('Ch112');
 INSERT INTO pieces(nom) VALUES ('Ch113');
@@ -31,53 +56,6 @@ INSERT INTO pieces(nom) VALUES ('Ch122');
 INSERT INTO pieces(nom) VALUES ('Bl11');
 INSERT INTO pieces(nom) VALUES ('Bl12');
 INSERT INTO pieces(nom) VALUES ('Dep11');
-
-INSERT INTO patients(id, nom, isMan, raisonHospitalisation, idPiece)
-VALUES (1, "Lhaache", false, "Changement de sexe", 1),
-	   (2, "Benjamin", true, "Dédoublage de personnalité", 2),
-	   (3, "Tibalt", true, "Découpage des pieds gelés", 1),
-	   (4, "Benjamin", true, "Dédoublage de personnalité", 1),
-	   (5, "Jeremy", true, "Déprime ordonnanceur", 1),
-	   (6, "Dan", true, "Chef de projet PLD SI... Franssement, c est ssaud, mon frère !", 2);
-
-
-INSERT INTO capteurs(id, type, numeroCapteur, isGlobal, idSujet)
-VALUES 	(1, 0x0070401, 0x00100001, true, 1),
-		(2, 0x0070401, 0x00100002, true, 2),
-		(3, 0x0070401, 0x00100003, true, 3),
-		(4, 0x0070401, 0x00100004, true, 4),
-		(5, 0x0070401, 0x00100005, true, 5),
-		(6, 0x0070401, 0x00100006, true, 6),
-		(7, 0x0070401, 0x00100007, true, 7),
-		(8, 0x0070401, 0x00100008, true, 8),
-		(9, 0x0070401, 0x00100009, true, 9),
-		(10, 0x0070401, 0x00100010, true, 10),
-		(11, 0x0070401, 0x00100011, true, 11),
-		(12, 0x0070401, 0x00100012, true, 12),
-		(13, 0x0070401, 0x00100013, true, 13),
-		(14, 0x0070401, 0x00100014, true, 14),
-		(15, 0x0070401, 0x00100015, true, 15),
-		(16, 0x0070401, 0x00100016, true, 2),
-		(17, 0x0070401, 0x00100017, true, 2);
-
-INSERT INTO regles (id, nom, createsAlert) VALUES (100, 'chauffageON', true);
-INSERT INTO regles (id, nom, createsAlert) VALUES (101, 'chauffageOFF', true);
-
-INSERT INTO regleCapteur (idRegle, idCapteur, debutIntervalle, finIntervalle) VALUES ((SELECT id FROM regles WHERE nom = 'chauffageON'), 1, -10, 18.5);
-INSERT INTO regleCapteur (idRegle, idCapteur, debutIntervalle, finIntervalle) VALUES ((SELECT id FROM regles WHERE nom = 'chauffageOFF'), 1, 18.5, 50);
-
-INSERT INTO regleActionneur (idRegle, idActionneur, valeur, isActive) VALUES ((SELECT id FROM regles WHERE nom = 'chauffageOFF'), 1, 123456789, true);
-
-INSERT INTO mesures(id, idCapteur, time, typeMesure, mesure)
-VALUES (1, 1, 1328817902000, 3, 36),
-	   (2, 1, 1328818243000, 3, 39),
-	   (3, 2, 1328824670000, 3, 37),
-	   (4, 2, 1399999999999, 3, 1337);
-	   
-INSERT INTO alertes(time, idRegle) VALUES (1, 100);
-INSERT INTO alertes(time, idRegle) VALUES (10000000000, 101);
-INSERT INTO alertes(time, idRegle) VALUES (100000000000000, 100);
-INSERT INTO alertes(time, idRegle) VALUES (1000000000000000, 101);
 
 INSERT INTO murs(idPiece, x1, y1, x2, y2, ordre, isPorte)
 VALUES ((SELECT id FROM pieces WHERE nom = 'Ch111'), 10, 10, 100, 10, 1, false);
@@ -290,3 +268,88 @@ INSERT INTO murs(idPiece, x1, y1, x2, y2, ordre, isPorte)
 VALUES ((SELECT id FROM pieces WHERE nom = 'Dep11'), 270, 100, 270, 10, 6, false);
 INSERT INTO murs(idPiece, x1, y1, x2, y2, ordre, isPorte)
 VALUES ((SELECT id FROM pieces WHERE nom = 'Dep11'), 330, 100, 300, 100, 4, true);
+
+
+INSERT INTO patients(id, nom, isMan, raisonHospitalisation, idPiece)
+VALUES (1, "Lhaache", false, "Changement de sexe", (SELECT id FROM pld.pieces WHERE nom="Ch111")),
+	   (2, "Benjamin", true, "Dédoublage de personnalité", (SELECT id FROM pld.pieces WHERE nom="Ch111")),
+	   (3, "Tibalt", true, "Découpage des pieds gelés", (SELECT id FROM pld.pieces WHERE nom="Ch111")),
+	   (4, "Benjamin", true, "Dédoublage de personnalité", (SELECT id FROM pld.pieces WHERE nom="Ch112")),
+	   (5, "Jeremy", true, "Déprime ordonnanceur", (SELECT id FROM pld.pieces WHERE nom="Ch112")),
+	   (6, "Dan", true, "Chef de projet PLD SI... Franssement, c est ssaud, mon frère !", (SELECT id FROM pld.pieces WHERE nom="Ch113"));
+
+INSERT INTO capteurs(type, numeroCapteur, isGlobal, idSujet) VALUES (459777,1048599, 1, (SELECT id FROM pld.pieces WHERE nom="Ch111"));
+INSERT INTO capteurs(type, numeroCapteur, isGlobal, idSujet) VALUES (460801,1048600, 1, (SELECT id FROM pld.pieces WHERE nom="Ch111"));
+INSERT INTO capteurs(type, numeroCapteur, isGlobal, idSujet) VALUES (393217,1048601, 1,(SELECT id FROM pld.pieces WHERE nom="Ch111"));
+INSERT INTO capteurs(type, numeroCapteur, isGlobal, idSujet) VALUES (328193,1048602, 1, (SELECT id FROM pld.pieces WHERE nom="Ch111"));
+INSERT INTO capteurs(type, numeroCapteur, isGlobal, idSujet) VALUES (461057,1048603, 1, (SELECT id FROM pld.pieces WHERE nom="Ch111"));
+INSERT INTO capteurs(type, numeroCapteur, isGlobal, idSujet) VALUES (459777,1048604, 1, (SELECT id FROM pld.pieces WHERE nom="Ch114"));
+INSERT INTO capteurs(type, numeroCapteur, isGlobal, idSujet) VALUES (460801,1048605, 1, (SELECT id FROM pld.pieces WHERE nom="Ch114"));
+INSERT INTO capteurs(type, numeroCapteur, isGlobal, idSujet) VALUES (393217,1048606, 1,(SELECT id FROM pld.pieces WHERE nom="Ch114"));
+INSERT INTO capteurs(type, numeroCapteur, isGlobal, idSujet) VALUES (328193,1048607, 1, (SELECT id FROM pld.pieces WHERE nom="Ch114"));
+INSERT INTO capteurs(type, numeroCapteur, isGlobal, idSujet) VALUES (461057,1048608, 1, (SELECT id FROM pld.pieces WHERE nom="Ch114"));
+INSERT INTO capteurs(type, numeroCapteur, isGlobal, idSujet) VALUES (459777,1048609, 1, (SELECT id FROM pld.pieces WHERE nom="Bl11"));
+INSERT INTO capteurs(type, numeroCapteur, isGlobal, idSujet) VALUES (460801,1048610, 1, (SELECT id FROM pld.pieces WHERE nom="Bl11"));
+INSERT INTO capteurs(type, numeroCapteur, isGlobal, idSujet) VALUES (393217,1048611, 1,(SELECT id FROM pld.pieces WHERE nom="Bl11"));
+INSERT INTO capteurs(type, numeroCapteur, isGlobal, idSujet) VALUES (328193,1048612, 1, (SELECT id FROM pld.pieces WHERE nom="Bl11"));
+INSERT INTO capteurs(type, numeroCapteur, isGlobal, idSujet) VALUES (461057,1048613, 1, (SELECT id FROM pld.pieces WHERE nom="Bl11"));
+INSERT INTO capteurs(type, numeroCapteur, isGlobal, idSujet) VALUES (459777,1048614, 1, (SELECT id FROM pld.pieces WHERE nom="Bl12"));
+INSERT INTO capteurs(type, numeroCapteur, isGlobal, idSujet) VALUES (460801,1048615, 1, (SELECT id FROM pld.pieces WHERE nom="Bl12"));
+INSERT INTO capteurs(type, numeroCapteur, isGlobal, idSujet) VALUES (393217,1048616, 1,(SELECT id FROM pld.pieces WHERE nom="Bl12"));
+INSERT INTO capteurs(type, numeroCapteur, isGlobal, idSujet) VALUES (328193,1048617, 1, (SELECT id FROM pld.pieces WHERE nom="Bl12"));
+INSERT INTO capteurs(type, numeroCapteur, isGlobal, idSujet) VALUES (461057,1048618, 1, (SELECT id FROM pld.pieces WHERE nom="Bl12"));
+INSERT INTO capteurs(type, numeroCapteur, isGlobal, idSujet) VALUES (459777,1048619, 1, (SELECT id FROM pld.pieces WHERE nom="Ch112"));
+INSERT INTO capteurs(type, numeroCapteur, isGlobal, idSujet) VALUES (460801,1048620, 1, (SELECT id FROM pld.pieces WHERE nom="Ch112"));
+INSERT INTO capteurs(type, numeroCapteur, isGlobal, idSujet) VALUES (393217,1048621, 1,(SELECT id FROM pld.pieces WHERE nom="Ch112"));
+INSERT INTO capteurs(type, numeroCapteur, isGlobal, idSujet) VALUES (328193,1048622, 1, (SELECT id FROM pld.pieces WHERE nom="Ch112"));
+INSERT INTO capteurs(type, numeroCapteur, isGlobal, idSujet) VALUES (461057,1048623, 1, (SELECT id FROM pld.pieces WHERE nom="Ch112"));
+INSERT INTO capteurs(type, numeroCapteur, isGlobal, idSujet) VALUES (459777,1048624, 1, (SELECT id FROM pld.pieces WHERE nom="Ch113"));
+INSERT INTO capteurs(type, numeroCapteur, isGlobal, idSujet) VALUES (460801,1048625, 1, (SELECT id FROM pld.pieces WHERE nom="Ch113"));
+INSERT INTO capteurs(type, numeroCapteur, isGlobal, idSujet) VALUES (393217,1048626, 1,(SELECT id FROM pld.pieces WHERE nom="Ch113"));
+INSERT INTO capteurs(type, numeroCapteur, isGlobal, idSujet) VALUES (328193,1048627, 1, (SELECT id FROM pld.pieces WHERE nom="Ch113"));
+INSERT INTO capteurs(type, numeroCapteur, isGlobal, idSujet) VALUES (461057,1048628, 1, (SELECT id FROM pld.pieces WHERE nom="Ch113"));
+INSERT INTO capteurs(type, numeroCapteur, isGlobal, idSujet) VALUES (459777,1048629, 1, (SELECT id FROM pld.pieces WHERE nom="Ch115"));
+INSERT INTO capteurs(type, numeroCapteur, isGlobal, idSujet) VALUES (460801,1048630, 1, (SELECT id FROM pld.pieces WHERE nom="Ch115"));
+INSERT INTO capteurs(type, numeroCapteur, isGlobal, idSujet) VALUES (393217,1048631, 1,(SELECT id FROM pld.pieces WHERE nom="Ch115"));
+INSERT INTO capteurs(type, numeroCapteur, isGlobal, idSujet) VALUES (328193,1048632, 1, (SELECT id FROM pld.pieces WHERE nom="Ch115"));
+INSERT INTO capteurs(type, numeroCapteur, isGlobal, idSujet) VALUES (461057,1048633, 1, (SELECT id FROM pld.pieces WHERE nom="Ch115"));
+INSERT INTO capteurs(type, numeroCapteur, isGlobal, idSujet) VALUES (459777,1048634, 1, (SELECT id FROM pld.pieces WHERE nom="Ch116"));
+INSERT INTO capteurs(type, numeroCapteur, isGlobal, idSujet) VALUES (460801,1048635, 1, (SELECT id FROM pld.pieces WHERE nom="Ch116"));
+INSERT INTO capteurs(type, numeroCapteur, isGlobal, idSujet) VALUES (393217,1048636, 1,(SELECT id FROM pld.pieces WHERE nom="Ch116"));
+INSERT INTO capteurs(type, numeroCapteur, isGlobal, idSujet) VALUES (328193,1048637, 1, (SELECT id FROM pld.pieces WHERE nom="Ch116"));
+INSERT INTO capteurs(type, numeroCapteur, isGlobal, idSujet) VALUES (461057,1048638, 1, (SELECT id FROM pld.pieces WHERE nom="Ch116"));
+INSERT INTO capteurs(type, numeroCapteur, isGlobal, idSujet) VALUES (459777,1048639, 1, (SELECT id FROM pld.pieces WHERE nom="Ch117"));
+INSERT INTO capteurs(type, numeroCapteur, isGlobal, idSujet) VALUES (460801,1048640, 1, (SELECT id FROM pld.pieces WHERE nom="Ch117"));
+INSERT INTO capteurs(type, numeroCapteur, isGlobal, idSujet) VALUES (393217,1048641, 1,(SELECT id FROM pld.pieces WHERE nom="Ch117"));
+INSERT INTO capteurs(type, numeroCapteur, isGlobal, idSujet) VALUES (328193,1048642, 1, (SELECT id FROM pld.pieces WHERE nom="Ch117"));
+INSERT INTO capteurs(type, numeroCapteur, isGlobal, idSujet) VALUES (461057,1048643, 1, (SELECT id FROM pld.pieces WHERE nom="Ch117"));
+INSERT INTO capteurs(type, numeroCapteur, isGlobal, idSujet) VALUES (459777,1048644, 1, (SELECT id FROM pld.pieces WHERE nom="Ch118"));
+INSERT INTO capteurs(type, numeroCapteur, isGlobal, idSujet) VALUES (460801,1048645, 1, (SELECT id FROM pld.pieces WHERE nom="Ch118"));
+INSERT INTO capteurs(type, numeroCapteur, isGlobal, idSujet) VALUES (393217,1048646, 1,(SELECT id FROM pld.pieces WHERE nom="Ch118"));
+INSERT INTO capteurs(type, numeroCapteur, isGlobal, idSujet) VALUES (328193,1048647, 1, (SELECT id FROM pld.pieces WHERE nom="Ch118"));
+INSERT INTO capteurs(type, numeroCapteur, isGlobal, idSujet) VALUES (461057,1048648, 1, (SELECT id FROM pld.pieces WHERE nom="Ch118"));
+INSERT INTO capteurs(type, numeroCapteur, isGlobal, idSujet) VALUES (459777,1048649, 1, (SELECT id FROM pld.pieces WHERE nom="Ch119"));
+INSERT INTO capteurs(type, numeroCapteur, isGlobal, idSujet) VALUES (460801,1048650, 1, (SELECT id FROM pld.pieces WHERE nom="Ch119"));
+INSERT INTO capteurs(type, numeroCapteur, isGlobal, idSujet) VALUES (393217,1048651, 1,(SELECT id FROM pld.pieces WHERE nom="Ch119"));
+INSERT INTO capteurs(type, numeroCapteur, isGlobal, idSujet) VALUES (328193,1048652, 1, (SELECT id FROM pld.pieces WHERE nom="Ch119"));
+INSERT INTO capteurs(type, numeroCapteur, isGlobal, idSujet) VALUES (461057,1048653, 1, (SELECT id FROM pld.pieces WHERE nom="Ch119"));
+INSERT INTO capteurs(type, numeroCapteur, isGlobal, idSujet) VALUES (459777,1048654, 1, (SELECT id FROM pld.pieces WHERE nom="Ch120"));
+INSERT INTO capteurs(type, numeroCapteur, isGlobal, idSujet) VALUES (460801,1048655, 1, (SELECT id FROM pld.pieces WHERE nom="Ch120"));
+INSERT INTO capteurs(type, numeroCapteur, isGlobal, idSujet) VALUES (393217,1048656, 1,(SELECT id FROM pld.pieces WHERE nom="Ch120"));
+INSERT INTO capteurs(type, numeroCapteur, isGlobal, idSujet) VALUES (328193,1048657, 1, (SELECT id FROM pld.pieces WHERE nom="Ch120"));
+INSERT INTO capteurs(type, numeroCapteur, isGlobal, idSujet) VALUES (461057,1048658, 1, (SELECT id FROM pld.pieces WHERE nom="Ch120"));
+INSERT INTO capteurs(type, numeroCapteur, isGlobal, idSujet) VALUES (459777,1048659, 1, (SELECT id FROM pld.pieces WHERE nom="Ch121"));
+INSERT INTO capteurs(type, numeroCapteur, isGlobal, idSujet) VALUES (460801,1048660, 1, (SELECT id FROM pld.pieces WHERE nom="Ch121"));
+INSERT INTO capteurs(type, numeroCapteur, isGlobal, idSujet) VALUES (393217,1048661, 1,(SELECT id FROM pld.pieces WHERE nom="Ch121"));
+INSERT INTO capteurs(type, numeroCapteur, isGlobal, idSujet) VALUES (328193,1048662, 1, (SELECT id FROM pld.pieces WHERE nom="Ch121"));
+INSERT INTO capteurs(type, numeroCapteur, isGlobal, idSujet) VALUES (461057,1048663, 1, (SELECT id FROM pld.pieces WHERE nom="Ch121"));
+INSERT INTO capteurs(type, numeroCapteur, isGlobal, idSujet) VALUES (459777,1048664, 1, (SELECT id FROM pld.pieces WHERE nom="Ch122"));
+INSERT INTO capteurs(type, numeroCapteur, isGlobal, idSujet) VALUES (460801,1048665, 1, (SELECT id FROM pld.pieces WHERE nom="Ch122"));
+INSERT INTO capteurs(type, numeroCapteur, isGlobal, idSujet) VALUES (393217,1048666, 1,(SELECT id FROM pld.pieces WHERE nom="Ch122"));
+INSERT INTO capteurs(type, numeroCapteur, isGlobal, idSujet) VALUES (328193,1048667, 1, (SELECT id FROM pld.pieces WHERE nom="Ch122"));
+INSERT INTO capteurs(type, numeroCapteur, isGlobal, idSujet) VALUES (461057,1048668, 1, (SELECT id FROM pld.pieces WHERE nom="Ch122"));
+INSERT INTO capteurs(type, numeroCapteur, isGlobal, idSujet) VALUES (459777,1048669, 1, (SELECT id FROM pld.pieces WHERE nom="Dep11"));
+INSERT INTO capteurs(type, numeroCapteur, isGlobal, idSujet) VALUES (460801,1048670, 1, (SELECT id FROM pld.pieces WHERE nom="Dep11"));
+INSERT INTO capteurs(type, numeroCapteur, isGlobal, idSujet) VALUES (393217,1048671, 1,(SELECT id FROM pld.pieces WHERE nom="Dep11"));
+INSERT INTO capteurs(type, numeroCapteur, isGlobal, idSujet) VALUES (328193,1048672, 1, (SELECT id FROM pld.pieces WHERE nom="Dep11"));
+INSERT INTO capteurs(type, numeroCapteur, isGlobal, idSujet) VALUES (461057,1048673, 1, (SELECT id FROM pld.pieces WHERE nom="Dep11"));

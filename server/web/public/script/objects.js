@@ -65,10 +65,6 @@ var RithmObjects = {}
 		this.origine[0] = x;
 	};
 
-	RithmObjects.Wall.prototype.stroke = function WallStroke(ctx) {
-		this.segmentPlot.stroke(ctx);
-	};
-
 	// ---------------------
 	// 		   DOOR
 	// ---------------------
