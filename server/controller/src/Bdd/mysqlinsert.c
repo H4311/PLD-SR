@@ -9,8 +9,19 @@ MYSQL* connectToMysql() {
 	if(mysql == NULL) {
 		puts("Erreur de mysql_init");
 	}
+	
+	int res = 0;
+	int i;
+	//Test 3 times to connect to mysql
+	for(i=0; !res && i<3; i++) {
+		if(i!=0) {
+			sleep(1);
+		}
+		printf("try %d\n", i);
+		res = mysql_real_connect(mysql,"localhost","rithm","rithm","pld",0,NULL,0);
+	}
 
-	if (!mysql_real_connect(mysql,"localhost","rithm","rithm","pld",0,NULL,0)) {
+	if (!res) {
 		fprintf(stderr, "Error: failed to connect to database (%s)\n", mysql_error(mysql));
 	}
 	
