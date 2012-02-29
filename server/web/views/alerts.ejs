@@ -33,19 +33,11 @@ function twoDigits(nb) {
 <div class="hero-unit">
 <h2>Notifications</h2>
 <h3>Activite recente</h3>
-<table class="table table-condensed">
-    <thead>
-        <tr>
-        <th>Description</th>
-        <th>Heure</th>
-        </tr>
-    </thead>
-    <tbody>
+<br />
 		<% for(var i in notifs.alerts) {
 			var a = notifs.alerts[i];
 			notifTime = dateToString(new Date(a.time/1000)); %>
-			<tr><td><i class="icon-time"></i>&nbsp;<%= a.nom %></td> <td><%= notifTime %></td></tr>
+			<div class="alert"><i class="icon-time"></i>&nbsp;<%= a.nom%>" : <%=notifTime %>
+			</div>
 		<% } %>
-    </tbody>
-</table>
 </div>

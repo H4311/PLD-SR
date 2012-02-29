@@ -92,7 +92,9 @@ function viewPatient(req, res) {
  */
 function viewNotif(req, res) {
 	//TODO: Get the last 24h notifs
-	var before = new Date(0);
+	var now = new Date();
+	var d = (now.getTime() - 3600*24*1000);
+	var before = new Date(d);
 	var data = {"from":  dateToString(before)};
 	
 	// Get model data
