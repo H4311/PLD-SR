@@ -44,8 +44,9 @@ function getAlerts(param, callback) {
 	sql_req += "FROM alertes ";
 	sql_req += "WHERE time > " + from + " ";
 	if(param.to) {
-		sql_req += "AND time < " + Date.parse(param.to);
-	}	
+		sql_req += "AND time < " + Date.parse(param.to) + " ";
+	}
+	sql_req += "ORDER BY time DESC ";
 	
 	var db = sqlConnect();
 	sql.query(db, sql_req, function(result) {
