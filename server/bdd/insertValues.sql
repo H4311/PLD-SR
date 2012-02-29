@@ -20,7 +20,7 @@ INSERT INTO actionneurs (numeroActionneur, type) VALUES (1337, 42);
 
 
 
-
+/*
 INSERT INTO regles (id, nom, createsAlert) VALUES (100, 'chauffageON', true);
 INSERT INTO regles (id, nom, createsAlert) VALUES (101, 'chauffageOFF', true);
 
@@ -40,6 +40,7 @@ INSERT INTO alertes(time, idRegle) VALUES (1, 100);
 INSERT INTO alertes(time, idRegle) VALUES (10000000000, 101);
 INSERT INTO alertes(time, idRegle) VALUES (100000000000000, 100);
 INSERT INTO alertes(time, idRegle) VALUES (1000000000000000, 101);
+*/
 
 INSERT INTO pieces(nom) VALUES ('Ch111');
 INSERT INTO pieces(nom) VALUES ('Ch112');
