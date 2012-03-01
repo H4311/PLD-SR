@@ -1,9 +1,14 @@
+var config = require("./config");
+
 var modelrooms = require("./model/rooms");
 var modelpatients = require("./model/patients");
 var modelalerts = require("./model/alerts");
 var modelsensors = require("./model/sensors");
 var modeladmin = require("./model/admin");
 var modelrules = require("./model/rules");
+
+var rest = config.getProperty("security.ssl") ? "https://" : "http://";
+rest += config.getProperty("rest.url");
 
 /*
  * VIEW Index
@@ -14,7 +19,7 @@ function viewIndex(req, res) {
     // Get rooms details
     modelrooms.getRooms(req, function(result) {
         var rooms=result.hits;
-        res.render('index', {title: "Accueil", rooms: rooms});
+        res.render('index', {title: "Accueil", rest: rest, rooms: rooms});
 	});
 }
 
@@ -29,7 +34,7 @@ function viewRoom(req, res) {
     modelrooms.getRooms(req, function(result) {
         var roomDetails=result.hits[0];
         if(!roomDetails) {
-        	res.render('404', {title: "Erreur"});
+        	res.render('404', {title: "Erreur", rest: rest});
         	return;
         }
         
@@ -38,7 +43,7 @@ function viewRoom(req, res) {
         // Get patients list
         modelpatients.getPatients(req, function(result) {
             var patients = result.hits;
-            res.render('room', {title: "Chambre", roomDetails: roomDetails, patients: patients});
+            res.render('room', {title: "Chambre", rest: rest, roomDetails: roomDetails, patients: patients});
         });
     });
 }
@@ -49,7 +54,7 @@ function viewRoom(req, res) {
  */
 function viewLogin(req, res) {
 	next = req.param("next", null);
-	res.render('login', {title: "Login", next: next, error: null});
+	res.render('login', {title: "Login", rest: rest, next: next, error: null});
 }
 
 /*
@@ -63,7 +68,7 @@ function viewPatient(req, res) {
 	modelpatients.getPatients(req, function(result) {
 		var patientDetails=result.hits[0];
 		if(!patientDetails) {
-        	res.render('404', {title: "Erreur"});
+        	res.render('404', {title: "Erreur", rest: rest});
         	return;
         }
 		
@@ -85,7 +90,7 @@ function viewPatient(req, res) {
             	}
             }
             var typeLabels = modelsensors.getSensorsLabels();
-            res.render('patient', {title: "Patient "+patientDetails.nom, patientDetails: patientDetails, measures: measures, typeLabels: typeLabels});
+            res.render('patient', {title: "Patient "+patientDetails.nom, rest: rest, patientDetails: patientDetails, measures: measures, typeLabels: typeLabels});
         });
 	});
 }
@@ -103,7 +108,7 @@ function viewNotif(req, res) {
 	// Get model data
 	modelalerts.getAlerts(data, function(result) {
 		var notifs = result;
-		res.render('alerts', {title: "Notifications", notifs: notifs });
+		res.render('alerts', {title: "Notifications", rest: rest, notifs: notifs });
 	});
 }
 
@@ -131,11 +136,11 @@ function twoDigits(nb) {
 
 
 function viewNotfound(req, res) {
-	res.render('404', {title: "Page non trouvée"});
+	res.render('404', {title: "Page non trouvée", rest: rest});
 }
 
 function viewHelp(req, res) {
-	res.render('help', {title: "Aide"});
+	res.render('help', {title: "Aide", rest: rest});
 }
 
 /*
@@ -164,7 +169,7 @@ function addSensorPatient(req, res){
  */
 function viewActuators(req, res){
 		modelsensors.getActuatorsList(function(result){
-			res.render('actuators', {title: "Actionneurs", actuators: result.hits });
+			res.render('actuators', {title: "Actionneurs", rest: rest, actuators: result.hits });
 		});
 }
 
@@ -185,7 +190,7 @@ function doActuator(req, res){
  */
 function viewRules(req, res){
 	modelrules.getRules(function(result){
-		res.render('rules', {title: "Règles", rules: result.hits });
+		res.render('rules', {title: "Règles", rest: rest, rules: result.hits });
 	});
 
 }

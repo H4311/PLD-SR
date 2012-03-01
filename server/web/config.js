@@ -1,6 +1,13 @@
 var config = {
 	"logger" : {
 		"level" : "debug"
+	},
+	"security" : {
+		"ssl" : false,
+		"auth" : false
+	},
+	"rest" : {
+		"url" : "localhost:1337"
 	}
 };
 
