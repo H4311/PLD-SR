@@ -42,21 +42,21 @@ INSERT INTO alertes(time, idRegle) VALUES (100000000000000, 100);
 INSERT INTO alertes(time, idRegle) VALUES (1000000000000000, 101);
 */
 
-INSERT INTO pieces(nom) VALUES ('Ch111');
-INSERT INTO pieces(nom) VALUES ('Ch112');
-INSERT INTO pieces(nom) VALUES ('Ch113');
-INSERT INTO pieces(nom) VALUES ('Ch114');
-INSERT INTO pieces(nom) VALUES ('Ch115');
-INSERT INTO pieces(nom) VALUES ('Ch116');
-INSERT INTO pieces(nom) VALUES ('Ch117');
-INSERT INTO pieces(nom) VALUES ('Ch118');
-INSERT INTO pieces(nom) VALUES ('Ch119');
-INSERT INTO pieces(nom) VALUES ('Ch120');
-INSERT INTO pieces(nom) VALUES ('Ch121');
-INSERT INTO pieces(nom) VALUES ('Ch122');
-INSERT INTO pieces(nom) VALUES ('Bl11');
-INSERT INTO pieces(nom) VALUES ('Bl12');
-INSERT INTO pieces(nom) VALUES ('Dep11');
+INSERT INTO pieces(id, nom) VALUES (1, 'Ch111');
+INSERT INTO pieces(id, nom) VALUES (2, 'Ch112');
+INSERT INTO pieces(id, nom) VALUES (3,'Ch113');
+INSERT INTO pieces(id, nom) VALUES (4,'Ch114');
+INSERT INTO pieces(id, nom) VALUES (5,'Ch115');
+INSERT INTO pieces(id, nom) VALUES (6,'Ch116');
+INSERT INTO pieces(id, nom) VALUES (7,'Ch117');
+INSERT INTO pieces(id, nom) VALUES (8,'Ch118');
+INSERT INTO pieces(id, nom) VALUES (9,'Ch119');
+INSERT INTO pieces(id, nom) VALUES (10,'Ch120');
+INSERT INTO pieces(id, nom) VALUES (11,'Ch121');
+INSERT INTO pieces(id, nom) VALUES (12,'Ch122');
+INSERT INTO pieces(id, nom) VALUES (13,'Bl11');
+INSERT INTO pieces(id, nom) VALUES (14,'Bl12');
+INSERT INTO pieces(id, nom) VALUES (15,'Dep11');
 
 INSERT INTO murs(idPiece, x1, y1, x2, y2, ordre, isPorte)
 VALUES ((SELECT id FROM pieces WHERE nom = 'Ch111'), 10, 10, 100, 10, 1, false);
@@ -272,15 +272,31 @@ VALUES ((SELECT id FROM pieces WHERE nom = 'Dep11'), 330, 100, 300, 100, 4, true
 
 
 INSERT INTO patients(id, nom, isMan, raisonHospitalisation, idPiece)
-VALUES (1, "Lhaache", false, "Changement de sexe", (SELECT id FROM pld.pieces WHERE nom="Ch111")),
-	   (2, "Benjamin", true, "Dédoublage de personnalité", (SELECT id FROM pld.pieces WHERE nom="Ch111")),
-	   (3, "Tibalt", true, "Découpage des pieds gelés", (SELECT id FROM pld.pieces WHERE nom="Ch111")),
-	   (4, "Benjamin", true, "Dédoublage de personnalité", (SELECT id FROM pld.pieces WHERE nom="Ch112")),
-	   (5, "Jeremy", true, "Déprime ordonnanceur", (SELECT id FROM pld.pieces WHERE nom="Ch112")),
-	   (6, "Dan", true, "Chef de projet PLD SI... Franssement, c est ssaud, mon frère !", (SELECT id FROM pld.pieces WHERE nom="Ch113"));
-
-INSERT INTO capteurs(id, type, numeroCapteur, isGlobal, idSujet) VALUES (1, 0x0070205,1, 0, 3);
-INSERT INTO mesures (idCapteur, time, typeMesure, mesure) VALUES (1, (SELECT UNIX_TIMESTAMP()*1000), 1, 42);
+VALUES (1001, "Arnal", false, "Changement de sexe", (SELECT id FROM pld.pieces WHERE nom="Ch111")),
+	   (1002, "Benjamin", true, "D&eacute;doublage de personnalit&eacute;", (SELECT id FROM pld.pieces WHERE nom="Ch111")),
+	   (1003, "Tibalt", true, "D&eacute;coupage des pieds gel&eacute;s", (SELECT id FROM pld.pieces WHERE nom="Ch111")),
+	   (1004, "Benjamin", true, "D&eacute;doublage de personnalit&eacute;", (SELECT id FROM pld.pieces WHERE nom="Ch112")),
+	   (1005, "Jeremy", true, "D&eacute;prime ordonnanceur", (SELECT id FROM pld.pieces WHERE nom="Ch112")),
+	   (1006, "Dan", true, "Chef de projet PLD SI... Franssement, c est ssaud, mon fr&eacute;re !", (SELECT id FROM pld.pieces WHERE nom="Ch113")),
+	   (1007, "Ren&eacute;e G&eacute;rard", false, "Hypocondrie", (SELECT id FROM pld.pieces WHERE nom="Ch113")),
+	   (1008, "Daniel H&eacute;bonne", false, "Chirurgie esth&eacute;tique", (SELECT id FROM pld.pieces WHERE nom="Ch114")),
+	   (1009, "J&eacute;r&eacute;my Fasollasi", true, "Op&eacute;ration du tympan droit", (SELECT id FROM pld.pieces WHERE nom="Ch115")),
+	   (1010, "Thibalt Lon", false, "Entorse du genou simul&eacute;e", (SELECT id FROM pld.pieces WHERE nom="Ch115")),
+	   (1011, "Arnal Ligator", true, "Extraction de dents", (SELECT id FROM pld.pieces WHERE nom="Ch116")),
+	   (1012, "Bill At&eacute;ral", true, "Bipolarit&eacute; cervovaculaire", (SELECT id FROM pld.pieces WHERE nom="Ch117")),
+	   (1013, "Boule Deun&eacute;geux", true, "Engel�res aux doigts", (SELECT id FROM pld.pieces WHERE nom="Ch118")),
+	   (1014, "Benjamin Tenancespie", true, "Overdose de SAP", (SELECT id FROM pld.pieces WHERE nom="Ch119")),
+	   (1015, "Jeremy Lemeimeslipe", false, "Escar aux fesses", (SELECT id FROM pld.pieces WHERE nom="Ch120")),
+	   (1025, "Arnaud Limite", false, "Overdose coca�no�que", (SELECT id FROM pld.pieces WHERE nom="Ch121")),
+	   (1016, "Thibaut Gausse", true, "Chirurgie esth&eacute;tique", (SELECT id FROM pld.pieces WHERE nom="Ch121")),
+	   (1017, "Dan T&eacute;dan", true, "Traumatisme cranien s&eacute;v&eacute;re", (SELECT id FROM pld.pieces WHERE nom="Bl12")),
+	   (1018, "J&eacute;remy Sa", true, "Double fracture ouverte du tibia", (SELECT id FROM pld.pieces WHERE nom="Bl11")),
+	   (1019, "Benjamin Tenan-Oujam&eacute;", false, "Flemmingite aigue", (SELECT id FROM pld.pieces WHERE nom="Ch116")),
+	   (1020, "Arnal Longetoa", true, "MST exotique", (SELECT id FROM pld.pieces WHERE nom="Ch120")),
+	   (1021, "Bill Lingoualle", false, "Tourista", (SELECT id FROM pld.pieces WHERE nom="Ch121")),
+	   (1022, "Thibaut Coudeukalein", true, "Cote 3-1 f&ecirc;l&eacute;e", (SELECT id FROM pld.pieces WHERE nom="Ch117")),
+	   (1023, "Boul Lei", true, "Coma c&eacute;r&eacute;bral", (SELECT id FROM pld.pieces WHERE nom="Ch115")),
+	   (1024, "Charlie", true, "En recherche", (SELECT id FROM pld.pieces WHERE nom="Ch119"));
 
 INSERT INTO capteurs(type, numeroCapteur, isGlobal, idSujet) VALUES (459777,1048599, 1, (SELECT id FROM pld.pieces WHERE nom="Ch111"));
 INSERT INTO capteurs(type, numeroCapteur, isGlobal, idSujet) VALUES (460801,1048600, 1, (SELECT id FROM pld.pieces WHERE nom="Ch111"));
@@ -357,3 +373,30 @@ INSERT INTO capteurs(type, numeroCapteur, isGlobal, idSujet) VALUES (460801,1048
 INSERT INTO capteurs(type, numeroCapteur, isGlobal, idSujet) VALUES (393217,1048671, 1,(SELECT id FROM pld.pieces WHERE nom="Dep11"));
 INSERT INTO capteurs(type, numeroCapteur, isGlobal, idSujet) VALUES (328193,1048672, 1, (SELECT id FROM pld.pieces WHERE nom="Dep11"));
 INSERT INTO capteurs(type, numeroCapteur, isGlobal, idSujet) VALUES (461057,1048673, 1, (SELECT id FROM pld.pieces WHERE nom="Dep11"));
+
+INSERT INTO capteurs(type, numeroCapteur, isGlobal, idSujet) VALUES (0x00A0001,0x00001000, 0, 1001);
+INSERT INTO capteurs(type, numeroCapteur, isGlobal, idSujet) VALUES (0x00A0001,0x00001001, 0, 1002);
+INSERT INTO capteurs(type, numeroCapteur, isGlobal, idSujet) VALUES (0x00A0001,0x00001002, 0, 1003);
+INSERT INTO capteurs(type, numeroCapteur, isGlobal, idSujet) VALUES (0x00A0001,0x00001003, 0, 1004);
+INSERT INTO capteurs(type, numeroCapteur, isGlobal, idSujet) VALUES (0x00A0001,0x00001004, 0, 1005);
+INSERT INTO capteurs(type, numeroCapteur, isGlobal, idSujet) VALUES (0x00A0001,0x00001005, 0, 1006);
+INSERT INTO capteurs(type, numeroCapteur, isGlobal, idSujet) VALUES (0x00A0001,0x00001006, 0, 1007);
+INSERT INTO capteurs(type, numeroCapteur, isGlobal, idSujet) VALUES (0x00A0001,0x00001007, 0, 1008);
+INSERT INTO capteurs(type, numeroCapteur, isGlobal, idSujet) VALUES (0x00A0001,0x00001008, 0, 1009);
+INSERT INTO capteurs(type, numeroCapteur, isGlobal, idSujet) VALUES (0x00A0001,0x00001009, 0, 1010);
+INSERT INTO capteurs(type, numeroCapteur, isGlobal, idSujet) VALUES (0x00A0001,0x00001010, 0, 1011);
+INSERT INTO capteurs(type, numeroCapteur, isGlobal, idSujet) VALUES (0x00A0001,0x00001011, 0, 1012);
+INSERT INTO capteurs(type, numeroCapteur, isGlobal, idSujet) VALUES (0x00A0001,0x00001012, 0, 1013);
+INSERT INTO capteurs(type, numeroCapteur, isGlobal, idSujet) VALUES (0x00A0001,0x00001013, 0, 1014);
+INSERT INTO capteurs(type, numeroCapteur, isGlobal, idSujet) VALUES (0x00A0001,0x00001014, 0, 1015);
+INSERT INTO capteurs(type, numeroCapteur, isGlobal, idSujet) VALUES (0x00A0001,0x00001015, 0, 1016);
+INSERT INTO capteurs(type, numeroCapteur, isGlobal, idSujet) VALUES (0x00A0001,0x00001016, 0, 1017);
+INSERT INTO capteurs(type, numeroCapteur, isGlobal, idSujet) VALUES (0x00A0001,0x00001017, 0, 1018);
+INSERT INTO capteurs(type, numeroCapteur, isGlobal, idSujet) VALUES (0x00A0001,0x00001018, 0, 1019);
+INSERT INTO capteurs(type, numeroCapteur, isGlobal, idSujet) VALUES (0x00A0001,0x00001019, 0, 1020);
+INSERT INTO capteurs(type, numeroCapteur, isGlobal, idSujet) VALUES (0x00A0001,0x00001020, 0, 1021);
+INSERT INTO capteurs(type, numeroCapteur, isGlobal, idSujet) VALUES (0x00A0001,0x00001021, 0, 1022);
+INSERT INTO capteurs(type, numeroCapteur, isGlobal, idSujet) VALUES (0x00A0001,0x00001022, 0, 1023);
+INSERT INTO capteurs(type, numeroCapteur, isGlobal, idSujet) VALUES (0x00A0001,0x00001023, 0, 1024);
+INSERT INTO capteurs(type, numeroCapteur, isGlobal, idSujet) VALUES (0x00A0001,0x00001024, 0, 1025);
+

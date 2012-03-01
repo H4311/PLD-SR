@@ -11,9 +11,10 @@
 //---------------------------------------------------------------- INCLUDE
 
 //--------------------------------------------------------- System Include
-using namespace std;
+
 #include <unistd.h>
 #include <iostream>
+using namespace std;
 //------------------------------------------------------ Personnal Include
 #include "EnOCeanBaseSimulator.h"
 //-------------------------------------------------------------- Constants
@@ -199,7 +200,7 @@ Subject* EnOCeanBaseSimulator::findSubject(int id) {
 }
 
 float EnOCeanBaseSimulator::updateSensors() {
-	float conso;
+	float conso = 0;
 	pthread_mutex_lock(&mutex);
 	for (vector<Actuator*>::iterator it=actuators.begin() ; it < actuators.end(); it++ )
 	    {

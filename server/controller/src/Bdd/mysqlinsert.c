@@ -81,7 +81,7 @@ result* getCapteurs(MYSQL* mysql) {
 void insertMesure(MYSQL* mysql, int type, int numeroCapteur, long long time, int typeMesure, double mesure) {
 	char s[512];
 	sprintf(s, "INSERT INTO mesures (idCapteur, time, typeMesure, mesure) VALUES ((SELECT id FROM capteurs WHERE numeroCapteur=%d),%lld,%d,%f)", numeroCapteur, time, typeMesure, mesure);
-	printf(s);
+	//printf(s);
 	if(mysql_query(mysql, s)) {
 		printf("Erreur: insert (%s)\n", mysql_error(mysql));
 	}

@@ -4,7 +4,7 @@
 
 # Add inputs and outputs from these tool invocations to the build variables 
 CPP_SRCS += \
-../src/EnOcean2.cpp \
+../src/EnOcean.cpp \
 ../src/EnOceanAnalyser.cpp \
 ../src/EnOceanReceptor.cpp \
 ../src/PeriphTable.cpp \
@@ -12,7 +12,7 @@ CPP_SRCS += \
 ../src/Sensors.cpp 
 
 OBJS += \
-./src/EnOcean2.o \
+./src/EnOcean.o \
 ./src/EnOceanAnalyser.o \
 ./src/EnOceanReceptor.o \
 ./src/PeriphTable.o \
@@ -20,7 +20,7 @@ OBJS += \
 ./src/Sensors.o 
 
 CPP_DEPS += \
-./src/EnOcean2.d \
+./src/EnOcean.d \
 ./src/EnOceanAnalyser.d \
 ./src/EnOceanReceptor.d \
 ./src/PeriphTable.d \

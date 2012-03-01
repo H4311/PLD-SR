@@ -1,4 +1,4 @@
-src/EnOcean2.d: ../src/EnOcean2.cpp ../src/Config.h \
+src/EnOcean.d: ../src/EnOcean.cpp ../src/Config.h \
  ../src/EnOceanClient/EnOceanReceptor.h ../src/EnOceanClient/../Config.h \
  ../src/EnOceanClient/../Devices/EnOceanProtocol.h \
  ../src/EnOceanClient/../Libs/blocking_queue.h \
@@ -30,9 +30,11 @@ src/EnOcean2.d: ../src/EnOcean2.cpp ../src/Config.h \
  ../src/Simulator/Actuators/../Model/Room.h \
  ../src/Simulator/Actuators/../Model/Subject.h \
  ../src/Devices/DeviceTable.h ../src/Devices/EnOceanSensorAPI.h \
- ../src/Simulator/Model/Subject.h ../src/EnOceanClient/ServerSettings.h \
+ ../src/Simulator/Model/Subject.h ../src/Simulator/Model/Room.h \
+ ../src/Simulator/Model/Patient.h ../src/Simulator/Model/Subject.h \
+ ../src/Simulator/Model/Room.h ../src/EnOceanClient/ServerSettings.h \
  ../src/EnOceanClient/../Simulator/EnOCeanBaseSimulator.h \
- ../src/EnOceanClient/TCPServer.h ../src/Bdd/mysqlinsert.h
+ ../src/EnOceanClient/TCPServer.h
 
 ../src/Config.h:
 
@@ -106,10 +108,16 @@ src/EnOcean2.d: ../src/EnOcean2.cpp ../src/Config.h \
 
 ../src/Simulator/Model/Subject.h:
 
+../src/Simulator/Model/Room.h:
+
+../src/Simulator/Model/Patient.h:
+
+../src/Simulator/Model/Subject.h:
+
+../src/Simulator/Model/Room.h:
+
 ../src/EnOceanClient/ServerSettings.h:
 
 ../src/EnOceanClient/../Simulator/EnOCeanBaseSimulator.h:
 
 ../src/EnOceanClient/TCPServer.h:
-
-../src/Bdd/mysqlinsert.h:

@@ -15,17 +15,13 @@
 #include "Devices/DeviceTable.h"
 #include "Devices/EnOceanSensorAPI.h"
 #include "Simulator/Model/Subject.h"
+#include "Simulator/Model/Room.h"
+#include "Simulator/Model/Patient.h"
 #include <pthread.h>
 #include <unistd.h>
 #include "EnOceanClient/ServerSettings.h"
 #include <map>
 
-extern "C" {
-	#include "Bdd/mysqlinsert.h"
-}
-/**
- * main? Don't know, what main does ;)
- */
 int main(int argc, char *argv[]) {
 	cout << "Testprogram started...\n";
 
@@ -38,7 +34,7 @@ int main(int argc, char *argv[]) {
 	EnOCeanBaseSimulator simulator = EnOCeanBaseSimulator();
 
 	string adresseSimulatedSensor = "127.0.0.1";
-	int portSimulatedSensor = 5020;
+	int portSimulatedSensor = 5022;
 
 	// List of the simulated sensors :
 	vector<int> simulatedSensorsID;
@@ -118,6 +114,32 @@ int main(int argc, char *argv[]) {
 	simulatedSensorsID.push_back(1048672);
 	simulatedSensorsID.push_back(1048673);
 
+	simulatedSensorsID.push_back(0x00001000);
+	simulatedSensorsID.push_back(0x00001001);
+	simulatedSensorsID.push_back(0x00001002);
+	simulatedSensorsID.push_back(0x00001003);
+	simulatedSensorsID.push_back(0x00001004);
+	simulatedSensorsID.push_back(0x00001005);
+	simulatedSensorsID.push_back(0x00001006);
+	simulatedSensorsID.push_back(0x00001007);
+	simulatedSensorsID.push_back(0x00001008);
+	simulatedSensorsID.push_back(0x00001009);
+	simulatedSensorsID.push_back(0x00001010);
+	simulatedSensorsID.push_back(0x00001011);
+	simulatedSensorsID.push_back(0x00001012);
+	simulatedSensorsID.push_back(0x00001013);
+	simulatedSensorsID.push_back(0x00001014);
+	simulatedSensorsID.push_back(0x00001015);
+	simulatedSensorsID.push_back(0x00001016);
+	simulatedSensorsID.push_back(0x00001017);
+	simulatedSensorsID.push_back(0x00001018);
+	simulatedSensorsID.push_back(0x00001019);
+	simulatedSensorsID.push_back(0x00001020);
+	simulatedSensorsID.push_back(0x00001021);
+	simulatedSensorsID.push_back(0x00001022);
+	simulatedSensorsID.push_back(0x00001023);
+	simulatedSensorsID.push_back(0x00001024);
+
 
 	// Define Rooms :
 	Room room111 = Room(1);
@@ -135,6 +157,33 @@ int main(int argc, char *argv[]) {
 	Room roomBl11 = Room(13);
 	Room roomBl12 = Room(14);
 	Room roomDp1 = Room(15);
+
+	Patient pat1 = Patient(1001);
+	pat1.setTemperature(38.9);
+	Patient pat2 = Patient(1002);
+	Patient pat3 = Patient(1003);
+	Patient pat4 = Patient(1004);
+	Patient pat5 = Patient(1005);
+	Patient pat6 = Patient(1006);
+	Patient pat7 = Patient(1007);
+	Patient pat8 = Patient(1008);
+	Patient pat9 = Patient(1009);
+	Patient pat10 = Patient(1010);
+	Patient pat11 = Patient(1011);
+	Patient pat12 = Patient(1012);
+	Patient pat13 = Patient(1013);
+	Patient pat14 = Patient(1014);
+	Patient pat15 = Patient(1015);
+	Patient pat16 = Patient(1016);
+	Patient pat17 = Patient(1017);
+	Patient pat18 = Patient(1018);
+	Patient pat19 = Patient(1019);
+	Patient pat20 = Patient(1020);
+	Patient pat21 = Patient(1021);
+	Patient pat22 = Patient(1022);
+	Patient pat23 = Patient(1023);
+	Patient pat24 = Patient(1024);
+	Patient pat25 = Patient(1025);
 
 	room111.addNeigthborRoom(&room112);
 	room111.addNeigthborRoom(&room114);
@@ -179,6 +228,33 @@ int main(int argc, char *argv[]) {
 	room122.addNeigthborRoom(&room121);
 	room122.addNeigthborRoom(&roomBl12);
 
+	pat1.setRoom(&room111);
+	pat2.setRoom(&room111);
+	pat3.setRoom(&room111);
+	pat4.setRoom(&room112);
+	pat5.setRoom(&room112);
+	pat6.setRoom(&room113);
+	pat7.setRoom(&room113);
+	pat8.setRoom(&room114);
+	pat9.setRoom(&room115);
+	pat10.setRoom(&room115);
+	pat11.setRoom(&room116);
+	pat12.setRoom(&room117);
+	pat13.setRoom(&room118);
+	pat14.setRoom(&room119);
+	pat15.setRoom(&room120);
+	pat25.setRoom(&room121);
+	pat16.setRoom(&room121);
+	pat17.setRoom(&roomBl12);
+	pat18.setRoom(&roomBl11);
+	pat19.setRoom(&room116);
+	pat20.setRoom(&room120);
+	pat21.setRoom(&room121);
+	pat22.setRoom(&room117);
+	pat23.setRoom(&room115);
+	pat24.setRoom(&room119);
+
+
 	simulator.addSubject(&room111);
 	simulator.addSubject(&room112);
 	simulator.addSubject(&room113);
@@ -195,6 +271,31 @@ int main(int argc, char *argv[]) {
 	simulator.addSubject(&roomBl12);
 	simulator.addSubject(&roomDp1);
 
+	simulator.addSubject(&pat1);
+	simulator.addSubject(&pat2);
+	simulator.addSubject(&pat3);
+	simulator.addSubject(&pat4);
+	simulator.addSubject(&pat5);
+	simulator.addSubject(&pat6);
+	simulator.addSubject(&pat7);
+	simulator.addSubject(&pat8);
+	simulator.addSubject(&pat9);
+	simulator.addSubject(&pat10);
+	simulator.addSubject(&pat11);
+	simulator.addSubject(&pat12);
+	simulator.addSubject(&pat13);
+	simulator.addSubject(&pat14);
+	simulator.addSubject(&pat15);
+	simulator.addSubject(&pat16);
+	simulator.addSubject(&pat17);
+	simulator.addSubject(&pat18);
+	simulator.addSubject(&pat19);
+	simulator.addSubject(&pat20);
+	simulator.addSubject(&pat21);
+	simulator.addSubject(&pat22);
+	simulator.addSubject(&pat23);
+	simulator.addSubject(&pat24);
+	simulator.addSubject(&pat25);
 
 	// Sensors :
 	table.fillFromDB(&simulator, &simulatedSensorsID);

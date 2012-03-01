@@ -7,6 +7,11 @@ body {
 ----------------						MAP						--------------------------------
 -----------------------------------------------------------------------------------------------------*/
 
+.span2 div {
+	width: 50px;
+	margin: 0px auto;
+	margin-top: 10px;
+}
 #buildingContainer {
 	margin-left: 30px;
 	margin-top: 20px;
@@ -14,13 +19,17 @@ body {
 
 #roomDesc, #warningDesc {
 	position: absolute;
-	background-color: #333;
 	-webkit-border-radius:10px;
 	   -moz-border-radius:10px;
 			border-radius:10px;
 	display: none;
 	padding: 3px;
 	border: 1px solid black;
+	
+}
+
+#roomDesc {
+	background-color: #333;
 	color: white;
 }
 
@@ -48,8 +57,4 @@ body {
 	color: white;
 	font-weight: bold;
 	text-align: center;
-}
-
-#warningDesc {
-	background-color: red;
 }

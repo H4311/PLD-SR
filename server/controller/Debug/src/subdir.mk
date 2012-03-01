@@ -4,16 +4,13 @@
 
 # Add inputs and outputs from these tool invocations to the build variables 
 CPP_SRCS += \
-../src/EnOcean2.cpp \
-../src/Test.cpp 
+../src/EnOcean.cpp 
 
 OBJS += \
-./src/EnOcean2.o \
-./src/Test.o 
+./src/EnOcean.o 
 
 CPP_DEPS += \
-./src/EnOcean2.d \
-./src/Test.d 
+./src/EnOcean.d 
 
 
 # Each subdirectory must supply rules for building sources it contributes
