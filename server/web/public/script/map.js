@@ -580,14 +580,14 @@ var BuildingGenerator = {
 		
 		
 		// AJOUT DE WARNINGS :
-		var warning = new RithmObjects.Warning(BuildingGenerator.roomShapes[1].room, 'Danger!');
-		BuildingGenerator.addWarning(1, warning);	
-		var warning2 = new RithmObjects.Warning(BuildingGenerator.roomShapes[2].room, 'Patient #42 - Fatal Error!');
-		BuildingGenerator.addWarning(2, warning2);	
-		var warning3 = new RithmObjects.Warning(BuildingGenerator.roomShapes[3].room, 'L\'opération tourne mal !');
-		BuildingGenerator.addWarning(3, warning3);	
-		var warning4 = new RithmObjects.Warning(BuildingGenerator.roomShapes[3].room, 'Trop tard ...');
-		BuildingGenerator.addWarning(4, warning4);
+		//~ var warning = new RithmObjects.Warning(BuildingGenerator.roomShapes[1].room, 'Danger!');
+		//~ BuildingGenerator.addWarning(1, warning);	
+		//~ var warning2 = new RithmObjects.Warning(BuildingGenerator.roomShapes[2].room, 'Patient #42 - Fatal Error!');
+		//~ BuildingGenerator.addWarning(2, warning2);	
+		//~ var warning3 = new RithmObjects.Warning(BuildingGenerator.roomShapes[3].room, 'L\'opération tourne mal !');
+		//~ BuildingGenerator.addWarning(3, warning3);	
+		//~ var warning4 = new RithmObjects.Warning(BuildingGenerator.roomShapes[3].room, 'Trop tard ...');
+		//~ BuildingGenerator.addWarning(4, warning4);
 		
 		// AJOUT DE PATIENTS :
 		//~ var pat1 = new RithmObjects.Patient("Arnaud", true, "Cuite sévère", 1);

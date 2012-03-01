@@ -96,7 +96,7 @@ void SensorSimulatorLumAndOcc::update() {
 	float illuminance = 0;
 	Room* room = dynamic_cast<Room*>(subject);
 	if (room != 0) {
-		illuminance = room->getLuminosity();
+		illuminance = room->getLuminosity()/100;
 	}
 	if (illuminance > maxLum) { illuminance = maxLum; }
 	else if (illuminance < minLum) { illuminance = minLum; }
@@ -119,7 +119,7 @@ SensorSimulatorLumAndOcc::SensorSimulatorLumAndOcc(int id, Subject* r, float min
 	float t = 0;
 	Room* room = dynamic_cast<Room*>(r);
 	if (room != 0) {
-		t = room->getLuminosity();
+		t = room->getLuminosity()/100;
 	} else { subject = NULL; }
 
 	EnOceanSensorAPI::setIlluminance(&frame, t, minLum, maxLum);

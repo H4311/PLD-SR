@@ -34,14 +34,14 @@ int main(int argc, char *argv[]) {
 	EnOCeanBaseSimulator simulator = EnOCeanBaseSimulator();
 
 	string adresseSimulatedSensor = "127.0.0.1";
-	int portSimulatedSensor = 5022;
+	int portSimulatedSensor = 5023;
 
 	// List of the simulated sensors :
 	vector<int> simulatedSensorsID;
 	simulatedSensorsID.push_back(1048599);
-	simulatedSensorsID.push_back(1048600);
-	simulatedSensorsID.push_back(1048601);
-	simulatedSensorsID.push_back(1048602);
+	//simulatedSensorsID.push_back(1048600);
+	//simulatedSensorsID.push_back(1048601);
+	//simulatedSensorsID.push_back(1048602);
 	simulatedSensorsID.push_back(1048603);
 	simulatedSensorsID.push_back(1048604);
 	simulatedSensorsID.push_back(1048605);
@@ -61,7 +61,7 @@ int main(int argc, char *argv[]) {
 	simulatedSensorsID.push_back(1048619);
 	simulatedSensorsID.push_back(1048620);
 	simulatedSensorsID.push_back(1048621);
-	simulatedSensorsID.push_back(1048622);
+	//simulatedSensorsID.push_back(1048622);
 	simulatedSensorsID.push_back(1048623);
 	simulatedSensorsID.push_back(1048624);
 	simulatedSensorsID.push_back(1048625);
@@ -405,7 +405,8 @@ int main(int argc, char *argv[]) {
 
 	table.add((EnOceanSensorAPI::SensorId)0x00893378, (EnOceanSensorAPI::EnOceanCallbackFunction)EnOceanSensorAPI::analyseTempSensor_EEP_07_02_05);
 	table.add((EnOceanSensorAPI::SensorId)0x0021CBE3, (EnOceanSensorAPI::EnOceanCallbackFunction)EnOceanSensorAPI::analyseRockerSwitch_EEP_05_02_01);
-	table.add((EnOceanSensorAPI::SensorId)0x0001B592, (EnOceanSensorAPI::EnOceanCallbackFunction)EnOceanSensorAPI::analyseContactSensor_EEP_06_00_01);
+	table.add((EnOceanSensorAPI::SensorId)0x0001B596, (EnOceanSensorAPI::EnOceanCallbackFunction)EnOceanSensorAPI::analyseContactSensor_EEP_06_00_01);
+	table.add((EnOceanSensorAPI::SensorId)0x0001B595, (EnOceanSensorAPI::EnOceanCallbackFunction)EnOceanSensorAPI::analyseContactSensor_EEP_06_00_01);
 	table.add((EnOceanSensorAPI::SensorId)0x00054A7F, (EnOceanSensorAPI::EnOceanCallbackFunction)EnOceanSensorAPI::analyseLumAndOcc_EEP_07_08_01);
 
 	blocking_queue<string> msgToSend = blocking_queue<string>();
@@ -415,15 +416,15 @@ int main(int argc, char *argv[]) {
 
 	//string adresseEnOcean = "134.214.105.28";
 
-	//system("ssh -f -L 6543:134.214.105.28:5000 -N bplanche@iftpserv2.insa-lyon.fr")
+	//system("ssh -f -L 6543:134.214.59.17:5000 -N bplanche@iftpserv2.insa-lyon.fr")
 	string adresseSunSpot = "127.0.0.1";
-	int portSunSpot = 5555;
+	int portSunSpot = 7080;
 
 	table.add((EnOceanSensorAPI::SensorId)0x00005896, (EnOceanSensorAPI::EnOceanCallbackFunction)EnOceanSensorAPI::analyseSunSpot);
 
 
-	ServerSettings serverSettings = ServerSettings(&table, &msgToSendSimulator, NULL);
-	serverSettings.openSocket(1235);
+	ServerSettings serverSettings = ServerSettings(&table, &msgToSend, NULL);
+	serverSettings.openSocket(1234);
 	serverSettings.run();
 
 	EnOceanAnalyser analyser = EnOceanAnalyser(&table, &msgQueue);

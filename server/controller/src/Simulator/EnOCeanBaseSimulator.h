@@ -39,7 +39,7 @@ class EnOCeanBaseSimulator
 
 public:
 //------------------------------------------------------- Public Constants
-	static const int DELAY = 20;
+	static const int DELAY = 200;
 //--------------------------------------------------------- Public Methods
 
 	void addSensor(SensorSimulator* sensor);
