@@ -5,6 +5,12 @@ var services = require("./services");
 var views = require("./views");
 var authModule = require("./auth").authModule;
 
+
+// Catch for all exception
+process.on('uncaughtException', function (error) {
+   console.log(error.stack);
+});
+
 var securityActivated = true;
 
 // REST Server config
@@ -29,6 +35,7 @@ serviceHandler["/murs"] = services.murs;
 serviceHandler["/bondsActuators"] = services.bondsActuators;
 serviceHandler["/add_device"] = services.admin_add_devices;
 serviceHandler["/remove_device"] = services.admin_remove_devices;
+serviceHandler["/rules"] = services.rules;
 
 for (var url in serviceHandler) {
 	rest.post(url, serviceHandler[url]);
@@ -62,6 +69,11 @@ viewHandler["/patient"] = views.patient;
 viewHandler["/login"] = views.login;
 viewHandler["/help"] = views.help;
 viewHandler["/alerts"] = views.notif;
+viewHandler["/add_sensor_patient"] = views.add_sensor_patient;
+viewHandler["/add_rule"] = views.add_rule;
+viewHandler["/actuators"] = views.actuators;
+viewHandler["/rules"] = views.rules;
+viewHandler["/set_actuator"] = views.set_actuator;
 
 // Need to be put before * otherwise the star rule catches all the
 // requests !

@@ -8,9 +8,8 @@ body {
 -----------------------------------------------------------------------------------------------------*/
 
 #buildingContainer {
-	position: absolute;
-	left: 170px;
-	top: 100px;
+	margin-left: 30px;
+	margin-top: 20px;
 }
 
 #roomDesc, #warningDesc {
@@ -29,7 +28,7 @@ body {
 	float: left;
 	width: 30px;
 	position: relative;
-	top: 55px;
+	top: 65px;
 	font-weight: bold;
 	font-size: 1.5em;
 	-moz-transform:rotate(-90deg); 

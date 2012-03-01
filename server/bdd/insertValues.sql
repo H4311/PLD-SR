@@ -2,32 +2,21 @@ USE pld;
 
 SET NAMES 'utf8';
 
-DELETE FROM alertes;
-DELETE FROM regleCapteur;
-DELETE FROM regleActionneur;
-DELETE FROM regles;
-DELETE FROM actionneurs;
-DELETE FROM actionneurSujet;
-DELETE FROM pieces;
-DELETE FROM patients;
-DELETE FROM mesures;
-DELETE FROM capteurs;
 DELETE FROM murs;
+DELETE FROM	alertes; 
+DELETE FROM	regleActionneur; 
+DELETE FROM	regleCapteur; 
+DELETE FROM	regles;
+DELETE FROM	mesures;
+DELETE FROM	capteurs; 
+DELETE FROM	patients; 
+DELETE FROM	pieces;
+DELETE FROM	actionneurSujet; 
+DELETE FROM	actionneurs ;
 
-INSERT INTO actionneurs(numeroActionneur, type)
-	VALUES(1, 0x1070901);
+INSERT INTO actionneurs(id, numeroActionneur, type)
+	VALUES(1, 1, 0x1070901);
 INSERT INTO actionneurs (numeroActionneur, type) VALUES (1337, 42);
-
-INSERT INTO regles (id, nom, createsAlert) VALUES (100, 'chauffageON', true);
-INSERT INTO regles (id, nom, createsAlert) VALUES (101, 'chauffageOFF', true);
-
-INSERT INTO regleActionneur (idRegle, idActionneur, valeur, isActive) 
-	VALUES ((SELECT id FROM regles WHERE nom = 'chauffageOFF'), 1, 123456789, true);		
-	   
-INSERT INTO alertes(time, idRegle) VALUES (1, 100);
-INSERT INTO alertes(time, idRegle) VALUES (10000000000, 101);
-INSERT INTO alertes(time, idRegle) VALUES (100000000000000, 100);
-INSERT INTO alertes(time, idRegle) VALUES (1000000000000000, 101);
 
 INSERT INTO pieces(nom) VALUES ('Ch111');
 INSERT INTO pieces(nom) VALUES ('Ch112');
@@ -266,6 +255,9 @@ VALUES (1, "Lhaache", false, "Changement de sexe", (SELECT id FROM pld.pieces WH
 	   (5, "Jeremy", true, "Déprime ordonnanceur", (SELECT id FROM pld.pieces WHERE nom="Ch112")),
 	   (6, "Dan", true, "Chef de projet PLD SI... Franssement, c est ssaud, mon frère !", (SELECT id FROM pld.pieces WHERE nom="Ch113"));
 
+INSERT INTO capteurs(id, type, numeroCapteur, isGlobal, idSujet) VALUES (1, 0x0070205,1, 0, 3);
+INSERT INTO mesures (idCapteur, time, typeMesure, mesure) VALUES (1, (SELECT UNIX_TIMESTAMP()*1000), 1, 42);
+
 INSERT INTO capteurs(type, numeroCapteur, isGlobal, idSujet) VALUES (459777,1048599, 1, (SELECT id FROM pld.pieces WHERE nom="Ch111"));
 INSERT INTO capteurs(type, numeroCapteur, isGlobal, idSujet) VALUES (460801,1048600, 1, (SELECT id FROM pld.pieces WHERE nom="Ch111"));
 INSERT INTO capteurs(type, numeroCapteur, isGlobal, idSujet) VALUES (393217,1048601, 1,(SELECT id FROM pld.pieces WHERE nom="Ch111"));
@@ -342,13 +334,16 @@ INSERT INTO capteurs(type, numeroCapteur, isGlobal, idSujet) VALUES (393217,1048
 INSERT INTO capteurs(type, numeroCapteur, isGlobal, idSujet) VALUES (328193,1048672, 1, (SELECT id FROM pld.pieces WHERE nom="Dep11"));
 INSERT INTO capteurs(type, numeroCapteur, isGlobal, idSujet) VALUES (461057,1048673, 1, (SELECT id FROM pld.pieces WHERE nom="Dep11"));
 
-INSERT INTO mesures(id, idCapteur, time, typeMesure, mesure)
-VALUES (1, 1, 1328817902000, 3, 36),
-	   (2, 1, 1328818243000, 3, 39),
-	   (3, 2, 1328824670000, 3, 37),
-	   (4, 2, 1399999999999, 3, 1337);
-
 INSERT INTO regleCapteur (idRegle, idCapteur, debutIntervalle, finIntervalle) VALUES ((SELECT id FROM regles WHERE nom = 'chauffageON'), 1, -10, 18.5);
 INSERT INTO regleCapteur (idRegle, idCapteur, debutIntervalle, finIntervalle) VALUES ((SELECT id FROM regles WHERE nom = 'chauffageOFF'), 1, 18.5, 50);
 
+INSERT INTO regles (id, nom, createsAlert) VALUES (100, 'chauffageON', true);
+INSERT INTO regles (id, nom, createsAlert) VALUES (101, 'chauffageOFF', true);
 
+INSERT INTO regleActionneur (idRegle, idActionneur, valeur, isActive) 
+	VALUES ((SELECT id FROM regles WHERE nom = 'chauffageOFF'), 1, 123456789, true);		
+	   
+INSERT INTO alertes(time, idRegle) VALUES (1, 100);
+INSERT INTO alertes(time, idRegle) VALUES (10000000000, 101);
+INSERT INTO alertes(time, idRegle) VALUES (100000000000000, 100);
+INSERT INTO alertes(time, idRegle) VALUES (1000000000000000, 101);

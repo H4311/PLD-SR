@@ -37,23 +37,27 @@ function sqlConnect() {
 function getAlerts(param, callback) {
 
 	var from = Date.parse(param.from);
-	console.log("Date : "+from);
 	// retrieve des alertes déclenchées
 	var sql_req = "";
 	sql_req += "SELECT time, idRegle, (SELECT nom FROM regles WHERE id = idRegle) nom ";
 	sql_req += "FROM alertes ";
 	sql_req += "WHERE time > " + from + " ";
 	if(param.to) {
-		sql_req += "AND time < " + Date.parse(param.to);
-	}	
+		sql_req += "AND time < " + Date.parse(param.to) + " ";
+	}
+	sql_req += "ORDER BY time DESC ";
 	
 	var db = sqlConnect();
 	sql.query(db, sql_req, function(result) {
-		console.log("A Took : "+result.took+"ms - Hits : "+result.count);
-		
 		// Construct json response
 		var response = {};
 		response.alerts = [];
+		
+		if(result.count == 0) {
+			// Call the callback with json response
+			callback(response);
+			sql.close(db);
+		}
 		
 		var nbResponseReceived = 0;
 		for(var i in result.hits) {
@@ -73,18 +77,16 @@ function getAlerts(param, callback) {
 			sql_req += "WHERE rc.idRegle = " + hit.idRegle;
 
 			sql.query(db, sql_req, function(result2) {
-				console.log("Took : "+result2.took+"ms - Hits : "+result2.count);
-				
 				for(var j in result2.hits) {
 					response.alerts[nbResponseReceived].sensors.push(result2.hits[j]);
 				}
 
 				nbResponseReceived++;
+				
 				// For the last alert
 				if(nbResponseReceived === result.count) {
-					// Call the record with json response
+					// Call the callback with json response
 					callback(response);
-					console.log(response);
 					sql.close(db);
 				}
 				

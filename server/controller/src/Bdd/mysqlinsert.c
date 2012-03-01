@@ -9,8 +9,19 @@ MYSQL* connectToMysql() {
 	if(mysql == NULL) {
 		puts("Erreur de mysql_init");
 	}
+	
+	long res = 0;
+	int i;
+	//Test 3 times to connect to mysql
+	for(i=0; !res && i<3; i++) {
+		if(i!=0) {
+			sleep(1);
+		}
+		printf("try %d\n", i);
+		res = (long)(mysql_real_connect(mysql,"localhost","rithm","rithm","pld",0,NULL,0));
+	}
 
-	if (!mysql_real_connect(mysql,"localhost","rithm","rithm","pld",0,NULL,0)) {
+	if (!res) {
 		fprintf(stderr, "Error: failed to connect to database (%s)\n", mysql_error(mysql));
 	}
 	
@@ -69,8 +80,8 @@ result* getCapteurs(MYSQL* mysql) {
 
 void insertMesure(MYSQL* mysql, int type, int numeroCapteur, long long time, int typeMesure, double mesure) {
 	char s[512];
-	sprintf(s, "INSERT INTO mesures (idCapteur, time, typeMesure, mesure) VALUES ((SELECT id FROM capteurs WHERE type=%d AND numeroCapteur=%d),%lld,%d,%f)", type, numeroCapteur, time, typeMesure, mesure);
-
+	sprintf(s, "INSERT INTO mesures (idCapteur, time, typeMesure, mesure) VALUES ((SELECT id FROM capteurs WHERE numeroCapteur=%d),%lld,%d,%f)", numeroCapteur, time, typeMesure, mesure);
+	printf(s);
 	if(mysql_query(mysql, s)) {
 		printf("Erreur: insert (%s)\n", mysql_error(mysql));
 	}

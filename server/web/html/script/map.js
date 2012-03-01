@@ -602,8 +602,8 @@ var BuildingGenerator = {
 		//~ sen2.setSubject(1, true);
 		//~ sen2.setMeasure({type: "3", time: new Date(), value: 10});
 		//~ room.addSensor(sen2);
-		var numC=0;
-		$('body').html("<p></p>");
+		//~ var numC=0;
+		//~ $('body').html("<p></p>");
 		for (var i in BuildingGenerator.roomShapes) {
 			// Temp & Hum sensor :
 			var s = new RithmObjects.Sensor("3");
@@ -635,16 +635,21 @@ var BuildingGenerator = {
 				if (wall.isOpen != null) { wall.isOpen = true; }
 			}
 			
-			$("body p").append('INSERT INTO capteurs(type, numeroCapteur, isGlobal, idSujet) VALUES ('+0x0070401+','+(1048599+numC)+', 1, (SELECT id FROM pld.pieces WHERE nom="'+BuildingGenerator.roomShapes[i].room.name+'"));<br\>');
-			numC++;
-			$("body p").append('INSERT INTO capteurs(type, numeroCapteur, isGlobal, idSujet) VALUES ('+0x0070801+','+(1048599+numC)+', 1, (SELECT id FROM pld.pieces WHERE nom="'+BuildingGenerator.roomShapes[i].room.name+'"));<br\>');
-			numC++;
-			$("body p").append('INSERT INTO capteurs(type, numeroCapteur, isGlobal, idSujet) VALUES ('+0x0060001+','+(1048599+numC)+', 1,(SELECT id FROM pld.pieces WHERE nom="'+BuildingGenerator.roomShapes[i].room.name+'"));<br\>');
-			numC++;
-			$("body p").append('INSERT INTO capteurs(type, numeroCapteur, isGlobal, idSujet) VALUES ('+0x0050201+','+(1048599+numC)+', 1, (SELECT id FROM pld.pieces WHERE nom="'+BuildingGenerator.roomShapes[i].room.name+'"));<br\>');
-			numC++;
-			$("body p").append('INSERT INTO capteurs(type, numeroCapteur, isGlobal, idSujet) VALUES ('+0x0070901+','+(1048599+numC)+', 1, (SELECT id FROM pld.pieces WHERE nom="'+BuildingGenerator.roomShapes[i].room.name+'"));<br\>');
-			numC++;
+			//~ //$("body p").append('INSERT INTO capteurs(type, numeroCapteur, isGlobal, idSujet) VALUES ('+0x0070401+','+(1048599+numC)+', 1, (SELECT id FROM pld.pieces WHERE nom="'+BuildingGenerator.roomShapes[i].room.name+'"));<br\>');
+			//~ $("body p").append('simulatedSensorsID.push_back('+(1048599+numC)+');<br/>');
+			//~ numC++;
+			//~ //$("body p").append('INSERT INTO capteurs(type, numeroCapteur, isGlobal, idSujet) VALUES ('+0x0070801+','+(1048599+numC)+', 1, (SELECT id FROM pld.pieces WHERE nom="'+BuildingGenerator.roomShapes[i].room.name+'"));<br\>');
+			//~ $("body p").append('simulatedSensorsID.push_back('+(1048599+numC)+');<br/>');
+			//~ numC++;
+			//~ //$("body p").append('INSERT INTO capteurs(type, numeroCapteur, isGlobal, idSujet) VALUES ('+0x0060001+','+(1048599+numC)+', 1,(SELECT id FROM pld.pieces WHERE nom="'+BuildingGenerator.roomShapes[i].room.name+'"));<br\>');
+			//~ $("body p").append('simulatedSensorsID.push_back('+(1048599+numC)+');<br/>');
+			//~ numC++;
+			//~ //$("body p").append('INSERT INTO capteurs(type, numeroCapteur, isGlobal, idSujet) VALUES ('+0x0050201+','+(1048599+numC)+', 1, (SELECT id FROM pld.pieces WHERE nom="'+BuildingGenerator.roomShapes[i].room.name+'"));<br\>');
+			//~ $("body p").append('simulatedSensorsID.push_back('+(1048599+numC)+');<br/>');
+			//~ numC++;
+			//~ //$("body p").append('INSERT INTO capteurs(type, numeroCapteur, isGlobal, idSujet) VALUES ('+0x0070901+','+(1048599+numC)+', 1, (SELECT id FROM pld.pieces WHERE nom="'+BuildingGenerator.roomShapes[i].room.name+'"));<br\>');
+			//~ $("body p").append('simulatedSensorsID.push_back('+(1048599+numC)+');<br/>');
+			//~ numC++;
 		}
 		
 		

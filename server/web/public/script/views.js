@@ -80,7 +80,7 @@ var RithmViews = {}
 			$('#roomDesc').css('display', 'none');
 		});
 		shape.on("dblclick", function Click(){
-			location.href = 'room.html?id='+ this.idRoom;
+			location.href = 'room?id='+ this.idRoom;
 		});
 		shape.room = room;
 		shape.idRoom = id;
@@ -144,7 +144,7 @@ var RithmViews = {}
 			previousColor = ctx.fillStyle;
 			ctx.font = "12pt Calibri";
 			ctx.fillStyle = "black";
-			ctx.fillText(this.room.name, this.room.walls[0].segmentPlot.x1+10, this.room.walls[0].segmentPlot.y1+12);
+			ctx.fillText(this.room.name, this.room.walls[0].segmentPlot.x1+10, this.room.walls[0].segmentPlot.y1+16);
 			ctx.font = previousFont;
 			ctx.fillStyle = previousColor;
 		});
@@ -162,7 +162,7 @@ var RithmViews = {}
 	RithmObjects.WarningCircle = function WarningCircle (id, warning) {
 		var shapeW = new Kinetic.Shape(function() {
 			var context = this.getContext();
-			drawCircle(context, this.warning.room.walls[0].segmentPlot.x1+25, this.warning.room.walls[0].segmentPlot.y1+24, 10, 'rgb(200,50,50)');
+			drawCircle(context, this.warning.room.walls[0].segmentPlot.x1+25, this.warning.room.walls[0].segmentPlot.y1+28, 10, 'rgb(200,50,50)');
 		});
 		
 		shapeW.warning = warning;
@@ -216,7 +216,7 @@ var RithmViews = {}
 	RithmObjects.WarningMark = function WarningMark (id, warning) {
 		var shapeW = new Kinetic.Shape(function() {
 			var context = this.getContext();
-			drawExclame(context, this.warning.room.walls[0].segmentPlot.x1+25, this.warning.room.walls[0].segmentPlot.y1+24, 10, 'rgb(255,255,255)');
+			drawExclame(context, this.warning.room.walls[0].segmentPlot.x1+25, this.warning.room.walls[0].segmentPlot.y1+28, 10, 'rgb(255,255,255)');
 		});
 		
 		shapeW.idWarning = id;

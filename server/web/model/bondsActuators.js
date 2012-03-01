@@ -53,8 +53,6 @@ function getBondsActuators(param, callback) {
 	// Send the query to SQL DB :
 	var db = sqlConnect();
 	sql.query(db, sql_req.toString(), function(result) {
-		console.log("Took : "+result.took+"ms\nHits : "+result.count);
-		
 		// Call the record with json response :
 		callback(result);
 		sql.close(db);

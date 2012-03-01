@@ -21,7 +21,8 @@ public:
 
 	float getMovement();
 	void setMovement(float v);
-
+	int getClick();
+	void setClick(int v);
 	Subject(int i, float temp, float mov);
 	virtual ~Subject();
 
@@ -29,7 +30,7 @@ protected:
 	int id;
 	float temperature;
 	float movement;
-
+	int click;
 
 	pthread_mutex_t mutex;
 };

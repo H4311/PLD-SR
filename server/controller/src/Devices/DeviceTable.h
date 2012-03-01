@@ -16,12 +16,16 @@
 using namespace std;
 #include <map>
 #include <string>
+#include <vector>
 #include <pthread.h>
 //----------------------------------------------------- Personnal Includes
+#include "../Config.h"
 #include "EnOceanProtocol.h"
 #include "../EnOceanClient/Receptor.h"
 #include "EnOceanSensorAPI.h"
-
+#ifdef SIMULATION
+#include "../Simulator/EnOCeanBaseSimulator.h"
+#endif
 
 //------------------------------------------------------------- Constantes
 
@@ -47,6 +51,12 @@ public:
     //		Add a driver to the list.
     // Contract :
     //		/
+
+	void fillFromDB(
+#ifdef SIMULATION
+		EnOCeanBaseSimulator* simulator, vector<int>* simulatedSensorsID
+#endif
+		);
 
 	bool del(EnOceanSensorAPI::SensorId id);
 	// Manual :

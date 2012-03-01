@@ -5,6 +5,7 @@ src/Simulator/Actuators/EnOceanActuatorLight.d: \
  ../src/Simulator/Actuators/Actuator.h \
  ../src/Simulator/Actuators/../Model/Subject.h \
  ../src/Simulator/Actuators/../../Devices/EnOceanSensorAPI.h \
+ ../src/Simulator/Actuators/../../Devices/../Config.h \
  ../src/Simulator/Actuators/../../Devices/EnOceanProtocol.h \
  ../src/Simulator/Actuators/../Sensors/SensorSimulatorLumAndOcc.h \
  ../src/Simulator/Actuators/../Sensors/SensorSimulator.h \
@@ -22,6 +23,8 @@ src/Simulator/Actuators/EnOceanActuatorLight.d: \
 ../src/Simulator/Actuators/../Model/Subject.h:
 
 ../src/Simulator/Actuators/../../Devices/EnOceanSensorAPI.h:
+
+../src/Simulator/Actuators/../../Devices/../Config.h:
 
 ../src/Simulator/Actuators/../../Devices/EnOceanProtocol.h:
 

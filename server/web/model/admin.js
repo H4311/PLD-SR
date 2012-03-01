@@ -1,17 +1,39 @@
-
+var logger = require('../logger');
 var net = require('net');
 
 function connectClient() {
-	return net.createConnection(1234, "localhost");
+	var client = net.createConnection(1234, "localhost");
+	return client;
 }
 
 /*
  * REQUEST :
  * ============================================================================
+SENSOR :
 {
     “id” : “111111”,
-    “type” : “1ZJU928”
-} ============================================================================
+    “type” : “1ZJU928”,
+    "subject" : {
+		"i" : 12212,
+		"g" : 0 // patient : 0, piece : 1
+	}
+}
+ACTUATOR :
+{
+    “id” : “111111”,
+    “type” : “1ZJU928”,
+    "subject" : [
+		{
+			"i" : 12212,
+			"g" : 0 // patient : 0, piece : 1
+		},
+		{
+			"i" : 1452,
+			"g" : 1 // patient : 0, piece : 1
+		}
+	]
+} 
+ * ============================================================================
  *
  * RESPONSE :
  * ============================================================================
@@ -29,6 +51,12 @@ function addDevice(param, callback) {
 		
 	// Send the query :
 	var client = connectClient();
+	client.on("error", function() {
+		logger.error("Unable to connect to client");
+		var response = {};
+		response.status = "ko";
+		callback(response);
+	});
 	client.on("connect", function() {
 		console.log("[addDevice] Connected to the server");
 		client.write(JSON.stringify(query), function() {
@@ -104,6 +132,12 @@ function setActuator(param, callback) {
 		
 	// Send the query :
 	var client = connectClient();
+	client.on("error", function() {
+		logger.error("Unable to connect to client");
+		var response = {};
+		response.status = "ko";
+		callback(response);
+	});
 	client.on("connect", function() {
 		console.log("[setActuator] Connected to the server");
 		client.write(JSON.stringify(query), function() {

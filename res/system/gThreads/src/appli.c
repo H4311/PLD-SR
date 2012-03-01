@@ -38,7 +38,7 @@ void numbers(void *args)
 void others(void *args)
 {
 	int i;
-	for (i = 0; i<13; ++i) 
+	for (i = 0; i<13000; ++i) 
 	{
 		printf("+");
 		printf("-");
@@ -89,18 +89,16 @@ int main()
 	/*
 	 * Create two threads
 	 */
-	/*
 	createGThread("numbers", numbers, NULL, STACK_SIZE);
 	createGThread("letters", letters, NULL, STACK_SIZE);
 	createGThread("others", others, NULL, STACK_SIZE);
 	createGThread("stuff", stuff, NULL, STACK_SIZE);
-	createGThread("inifi", infiniteCoucou, NULL, STACK_SIZE);
-	*/
 	
+	/*
 	createGThread("lol", infiniteLol, NULL, STACK_SIZE);
 	createGThread("truc", infiniteTruc, NULL, STACK_SIZE);
 	createGThread("coucou", infiniteCoucou, NULL, STACK_SIZE);
-	
+	*/
 	/*createGThread("others", others, NULL, STACK_SIZE);*/
 		
 	/* To be sure they are all well created */

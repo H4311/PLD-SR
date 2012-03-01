@@ -38,4 +38,47 @@
         <% }) %>
     </tbody>
 </table>
+<div class="row">
+		<div class="span2 offset7">
+			<a class="btn btn-primary" data-toggle="modal" href="#myModal">
+				Ajouter Capteur Patient
+			</a>
+		</div>
+	</div>
+</div>
+
+<div class="modal hide fade" id="myModal">
+	<div class="modal-header">
+	<a class="close" data-dismiss="modal">×</a>
+	<h3>Ajout Capteur</h3>
+	</div>
+	<div class="modal-body">
+	   <form class="form-horizontal" method="get" action="add_sensor_patient">
+			<fieldset>
+			<div class="control-group">
+				<label class="control-label" for="input01">Id Capteur</label>
+			<div class="controls">
+			<input type="hidden" name="id" value="<%= patientDetails.id %>" />
+			<input type="text" name="sensorId" class="input-xlarge" id="input01" />
+				<p class="help-block">(ex: 1048577)</p>
+			</div>
+			</div>
+			<div class="control-group">
+            <label class="control-label" for="select01">Type Capteur</label>
+            <div class="controls">
+              <select name="sensorType" id="select01">
+                <%for( var type in typeLabels){%>
+					<option value="<%=type %>"><%= typeLabels[type] %></option>
+                <%}%>
+              </select>
+			  <p class="help-block">(ex: Temperature)</p>
+				</div>
+			  </div>
+			</fieldset>
+			<div class="modal-footer">
+			<input type="submit" class="btn btn-primary" value="Ajouter"/>
+			<a href="#" class="btn" data-dismiss="modal">Close</a>
+			</div>
+	  </form>
+	</div>
 </div>

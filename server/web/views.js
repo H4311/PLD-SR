@@ -2,6 +2,8 @@ var modelrooms = require("./model/rooms");
 var modelpatients = require("./model/patients");
 var modelalerts = require("./model/alerts");
 var modelsensors = require("./model/sensors");
+var modeladmin = require("./model/admin");
+var modelrules = require("./model/rules");
 
 /*
  * VIEW Index
@@ -82,7 +84,8 @@ function viewPatient(req, res) {
             		measures.push(measure);
             	}
             }
-            res.render('patient', {title: "Patient "+patientDetails.nom, patientDetails: patientDetails, measures: measures});
+            var typeLabels = modelsensors.getSensorsLabels();
+            res.render('patient', {title: "Patient "+patientDetails.nom, patientDetails: patientDetails, measures: measures, typeLabels: typeLabels});
         });
 	});
 }
@@ -92,7 +95,9 @@ function viewPatient(req, res) {
  */
 function viewNotif(req, res) {
 	//TODO: Get the last 24h notifs
-	var before = new Date(0);
+	var now = new Date();
+	var d = (now.getTime() - 3600*24*1000);
+	var before = new Date(d);
 	var data = {"from":  dateToString(before)};
 	
 	// Get model data
@@ -133,6 +138,88 @@ function viewHelp(req, res) {
 	res.render('help', {title: "Aide"});
 }
 
+/*
+ * VIEW addSensorPatient
+ */
+function addSensorPatient(req, res){
+	var patientId = req.param("id", null);
+	var sensorId = req.param("sensorId", null);
+	var sensorType = req.param("sensorType", null);
+	
+	var data={};
+	data.id = sensorId;
+	data.type = sensorType;
+	data.subject = {
+		i: patientId,
+		g: 0
+	};
+	
+	modeladmin.addDevice(data, function() {
+		viewPatient(req, res);
+	});
+}
+
+/*
+ * VIEW getActuatorsList
+ */
+function viewActuators(req, res){
+		modelsensors.getActuatorsList(function(result){
+			res.render('actuators', {title: "Actionneurs", actuators: result.hits });
+		});
+}
+
+function doActuator(req, res){	
+	var data={};
+	data.id = req.param("id", null);
+	data.type = req.param("type", null);
+	data.value = req.param("value", null);
+	data.active = req.param("active", null);
+
+	modeladmin.setActuator(data, function(result){
+			viewActuators(req, res);
+		});
+}
+
+/*
+ * VIEW viewRules
+ */
+function viewRules(req, res){
+	modelrules.getRules(function(result){
+		res.render('rules', {title: "Règles", rules: result.hits });
+	});
+
+}
+
+function addRule(req, res){
+	var idRegle = req.param("idRegle", null);
+	var nom = req.param("nom", null);
+	var createsAlert = req.param("createsAlert", null);
+	
+	var idCapteur = req.param("idCapteur", null);
+	var debIT = req.param("debIT", null);
+	var finIT = req.param("finIT", null);
+	
+	var idActionneur = req.param("idActionneur", null);
+	var valeur = req.param("valeur", null);
+	var isActive = req.param("isActive", null);
+	
+	var data={};
+	data.idRegle = idRegle;
+	data.nom = nom;
+	data.createsAlert = createsAlert;
+	data.idCapteur = idCapteur;
+	data.debIT = debIT;
+	data.finIT = finIT;
+	data.idActionneur = idActionneur;
+	data.valeur = valeur;
+	data.isActive = isActive;
+	
+	modelrules.addRule(data, function() {
+		viewRules(req, res);
+	});
+}
+
+
 exports.index = viewIndex;
 exports.room = viewRoom;
 exports.patient = viewPatient;
@@ -140,3 +227,9 @@ exports.login = viewLogin;
 exports.notif = viewNotif;
 exports.notfound = viewNotfound;
 exports.help = viewHelp;
+exports.add_sensor_patient = addSensorPatient;
+exports.actuators = viewActuators;
+exports.set_actuator = doActuator;
+exports.rules = viewRules;
+exports.add_rule = addRule;
+

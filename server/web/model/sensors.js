@@ -1,4 +1,5 @@
 var squel = require("squel");
+var logger = require("../logger");
 var sql = require("./nodesql");
 
 function sqlConnect() {
@@ -91,8 +92,6 @@ function getSensorsRecords(param, callback) {
 	// Send the query to SQL DB :
 	var db = sqlConnect();
 	sql.query(db, sql_req.toString(), function(result) {
-		console.log("Took : "+result.took+"ms - Hits : "+result.count);
-		
 		// Construct json response :
 		var response = {};
 		response.records = {};
@@ -123,8 +122,6 @@ function getSensorsList(callback) {
 	// Send the query to SQL DB :
 	var db = sqlConnect();
 	sql.query(db, sql_req.toString(), function(result) {
-		console.log("Took : "+result.took+"ms - Hits : "+result.count);
-		
 		// Call the record with json response :
 		callback(result);
 		sql.close(db);
@@ -140,8 +137,6 @@ function getSensorsListByPatient(id, callback) {
 	// Send the query to SQL DB :
 	var db = sqlConnect();
 	sql.query(db, sql_req.toString(), function(result) {
-		console.log("Took : "+result.took+"ms - Hits : "+result.count);
-		
 		// Call the record with json response :
 		callback(result);
 		sql.close(db);
@@ -157,8 +152,6 @@ function getSensorsListByRoom(id, callback) {
 	// Send the query to SQL DB :
 	var db = sqlConnect();
 	sql.query(db, sql_req.toString(), function(result) {
-		console.log("Took : "+result.took+"ms - Hits : "+result.count);
-		
 		// Call the record with json response :
 		callback(result);
 		sql.close(db);
@@ -173,12 +166,14 @@ function getActuatorsList(callback) {
 	// Send the query to SQL DB :
 	var db = sqlConnect();
 	sql.query(db, sql_req.toString(), function(result) {
-		console.log("Took : "+result.took+"ms - Hits : "+result.count);
-		
 		// Call the record with json response :
 		callback(result);
 		sql.close(db);
 	});
+}
+
+function getSensorsTypes() {
+	return [0x0060001, 0x0050201, 0x0070205, 0x0070401, 0x0070801, 0x0070901, 0x0070A01, 0x00A0001];
 }
 
 function getRecordtypesBySensortype(sensortype) {
@@ -227,10 +222,23 @@ function recordtypeToString(recordtype) {
 	}
 }
 
+function getSensorsLabels() {
+	var res={};
+	getSensorsTypes().forEach(function(type) {
+		res[type]="";
+		getRecordtypesBySensortype(type).forEach(function(typeSensor) {
+			res[type]+=recordtypeToString(typeSensor)+' ';
+		});
+	});
+	return res;
+}
+
 exports.getSensorsRecords = getSensorsRecords;
 exports.getSensorsList = getSensorsList;
 exports.getSensorsListByPatient = getSensorsListByPatient;
 exports.getSensorsListByRoom = getSensorsListByRoom;
 exports.getActuatorsList = getActuatorsList;
+exports.getSensorsTypes = getSensorsTypes;
 exports.getRecordtypesBySensortype = getRecordtypesBySensortype;
 exports.recordtypeToString = recordtypeToString;
+exports.getSensorsLabels = getSensorsLabels;
