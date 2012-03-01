@@ -30,7 +30,8 @@ public:
 	void setPIRStatus(bool v);
 	bool getOccupancy();
 	void setOccupancy(bool v);
-
+	bool getDoorState();
+	void setDoorState(bool v);
 	Room(int id);
 	virtual ~Room();
 
@@ -42,6 +43,7 @@ protected:
 	float luminosity;
 	bool pirStatus;
 	bool occupancy;
+	bool doorOpen;
 };
 
 #endif /* ROOM_H_ */

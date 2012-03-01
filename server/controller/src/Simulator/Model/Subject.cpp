@@ -40,10 +40,25 @@ void Subject::setMovement(float v) {
 	pthread_mutex_unlock(&mutex);
 }
 
+void Subject::setClick(int v) {
+	pthread_mutex_lock(&mutex);
+	click = v;
+	pthread_mutex_unlock(&mutex);
+}
+
+int Subject::getClick() {
+	int r;
+	pthread_mutex_lock(&mutex);
+	r = click;
+	pthread_mutex_unlock(&mutex);
+	return r;
+}
+
 Subject::Subject(int i, float temp, float mov) :
 		id(i),
 		temperature(temp),
-		movement(mov) {
+		movement(mov),
+		click(0){
 	// TODO Auto-generated constructor stub
 	pthread_mutex_init(&mutex, NULL);
 }

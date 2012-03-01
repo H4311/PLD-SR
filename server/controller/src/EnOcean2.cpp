@@ -4,7 +4,7 @@
  *  Created on: 13 janv. 2012
  *      Author: bplanche
  */
-
+#include "Config.h"
 #include "EnOceanClient/EnOceanReceptor.h"
 #include "EnOceanClient/EnOceanAnalyser.h"
 #include "Simulator/EnOCeanBaseSimulator.h"
@@ -18,6 +18,11 @@
 #include <pthread.h>
 #include <unistd.h>
 #include "EnOceanClient/ServerSettings.h"
+#include <map>
+
+extern "C" {
+	#include "Bdd/mysqlinsert.h"
+}
 /**
  * main? Don't know, what main does ;)
  */
@@ -30,10 +35,91 @@ int main(int argc, char *argv[]) {
 // ----- SIMULATED SENSORS
 
 	blocking_queue<string> msgToSendSimulator = blocking_queue<string>();
+	EnOCeanBaseSimulator simulator = EnOCeanBaseSimulator();
 
 	string adresseSimulatedSensor = "127.0.0.1";
-	int portSimulatedSensor = 5009;
+	int portSimulatedSensor = 5019;
 
+	// List of the simulated sensors :
+	vector<int> simulatedSensorsID;
+	simulatedSensorsID.push_back(1048599);
+	simulatedSensorsID.push_back(1048600);
+	simulatedSensorsID.push_back(1048601);
+	simulatedSensorsID.push_back(1048602);
+	simulatedSensorsID.push_back(1048603);
+	simulatedSensorsID.push_back(1048604);
+	simulatedSensorsID.push_back(1048605);
+	simulatedSensorsID.push_back(1048606);
+	simulatedSensorsID.push_back(1048607);
+	simulatedSensorsID.push_back(1048608);
+	simulatedSensorsID.push_back(1048609);
+	simulatedSensorsID.push_back(1048610);
+	simulatedSensorsID.push_back(1048611);
+	simulatedSensorsID.push_back(1048612);
+	simulatedSensorsID.push_back(1048613);
+	simulatedSensorsID.push_back(1048614);
+	simulatedSensorsID.push_back(1048615);
+	simulatedSensorsID.push_back(1048616);
+	simulatedSensorsID.push_back(1048617);
+	simulatedSensorsID.push_back(1048618);
+	simulatedSensorsID.push_back(1048619);
+	simulatedSensorsID.push_back(1048620);
+	simulatedSensorsID.push_back(1048621);
+	simulatedSensorsID.push_back(1048622);
+	simulatedSensorsID.push_back(1048623);
+	simulatedSensorsID.push_back(1048624);
+	simulatedSensorsID.push_back(1048625);
+	simulatedSensorsID.push_back(1048626);
+	simulatedSensorsID.push_back(1048627);
+	simulatedSensorsID.push_back(1048628);
+	simulatedSensorsID.push_back(1048629);
+	simulatedSensorsID.push_back(1048630);
+	simulatedSensorsID.push_back(1048631);
+	simulatedSensorsID.push_back(1048632);
+	simulatedSensorsID.push_back(1048633);
+	simulatedSensorsID.push_back(1048634);
+	simulatedSensorsID.push_back(1048635);
+	simulatedSensorsID.push_back(1048636);
+	simulatedSensorsID.push_back(1048637);
+	simulatedSensorsID.push_back(1048638);
+	simulatedSensorsID.push_back(1048639);
+	simulatedSensorsID.push_back(1048640);
+	simulatedSensorsID.push_back(1048641);
+	simulatedSensorsID.push_back(1048642);
+	simulatedSensorsID.push_back(1048643);
+	simulatedSensorsID.push_back(1048644);
+	simulatedSensorsID.push_back(1048645);
+	simulatedSensorsID.push_back(1048646);
+	simulatedSensorsID.push_back(1048647);
+	simulatedSensorsID.push_back(1048648);
+	simulatedSensorsID.push_back(1048649);
+	simulatedSensorsID.push_back(1048650);
+	simulatedSensorsID.push_back(1048651);
+	simulatedSensorsID.push_back(1048652);
+	simulatedSensorsID.push_back(1048653);
+	simulatedSensorsID.push_back(1048654);
+	simulatedSensorsID.push_back(1048655);
+	simulatedSensorsID.push_back(1048656);
+	simulatedSensorsID.push_back(1048657);
+	simulatedSensorsID.push_back(1048658);
+	simulatedSensorsID.push_back(1048659);
+	simulatedSensorsID.push_back(1048660);
+	simulatedSensorsID.push_back(1048661);
+	simulatedSensorsID.push_back(1048662);
+	simulatedSensorsID.push_back(1048663);
+	simulatedSensorsID.push_back(1048664);
+	simulatedSensorsID.push_back(1048665);
+	simulatedSensorsID.push_back(1048666);
+	simulatedSensorsID.push_back(1048667);
+	simulatedSensorsID.push_back(1048668);
+	simulatedSensorsID.push_back(1048669);
+	simulatedSensorsID.push_back(1048670);
+	simulatedSensorsID.push_back(1048671);
+	simulatedSensorsID.push_back(1048672);
+	simulatedSensorsID.push_back(1048673);
+
+
+	// Define Rooms :
 	Room room111 = Room(1);
 	Room room112 = Room(2);
 	Room room113 = Room(3);
@@ -93,100 +179,119 @@ int main(int argc, char *argv[]) {
 	room122.addNeigthborRoom(&room121);
 	room122.addNeigthborRoom(&roomBl12);
 
+	simulator.addSubject(&room111);
+	simulator.addSubject(&room112);
+	simulator.addSubject(&room113);
+	simulator.addSubject(&room114);
+	simulator.addSubject(&room115);
+	simulator.addSubject(&room116);
+	simulator.addSubject(&room117);
+	simulator.addSubject(&room118);
+	simulator.addSubject(&room119);
+	simulator.addSubject(&room120);
+	simulator.addSubject(&room121);
+	simulator.addSubject(&room122);
+	simulator.addSubject(&roomBl11);
+	simulator.addSubject(&roomBl12);
+	simulator.addSubject(&roomDp1);
 
-	EnOCeanBaseSimulator simulator = EnOCeanBaseSimulator();
-	SensorSimulatorTempHumi sensorSimu1 = SensorSimulatorTempHumi(0x00100001, &room1, 0, 40);
-	simulator.addSensor(&sensorSimu1);
 
-	SensorSimulatorTempHumi sensorSimu2 = SensorSimulatorTempHumi(0x00100002, &room2, 0, 40);
-	simulator.addSensor(&sensorSimu2);
+	// Sensors :
+	table.fillFromDB(&simulator, &simulatedSensorsID);
+	sleep(2);
 
-	SensorSimulatorTempHumi sensorSimu3 = SensorSimulatorTempHumi(0x00100003, &room3, 0, 40);
-	simulator.addSensor(&sensorSimu3);
-
-	SensorSimulatorTempHumi sensorSimu4 = SensorSimulatorTempHumi(0x00100004, &room4, 0, 40);
-	simulator.addSensor(&sensorSimu4);
-
-	SensorSimulatorTempHumi sensorSimu5 = SensorSimulatorTempHumi(0x00100005, &room1, 0, 40);
-	simulator.addSensor(&sensorSimu5);
-
-	SensorSimulatorTempHumi sensorSimu6 = SensorSimulatorTempHumi(0x00100006, &room2, 0, 40);
-	simulator.addSensor(&sensorSimu6);
-
-	SensorSimulatorTempHumi sensorSimu7 = SensorSimulatorTempHumi(0x00100007, &room3, 0, 40);
-	simulator.addSensor(&sensorSimu7);
-
-	SensorSimulatorTempHumi sensorSimu8 = SensorSimulatorTempHumi(0x00100008, &room4, 0, 40);
-	simulator.addSensor(&sensorSimu8);
-
-	SensorSimulatorTempHumi sensorSimu9 = SensorSimulatorTempHumi(0x00100009, &room2, 0, 40);
-	simulator.addSensor(&sensorSimu9);
-
-	SensorSimulatorTempHumi sensorSimu10 = SensorSimulatorTempHumi(0x00100010, &room3, 0, 40);
-	simulator.addSensor(&sensorSimu10);
-
-	SensorSimulatorTempHumi sensorSimu11 = SensorSimulatorTempHumi(0x00100011, &room4, 0, 40);
-	simulator.addSensor(&sensorSimu11);
-
-	SensorSimulatorTempHumi sensorSimu12 = SensorSimulatorTempHumi(0x00100012, &room1, 0, 40);
-	simulator.addSensor(&sensorSimu12);
-
-	SensorSimulatorTempHumi sensorSimu13 = SensorSimulatorTempHumi(0x00100013, &room1, 0, 40);
-	simulator.addSensor(&sensorSimu13);
-
-	SensorSimulatorTempHumi sensorSimu14 = SensorSimulatorTempHumi(0x00100014, &room2, 0, 40);
-	simulator.addSensor(&sensorSimu14);
-
-	SensorSimulatorTempHumi sensorSimu15 = SensorSimulatorTempHumi(0x00100015, &room3, 0, 40);
-	simulator.addSensor(&sensorSimu15);
-
-	simulator.addSensor(&sensorSimu1);
-	simulator.addSensor(&sensorSimu2);
-	simulator.addSensor(&sensorSimu3);
-	simulator.addSensor(&sensorSimu4);
-	simulator.addSensor(&sensorSimu5);
-	simulator.addSensor(&sensorSimu6);
-	simulator.addSensor(&sensorSimu7);
-	simulator.addSensor(&sensorSimu8);
-	simulator.addSensor(&sensorSimu9);
-	simulator.addSensor(&sensorSimu10);
-	simulator.addSensor(&sensorSimu11);
-	simulator.addSensor(&sensorSimu12);
-	simulator.addSensor(&sensorSimu13);
-	simulator.addSensor(&sensorSimu14);
-	simulator.addSensor(&sensorSimu15);
-
+//	SensorSimulatorTempHumi sensorSimu1 = SensorSimulatorTempHumi(0x00100001, &room1, 0, 40);
+//	simulator.addSensor(&sensorSimu1);
+//
+//	SensorSimulatorTempHumi sensorSimu2 = SensorSimulatorTempHumi(0x00100002, &room2, 0, 40);
+//	simulator.addSensor(&sensorSimu2);
+//
+//	SensorSimulatorTempHumi sensorSimu3 = SensorSimulatorTempHumi(0x00100003, &room3, 0, 40);
+//	simulator.addSensor(&sensorSimu3);
+//
+//	SensorSimulatorTempHumi sensorSimu4 = SensorSimulatorTempHumi(0x00100004, &room4, 0, 40);
+//	simulator.addSensor(&sensorSimu4);
+//
+//	SensorSimulatorTempHumi sensorSimu5 = SensorSimulatorTempHumi(0x00100005, &room1, 0, 40);
+//	simulator.addSensor(&sensorSimu5);
+//
+//	SensorSimulatorTempHumi sensorSimu6 = SensorSimulatorTempHumi(0x00100006, &room2, 0, 40);
+//	simulator.addSensor(&sensorSimu6);
+//
+//	SensorSimulatorTempHumi sensorSimu7 = SensorSimulatorTempHumi(0x00100007, &room3, 0, 40);
+//	simulator.addSensor(&sensorSimu7);
+//
+//	SensorSimulatorTempHumi sensorSimu8 = SensorSimulatorTempHumi(0x00100008, &room4, 0, 40);
+//	simulator.addSensor(&sensorSimu8);
+//
+//	SensorSimulatorTempHumi sensorSimu9 = SensorSimulatorTempHumi(0x00100009, &room2, 0, 40);
+//	simulator.addSensor(&sensorSimu9);
+//
+//	SensorSimulatorTempHumi sensorSimu10 = SensorSimulatorTempHumi(0x00100010, &room3, 0, 40);
+//	simulator.addSensor(&sensorSimu10);
+//
+//	SensorSimulatorTempHumi sensorSimu11 = SensorSimulatorTempHumi(0x00100011, &room4, 0, 40);
+//	simulator.addSensor(&sensorSimu11);
+//
+//	SensorSimulatorTempHumi sensorSimu12 = SensorSimulatorTempHumi(0x00100012, &room1, 0, 40);
+//	simulator.addSensor(&sensorSimu12);
+//
+//	SensorSimulatorTempHumi sensorSimu13 = SensorSimulatorTempHumi(0x00100013, &room1, 0, 40);
+//	simulator.addSensor(&sensorSimu13);
+//
+//	SensorSimulatorTempHumi sensorSimu14 = SensorSimulatorTempHumi(0x00100014, &room2, 0, 40);
+//	simulator.addSensor(&sensorSimu14);
+//
+//	SensorSimulatorTempHumi sensorSimu15 = SensorSimulatorTempHumi(0x00100015, &room3, 0, 40);
+//	simulator.addSensor(&sensorSimu15);
+//
+//	simulator.addSensor(&sensorSimu1);
+//	simulator.addSensor(&sensorSimu2);
+//	simulator.addSensor(&sensorSimu3);
+//	simulator.addSensor(&sensorSimu4);
+//	simulator.addSensor(&sensorSimu5);
+//	simulator.addSensor(&sensorSimu6);
+//	simulator.addSensor(&sensorSimu7);
+//	simulator.addSensor(&sensorSimu8);
+//	simulator.addSensor(&sensorSimu9);
+//	simulator.addSensor(&sensorSimu10);
+//	simulator.addSensor(&sensorSimu11);
+//	simulator.addSensor(&sensorSimu12);
+//	simulator.addSensor(&sensorSimu13);
+//	simulator.addSensor(&sensorSimu14);
+//	simulator.addSensor(&sensorSimu15);
+//
 	simulator.openSocket(portSimulatedSensor);
 	simulator.run();
-
-	table.add((EnOceanSensorAPI::SensorId)0x00100001, (EnOceanSensorAPI::EnOceanCallbackFunction)EnOceanSensorAPI::analyseTempAndHumidSensor_EEP_07_04_01);
-	table.add((EnOceanSensorAPI::SensorId)0x00100002, (EnOceanSensorAPI::EnOceanCallbackFunction)EnOceanSensorAPI::analyseTempAndHumidSensor_EEP_07_04_01);
-	table.add((EnOceanSensorAPI::SensorId)0x00100003, (EnOceanSensorAPI::EnOceanCallbackFunction)EnOceanSensorAPI::analyseTempAndHumidSensor_EEP_07_04_01);
-	table.add((EnOceanSensorAPI::SensorId)0x00100004, (EnOceanSensorAPI::EnOceanCallbackFunction)EnOceanSensorAPI::analyseTempAndHumidSensor_EEP_07_04_01);
-	table.add((EnOceanSensorAPI::SensorId)0x00100005, (EnOceanSensorAPI::EnOceanCallbackFunction)EnOceanSensorAPI::analyseTempAndHumidSensor_EEP_07_04_01);
-	table.add((EnOceanSensorAPI::SensorId)0x00100006, (EnOceanSensorAPI::EnOceanCallbackFunction)EnOceanSensorAPI::analyseTempAndHumidSensor_EEP_07_04_01);
-	table.add((EnOceanSensorAPI::SensorId)0x00100007, (EnOceanSensorAPI::EnOceanCallbackFunction)EnOceanSensorAPI::analyseTempAndHumidSensor_EEP_07_04_01);
-	table.add((EnOceanSensorAPI::SensorId)0x00100008, (EnOceanSensorAPI::EnOceanCallbackFunction)EnOceanSensorAPI::analyseTempAndHumidSensor_EEP_07_04_01);
-	table.add((EnOceanSensorAPI::SensorId)0x00100009, (EnOceanSensorAPI::EnOceanCallbackFunction)EnOceanSensorAPI::analyseTempAndHumidSensor_EEP_07_04_01);
-	table.add((EnOceanSensorAPI::SensorId)0x001000010, (EnOceanSensorAPI::EnOceanCallbackFunction)EnOceanSensorAPI::analyseTempAndHumidSensor_EEP_07_04_01);
-	table.add((EnOceanSensorAPI::SensorId)0x001000011, (EnOceanSensorAPI::EnOceanCallbackFunction)EnOceanSensorAPI::analyseTempAndHumidSensor_EEP_07_04_01);
-	table.add((EnOceanSensorAPI::SensorId)0x001000012, (EnOceanSensorAPI::EnOceanCallbackFunction)EnOceanSensorAPI::analyseTempAndHumidSensor_EEP_07_04_01);
-	table.add((EnOceanSensorAPI::SensorId)0x001000013, (EnOceanSensorAPI::EnOceanCallbackFunction)EnOceanSensorAPI::analyseTempAndHumidSensor_EEP_07_04_01);
-	table.add((EnOceanSensorAPI::SensorId)0x001000014, (EnOceanSensorAPI::EnOceanCallbackFunction)EnOceanSensorAPI::analyseTempAndHumidSensor_EEP_07_04_01);
-	table.add((EnOceanSensorAPI::SensorId)0x001000015, (EnOceanSensorAPI::EnOceanCallbackFunction)EnOceanSensorAPI::analyseTempAndHumidSensor_EEP_07_04_01);
-
-	EnOceanActuatorAirConditioning airCond = EnOceanActuatorAirConditioning(1, 10.0, 12, 0, 40);
-	airCond.addSubject(&room1);
-	airCond.addSubject(&room2);
-	airCond.addSubject(&room3);
-	airCond.addSubject(&room4);
-	airCond.setStatus(true);
-
-	EventActuatorFire fire = EventActuatorFire(2, 5);
-	fire.addSubject(&room1);
-
-	simulator.addActuator(&airCond);
-	simulator.addActuator(&fire);
+//
+//	table.add((EnOceanSensorAPI::SensorId)0x00100001, (EnOceanSensorAPI::EnOceanCallbackFunction)EnOceanSensorAPI::analyseTempAndHumidSensor_EEP_07_04_01);
+//	table.add((EnOceanSensorAPI::SensorId)0x00100002, (EnOceanSensorAPI::EnOceanCallbackFunction)EnOceanSensorAPI::analyseTempAndHumidSensor_EEP_07_04_01);
+//	table.add((EnOceanSensorAPI::SensorId)0x00100003, (EnOceanSensorAPI::EnOceanCallbackFunction)EnOceanSensorAPI::analyseTempAndHumidSensor_EEP_07_04_01);
+//	table.add((EnOceanSensorAPI::SensorId)0x00100004, (EnOceanSensorAPI::EnOceanCallbackFunction)EnOceanSensorAPI::analyseTempAndHumidSensor_EEP_07_04_01);
+//	table.add((EnOceanSensorAPI::SensorId)0x00100005, (EnOceanSensorAPI::EnOceanCallbackFunction)EnOceanSensorAPI::analyseTempAndHumidSensor_EEP_07_04_01);
+//	table.add((EnOceanSensorAPI::SensorId)0x00100006, (EnOceanSensorAPI::EnOceanCallbackFunction)EnOceanSensorAPI::analyseTempAndHumidSensor_EEP_07_04_01);
+//	table.add((EnOceanSensorAPI::SensorId)0x00100007, (EnOceanSensorAPI::EnOceanCallbackFunction)EnOceanSensorAPI::analyseTempAndHumidSensor_EEP_07_04_01);
+//	table.add((EnOceanSensorAPI::SensorId)0x00100008, (EnOceanSensorAPI::EnOceanCallbackFunction)EnOceanSensorAPI::analyseTempAndHumidSensor_EEP_07_04_01);
+//	table.add((EnOceanSensorAPI::SensorId)0x00100009, (EnOceanSensorAPI::EnOceanCallbackFunction)EnOceanSensorAPI::analyseTempAndHumidSensor_EEP_07_04_01);
+//	table.add((EnOceanSensorAPI::SensorId)0x001000010, (EnOceanSensorAPI::EnOceanCallbackFunction)EnOceanSensorAPI::analyseTempAndHumidSensor_EEP_07_04_01);
+//	table.add((EnOceanSensorAPI::SensorId)0x001000011, (EnOceanSensorAPI::EnOceanCallbackFunction)EnOceanSensorAPI::analyseTempAndHumidSensor_EEP_07_04_01);
+//	table.add((EnOceanSensorAPI::SensorId)0x001000012, (EnOceanSensorAPI::EnOceanCallbackFunction)EnOceanSensorAPI::analyseTempAndHumidSensor_EEP_07_04_01);
+//	table.add((EnOceanSensorAPI::SensorId)0x001000013, (EnOceanSensorAPI::EnOceanCallbackFunction)EnOceanSensorAPI::analyseTempAndHumidSensor_EEP_07_04_01);
+//	table.add((EnOceanSensorAPI::SensorId)0x001000014, (EnOceanSensorAPI::EnOceanCallbackFunction)EnOceanSensorAPI::analyseTempAndHumidSensor_EEP_07_04_01);
+//	table.add((EnOceanSensorAPI::SensorId)0x001000015, (EnOceanSensorAPI::EnOceanCallbackFunction)EnOceanSensorAPI::analyseTempAndHumidSensor_EEP_07_04_01);
+//
+//	EnOceanActuatorAirConditioning airCond = EnOceanActuatorAirConditioning(1, 10.0, 12, 0, 40);
+//	airCond.addSubject(&room1);
+//	airCond.addSubject(&room2);
+//	airCond.addSubject(&room3);
+//	airCond.addSubject(&room4);
+//	airCond.setStatus(true);
+//
+//	EventActuatorFire fire = EventActuatorFire(2, 5);
+//	fire.addSubject(&room1);
+//
+//	simulator.addActuator(&airCond);
+//	simulator.addActuator(&fire);
 
 
 // ----- ENOCEAN SENSORS

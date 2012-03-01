@@ -11,11 +11,16 @@
 
 //--------------------------------------------------------- System Include
 using namespace std;
-
+#include <iostream>
 
 //------------------------------------------------------ Personnal Include
 #include "DeviceTable.h"
-
+extern "C" {
+	#include "../Bdd/mysqlinsert.h"
+}
+#ifdef SIMULATION
+#include "../Simulator/Model/Subject.h"
+#endif
 //-------------------------------------------------------------- Constants
 
 //----------------------------------------------------------------- PUBLIC
@@ -29,6 +34,35 @@ int DeviceTable::add(EnOceanSensorAPI::SensorId id, EnOceanSensorAPI::EnOceanCal
 	pthread_mutex_unlock(&mutex);
 	return n;
 } //----- End of add
+
+void DeviceTable::fillFromDB(
+#ifdef SIMULATION
+		EnOCeanBaseSimulator* simulator, vector<int>* simulatedSensorsID
+#endif
+
+) {
+	MYSQL* mysql = connectToMysql();
+	result* sensors = getCapteurs(mysql);
+	closeMysql(mysql);
+	for (int i = 0; i < sensors->nbRows; i++) {
+		this->add((EnOceanSensorAPI::SensorId)sensors->tab[i][1], (EnOceanSensorAPI::EnOceanCallbackFunction)EnOceanSensorAPI::getFunctionPerType(sensors->tab[i][0]));
+#ifdef SIMULATION
+		bool simulated = false;
+		for (unsigned int j = 0; j < simulatedSensorsID->size(); j++) {
+			if (simulatedSensorsID->at(j) == sensors->tab[i][1]) {
+				simulated = true;
+				break;
+			}
+		}
+		if (simulated)	{
+			Subject* subject = simulator->findSubject(sensors->tab[i][3]);
+			simulator->addSensor(SensorSimulator::createSensorSimulator(sensors->tab[i][1], sensors->tab[i][0], subject));
+			cout << "<Simulator> Simulated Sensor n°" << sensors->tab[i][1] << " - Created !\n";
+
+		}
+#endif
+	}
+}
 
 bool DeviceTable::del(EnOceanSensorAPI::SensorId id) {
 	bool ret;

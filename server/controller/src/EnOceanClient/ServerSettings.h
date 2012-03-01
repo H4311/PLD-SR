@@ -17,13 +17,12 @@ using namespace std;
 #include <pthread.h>
 #include <vector>
 //------------------------------------------------------ Personnal Include
+#include "../Config.h"
 #include "../Devices/EnOceanSensorAPI.h"
 #include "../Devices/DeviceTable.h"
 #include "../Simulator/EnOCeanBaseSimulator.h"
 #include "TCPServer.h"
 //------------------------------------------------------------- Constantes
-
-#define SIMULATION
 
 //------------------------------------------------------------------ Types
 

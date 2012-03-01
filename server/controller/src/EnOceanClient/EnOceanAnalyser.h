@@ -19,6 +19,7 @@ using namespace std;
 #include <pthread.h>
 
 //------------------------------------------------------ Personnal Include
+#include "../Config.h"
 #include "../Libs/blocking_queue.h"
 #include "../Devices/DeviceTable.h"
 #include "../Devices/EnOceanSensorAPI.h"
