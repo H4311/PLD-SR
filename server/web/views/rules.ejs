@@ -1,7 +1,6 @@
 <div class="hero-unit">
 <h2>Règles</h2>
 
-<h3>Liste des règles en vigueur</h3>
 <table class="table table-condensed">
     <thead>
         <tr>
@@ -12,8 +11,8 @@
     <tbody>
     	<% rules.forEach(function(rule){ %>
         <tr>
-        <td><i class="icon-signal"></i>&nbsp;<span class="label label-info"><%= rule.id %></span></td>
-        <td><span class="label label-info"><%= rule.nom %></span></td>
+        <td><i class="icon-ok-sign"></i>&nbsp;<span class="label"><%= rule.id %></span></td>
+        <td><span class="label"><%= rule.nom %></span></td>
         </tr>
         <% }) %>
     </tbody>
