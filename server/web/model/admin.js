@@ -132,6 +132,12 @@ function setActuator(param, callback) {
 		
 	// Send the query :
 	var client = connectClient();
+	client.on("error", function() {
+		logger.error("Unable to connect to client");
+		var response = {};
+		response.status = "ko";
+		callback(response);
+	});
 	client.on("connect", function() {
 		console.log("[setActuator] Connected to the server");
 		client.write(JSON.stringify(query), function() {

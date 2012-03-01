@@ -54,19 +54,23 @@ function addRule(param, callback) {
 		//Insertion d'une règle
 		sql_req = "INSERT INTO regles(nom, createsAlert) ";
 		sql_req += "VALUES('"+param.nom+"',"+param.createsAlert+");";
-	} else if(param.idCapteur != null && param.debIT != null && param.finIT != null) {
+	}
+	if(param.idCapteur != null && param.debIT != null && param.finIT != null) {
 		//Insertion d'un règle/capteur
 		sql_req += "INSERT INTO regleCapteur (idRegle, idCapteur, debutIntervalle, finIntervalle) ";
 		sql_req += "VALUES((SELECT id FROM regles WHERE nom='" + param.nom + "'), " + param.idCapteur + ", " + param.debIT + ", " + param.finIT + ")";
-	} else if(param.idActionneur != null && param.valeur != null && param.isActive != null) {
+	}
+	if(param.idActionneur != null && param.valeur != null && param.isActive != null) {
 		//Insertion d'un règle/actionneur
 		sql_req += "INSERT INTO regleActionneur (idRegle, idActionneur, valeur, isActive) ";
 		sql_req += "VALUES((SELECT id FROM regles WHERE nom='" + param.nom + "'), " + param.idActionneur + ", " + param.valeur + ", " + param.isActive + ")";
-	} else {
+	}
+	//TODO: gérer les erreurs
+	/*else {
 		logger.error("[Services rules] params nom & createsAlert");
 		callback({});
 		return;
-	}
+	}*/
 	
 	// Send the query to SQL DB
 	var db = sqlConnect();
@@ -78,4 +82,21 @@ function addRule(param, callback) {
 	
 }
 
+
+function getRules(callback) {
+	// Construct the SQL query :
+	var sql_req = squel.select()
+		.from("regles");
+	
+	// Send the query to SQL DB :
+	var db = sqlConnect();
+	sql.query(db, sql_req.toString(), function(result) {
+		// Call the record with json response :
+		callback(result);
+		sql.close(db);
+	});
+}
+
+
 exports.addRule = addRule;
+exports.getRules = getRules;

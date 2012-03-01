@@ -3,6 +3,7 @@ var modelpatients = require("./model/patients");
 var modelalerts = require("./model/alerts");
 var modelsensors = require("./model/sensors");
 var modeladmin = require("./model/admin");
+var modelrules = require("./model/rules");
 
 /*
  * VIEW Index
@@ -158,6 +159,67 @@ function addSensorPatient(req, res){
 	});
 }
 
+/*
+ * VIEW getActuatorsList
+ */
+function viewActuators(req, res){
+		modelsensors.getActuatorsList(function(result){
+			res.render('actuators', {title: "Actionneurs", actuators: result.hits });
+		});
+}
+
+function doActuator(req, res){	
+	var data={};
+	data.id = req.param("id", null);
+	data.type = req.param("type", null);
+	data.value = req.param("value", null);
+	data.active = req.param("active", null);
+
+	modeladmin.setActuator(data, function(result){
+			viewActuators(req, res);
+		});
+}
+
+/*
+ * VIEW viewRules
+ */
+function viewRules(req, res){
+	modelrules.getRules(function(result){
+		res.render('rules', {title: "Règles", rules: result.hits });
+	});
+
+}
+
+function addRule(req, res){
+	var idRegle = req.param("idRegle", null);
+	var nom = req.param("nom", null);
+	var createsAlert = req.param("createsAlert", null);
+	
+	var idCapteur = req.param("idCapteur", null);
+	var debIT = req.param("debIT", null);
+	var finIT = req.param("finIT", null);
+	
+	var idActionneur = req.param("idActionneur", null);
+	var valeur = req.param("valeur", null);
+	var isActive = req.param("isActive", null);
+	
+	var data={};
+	data.idRegle = idRegle;
+	data.nom = nom;
+	data.createsAlert = createsAlert;
+	data.idCapteur = idCapteur;
+	data.debIT = debIT;
+	data.finIT = finIT;
+	data.idActionneur = idActionneur;
+	data.valeur = valeur;
+	data.isActive = isActive;
+	
+	modelrules.addRule(data, function() {
+		viewRules(req, res);
+	});
+}
+
+
 exports.index = viewIndex;
 exports.room = viewRoom;
 exports.patient = viewPatient;
@@ -166,3 +228,8 @@ exports.notif = viewNotif;
 exports.notfound = viewNotfound;
 exports.help = viewHelp;
 exports.add_sensor_patient = addSensorPatient;
+exports.actuators = viewActuators;
+exports.set_actuator = doActuator;
+exports.rules = viewRules;
+exports.add_rule = addRule;
+

@@ -1,0 +1,68 @@
+<div class="hero-unit">
+<h2>Actionneurs</h2>
+<br />
+<table class="table table-condensed">
+    <thead>
+        <tr>
+        <th>Id</th>
+        <th></th>	
+        </tr>
+    </thead>
+    <tbody>
+		<% actuators.forEach( function(actuator){%>
+			<tr>
+			<td><%= actuator.numeroActionneur %></td>
+			<td>
+			<div class="row">
+		<div class="span2 offset7">
+			<a class="btn btn-inverse" data-toggle="modal" href="#myModal">
+				Actionner
+			</a>
+		</div>
+			</div>
+		</div>
+			</td>
+			</tr>
+		<% }) %>
+    </tbody>
+</table>
+</div>
+
+<div class="modal hide fade" id="myModal">
+	<div class="modal-header">
+	<a class="close" data-dismiss="modal">×</a>
+	<h3>Actionner</h3>
+	</div>
+	<div class="modal-body">
+	   <form class="form-horizontal" method="get" action="set_actuator">
+			<fieldset>
+			<div class="control-group">
+				<label class="control-label" for="input01">Valeur</label>
+			<div class="controls">
+			<input type="hidden" name="id" value="1" />
+			<input type="hidden" name="type" value="17238273" />
+			<input type="text" name="value" class="input-xlarge" id="input01" />
+				<p class="help-block">(ex: 1.1)</p>
+			</div>
+			</div>
+			<div class="control-group">
+			<label class="control-label" for="input01">Active</label>
+			<div class="controls">
+              <label class="radio">
+              <input name="active" value="true" checked="checked" type="radio">
+                On
+              </label>
+              <label class="radio">
+              <input name="active" value="false" type="radio">
+                Off
+              </label>
+            </div> 
+            </div>
+			</fieldset>
+			<div class="modal-footer">
+			<input type="submit" class="btn btn-primary" value="Actionner"/>
+			<a href="#" class="btn" data-dismiss="modal">Close</a>
+			</div>
+		</form>
+	</div>
+</div>

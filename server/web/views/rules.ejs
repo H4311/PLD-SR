@@ -1,0 +1,112 @@
+<ul class="breadcrumb">
+	<li>
+		<a href="index">Home</a> <span class="divider">/</span>
+	</li>
+	<li class="active">
+		<a href="#">Regles</a>
+	</li>
+</ul>
+
+<div class="hero-unit">
+<h2>Regles</h2>
+
+<h3>Liste des règles en vigueur</h3>
+<table class="table table-condensed">
+    <thead>
+        <tr>
+        <th>Id</th>
+        <th>Nom</th>
+        </tr>
+    </thead>
+    <tbody>
+    	<% rules.forEach(function(rule){ %>
+        <tr>
+        <td><i class="icon-signal"></i>&nbsp;<span class="label label-info"><%= rule.id %></span></td>
+        <td><span class="label label-info"><%= rule.nom %></span></td>
+        </tr>
+        <% }) %>
+    </tbody>
+</table>
+<div class="row">
+		<div class="span2 offset7">
+			<a class="btn btn-primary" data-toggle="modal" href="#myModal">
+				Ajouter Règles
+			</a>
+		</div>
+	</div>
+</div>
+
+<div class="modal hide fade" id="myModal">
+	<div class="modal-header">
+	<a class="close" data-dismiss="modal">×</a>
+	<h3>Ajout Règle</h3>
+	</div>
+	<div class="modal-body">
+	   <form class="form-horizontal" method="get" action="add_rule">
+			<fieldset>
+			<legend>Description</legend>
+			<div class="control-group">
+				<label class="control-label" for="input01">Id Règle</label>
+			<div class="controls">
+			<input type="hidden" name="createsAlert" value="1"/>
+			<input type="text" name="ruleId" class="input-xlarge" id="input01"/>
+				<p class="help-block">(ex: Modification si existant)</p>
+			</div>
+			</div>
+			<div class="control-group">
+            <label class="control-label" for="select01">Nom</label>
+            <div class="controls">
+              <input type="text" name="nom" class="input-xlarge" id="input01"/>
+			  <p class="help-block">(ex: Règle Chauffage Chambre 211)</p>
+				</div>
+			  </div>
+			  </fieldset>
+			  <fieldset>
+			  <legend>Capteur</legend>
+			<div class="control-group">
+            <label class="control-label" for="select01">Id</label>
+            <div class="controls">
+              <input type="text" name="idCapteur" class="input-xlarge" id="input01"/>
+			  <p class="help-block">(ex: 23)</p>
+				</div>
+			  </div>
+			  <div class="control-group">
+            <label class="control-label" for="select01">Debut Interval</label>
+            <div class="controls">
+              <input type="text" name="debIT" class="input-xlarge" id="input01"/>
+			  <p class="help-block">(ex: 0)</p>
+				</div>
+			  </div>
+			  <div class="control-group">
+            <label class="control-label" for="select01">Fin Interval</label>
+            <div class="controls">
+              <input type="text" name="finIT" class="input-xlarge" id="input01"/>
+			  <p class="help-block">(ex: 18)</p>
+				</div>
+			  </div>
+			</fieldset>
+			<fieldset>
+			  <legend>Actionneur</legend>
+			<div class="control-group">
+            <label class="control-label" for="select01">Id</label>
+            <div class="controls">
+              <input type="hidden" name="isActive" value="1"/>
+              <input type="text" name="idActionneur" class="input-xlarge" id="input01"/>
+			  <p class="help-block">(ex: 34)</p>
+				</div>
+			  </div>
+			  <div class="control-group">
+            <label class="control-label" for="select01">Valeur</label>
+            <div class="controls">
+              <input type="text" name="valeur" class="input-xlarge" id="input01"/>
+			  <p class="help-block">(ex: 42)</p>
+				</div>
+			  </div>
+			</fieldset>
+			<div class="modal-footer">
+			<input type="submit" class="btn btn-primary" value="Ajouter"/>
+			<a href="#" class="btn" data-dismiss="modal">Close</a>
+			</div>
+	  </form>
+	</div>
+</div>
