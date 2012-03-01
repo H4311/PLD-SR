@@ -38,7 +38,8 @@ void* EnOceanBaseSimulatorThread_Send (void* param) {
 		simu->updateSensors();
 
 		// Sending their values :
-		delayBetween2Sendings = (simu->DELAY*1000000) / simu->countSensors();
+		int nbS = simu->countSensors();
+		delayBetween2Sendings = (nbS != 0)?((simu->DELAY*1000000) / nbS):0;
 		delayBetween2Sendings = (delayBetween2Sendings < 100)? 100 : delayBetween2Sendings;
 		
 		for (int i = 0; i < simu->countSensors(); i++) {

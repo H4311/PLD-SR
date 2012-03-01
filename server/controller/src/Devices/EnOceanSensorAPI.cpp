@@ -400,7 +400,7 @@ extern "C" {
 		float volt = getVoltage(frame, minV, maxV);
 		bool pir = getPIRStatus(frame);
 		bool occ = getOccupancy(frame);
-		insertMesure(mysql, CAPTEUR_ENOCEAN, (int)getID(frame), timestamp, LUMINOSITY, getIlluminance(frame, minLum, maxLum));
+		insertMesure(mysql, CAPTEUR_ENOCEAN, (int)getID(frame), timestamp, LUMINOSITY, getIlluminance(frame, minLum, maxLum)*100);
 //		insertMesure(mysql, CAPTEUR_ENOCEAN, (int)getID(frame), timestamp, 1, getVoltage(frame, minV, maxV));
 //		insertMesure(mysql, CAPTEUR_ENOCEAN, (int)getID(frame), timestamp, 2, getPIRStatus(frame));
 		insertMesure(mysql, CAPTEUR_ENOCEAN, (int)getID(frame), timestamp, OCCUPANCY, getOccupancy(frame));
