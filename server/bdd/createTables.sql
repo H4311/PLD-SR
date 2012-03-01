@@ -15,7 +15,7 @@ DROP TABLE IF EXISTS murs,
 
 CREATE TABLE actionneurs (
 	id INTEGER PRIMARY KEY AUTO_INCREMENT,
-	numeroActionneur INTEGER,
+	numeroActionneur INTEGER UNSIGNED,
 	type INTEGER
 );
 
@@ -45,7 +45,7 @@ CREATE TABLE patients (
 CREATE TABLE capteurs (
 	id INTEGER PRIMARY KEY AUTO_INCREMENT,
 	type INTEGER,
-	numeroCapteur INTEGER,
+	numeroCapteur INTEGER UNSIGNED,
 	isGlobal BOOLEAN,
 	idSujet INTEGER,
 	UNIQUE (type, numeroCapteur)
