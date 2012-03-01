@@ -1,8 +1,9 @@
-
+var logger = require('../logger');
 var net = require('net');
 
 function connectClient() {
-	return net.createConnection(1234, "localhost");
+	var client = net.createConnection(1234, "localhost");
+	return client;
 }
 
 /*
@@ -50,6 +51,12 @@ function addDevice(param, callback) {
 		
 	// Send the query :
 	var client = connectClient();
+	client.on("error", function() {
+		logger.error("Unable to connect to client");
+		var response = {};
+		response.status = "ko";
+		callback(response);
+	});
 	client.on("connect", function() {
 		console.log("[addDevice] Connected to the server");
 		client.write(JSON.stringify(query), function() {

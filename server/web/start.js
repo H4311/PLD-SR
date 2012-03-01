@@ -5,6 +5,12 @@ var services = require("./services");
 var views = require("./views");
 var authModule = require("./auth").authModule;
 
+
+// Catch for all exception
+process.on('uncaughtException', function (error) {
+   console.log(error.stack);
+});
+
 var securityActivated = true;
 
 // REST Server config
@@ -63,6 +69,7 @@ viewHandler["/patient"] = views.patient;
 viewHandler["/login"] = views.login;
 viewHandler["/help"] = views.help;
 viewHandler["/alerts"] = views.notif;
+viewHandler["/add_sensor_patient"] = views.add_sensor_patient;
 
 // Need to be put before * otherwise the star rule catches all the
 // requests !
@@ -73,9 +80,6 @@ viewHandler["*"] = views.notfound;
 
 // handler, user, password
 authModule.init(viewHandler);
-
-// Forms
-html.post("/add_sensor_patient", views.add_sensor_patient);
 
 for (var url in viewHandler) {
 	(securityActivated) ? html.get(url, authModule.checkAuth(url))
