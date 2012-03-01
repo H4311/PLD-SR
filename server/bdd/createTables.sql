@@ -26,7 +26,7 @@ CREATE TABLE patients (
 	id INTEGER PRIMARY KEY AUTO_INCREMENT,
 	nom VARCHAR(32),
 	isMan BOOLEAN,
-	raisonHospitalisation VARCHAR(32),
+	raisonHospitalisation VARCHAR(64),
 	idPiece INTEGER,
 	FOREIGN KEY (idPiece) REFERENCES pieces (id)
 );
@@ -54,7 +54,8 @@ CREATE TABLE mesures (
 CREATE TABLE regles (
 	id INTEGER PRIMARY KEY AUTO_INCREMENT,
 	nom VARCHAR(32),
-	createsAlert BOOLEAN
+	createsAlert BOOLEAN,
+	UNIQUE(nom)
 );
 
 CREATE TABLE regleCapteur (
