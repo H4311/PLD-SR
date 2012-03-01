@@ -70,6 +70,10 @@ viewHandler["/login"] = views.login;
 viewHandler["/help"] = views.help;
 viewHandler["/alerts"] = views.notif;
 viewHandler["/add_sensor_patient"] = views.add_sensor_patient;
+viewHandler["/add_rule"] = views.add_rule;
+viewHandler["/actuators"] = views.actuators;
+viewHandler["/rules"] = views.rules;
+viewHandler["/set_actuator"] = views.set_actuator;
 
 // Need to be put before * otherwise the star rule catches all the
 // requests !

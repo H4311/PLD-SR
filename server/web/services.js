@@ -179,9 +179,8 @@ function serviceAdminRemoveDevices(req, resp) {
 function serviceAddRule(req, resp) {
 	writeHeaders(resp);
 
-	//request = parseRequest(req, ["idRegle", "nom", "createsAlert", "idCapteur", "debIT", "finIT", "idActionneur", "valeur", "isActive"]);
-	request = parseRequest(req, ["nom", "createsAlert"]);
-	// Get the response from the modeladmin layer :
+	request = parseRequest(req, ["nom", "createsAlert", "idCapteur", "debIT", "finIT", "idActionneur", "valeur", "isActive"]);
+	// Get the response from the modelrules layer :
 	modelrules.addRule(request, function(response) {
 		// Send the stringified json to client :
 		resp.json(response);

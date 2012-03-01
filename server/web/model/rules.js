@@ -44,39 +44,33 @@ curl -H 'content-type: application/json' -XPOST https://localhost:1337/rules -d 
 function addRule(param, callback) {
 	if(!param.nom) {
 		logger.warn("[Service rules] Unnamed rule");
-		callback(null);
+		callback({});
+		return;
 	}
 	
 	var sql_req = "";
 	
-	/* Très simpliste pour l'instant */
-	if (param.nom && param.createsAlert) {
-		sql_req = "INSERT INTO regles(nom, createsAlert)";
-		//sql_req += "VALUES("+param.nom+","+param.createsAlert+");";
-		sql_req += "VALUES('truc', '1');";
-		
-	} else {
+	if (param.createsAlert != null) { 
+		//Insertion d'une règle
+		sql_req = "INSERT INTO regles(nom, createsAlert) ";
+		sql_req += "VALUES('"+param.nom+"',"+param.createsAlert+");";
+	}
+	if(param.idCapteur != null && param.debIT != null && param.finIT != null) {
+		//Insertion d'un règle/capteur
+		sql_req += "INSERT INTO regleCapteur (idRegle, idCapteur, debutIntervalle, finIntervalle) ";
+		sql_req += "VALUES((SELECT id FROM regles WHERE nom='" + param.nom + "'), " + param.idCapteur + ", " + param.debIT + ", " + param.finIT + ")";
+	}
+	if(param.idActionneur != null && param.valeur != null && param.isActive != null) {
+		//Insertion d'un règle/actionneur
+		sql_req += "INSERT INTO regleActionneur (idRegle, idActionneur, valeur, isActive) ";
+		sql_req += "VALUES((SELECT id FROM regles WHERE nom='" + param.nom + "'), " + param.idActionneur + ", " + param.valeur + ", " + param.isActive + ")";
+	}
+	//TODO: gérer les erreurs
+	/*else {
 		logger.error("[Services rules] params nom & createsAlert");
-	}
-	
-	/*
-	if (param.idRegle && param.nom && param.idCapteur && param.debIT && param.finIT && 
-		param.idActionneur && param.valeur && param.isActive) {
-			sql_req = "INSERT INTO regles(nom, createsAlert)";
-			sql_req += "VALUES("+param.nom+","+param.createsAlert+");";
-
-			sql_req += "INSERT INTO regleCapteur(idRegle, idCapteur, debutIntervalle, finIntervalle)";
-			sql_req += "VALUES("+param.idRegle+","+param.idCapteur+","+param.debIT+","+param.finIT+");";
-			
-			sql_req += "INSERT INTO regleActionneur(idRegle, idActionneur, valeur, isActive)";
-			sql_req += "VALUES("+param.idRegle+","+param.idActionneur+","+param.valeur+","+param.isActive+");";
-			
-			console.log("Formatage de sql_req terminé");
-			
-	} else {
-		console.log("[Services rules] Erreur : Passage de parametres incorrect, insertion annulée");
-	}
-	*/
+		callback({});
+		return;
+	}*/
 	
 	// Send the query to SQL DB
 	var db = sqlConnect();
@@ -88,4 +82,21 @@ function addRule(param, callback) {
 	
 }
 
+
+function getRules(callback) {
+	// Construct the SQL query :
+	var sql_req = squel.select()
+		.from("regles");
+	
+	// Send the query to SQL DB :
+	var db = sqlConnect();
+	sql.query(db, sql_req.toString(), function(result) {
+		// Call the record with json response :
+		callback(result);
+		sql.close(db);
+	});
+}
+
+
 exports.addRule = addRule;
+exports.getRules = getRules;
