@@ -1,6 +1,17 @@
 USE pld;
 
-DROP TABLE IF EXISTS murs, alertes, regleCapteur, regleActionneur, regles, regleEvent, events, actionneurs, actionneurSujet, pieces, patients, mesures, capteurs;
+DROP TABLE IF EXISTS murs, 
+	alertes, 
+	regleActionneur, 
+	regleCapteur, 
+	regles, 
+	mesures, 
+	capteurs, 
+	patients, 
+	pieces, 
+	actionneurSujet, 
+	actionneurs ;
+-- regleEvent, events ?
 
 CREATE TABLE actionneurs (
 	id INTEGER PRIMARY KEY AUTO_INCREMENT,
