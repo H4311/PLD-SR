@@ -1,4 +1,26 @@
+<script type="application/x-javascript">
+		
+		$(document).ready(function() {
+			//$('header nav ul').css("width", window.innerWidth-400+"px");
+			$('#buildingContainer').css("left", (window.innerWidth*0.16)+"px");
+			var canvas = document.getElementById('scale');
+			canvas.width = 50;
+			canvas.height = 200;
+			BuildingGenerator.setStage('buildingContainer',  $('.span10').width(), window.innerHeight-330);
 
+ 			Initialize();
+			draw();
+			
+			$('.span2 .nav a').click(function() {
+				$('.span2 .nav li').removeClass('active');
+				BuildingGenerator.wantedMeasure = $(this).attr('value');
+				BuildingGenerator.roomLayer.draw();
+				drawGradient(document.getElementById('scale'), BuildingGenerator.minArrays[$(this).attr('value')], BuildingGenerator.maxArrays[$(this).attr('value')], BuildingGenerator.colorArrays[$(this).attr('value')], 8, BuildingGenerator.unitArrays[$(this).attr('value')], 'Température');
+				$(this).parent().addClass('active');
+			});
+
+		});
+</script>
 <ul class="breadcrumb">
 	<li class="active">
 		<a href="index">Home</a>
@@ -34,7 +56,7 @@
 			<a href="#" id = "menu_5" value = "5">Luminosity</a>
 		</li>
 		<li>
-			<a href="#" id = "menu_6" value = "6">CO2 Level</a>
+			<a href="#" id = "menu_6" value = "8">CO2 Level</a>
 		</li>
 	</ul> 
 	<div>
@@ -62,7 +84,18 @@
 	</div><div class="row">
 
 		<div id="buildingContainer" ></div>
-	
+		<div id="roomDesc">
+			<p>0</p>
+			<table>
+				<tr><td><img src="images/patient.png" alt="Patients" Title="Patients"/></td> <td>0</td></tr>
+				<tr><td><img src="images/warning2.png" alt="Alertes" Title="Alertes"/></td> <td>0</td></tr>
+				<tr><td colspan=2>0</td></tr>
+			    
+			</table>
+			
+		</div>
+		<p id="warningDesc">
+		</p>
 	</div>
 </section>
 

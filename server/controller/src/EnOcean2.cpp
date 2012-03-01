@@ -38,7 +38,7 @@ int main(int argc, char *argv[]) {
 	EnOCeanBaseSimulator simulator = EnOCeanBaseSimulator();
 
 	string adresseSimulatedSensor = "127.0.0.1";
-	int portSimulatedSensor = 5019;
+	int portSimulatedSensor = 5020;
 
 	// List of the simulated sensors :
 	vector<int> simulatedSensorsID;
@@ -280,18 +280,18 @@ int main(int argc, char *argv[]) {
 //	table.add((EnOceanSensorAPI::SensorId)0x001000014, (EnOceanSensorAPI::EnOceanCallbackFunction)EnOceanSensorAPI::analyseTempAndHumidSensor_EEP_07_04_01);
 //	table.add((EnOceanSensorAPI::SensorId)0x001000015, (EnOceanSensorAPI::EnOceanCallbackFunction)EnOceanSensorAPI::analyseTempAndHumidSensor_EEP_07_04_01);
 //
-//	EnOceanActuatorAirConditioning airCond = EnOceanActuatorAirConditioning(1, 10.0, 12, 0, 40);
-//	airCond.addSubject(&room1);
-//	airCond.addSubject(&room2);
-//	airCond.addSubject(&room3);
-//	airCond.addSubject(&room4);
-//	airCond.setStatus(true);
-//
-//	EventActuatorFire fire = EventActuatorFire(2, 5);
-//	fire.addSubject(&room1);
-//
-//	simulator.addActuator(&airCond);
-//	simulator.addActuator(&fire);
+	EnOceanActuatorAirConditioning airCond = EnOceanActuatorAirConditioning(1, 10.0, 12, 0, 40);
+	airCond.addSubject(&room111);
+	airCond.addSubject(&room121);
+	airCond.addSubject(&room118);
+	airCond.addSubject(&room115);
+	airCond.setStatus(true);
+
+	EventActuatorFire fire = EventActuatorFire(2, 5);
+	fire.addSubject(&room113);
+
+	simulator.addActuator(&airCond);
+	simulator.addActuator(&fire);
 
 
 // ----- ENOCEAN SENSORS

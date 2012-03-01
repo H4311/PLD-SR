@@ -31,6 +31,7 @@ function InitializeRooms(data) {
 			async:false
 		});
 	}
+	BuildingGenerator.scale(BuildingGenerator.width/670, BuildingGenerator.height/450);
 }
 
 function InitializePatients(data) {
@@ -85,30 +86,17 @@ function InitializeBondsActuators(data) {
 }
 
 function InitializeMeasures(data) {
-	for (var i in data.hits) {
-		var sensor = data.hits[i];
+	for (var i in data.records) {
+		var sensor = data.records[i];
 		for (var j = 0; j < sensor.length; j++)  {
 			Sensors[i].setMeasure(sensor[j]);
 		}
 	}
+	BuildingGenerator.draw();
 }
 
 function UpdateMeasures() {
-	for (var i in Sensors) {
-		var jqXHRRooms = $.ajax({
-			type: 'POST',
-			url: rest+'/sensors',
-			data: {"sensors" : [ { "id" : i, "from" : /*TODO*/ 0}]},
-			success: function(data) {
-				var sensor = data.hits[0];
-				for (var j = 0; j < sensor.length; j++)  {
-					Sensors[i].setMeasure(sensor[j]);
-				}
-			},
-			dataType: 'json',
-			async:true
-		});
-	}
+	
 }
 
 function Initialize() {
@@ -171,18 +159,41 @@ function Initialize() {
 	});	
 	
 	// Load Measures :
-	//getSensorValues(idSensor, callback, from, to)
-	//$.ajax({
-	//	type: 'POST',
-	//	url: rest+'/sensors',
-	//	data: '{}',
-	//	success: function(data) {
-	//		// Waiting for the Patients & Rooms & Actuators request to finished (we need their values) :
-	//		$.when(jqXHRSensors).then(InitializeMeasures(data) /* if success */, function() { alert('Loading Failed');} /* if failure */);
-	//	},
-	//	dataType: 'json',
-	//	async:true
-	//});		
+	$.ajax({
+		type: 'POST',
+		url: rest+'/sensors',
+		data: {},
+		success: function(data) {
+			// Waiting for the Patients & Rooms & Actuators request to finished (we need their values) :
+			$.when(jqXHRSensors).then(InitializeMeasures(data) /* if success */, function() { alert('Loading Failed');} /* if failure */);
+		},
+		dataType: 'json',
+		async:true
+	});		
+	
+	// Keep the measures up to date :
+	function getLastMeasures() {
+		var toDate = new Date();
+		var strDate = getLastMeasures.lastUpdate.getTime();
+		console.log(strDate);
+		var req = {};
+		req["sensors"] = [];
+		for (var i in Sensors) {
+			req["sensors"].push({ "id" : i, "from" : strDate});
+		}
+		getLastMeasures.lastUpdate = toDate; // Using the fact that JS functions can have attributes to store the last date.
+		
+		$.ajax({
+			type: 'POST',
+			url: rest+'/sensors',
+			data: req,
+			success: InitializeMeasures,
+			dataType: 'json',
+			async:true
+		});	
+	};
+	getLastMeasures.lastUpdate = new Date(0);
+	setInterval(getLastMeasures,2000);
 }
 
 
@@ -215,12 +226,12 @@ var BuildingGenerator = {
 	lineWidthWallWarning : 5,
 	colorWallWarning : "red",
 	
-	colorArrays: { "3" : [ {red:0,green:0,blue:255}, {red:0,green:255,blue:255}, {red:0,green:255,blue:0}, {red:255,green:255,blue:0}, {red:255,green:0,blue:0}], "4" :[ {red:214,green:178,blue:52}, {red:255,green:255,blue:255}, {red:56,green:148,blue:186}], "5" : [ {red:69,green:57,blue:138}, {red:255,green:244,blue:61}], "7":[ {red:172,green:255,blue:255}, {red:100,green:90,blue:84}]},
+	colorArrays: { "3" : [ {red:0,green:0,blue:255}, {red:0,green:255,blue:255}, {red:0,green:255,blue:0}, {red:255,green:255,blue:0}, {red:255,green:0,blue:0}], "4" :[ {red:214,green:178,blue:52}, {red:255,green:255,blue:255}, {red:56,green:148,blue:186}], "5" : [ {red:69,green:57,blue:138}, {red:255,green:244,blue:61}], "8":[ {red:172,green:255,blue:255}, {red:100,green:90,blue:84}]},
 	
-	unitArrays: { "3" : "°c", "4" : "%", "5" : "lx", "7":"pm"},
+	unitArrays: { "3" : "°c", "4" : "%", "5" : "lx", "8":"pm"},
 	
-	minArrays: { "3" : 0, "4" : 0, "5" : 0, "7": 300},
-	maxArrays: { "3" : 40, "4" : 100, "5" : 3000, "7": 2000},
+	minArrays: { "3" : -1, "4" : -1, "5" : -1, "8": 299},
+	maxArrays: { "3" : 41, "4" : 101, "5" : 3001, "8": 2001},
 	
 	// draw : function() {
 		// for (var i = 0; i < this.rooms.length; i++) {
@@ -233,10 +244,18 @@ var BuildingGenerator = {
 	// 	     FUNCTION
 	// ---------------------
 	
-	setStage : function SetStage(canvasId, width, height, offsetL, offsetT) {
+	setStage : function SetStage(canvasId, width, height) {
 		this.stage = new Kinetic.Stage(canvasId, width, height);
-		this.leftOffset = offsetL;
-		this.topOffset = offsetT;
+		this.width = width;
+		this.height = height;
+		this.leftOffset = $('#'+canvasId).offset().left+4;
+		this.topOffset = $('#'+canvasId).offset().top+12;
+
+		this.stage.add(this.roomLayer);
+		this.stage.add(this.pathLayer);
+		this.stage.add(this.warningLayer);
+		
+		drawGradient(document.getElementById('scale'), this.minArrays["3"], this.maxArrays["3"], this.colorArrays["3"], 8, this.unitArrays["3"], '');
 	},
 	
 	addRoom : function AddRoom(id, room) {
@@ -602,48 +621,45 @@ var BuildingGenerator = {
 		//~ sen2.setSubject(1, true);
 		//~ sen2.setMeasure({type: "3", time: new Date(), value: 10});
 		//~ room.addSensor(sen2);
-		for (var i in BuildingGenerator.roomShapes) {
-			// Temp & Hum sensor :
-			var s = new RithmObjects.Sensor("3");
-			s.setSubject(i, true);
-			s.setMeasure({type: "3", time: new Date(), value: Math.round(Math.random()*40)});
-			s.setMeasure({type: "4", time: new Date(), value: Math.round(Math.random()*100)});
-			BuildingGenerator.roomShapes[i].room.addSensor(s);
+		//~ for (var i in BuildingGenerator.roomShapes) {
+			//~ // Temp & Hum sensor :
+			//~ var s = new RithmObjects.Sensor("3");
+			//~ s.setSubject(i, true);
+			//~ s.setMeasure({type: "3", time: new Date(), value: Math.round(Math.random()*40)});
+			//~ s.setMeasure({type: "4", time: new Date(), value: Math.round(Math.random()*100)});
+			//~ BuildingGenerator.roomShapes[i].room.addSensor(s);
 			
-			// Hum sensor :
-			s = new RithmObjects.Sensor("4");
-			s.setSubject(i, true);
-			s.setMeasure({type: "4", time: new Date(), value: Math.round(Math.random()*100)});
-			BuildingGenerator.roomShapes[i].room.addSensor(s);
+			//~ // Hum sensor :
+			//~ s = new RithmObjects.Sensor("4");
+			//~ s.setSubject(i, true);
+			//~ s.setMeasure({type: "4", time: new Date(), value: Math.round(Math.random()*100)});
+			//~ BuildingGenerator.roomShapes[i].room.addSensor(s);
 			
-			// Lum sensor :
-			s = new RithmObjects.Sensor("5");
-			s.setSubject(i, true);
-			s.setMeasure({type: "5", time: new Date(), value: Math.round(Math.random()*3000)});
-			BuildingGenerator.roomShapes[i].room.addSensor(s);
+			//~ // Lum sensor :
+			//~ s = new RithmObjects.Sensor("5");
+			//~ s.setSubject(i, true);
+			//~ s.setMeasure({type: "5", time: new Date(), value: Math.round(Math.random()*3000)});
+			//~ BuildingGenerator.roomShapes[i].room.addSensor(s);
 			
-			// CO2 sensor :
-			s = new RithmObjects.Sensor("7");
-			s.setSubject(i, true);
-			s.setMeasure({type: "7", time: new Date(), value: Math.round(Math.random()*1700+300)});
-			BuildingGenerator.roomShapes[i].room.addSensor(s);
+			//~ // CO2 sensor :
+			//~ s = new RithmObjects.Sensor("7");
+			//~ s.setSubject(i, true);
+			//~ s.setMeasure({type: "7", time: new Date(), value: Math.round(Math.random()*1700+300)});
+			//~ BuildingGenerator.roomShapes[i].room.addSensor(s);
 			
-			for (var j in BuildingGenerator.roomShapes[i].room.walls) {
-				var wall = BuildingGenerator.roomShapes[i].room.walls[j];
-				if (wall.isOpen != null) { wall.isOpen = true; }
-			}
-		}
+			//~ for (var j in BuildingGenerator.roomShapes[i].room.walls) {
+				//~ var wall = BuildingGenerator.roomShapes[i].room.walls[j];
+				//~ if (wall.isOpen != null) { wall.isOpen = true; }
+			//~ }
+		//~ }
 		
+
+		BuildingGenerator.draw();
 		
 
 		// BuildingGenerator.roomLayer.setScale(window.innerWidth/850, (window.innerHeight-130)/480);
 		// BuildingGenerator.pathLayer.setScale(window.innerWidth/850, (window.innerHeight-130)/480);
-		BuildingGenerator.scale( window.innerWidth*0.8/670, (window.innerHeight-130)/450);
-		BuildingGenerator.stage.add(BuildingGenerator.roomLayer);
-		BuildingGenerator.stage.add(BuildingGenerator.pathLayer);
-		BuildingGenerator.stage.add(BuildingGenerator.warningLayer);
 		
-		drawGradient(document.getElementById('scale'), BuildingGenerator.minArrays["3"], BuildingGenerator.maxArrays["3"], BuildingGenerator.colorArrays["3"], 8, BuildingGenerator.unitArrays["3"], '');
 		
 		// room.draw(ctx, "rgb(255,165,0)", "black", 2, "red", 1);
 		// room2.draw(ctx, "rgb(155,165,0)", "black", 2, "red", 1);

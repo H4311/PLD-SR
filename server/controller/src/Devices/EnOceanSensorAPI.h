@@ -43,7 +43,7 @@ public :
 	typedef enum { PRESSED = 0, RELEASED = 1} RockerSwitchEnergyBow;
 	typedef enum { ORG_RPS = 5, ORG_1BS = 6, ORG_4BS = 7} ORG;
 	
-typedef enum { CONTACT = 0, SWITCH, TEMPERATURE, HUMIDITY, LUMINOSITY, OCCUPANCY, MOVEMENT, CO2, HEARTRATE} MeasureType;
+typedef enum { CONTACT = 1, SWITCH, TEMPERATURE, HUMIDITY, LUMINOSITY, OCCUPANCY, MOVEMENT, CO2, HEARTRATE} MeasureType;
 
 	static const unsigned int FRAME_SIZE = 28;
 
