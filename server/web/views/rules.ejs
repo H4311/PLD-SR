@@ -35,13 +35,6 @@
 	   <form class="form-horizontal" method="get" action="add_rule">
 			<fieldset>
 			<legend>Description</legend>
-			<!--<div class="control-group">
-				<label class="control-label" for="input01">Id Règle</label>
-			<div class="controls">
-			<input type="text" name="ruleId" class="input-xlarge" id="input01"/>
-				<p class="help-block">(ex: Modification si existant)</p>
-			</div>
-			</div> -->
 			<div class="control-group">
             <label class="control-label" for="select01">Nom</label>
             <div class="controls">
@@ -53,11 +46,15 @@
 			  </fieldset>
 			  <fieldset>
 			  <legend>Capteur</legend>
-			<div class="control-group">
-            <label class="control-label" for="select01">Id</label>
+			  <div class="control-group">
+            <label class="control-label" for="select01">ID Capteur</label>
             <div class="controls">
-              <input type="text" name="idCapteur" class="input-xlarge" id="input01"/>
-			  <p class="help-block">Ex: 23</p>
+              <select name="idCapteur" id="select01">
+                <%sensors.forEach(function(sensor){%>
+					<option value="<%=sensor.id %>"><%= sensor.id %></option>
+                <%})%>
+              </select>
+			  <p class="help-block">(ex: 101)</p>
 				</div>
 			  </div>
 			  <div class="control-group">
@@ -79,15 +76,21 @@
 			  <legend>Actionneur</legend>
 			<div class="control-group">
             <label class="control-label" for="select01">Id</label>
+            
             <div class="controls">
-              <input type="hidden" name="isActive" value="1"/>
-              <input type="text" name="idActionneur" class="input-xlarge" id="input01"/>
-			  <p class="help-block">Ex: 34</p>
+              <select name="idActionneur" id="select01">
+                <%actuators.forEach(function(actuator){%>
+					<option value="<%=actuator.id %>"><%= actuator.id %></option>
+                <%})%>
+              </select>
+			  <p class="help-block">(ex: 1)</p>
 				</div>
 			  </div>
+
 			  <div class="control-group">
             <label class="control-label" for="select01">Valeur</label>
             <div class="controls">
+			  <input type="hidden" name="isActive" value="1"/>
               <input type="text" name="valeur" class="input-xlarge" id="input01"/>
 			  <p class="help-block">Ex: 42</p>
 				</div>
