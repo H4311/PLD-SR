@@ -33,24 +33,24 @@
         <tr>
         <td><i class="icon-signal"></i>&nbsp;<span class="label label-info"><%= measure.name %></span>&nbsp;Capteur N°<%= measure.sensorId %></td>
         <td><span class="measure" id="measure_<%= measure.sensorId %>_<%= measure.recordType %>">0</span></td>
-        <td><a href="#" class="histo btn btn-info" id="histo_<%= measure.sensorId %>_<%= measure.recordType %>">Voir l'historique</a></td>
+        <td><a data-toggle="modal" href="#histoModal" class="histo btn btn-info" id="histo_<%= measure.sensorId %>_<%= measure.recordType %>">Voir l'historique</a></td>
         </tr>
         <% }) %>
     </tbody>
 </table>
 <div class="row">
 		<div class="span2 offset7">
-			<a class="btn btn-primary" data-toggle="modal" href="#myModal">
+			<a class="btn btn-primary" data-toggle="modal" href="#addModal">
 				Ajouter Capteur Patient
 			</a>
 		</div>
 	</div>
 </div>
 
-<div class="modal hide fade" id="myModal">
+<div class="modal hide fade" id="addModal">
 	<div class="modal-header">
-	<a class="close" data-dismiss="modal">×</a>
-	<h3>Ajout Capteur</h3>
+		<a class="close" data-dismiss="modal">×</a>
+		<h3>Ajout Capteur</h3>
 	</div>
 	<div class="modal-body">
 	   <form class="form-horizontal" method="get" action="add_sensor_patient">
@@ -76,9 +76,21 @@
 			  </div>
 			</fieldset>
 			<div class="modal-footer">
-			<input type="submit" class="btn btn-primary" value="Ajouter"/>
-			<a href="#" class="btn" data-dismiss="modal">Close</a>
+				<input type="submit" class="btn btn-primary" value="Ajouter"/>
+				<a href="#" class="btn" data-dismiss="modal">Close</a>
 			</div>
 	  </form>
+	</div>
+</div>
+
+<div class="modal hide fade" id="histoModal">
+	<div class="modal-header">
+		<a class="close" data-dismiss="modal">×</a>
+		<h3>Historique</h3>
+	</div>
+	<div class="modal-body" id="divHisto">Chargement...</div>
+	<div class="modal-footer">
+		<input type="submit" class="btn btn-primary" value="Ajouter"/>
+		<a href="#" class="btn" data-dismiss="modal">Close</a>
 	</div>
 </div>
