@@ -2,6 +2,7 @@ src/Simulator/EnOCeanBaseSimulator.d: \
  ../src/Simulator/EnOCeanBaseSimulator.cpp \
  ../src/Simulator/EnOCeanBaseSimulator.h \
  ../src/Simulator/../Devices/EnOceanSensorAPI.h \
+ ../src/Simulator/../Devices/../Config.h \
  ../src/Simulator/../Devices/EnOceanProtocol.h \
  ../src/Simulator/Sensors/SensorSimulator.h \
  ../src/Simulator/Sensors/../../Devices/EnOceanSensorAPI.h \
@@ -16,6 +17,8 @@ src/Simulator/EnOCeanBaseSimulator.d: \
 ../src/Simulator/EnOCeanBaseSimulator.h:
 
 ../src/Simulator/../Devices/EnOceanSensorAPI.h:
+
+../src/Simulator/../Devices/../Config.h:
 
 ../src/Simulator/../Devices/EnOceanProtocol.h:
 

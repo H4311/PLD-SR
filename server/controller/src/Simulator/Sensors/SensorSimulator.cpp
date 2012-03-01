@@ -20,6 +20,8 @@ using namespace std;
 # include "SensorSimulatorCO2.h"
 # include "SensorSimulatorLumAndOcc.h"
 # include "SensorSimulatorTempHumi.h"
+# include "SensorSimulatorContact.h"
+# include "SensorSimulatorSwitch.h"
 //-------------------------------------------------------------- Constants
 
 //----------------------------------------------------------------- PUBLIC
@@ -27,8 +29,8 @@ using namespace std;
 //--------------------------------------------------------- Public Methods
 SensorSimulator* SensorSimulator::createSensorSimulator(int id, int type, Subject* subject) {
 	switch(type) {
-	case 0x0060001 : { return NULL; }
-	case 0x0050201 : { return NULL; }
+	case 0x0060001 : { return new SensorSimulatorContact(id, subject); }
+	case 0x0050201 : { return new SensorSimulatorSwitch(id, subject); }
 	case 0x0070205 : { return NULL; }
 	case 0x0070401 : { return new SensorSimulatorTempHumi(id, subject, 0, 40); }
 	case 0x0070801 : { return new SensorSimulatorLumAndOcc(id, subject, 0, 510, 0.0, 5.1); }

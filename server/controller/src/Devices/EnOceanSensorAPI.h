@@ -17,6 +17,7 @@ using namespace std;
 #include <string>
 #include <mysql/mysql.h>
 //------------------------------------------------------ Personnal Include
+#include "../Config.h"
 #include "EnOceanProtocol.h"
 
 //------------------------------------------------------------- Constantes
@@ -121,6 +122,7 @@ static EnOceanCallbackFunction getFunctionPerType(int type);
 	static RockerSwitchEnergyBow getRockerSwitchEnergyBow(enocean_data_structure* frame);
 	static RockerSwitchAction getRockerSwitchAction2nd(enocean_data_structure* frame);
 	static bool isRockerSwitchAction2nd(enocean_data_structure* frame);
+	static void setRockerSwitch(enocean_data_structure* frame, int val);
 
 	static float getTemperature(enocean_data_structure* frame, float minTemp, float maxTemp);
 	static float getTemperatureInverted(enocean_data_structure* frame, float minTemp, float maxTemp);
@@ -145,6 +147,8 @@ static EnOceanCallbackFunction getFunctionPerType(int type);
 
 	static float getMovement(enocean_data_structure* frame, float minBPM, float maxBPM);
 	static void setMovement(enocean_data_structure* frame, float val, float minBPM, float maxBPM);
+
+	static void setContact(enocean_data_structure* frame, bool val);
 };
 
 //------------------------------ Other definition, depending on this class

@@ -1,75 +1,39 @@
 /*************************************************************************
-                           PeriphTable  -  description
+                           SensorSimulatorContact  -  description
                              -------------------
-    Creation             : 08 Jan. 2012
+    Creation             : 09 Feb. 2012
     Copyright            : (C) 2012 by H4311 - Benjamin PLANCHE (BPE)
 *************************************************************************/
 
-//------- Definition - <PeriphTable> (PeriphTable.h file) --------
+//------- Definition - <SensorSimulatorContact> (SensorSimulatorContact.h file) --------
 
-#ifndef PERIPHTABLE_H_
-#define PERIPHTABLE_H_
+#ifndef ENOCEANSIMULATORCONTACT_H_
+#define ENOCEANSIMULATORCONTACT_H_
 
 //---------------------------------------------------------------- INCLUDE
 
-//-------------------------------------------------------- System Includes
-using namespace std;
-#include <map>
-#include <string>
-#include <vector>
-#include <pthread.h>
-//----------------------------------------------------- Personnal Includes
-#include "../Config.h"
-#include "EnOceanProtocol.h"
-#include "../EnOceanClient/Receptor.h"
-#include "EnOceanSensorAPI.h"
-#ifdef SIMULATION
-#include "../Simulator/EnOCeanBaseSimulator.h"
-#endif
+//--------------------------------------------------------- System Include
+//------------------------------------------------------ Personnal Include
+#include "SensorSimulator.h"
 
 //------------------------------------------------------------- Constantes
 
 //------------------------------------------------------------------ Types
 
 //------------------------------------------------------------------------
-// Description :
-//		Map containing the "drivers", ie the id of the knownn devices, and the functions to process the data they send.
-//
+
 //------------------------------------------------------------------------
 
-class DeviceTable
+class SensorSimulatorContact : public SensorSimulator
 {
 //----------------------------------------------------------------- PUBLIC
 
 public:
 //------------------------------------------------------- Public Constants
-	static const int FRAME_SIZE = 8;
-	static const int QUEUE_SIZE = 0;
+
 //--------------------------------------------------------- Public Methods
-	int add(EnOceanSensorAPI::SensorId id, EnOceanSensorAPI::EnOceanCallbackFunction funct);
-	// Manual :
-    //		Add a driver to the list.
-    // Contract :
-    //		/
 
-	void fillFromDB(
-#ifdef SIMULATION
-		EnOCeanBaseSimulator* simulator, vector<int>* simulatedSensorsID
-#endif
-		);
-
-	bool del(EnOceanSensorAPI::SensorId id);
-	// Manual :
-	//		Delete a driver from the list. Return true if deleted.
-	// Contract :
-	//		/
-
-
-	EnOceanSensorAPI::EnOceanCallbackFunction find(EnOceanSensorAPI::SensorId id);
-	// Manual :
-    //		Returns the Process-function corresponding to the device's id (or NULL if not found).
-    // Contract :
-    //		/
+	void update();
 
 //------------------------------------------------- Static public Methods
 
@@ -77,8 +41,8 @@ public:
 
 //-------------------------------------------------- Builder / Destructor
 
-	DeviceTable();
-	virtual ~DeviceTable();
+	SensorSimulatorContact(int id, Subject* r);
+	virtual ~SensorSimulatorContact();
 
 //---------------------------------------------------------------- PRIVATE
 
@@ -90,8 +54,6 @@ private:
 
 protected:
 //-------------------------------------------------- Protected Attributes
-	map<EnOceanSensorAPI::SensorId, EnOceanSensorAPI::EnOceanCallbackFunction> drivers;
-	pthread_mutex_t mutex;
 
 private:
 //----------------------------------------------------- Private Attributes
@@ -106,5 +68,5 @@ private:
 
 //------------------------------ Other definition, depending on this class
 
-#endif /* PERIPHTABLE_H_ */
 
+#endif /* ENOCEANSIMULATORCONTACT_H_ */

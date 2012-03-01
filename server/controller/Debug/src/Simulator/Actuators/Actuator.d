@@ -5,6 +5,7 @@ src/Simulator/Actuators/Actuator.d: \
  ../src/Simulator/Actuators/EnOceanActuatorAeration.h \
  ../src/Simulator/Actuators/EnOceanActuator.h \
  ../src/Simulator/Actuators/../../Devices/EnOceanSensorAPI.h \
+ ../src/Simulator/Actuators/../../Devices/../Config.h \
  ../src/Simulator/Actuators/../../Devices/EnOceanProtocol.h \
  ../src/Simulator/Actuators/EnOceanActuatorAirConditioning.h \
  ../src/Simulator/Actuators/EnOceanActuatorLight.h \
@@ -21,6 +22,8 @@ src/Simulator/Actuators/Actuator.d: \
 ../src/Simulator/Actuators/EnOceanActuator.h:
 
 ../src/Simulator/Actuators/../../Devices/EnOceanSensorAPI.h:
+
+../src/Simulator/Actuators/../../Devices/../Config.h:
 
 ../src/Simulator/Actuators/../../Devices/EnOceanProtocol.h:
 

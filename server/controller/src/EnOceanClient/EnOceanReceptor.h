@@ -16,6 +16,7 @@
 using namespace std;
 #include <utility>
 //----------------------------------------------------- Personnal Includes
+#include "../Config.h"
 #include "../Devices/EnOceanProtocol.h"
 #include "../Libs/blocking_queue.h"
 #include "Receptor.h"

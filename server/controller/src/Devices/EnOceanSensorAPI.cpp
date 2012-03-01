@@ -416,11 +416,11 @@ extern "C" {
 
 	string EnOceanSensorAPI::analyseC02(enocean_data_structure* frame, float minPPM, float maxPPM, MYSQL* mysql, long long int timestamp) {
 		ostringstream oss;
-		bool dataFrame = (frame->DATA_BYTE0 >> 3) & 1;
-		if (dataFrame) {
+		//bool dataFrame = (frame->DATA_BYTE0 >> 3) & 1;
+		//if (dataFrame) {
 			oss << "< CO2 : " << getCO2Level(frame, minPPM, maxPPM) << "ppm. >";
 			insertMesure(mysql, CAPTEUR_ENOCEAN, (int)getID(frame), timestamp, CO2, getCO2Level(frame, minPPM, maxPPM));
-		}
+		//}
 		return oss.str();
 	} //----- End of analyseC02
 
@@ -472,6 +472,16 @@ extern "C" {
 		BYTE info = (frame->DATA_BYTE3 & 1);
 		return info;
 	} //----- End of isRockerSwitchAction2nd
+
+	void EnOceanSensorAPI::setRockerSwitch(enocean_data_structure* frame, int val) {
+		int fstAction = val / 16;
+		int scdAction = val % 16;
+		frame->DATA_BYTE3 = fstAction >> 5;
+		frame->DATA_BYTE3 += scdAction >> 1;
+		if (scdAction != 0) {
+			frame->DATA_BYTE3 += 1;
+		}
+	} //----- End of setTemperature
 
 
 	float EnOceanSensorAPI::getTemperature(enocean_data_structure* frame, float minTemp, float maxTemp) {
@@ -552,6 +562,7 @@ extern "C" {
 
 	void EnOceanSensorAPI::setCO2Level(enocean_data_structure* frame, float val, float minPPM, float maxPPM) {
 		float multiplyer = (float)(maxPPM-minPPM) / 255.0;
+		frame->DATA_BYTE0 = 1 >> 3;
 		frame->DATA_BYTE3 = (BYTE)((val - (float)( (multiplyer>=0)? minPPM : maxPPM )) / multiplyer);
 	}
 
@@ -572,5 +583,9 @@ extern "C" {
 	void EnOceanSensorAPI::setMovement(enocean_data_structure* frame, float val, float minBPM, float maxBPM) {
 		float multiplyer = (float)(maxBPM-minBPM) / 255.0;
 		frame->DATA_BYTE3 = (BYTE)((val - (float)( (multiplyer>=0)? minBPM : maxBPM )) / multiplyer);
+	}
+
+	void EnOceanSensorAPI::setContact(enocean_data_structure* frame, bool val) {
+		frame->DATA_BYTE0 = val? 1 : 0;
 	}
 

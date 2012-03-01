@@ -92,13 +92,30 @@ void Room::setOccupancy(bool v) {
 	pthread_mutex_unlock(&mutex);
 }
 
+bool Room::getDoorState() {
+	float r;
+	pthread_mutex_lock(&mutex);
+	r = doorOpen;
+	pthread_mutex_unlock(&mutex);
+	return r;
+}
+
+void Room::setDoorState(bool v) {
+	pthread_mutex_lock(&mutex);
+	doorOpen = v;
+	pthread_mutex_unlock(&mutex);
+}
+
+
+
 Room::Room(int i) :
 		Subject(i, 23, 0),
 		humidity(30),
 		co2Level(400),
 		luminosity(1000),
 		pirStatus(false),
-		occupancy(false) {
+		occupancy(false),
+		doorOpen (false){
 	// TODO Auto-generated constructor stub
 }
 
