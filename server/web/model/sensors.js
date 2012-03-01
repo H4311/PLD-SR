@@ -1,4 +1,5 @@
 var squel = require("squel");
+var logger = require("../logger");
 var sql = require("./nodesql");
 
 function sqlConnect() {
@@ -91,8 +92,6 @@ function getSensorsRecords(param, callback) {
 	// Send the query to SQL DB :
 	var db = sqlConnect();
 	sql.query(db, sql_req.toString(), function(result) {
-		console.log("Took : "+result.took+"ms - Hits : "+result.count);
-		
 		// Construct json response :
 		var response = {};
 		response.records = {};
@@ -123,8 +122,6 @@ function getSensorsList(callback) {
 	// Send the query to SQL DB :
 	var db = sqlConnect();
 	sql.query(db, sql_req.toString(), function(result) {
-		console.log("Took : "+result.took+"ms - Hits : "+result.count);
-		
 		// Call the record with json response :
 		callback(result);
 		sql.close(db);
@@ -140,8 +137,6 @@ function getSensorsListByPatient(id, callback) {
 	// Send the query to SQL DB :
 	var db = sqlConnect();
 	sql.query(db, sql_req.toString(), function(result) {
-		console.log("Took : "+result.took+"ms - Hits : "+result.count);
-		
 		// Call the record with json response :
 		callback(result);
 		sql.close(db);
@@ -157,8 +152,6 @@ function getSensorsListByRoom(id, callback) {
 	// Send the query to SQL DB :
 	var db = sqlConnect();
 	sql.query(db, sql_req.toString(), function(result) {
-		console.log("Took : "+result.took+"ms - Hits : "+result.count);
-		
 		// Call the record with json response :
 		callback(result);
 		sql.close(db);
@@ -173,8 +166,6 @@ function getActuatorsList(callback) {
 	// Send the query to SQL DB :
 	var db = sqlConnect();
 	sql.query(db, sql_req.toString(), function(result) {
-		console.log("Took : "+result.took+"ms - Hits : "+result.count);
-		
 		// Call the record with json response :
 		callback(result);
 		sql.close(db);

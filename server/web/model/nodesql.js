@@ -1,3 +1,4 @@
+var logger = require("../logger");
 var mysql = require("mysql-native");
 
 function sqlCreateClient(address, user, passwd, dbname) {
@@ -30,6 +31,7 @@ function sqlAsyncQuery(db, query, callbackAsync, callbackEnd) {
 		})
 		.on('end', function() {
 			result.took = new Date().getTime() - timestamp;
+			logger.debug("Took : "+result.took+"ms - Hits : "+result.count);
 			callbackEnd(result);
 		});
 }

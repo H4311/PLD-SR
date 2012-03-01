@@ -1,4 +1,5 @@
 var squel = require("squel");
+var logger = require("../logger");
 var sql = require("./nodesql");
 
 function sqlConnect() {
@@ -18,7 +19,7 @@ function sqlConnect() {
  */
 function getMurs(param, callback) {
 	if(!param.id) {
-		console.log("[Service murs] Erreur : pas d'id spécifié");
+		logger.error("[Service murs] no id specified");
 		return;
 	}
 	
@@ -30,8 +31,6 @@ function getMurs(param, callback) {
 	// Send the query to SQL DB :
 	var db = sqlConnect();
 	sql.query(db, sql_req.toString(), function(result) {
-		console.log("Took : "+result.took+"ms\nHits : "+result.count);
-		
 		// Call the record with json response :
 		callback(result);
 		sql.close(db);

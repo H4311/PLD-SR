@@ -1,4 +1,5 @@
 var squel = require("squel");
+var logger = require("../logger");
 var sql = require("./nodesql");
 
 function sqlConnect() {
@@ -42,7 +43,7 @@ curl -H 'content-type: application/json' -XPOST https://localhost:1337/rules -d 
 
 function addRule(param, callback) {
 	if(!param.nom) {
-		console.log("[Service rules] Warning : Regle sans nom");
+		logger.warn("[Service rules] Unnamed rule");
 		callback(null);
 	}
 	
@@ -55,7 +56,7 @@ function addRule(param, callback) {
 		sql_req += "VALUES('truc', '1');";
 		
 	} else {
-		console.log("[Services rules] Erreur : params nom et createsAlert");
+		logger.error("[Services rules] params nom & createsAlert");
 	}
 	
 	/*
@@ -80,8 +81,6 @@ function addRule(param, callback) {
 	// Send the query to SQL DB
 	var db = sqlConnect();
 	sql.query(db, sql_req.toString(), function(result) {
-		console.log("Took : "+result.took+"ms\nHits : "+result.count);
-		
 		// Call the record with json response :
 		callback(result);
 		sql.close(db);
