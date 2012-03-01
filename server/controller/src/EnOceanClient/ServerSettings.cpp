@@ -64,7 +64,7 @@ void* ServerSettingsThread_Receive (void* param) {
 			else {
 				try {
 					// Get the ID :
-					int idDevice = root.get("i", 0).asInt();
+					unsigned int idDevice = root.get("i", 0).asUInt();
 					// Get the action :
 					int idAction = root.get("a", 0).asInt();
 						// idAction :	1 -> Add Device			Needed values : ID, type, Subjects/Peoples, Simulated
@@ -171,7 +171,7 @@ void* ServerSettingsThread_Receive (void* param) {
 					}
 					else if (idAction == 3) {
 						int type = root.get("t", 0).asInt();
-						bool on = root.get("e", false).asBool();
+						bool on = root.get("e", 0).asInt() == 1;
 						float value = (float)root.get("v", 0.0).asDouble();
 						enocean_data_structure frame;
 						EnOceanSensorAPI::toFrame_Actuator(&frame, (EnOceanSensorAPI::SensorId)idDevice, type, on, value);

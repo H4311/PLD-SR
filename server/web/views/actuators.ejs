@@ -16,7 +16,7 @@
 			<td>
 			<div class="row">
 		<div class="span2 offset7">
-			<a class="btn btn-inverse" data-toggle="modal" href="#myModal">
+			<a class="actuator btn btn-inverse" data-toggle="modal" href="#myModal" actuator-id="<%= actuator.numeroActionneur %>" actuator-type="<%= actuator.type %>">
 				Actionner
 			</a>
 		</div>
@@ -40,8 +40,8 @@
 			<div class="control-group">
 				<label class="control-label" for="input01">Valeur</label>
 			<div class="controls">
-			<input type="hidden" name="id" value="1" />
-			<input type="hidden" name="type" value="17238273" />
+			<input type="hidden" id="form_id" name="id" value="1" />
+			<input type="hidden" id="form_type" name="type" value="17238273" />
 			<input type="text" name="value" class="input-xlarge" id="input01" />
 				<p class="help-block">(ex: 1.1)</p>
 			</div>
@@ -50,11 +50,11 @@
 			<label class="control-label" for="input01">Active</label>
 			<div class="controls">
               <label class="radio">
-              <input name="active" value="true" checked="checked" type="radio">
+              <input name="active" value="1" checked="checked" type="radio">
                 On
               </label>
               <label class="radio">
-              <input name="active" value="false" type="radio">
+              <input name="active" value="0" type="radio">
                 Off
               </label>
             </div> 
@@ -67,3 +67,10 @@
 		</form>
 	</div>
 </div>
+
+<script type="text/javascript">
+$(".actuator").click(function() {
+	$("#form_id").attr("value", $(this).attr("actuator-id"));
+	$("#form_type").attr("value", $(this).attr("actuator-type"));
+});
+</script>

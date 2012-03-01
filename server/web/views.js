@@ -175,9 +175,9 @@ function viewActuators(req, res){
 
 function doActuator(req, res){	
 	var data={};
-	data.id = req.param("id", null);
-	data.type = req.param("type", null);
-	data.value = req.param("value", null);
+	data.id = parseInt(req.param("id", null));
+	data.type = parseInt(req.param("type", null));
+	data.value = parseFloat(req.param("value", null));
 	data.active = req.param("active", null);
 
 	modeladmin.setActuator(data, function(result){
