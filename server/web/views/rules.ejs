@@ -35,19 +35,19 @@
 	   <form class="form-horizontal" method="get" action="add_rule">
 			<fieldset>
 			<legend>Description</legend>
-			<div class="control-group">
+			<!--<div class="control-group">
 				<label class="control-label" for="input01">Id Règle</label>
 			<div class="controls">
-			<input type="hidden" name="createsAlert" value="1"/>
 			<input type="text" name="ruleId" class="input-xlarge" id="input01"/>
 				<p class="help-block">(ex: Modification si existant)</p>
 			</div>
-			</div>
+			</div> -->
 			<div class="control-group">
             <label class="control-label" for="select01">Nom</label>
             <div class="controls">
+			  <input type="hidden" name="createsAlert" value="1"/>
               <input type="text" name="nom" class="input-xlarge" id="input01"/>
-			  <p class="help-block">(ex: Règle Chauffage Chambre 211)</p>
+			  <p class="help-block">Ex: Règle Chauffage Chambre 211 <br/> (Modification si existant)</p>
 				</div>
 			  </div>
 			  </fieldset>
@@ -57,21 +57,21 @@
             <label class="control-label" for="select01">Id</label>
             <div class="controls">
               <input type="text" name="idCapteur" class="input-xlarge" id="input01"/>
-			  <p class="help-block">(ex: 23)</p>
+			  <p class="help-block">Ex: 23</p>
 				</div>
 			  </div>
 			  <div class="control-group">
             <label class="control-label" for="select01">Debut Intervalle</label>
             <div class="controls">
               <input type="text" name="debIT" class="input-xlarge" id="input01"/>
-			  <p class="help-block">(ex: 0)</p>
+			  <p class="help-block">Ex: 0</p>
 				</div>
 			  </div>
 			  <div class="control-group">
             <label class="control-label" for="select01">Fin Intervalle</label>
             <div class="controls">
               <input type="text" name="finIT" class="input-xlarge" id="input01"/>
-			  <p class="help-block">(ex: 18)</p>
+			  <p class="help-block">Ex: 18</p>
 				</div>
 			  </div>
 			</fieldset>
@@ -82,14 +82,14 @@
             <div class="controls">
               <input type="hidden" name="isActive" value="1"/>
               <input type="text" name="idActionneur" class="input-xlarge" id="input01"/>
-			  <p class="help-block">(ex: 34)</p>
+			  <p class="help-block">Ex: 34</p>
 				</div>
 			  </div>
 			  <div class="control-group">
             <label class="control-label" for="select01">Valeur</label>
             <div class="controls">
               <input type="text" name="valeur" class="input-xlarge" id="input01"/>
-			  <p class="help-block">(ex: 42)</p>
+			  <p class="help-block">Ex: 42</p>
 				</div>
 			  </div>
 			</fieldset>
