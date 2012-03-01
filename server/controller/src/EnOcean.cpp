@@ -34,7 +34,7 @@ int main(int argc, char *argv[]) {
 	EnOCeanBaseSimulator simulator = EnOCeanBaseSimulator();
 
 	string adresseSimulatedSensor = "127.0.0.1";
-	int portSimulatedSensor = 5023;
+	int portSimulatedSensor = 5024;
 
 	// List of the simulated sensors :
 	vector<int> simulatedSensorsID;
@@ -420,7 +420,7 @@ int main(int argc, char *argv[]) {
 	string adresseSunSpot = "127.0.0.1";
 	int portSunSpot = 7080;
 
-	table.add((EnOceanSensorAPI::SensorId)0x00005896, (EnOceanSensorAPI::EnOceanCallbackFunction)EnOceanSensorAPI::analyseSunSpot);
+	table.add((EnOceanSensorAPI::SensorId)0x00005620, (EnOceanSensorAPI::EnOceanCallbackFunction)EnOceanSensorAPI::analyseSunSpot);
 
 
 	ServerSettings serverSettings = ServerSettings(&table, &msgToSend, NULL);
@@ -434,7 +434,7 @@ int main(int argc, char *argv[]) {
 	recepSimulator.open(adresseSimulatedSensor.c_str(), portSimulatedSensor);
 	recepSimulator.run();
 
-	EnOceanReceptor recep = EnOceanReceptor(&msgQueue, &msgToSendSimulator);
+	EnOceanReceptor recep = EnOceanReceptor(&msgQueue, &msgToSend);
 	recep.open(adresseEnOcean.c_str(), portEnOcean);
 	recep.run();
 

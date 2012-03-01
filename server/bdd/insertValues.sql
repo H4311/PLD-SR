@@ -378,6 +378,9 @@ INSERT INTO capteurs(type, numeroCapteur, isGlobal, idSujet) VALUES (0x0060001,0
 INSERT INTO capteurs(type, numeroCapteur, isGlobal, idSujet) VALUES (0x0060001,0x0001B595, 1, (SELECT id FROM pld.pieces WHERE nom="Ch112"));
 INSERT INTO capteurs(type, numeroCapteur, isGlobal, idSujet) VALUES (0x0070205,0x00893378, 1, (SELECT id FROM pld.pieces WHERE nom="Ch111"));
 
+INSERT INTO actionneurs(numeroActionneur, type ) VALUES (4288617990, 17105409);
+
+
 /*
 INSERT INTO regleCapteur (idRegle, idCapteur, debutIntervalle, finIntervalle) VALUES ((SELECT id FROM regles WHERE nom = 'chauffageON'), 1, -10, 18.5);
 INSERT INTO regleCapteur (idRegle, idCapteur, debutIntervalle, finIntervalle) VALUES ((SELECT id FROM regles WHERE nom = 'chauffageOFF'), 1, 18.5, 50);
