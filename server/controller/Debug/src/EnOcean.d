@@ -30,10 +30,12 @@ src/EnOcean.d: ../src/EnOcean.cpp ../src/Config.h \
  ../src/Simulator/Actuators/EventActuatorFire.h \
  ../src/Simulator/Actuators/../Model/Room.h \
  ../src/Simulator/Actuators/../Model/Subject.h \
- ../src/Devices/DeviceTable.h ../src/Devices/EnOceanSensorAPI.h \
- ../src/Simulator/Model/Subject.h ../src/Simulator/Model/Room.h \
- ../src/Simulator/Model/Patient.h ../src/Simulator/Model/Subject.h \
- ../src/Simulator/Model/Room.h ../src/EnOceanClient/ServerSettings.h \
+ ../src/Simulator/Actuators/EventActuatorAgony.h \
+ ../src/Simulator/Actuators/../Model/Patient.h \
+ ../src/Simulator/Actuators/../Model/Room.h ../src/Devices/DeviceTable.h \
+ ../src/Devices/EnOceanSensorAPI.h ../src/Simulator/Model/Subject.h \
+ ../src/Simulator/Model/Room.h ../src/Simulator/Model/Patient.h \
+ ../src/EnOceanClient/ServerSettings.h \
  ../src/EnOceanClient/../Simulator/EnOCeanBaseSimulator.h \
  ../src/EnOceanClient/TCPServer.h
 
@@ -105,6 +107,12 @@ src/EnOcean.d: ../src/EnOcean.cpp ../src/Config.h \
 
 ../src/Simulator/Actuators/../Model/Subject.h:
 
+../src/Simulator/Actuators/EventActuatorAgony.h:
+
+../src/Simulator/Actuators/../Model/Patient.h:
+
+../src/Simulator/Actuators/../Model/Room.h:
+
 ../src/Devices/DeviceTable.h:
 
 ../src/Devices/EnOceanSensorAPI.h:
@@ -114,10 +122,6 @@ src/EnOcean.d: ../src/EnOcean.cpp ../src/Config.h \
 ../src/Simulator/Model/Room.h:
 
 ../src/Simulator/Model/Patient.h:
-
-../src/Simulator/Model/Subject.h:
-
-../src/Simulator/Model/Room.h:
 
 ../src/EnOceanClient/ServerSettings.h:
 

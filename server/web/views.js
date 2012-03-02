@@ -156,9 +156,9 @@ function viewHelp(req, res) {
  * VIEW addSensorPatient
  */
 function addSensorPatient(req, res){
-	var patientId = req.param("id", null);
-	var sensorId = req.param("sensorId", null);
-	var sensorType = req.param("sensorType", null);
+	var patientId = parseInt(req.param("id", null));
+	var sensorId = parseInt(req.param("sensorId", null));
+	var sensorType = parseInt(req.param("sensorType", null));
 	logger.info("Adding sensor page");
 	
 	var data={};
