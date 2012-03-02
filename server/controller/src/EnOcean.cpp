@@ -405,7 +405,7 @@ int main(int argc, char *argv[]) {
 
 	//system("ssh -f -L 6543:134.214.105.28:5000 -N bplanche@iftpserv2.insa-lyon.fr");
 	string adresseEnOcean = "127.0.0.1";
-	int portEnOcean = 6523;
+	int portEnOcean = 6543;
 
 	table.add((EnOceanSensorAPI::SensorId)0x00893378, (EnOceanSensorAPI::EnOceanCallbackFunction)EnOceanSensorAPI::analyseTempSensor_EEP_07_02_05);
 	table.add((EnOceanSensorAPI::SensorId)0x0021CBE3, (EnOceanSensorAPI::EnOceanCallbackFunction)EnOceanSensorAPI::analyseRockerSwitch_EEP_05_02_01);
@@ -427,7 +427,7 @@ int main(int argc, char *argv[]) {
 	table.add((EnOceanSensorAPI::SensorId)0x00005620, (EnOceanSensorAPI::EnOceanCallbackFunction)EnOceanSensorAPI::analyseSunSpot);
 
 
-	ServerSettings serverSettings = ServerSettings(&table, &msgToSend, NULL);
+	ServerSettings serverSettings = ServerSettings(&table, &msgToSend, &msgToSendSimulator, &simulator);
 	serverSettings.openSocket(1234);
 	serverSettings.run();
 

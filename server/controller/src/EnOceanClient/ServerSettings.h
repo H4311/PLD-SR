@@ -72,6 +72,7 @@ public:
 
 	ServerSettings(DeviceTable* sensors, blocking_queue<string>* msgToSend
 #ifdef SIMULATION
+			, blocking_queue<string>* msgToSendSimu
 			,EnOCeanBaseSimulator* simu
 #endif
 	);
@@ -90,6 +91,7 @@ protected:
 	DeviceTable* sensors;
 	blocking_queue<string>* msgToSend;
 #ifdef SIMULATION
+	blocking_queue<string>* msgToSendSimu;
 	EnOCeanBaseSimulator* simu;
 #endif
 	pthread_mutex_t mutex;

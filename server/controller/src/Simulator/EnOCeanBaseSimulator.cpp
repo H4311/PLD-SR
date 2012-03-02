@@ -157,6 +157,15 @@ int EnOCeanBaseSimulator::countActuators() {
 	return ret;
 }
 
+bool EnOCeanBaseSimulator::isSimulatedActuator(int id) {
+	for (unsigned int k = 0; k < actuators.size(); k++) {
+		if (actuators[k]->getID() == id) {
+			return true;
+		}
+	}
+	return false;
+}
+
 void EnOCeanBaseSimulator::addSubject(Subject* r) {
 	pthread_mutex_lock(&mutex);
 	subjects.push_back(r);
