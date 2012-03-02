@@ -32,7 +32,7 @@ function fetchAlerts(callback) {
 		});	
 	};
 	getLastAlerts.lastUpdate = new Date(0);
-	setInterval(getLastAlerts,500);
+	setInterval(getLastAlerts,1000);
 }
 
 function displayAlerts(ul) {

@@ -98,6 +98,8 @@ var RithmViews = {}
 		var shape = new Kinetic.Shape(function() {
 			var ctx = this.getContext();
 			
+			this.room.measures["1"] = this.room.getAverageValue("1");
+			
 			// Stroke :
 			var colorWall = (this.room.warning > 0)? BuildingGenerator.colorWallWarning : BuildingGenerator.colorWall;
 			var lineWidthWall = (this.room.warning > 0)? BuildingGenerator.lineWidthWallWarning : BuildingGenerator.lineWidthWall;
@@ -118,7 +120,9 @@ var RithmViews = {}
 					ctx.lineWidth = BuildingGenerator.lineWidthDoor;
 					ctx.strokeStyle = BuildingGenerator.colorDoor;  
 					
-					if (this.isOpen) {
+					this.room.walls[i].isOpen = this.room.measures["1"] == 0;
+					
+					if (this.room.walls[i].isOpen) {
 						ctx.moveTo(this.room.walls[i].plotOpen.segmentPlot.x1,this.room.walls[i].plotOpen.segmentPlot.y1);  
 						ctx.lineTo(this.room.walls[i].plotOpen.segmentPlot.x2,this.room.walls[i].plotOpen.segmentPlot.y2); 
 						ctx.moveTo(this.room.walls[i].plotClosed.segmentPlot.x2, this.room.walls[i].plotClosed.segmentPlot.y2);
