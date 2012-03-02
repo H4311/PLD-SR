@@ -1,9 +1,16 @@
 #!/bin/bash
 
+if [ $# -ne 1 ]
+then
+	echo "Usage :"
+	echo "$0 userName"
+	exit
+fi
+
 echo "Lancement de MySQL..."
 sudo service mysql start
 echo "Connexion au serveur EnOcean..."
-ssh -f -L 6543:134.214.105.28:5000 -N bbouvier@iftpserv2.insa-lyon.fr
+ssh -f -L 6543:134.214.105.28:5000 -N $1@iftpserv2.insa-lyon.fr
 echo "Lancement du serveur C++..."
 ./controller/Debug/EnOcean2 > enocean.log &
 echo "Lancement des serveurs Web et REST..."

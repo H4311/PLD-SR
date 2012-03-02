@@ -132,8 +132,8 @@ var stop = function() {
 	process.exit(code=0);
 }
 
-run();
-setTimeout(stop, 3500);
+//run();
+//setTimeout(stop, 3500);
 
 exports.runInference = run;
 exports.stopInference = stop;
