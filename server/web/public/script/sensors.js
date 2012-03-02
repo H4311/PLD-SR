@@ -61,13 +61,13 @@ function fetchSensorLog(idSensor, sensorLog, callback) {
 	setInterval(getLastMeasures,2000);
 }
 
-unction fetchSensorsLogs(idSensor, sensorsLogs, callback) {
+function fetchSensorsLogs(sensorsLogs, callback) {
 	function getLastMeasures() {
 		var toDate = new Date();
 		var strDate = getLastMeasures.lastUpdate.getTime();
 		var req = {};
 		req["sensors"] = [];
-		for (var i in Sensors) {
+		for (var i in sensorsLogs) {
 			req["sensors"].push({ "id" : i, "from" : strDate});
 		}
 		getLastMeasures.lastUpdate = toDate; // Using the fact that JS functions can have attributes to store the last date.
@@ -76,7 +76,7 @@ unction fetchSensorsLogs(idSensor, sensorsLogs, callback) {
 			for (var i in data.records) {
 				var sensor = data.records[i];
 				for (var j = 0; j < sensor.length; j++)  {
-					sensorLog[i].addMeasure(sensor[j]);
+					sensorsLogs[i].addMeasure(sensor[j]);
 				}
 			}
 		}
@@ -129,7 +129,7 @@ function getSensorValuesByType(idSensor, callback, typeMesure, from, to) {
 	if(to) req.sensors[0].to =  new Date(to).getTime()
 	
 	$.post(rest + '/sensors',
-	  req,
+	  JSON.stringify(req),
 	  callback,
 	  "json");
 }
@@ -139,7 +139,7 @@ function getSensors(idPatient, callback) {
 		idPatient: idPatient
 	};
 	$.post(rest + '/list_sensors',
-	  req,
+	  JSON.stringify(req),
 	  callback,
 	  "json");
 }
