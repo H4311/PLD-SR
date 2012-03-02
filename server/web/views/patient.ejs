@@ -88,9 +88,8 @@
 		<a class="close" data-dismiss="modal">×</a>
 		<h3>Historique</h3>
 	</div>
-	<div class="modal-body" id="divHisto" sensorId="" recordType="">Chargement...</div>
+	<div class="modal-body" id="divHisto">Aucune valeur...</div>
 	<div class="modal-footer">
-		<input type="submit" class="btn btn-primary" value="Ajouter"/>
 		<a href="#" class="btn" data-dismiss="modal">Close</a>
 	</div>
 </div>
@@ -101,70 +100,62 @@
 	// Load the Visualization API and the piechart package.
 
 	google.load('visualization', '1.0', {'packages':['corechart']});
-
-	// Set a callback to run when the Google Visualization API is loaded.
-	//google.setOnLoadCallback(drawChart);
-
-	function updateChart() {
-		var randomnumber = Math.floor(Math.random()*11);
-
-		var data = new google.visualization.DataTable();
-		data.addColumn('string', 'TimeSensor');
-		data.addColumn('number', 'Temperature');
-		data.addRows([
-			['T1', randomnumber+2],
-			['T2', randomnumber-6],
-			['T3', randomnumber], 
-			['T4', randomnumber],
-			['T5', randomnumber+11]
-		]);
+	google.setOnLoadCallback(loadGCharts);
+	
+	var gChartsSettings = {
+		loaded: false,
+		options: {
+			width: 500,
+			height: 300,
+			vAxis: {title: "Value"},
+			hAxis: {title: "Time"},
+			animation: {
+				duration: 500,
+				easing: 'in'
+			}
+		}
 	}
-
-	// Instantiate and draw our chart, passing in some options.
-	$(document).ready( function() {
-
-		var chart = new google.visualization.LineChart(document.getElementById('divHisto'));
-
-		var randomnumber = Math.floor(Math.random()*11);
-		// Create the data table.
-		var data = new google.visualization.DataTable();
-		data.addColumn('number', 'TimeSensor');
-		data.addColumn('number', 'blala');
-		/*data.addRows([
-			['T1', 24],
-			['T2', 29],
-			['T3', randomnumber], 
-			['T4', 25],
-			['T5', 18]
-		]);*/
-
-		// Callback that creates and populates a data table, 
-		// instantiates the pie chart, passes in the data and
-		// draws it.
-		var drawChart = function drawChart() {
-
-			// Set chart options
-			var options = {title:'Fuck this shit, I\'m a chart',
-				width: 500,
-				height: 300,
-				vAxis: {title: "TODO:recupereType"},
-				hAxis: {title: "Time"},
-				animation:{
-					duration: 500,
-					easing: 'in'
-				},
-			};
-
-			chart.draw(data, options);
-		};
-
-		drawChart();
-
-	});
+	
+	function loadGCharts() {
+		gChartsSettings.loaded = true;
+	}
+	
+	function drawchart(chart, data) {
+		chart.draw(data, gChartsSettings.options);
+	}
+	
+	function updateChart(chart, data, sensorId, type, lastTimestamp) {
+		getSensorValues(sensorId, function(data) {
+			
+		}, type, lastTimestamp);
+	}
+	
+	function initChart(data) {
+		$("#divHisto").html("Aucune valeur...");
+		for(var sensorId in data.records) {
+			$("#divHisto").html("Chargement...");
+			var records = data.records[sensorId];
+			var chart = new google.visualization.LineChart($("#divHisto")[0]);
+			var data = new google.visualization.DataTable();
+			data.addColumn('string', 'time');
+			data.addColumn('number', recordtypeToString(records[0].type));
+			
+			for( var i in records) {
+				var record = records[i];
+				var date = dateToString(new Date(parseInt(record.time)));
+				data.addRow([date, record.value]);
+			}
+			
+			drawchart(chart, data);
+			break;
+		}
+	}
 	
 	$(".histo").click(function() {
-		$("#divHisto").attr("sensorId", $(this).attr("sensorId"));
-		$("#divHisto").attr("recordType", $(this).attr("recordType"));
-		updateChart();
+		var id = $(this).attr("sensorId");
+		var type = $(this).attr("recordType");
+		
+		// Get Sensor Values from 1 hour, and init the google chart :
+		getSensorValuesByType(id, initChart, type, new Date().getTime() - 3600000);
 	});
 </script>

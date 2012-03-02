@@ -75,6 +75,7 @@ function getSensorsRecords(param, callback) {
 				.and("time > '"+from+"'")
 			
 			if(sensor.type) {
+				var type = sensor.type;
 				sql_cond.and("typeMesure = '"+type+"'");
 			}
 			

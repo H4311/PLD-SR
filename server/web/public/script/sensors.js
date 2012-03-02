@@ -58,7 +58,7 @@ function getSensorValuesByType(idSensor, callback, typeMesure, from, to) {
 	if(to) req.sensors[0].to =  new Date(to).getTime()
 	
 	$.post(rest + '/sensors',
-	  JSON.stringify(req),
+	  req,
 	  callback,
 	  "json");
 }
@@ -68,7 +68,7 @@ function getSensors(idPatient, callback) {
 		idPatient: idPatient
 	};
 	$.post(rest + '/list_sensors',
-	  JSON.stringify(req),
+	  req,
 	  callback,
 	  "json");
 }
