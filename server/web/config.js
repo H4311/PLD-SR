@@ -1,6 +1,7 @@
 var config = {
 	"logger" : {
-		"level" : "debug"
+		"level" : "debug",
+		"printDate" : false
 	},
 	"security" : {
 		"ssl" : false,

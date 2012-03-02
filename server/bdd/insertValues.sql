@@ -256,10 +256,10 @@ VALUES (1001, "Arnal", false, "Changement de sexe", (SELECT id FROM pld.pieces W
 	   (1010, "Thibalt Lon", false, "Entorse du genou simul&eacute;e", (SELECT id FROM pld.pieces WHERE nom="Ch115")),
 	   (1011, "Arnal Ligator", true, "Extraction de dents", (SELECT id FROM pld.pieces WHERE nom="Ch116")),
 	   (1012, "Bill At&eacute;ral", true, "Bipolarit&eacute; cervovaculaire", (SELECT id FROM pld.pieces WHERE nom="Ch117")),
-	   (1013, "Boule Deun&eacute;geux", true, "Engelûres aux doigts", (SELECT id FROM pld.pieces WHERE nom="Ch118")),
+	   (1013, "Boule Deun&eacute;geux", true, "Engelures aux doigts", (SELECT id FROM pld.pieces WHERE nom="Ch118")),
 	   (1014, "Benjamin Tenancespie", true, "Overdose de SAP", (SELECT id FROM pld.pieces WHERE nom="Ch119")),
 	   (1015, "Jeremy Lemeimeslipe", false, "Escar aux fesses", (SELECT id FROM pld.pieces WHERE nom="Ch120")),
-	   (1025, "Arnaud Limite", false, "Overdose cocaïnoïque", (SELECT id FROM pld.pieces WHERE nom="Ch121")),
+	   (1025, "Arnaud Limite", false, "Overdose cocainoique", (SELECT id FROM pld.pieces WHERE nom="Ch121")),
 	   (1016, "Thibaut Gausse", true, "Chirurgie esth&eacute;tique", (SELECT id FROM pld.pieces WHERE nom="Ch121")),
 	   (1017, "Dan T&eacute;dan", true, "Traumatisme cranien s&eacute;v&eacute;re", (SELECT id FROM pld.pieces WHERE nom="Bl12")),
 	   (1018, "J&eacute;remy Sa", true, "Double fracture ouverte du tibia", (SELECT id FROM pld.pieces WHERE nom="Bl11")),
@@ -380,6 +380,18 @@ INSERT INTO capteurs(type, numeroCapteur, isGlobal, idSujet) VALUES (0x0070205,0
 
 INSERT INTO actionneurs(numeroActionneur, type ) VALUES (4288617990, 17105409);
 
+INSERT INTO regles (nom, createsAlert) VALUES ('Ecran On', true);
+INSERT INTO regles (nom, createsAlert) VALUES ('Ecran Off', true);
+
+INSERT INTO regleCapteur (idRegle, idCapteur, typeMesure, debutIntervalle, finIntervalle) VALUES ((SELECT id FROM regles WHERE nom = 'Ecran On'), (SELECT id FROM capteurs WHERE numeroCapteur=0x0021CBE3 AND type=0x0050201), 2, 16, 16);
+
+INSERT INTO regleCapteur (idRegle, idCapteur, typeMesure, debutIntervalle, finIntervalle) VALUES ((SELECT id FROM regles WHERE nom = 'Ecran Off'), (SELECT id FROM capteurs WHERE numeroCapteur=0x0021CBE3 AND type=0x0050201), 2, 32, 32);
+
+INSERT INTO regleActionneur (idRegle, idActionneur, valeur, isActive)
+	VALUES ((SELECT id FROM regles WHERE nom = 'Ecran On'), (SELECT id FROM actionneurs WHERE numeroActionneur = 4288617990 AND type = 17105409), 0, true);
+
+INSERT INTO regleActionneur (idRegle, idActionneur, valeur, isActive)
+	VALUES ((SELECT id FROM regles WHERE nom = 'Ecran Off'), (SELECT id FROM actionneurs WHERE numeroActionneur = 4288617990 AND type = 17105409), 0, false);
 
 /*
 INSERT INTO regleCapteur (idRegle, idCapteur, debutIntervalle, finIntervalle) VALUES ((SELECT id FROM regles WHERE nom = 'chauffageON'), 1, -10, 18.5);

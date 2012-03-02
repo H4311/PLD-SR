@@ -24,6 +24,7 @@ var authObject = {
 		} else {
 			return function (req, res) {
 				if (!req.session.auth) {
+					logger.debug("User unauthentified tries to go to " + url);
 					res.redirect('/login?next=' + url);
 				} else {
 					handler[url](req, res);
@@ -48,13 +49,15 @@ var authObject = {
 			if (!next) {
 				// If there was no page, just redirects to index
 				res.redirect('/');
+			} if (!handler[next]) {
+				// The user tries to go to a page which has no handler.
+				logger.info("The user tries to go to not available page : " + next + ". Redirecting to 404.");
+				res.redirect('*');
 			} else {
 				handler[next](req, res);
 			}
 		} else {
-			console.log("[AUTH] Tentative de connexion non fructueuse" +
-			" de la part de " + f_login);
-			
+			logger.error("[AUTH] Bad credentials with login = " + f_login + " and password = " + f_pwd);
 			res.render('login', 
 				{title: "Login", next: null, error: badPwdError});
 		}
@@ -64,6 +67,7 @@ var authObject = {
 	 * Logs out the current user, if there was one.
 	 */
 	logout: function logout(req, res) {
+		logger.info("Logouts user.");
 		if (req.session.auth !== undefined) {
 			req.session.destroy();
 		}

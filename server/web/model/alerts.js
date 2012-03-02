@@ -1,5 +1,6 @@
 var squel = require("squel");
 var sql = require("./nodesql");
+var logger = require("../logger");
 
 function sqlConnect() {
 	return sql.createClient("localhost", "rithm", "rithm", "pld");
@@ -35,8 +36,8 @@ function sqlConnect() {
  * ============================================================================
  */
 function getAlerts(param, callback) {
-
 	var from = Date.parse(param.from);
+	logger.info("Getting alerts from " + from + ".");
 	// retrieve des alertes déclenchées
 	var sql_req = "";
 	sql_req += "SELECT time, idRegle, (SELECT nom FROM regles WHERE id = idRegle) nom ";
@@ -86,6 +87,7 @@ function getAlerts(param, callback) {
 				// For the last alert
 				if(nbResponseReceived === result.count) {
 					// Call the callback with json response
+					logger.info("Alerts gotten !");
 					callback(response);
 					sql.close(db);
 				}

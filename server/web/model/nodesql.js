@@ -19,7 +19,7 @@ function sqlAsyncQuery(db, query, callbackAsync, callbackEnd) {
 	result.fields = [];
 	result.count = 0;
 	result.hits = [];
-	//console.log("Query : " + query.toString());
+	logger.debug("Query : " + query.toString());
 	db.query(query)
 		.on('field', function(f) {
 			result.fields.push(f.name);
@@ -41,15 +41,15 @@ function sqlQuery(db, query, callback) {
 }
 
 function sqlDumpResult(result) {
-	console.log("Took : "+result.took+"ms\nHits : "+result.count);
+	logger.info("Took : "+result.took+"ms\nHits : "+result.count);
 	var strFields = "";
 	for(var i in result.fields) strFields+=result.fields[i]+"\t";
-	console.log("Fields : "+strFields);
+	logger.debug("Fields : "+strFields);
 	for(var i in result.hits) {
 		var hit = result.hits[i];
-		console.log("================================");
-		console.log("Hit n°"+i);
-		for(var field in hit) console.log(field+":\t"+hit[field]);
+		logger.debug("================================");
+		logger.debug("Hit n°"+i);
+		for(var field in hit) logger.debug(field+":\t"+hit[field]);
 	}
 
 }

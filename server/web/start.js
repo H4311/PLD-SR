@@ -5,15 +5,20 @@ var config = require("./config");
 var services = require("./services");
 var views = require("./views");
 var authModule = require("./auth").authModule;
+var inference = require("./inference");
 
+var logger = require("./logger");
 
 // Catch for all exception
 process.on('uncaughtException', function (error) {
-   console.log(error.stack);
+   logger.error(error.stack);
 });
 
 var securityActivated = config.getProperty("security.auth");
+logger.warn("Security activated : " + securityActivated);
+
 var sslActivated = config.getProperty("security.ssl");
+logger.warn("SSL activated : " + sslActivated);
 
 // REST Server config
 var rest;
@@ -48,7 +53,9 @@ for (var url in serviceHandler) {
 	rest.post(url, serviceHandler[url]);
 }
 
+logger.warn("REST routes activated.");
 rest.listen(1337);
+logger.warn("REST server is listening.");
 
 // HTML Server config
 var html;
@@ -102,4 +109,8 @@ for (var url in viewHandler) {
 						: html.get(url, viewHandler[url]);
 }
 
+logger.warn("HTML Server routes activated.");
 html.listen(8080);
+
+inference.runInference();
+logger.warn("HTML Server is listening.");

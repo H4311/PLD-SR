@@ -6,6 +6,6 @@ for line in $(cat pids); do
 done
 echo "Arrêt de MySQL..."
 sudo service mysql stop
-echo "Suppression du fichier de PIDs..."
-rm pids
+#echo "Suppression du fichier de PIDs..."
+#rm pids
 echo "Everything is OK."
