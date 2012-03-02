@@ -82,6 +82,7 @@ typedef enum { CONTACT = 1, SWITCH, TEMPERATURE, HUMIDITY, LUMINOSITY, OCCUPANCY
 	static void toFrame_Sprinkler(enocean_data_structure* frame, EnOceanSensorAPI::SensorId id, bool on, float val, float valMin, float valMax);
 	static void toFrame_PainKiller(enocean_data_structure* frame, EnOceanSensorAPI::SensorId id, bool on, float val, float valMin, float valMax);
 	static void toFrame_Defibrillator(enocean_data_structure* frame, EnOceanSensorAPI::SensorId id, bool on, float val, float valMin, float valMax);
+	static void toFrame_Music(enocean_data_structure* frame, EnOceanSensorAPI::SensorId id, bool on);
 
 // ---- SENSOR ----
 static EnOceanCallbackFunction getFunctionPerType(int type);
