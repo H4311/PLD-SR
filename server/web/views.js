@@ -225,6 +225,7 @@ function addRule(req, res){
 	var createsAlert = req.param("createsAlert", null);
 	
 	var idCapteur = req.param("idCapteur", null);
+	var typeMesure = req.param("typeMesure", null);
 	var debIT = req.param("debIT", null);
 	var finIT = req.param("finIT", null);
 	
@@ -237,6 +238,7 @@ function addRule(req, res){
 	data.nom = nom;
 	data.createsAlert = createsAlert;
 	data.idCapteur = idCapteur;
+	data.typeMesure = typeMesure;
 	data.debIT = debIT;
 	data.finIT = finIT;
 	data.idActionneur = idActionneur;
