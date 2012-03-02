@@ -49,6 +49,7 @@ public:
 	void addActuator(Actuator* sensor);
 	bool delActuator(int id);
 	int countActuators();
+	bool isSimulatedActuator(int i);
 
 	void addSubject(Subject* sensor);
 	bool delSubject(int id);

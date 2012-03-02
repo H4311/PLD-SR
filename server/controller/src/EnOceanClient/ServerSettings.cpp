@@ -177,8 +177,17 @@ void* ServerSettingsThread_Receive (void* param) {
 						EnOceanSensorAPI::toFrame_Actuator(&frame, (EnOceanSensorAPI::SensorId)idDevice, type, on, value);
 						char buffer[EnOceanSensorAPI::FRAME_SIZE];
 						EnOceanSensorAPI::toString(&frame, buffer);
+						bool trueActuator = true;
+#ifdef SIMULATION
+						trueActuator = server->simu->isSimulatedActuator(idDevice);
+#endif
 						pthread_mutex_lock(&(server->mutex));
-						server->msgToSend->push(new string(buffer));
+						if (trueActuator) {
+							server->msgToSend->push(new string(buffer));
+						}
+						else {
+							server->msgToSendSimu->push(new string(buffer));
+						}
 						pthread_mutex_unlock(&(server->mutex));
 					}
 					else {
@@ -249,10 +258,12 @@ void ServerSettings::stop() {
 //-------------------------------------------------- Builder / Destructor
 ServerSettings::ServerSettings(DeviceTable* sens,  blocking_queue<string>* msg
 #ifdef SIMULATION
+		,  blocking_queue<string>* msgSimu
 		, EnOCeanBaseSimulator* sim
 #endif
 ): sensors(sens), msgToSend(msg)
 #ifdef SIMULATION
+, msgToSendSimu(msgSimu)
 , simu(sim)
 #endif
 {
