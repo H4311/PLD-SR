@@ -24,7 +24,6 @@
     <thead>
         <tr>
         <th>Mesure</th>
-        <th>Valeur</th>
         <th>Historique</th>
         </tr>
     </thead>
@@ -32,7 +31,6 @@
     	<% measures.forEach(function(measure){ %>
         <tr>
         <td><i class="icon-signal"></i>&nbsp;<span class="label label-info"><%= measure.name %></span>&nbsp;Capteur N°<%= measure.sensorId %></td>
-        <td><span class="measure" id="measure_<%= measure.sensorId %>_<%= measure.recordType %>">0</span></td>
         <td><a data-toggle="modal" href="#histoModal" class="histo btn btn-info" sensorId="<%= measure.sensorId %>" recordType="<%= measure.recordType %>">Voir l'historique</a></td>
         </tr>
         <% }) %>
@@ -104,6 +102,7 @@
 	
 	var gChartsSettings = {
 		loaded: false,
+		sensorId: -1,
 		options: {
 			width: 500,
 			height: 300,
@@ -125,14 +124,31 @@
 	}
 	
 	function updateChart(chart, data, sensorId, type, lastTimestamp) {
-		getSensorValues(sensorId, function(data) {
+		if(gChartsSettings.sensorId != sensorId) return;
+		
+		var timestamp = new Date().getTime();
+		getSensorValuesByType(sensorId, function(data) {
+			if(data.records[sensorId]) {
+				var records = data.records[sensorId];
+				for( var i in records) {
+					var record = records[i];
+					var date = dateToString(new Date(parseInt(record.time)));
+					data.addRow([date, record.value]);
+				}
+				
+				drawchart(chart, data);
+			}
 			
+			setInterval(function() {
+				updateChart(chart, data, sensorId, type, timestamp);
+			}, 5000);
 		}, type, lastTimestamp);
 	}
 	
-	function initChart(data) {
+	function initChart(sensorId, type, data) {
+		gChartsSettings.sensorId = sensorId;
 		$("#divHisto").html("Aucune valeur...");
-		for(var sensorId in data.records) {
+		if(data.records[sensorId]) {
 			$("#divHisto").html("Chargement...");
 			var records = data.records[sensorId];
 			var chart = new google.visualization.LineChart($("#divHisto")[0]);
@@ -147,7 +163,7 @@
 			}
 			
 			drawchart(chart, data);
-			break;
+			updateChart(chart, data, sensorId, type, new Date().getTime());
 		}
 	}
 	
@@ -156,11 +172,9 @@
 		var type = $(this).attr("recordType");
 		
 		// Get Sensor Values from 1 hour, and init the google chart :
-		getSensorValuesByType(id, initChart, type, new Date().getTime() - 3600000);
+		getSensorValuesByType(id, function(data) {
+			initChart(id, type, data);
+		}, type, new Date().getTime() - 5*3600*1000);
 	});
-	
-	$(document).ready(function() {
-		
-	}
 	
 </script>
