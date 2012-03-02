@@ -402,6 +402,7 @@ INSERT INTO regles (id, nom, createsAlert) VALUES (101, 'chauffageOFF', true);
 
 INSERT INTO regleActionneur (idRegle, idActionneur, valeur, isActive) 
 	VALUES ((SELECT id FROM regles WHERE nom = 'chauffageOFF'), 1, 123456789, true);		
+
 INSERT INTO alertes(time, idRegle) VALUES (1, 100);
 INSERT INTO alertes(time, idRegle) VALUES (10000000000, 101);
 INSERT INTO alertes(time, idRegle) VALUES (100000000000000, 100);

@@ -65,11 +65,11 @@ function addRule(param, callback) {
 				sql_req += "VALUES('"+param.nom+"',"+param.createsAlert+");";
 			}
 		}
-		if(param.idCapteur && param.debIT && param.finIT) {
+		if(param.idCapteur && param.typeMesure && param.debIT && param.finIT) {
 			//Insertion d'un règle/capteur
 			logger.info("Insertion regleCapteur");
-			sql_req += "INSERT INTO regleCapteur (idRegle, idCapteur, debutIntervalle, finIntervalle) ";
-			sql_req += "VALUES((SELECT id FROM regles WHERE nom='" + param.nom + "'), " + param.idCapteur + ", " + param.debIT + ", " + param.finIT + ");";
+			sql_req += "INSERT INTO regleCapteur (idRegle, idCapteur, typeMesure, debutIntervalle, finIntervalle) ";
+			sql_req += "VALUES((SELECT id FROM regles WHERE nom='" + param.nom + "'), " + param.idCapteur + ", " + param.typeMesure + ", " + param.debIT + ", " + param.finIT + ");";
 		}
 		if(param.idActionneur && param.valeur && param.isActive) {
 			//Insertion d'un règle/actionneur

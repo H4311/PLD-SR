@@ -344,11 +344,13 @@ extern "C" {
 		oss << getRockerSwitchAction2nd(frame) << " | ";
 		oss << isRockerSwitchAction2nd(frame) << " >";
 
-		int action = getRockerSwitchAction1st(frame)*16+((getRockerSwitchAction2nd(frame)+1)*(isRockerSwitchAction2nd(frame)?1:0));
-		insertMesure(mysql, CAPTEUR_ENOCEAN, (int)getID(frame), timestamp, SWITCH, action);
-//		insertMesure(mysql, CAPTEUR_ENOCEAN, (int)getID(frame), timestamp, 1, getRockerSwitchEnergyBow(frame));
-//		insertMesure(mysql, CAPTEUR_ENOCEAN, (int)getID(frame), timestamp, 2, getRockerSwitchAction2nd(frame));
-//		insertMesure(mysql, CAPTEUR_ENOCEAN, (int)getID(frame), timestamp, 3, isRockerSwitchAction2nd(frame));
+		if (getRockerSwitchEnergyBow(frame) > 0) {
+			int action = getRockerSwitchAction1st(frame)*16+((getRockerSwitchAction2nd(frame)+1)*(isRockerSwitchAction2nd(frame)?1:0));
+			insertMesure(mysql, CAPTEUR_ENOCEAN, (int)getID(frame), timestamp, SWITCH, action);
+	//		insertMesure(mysql, CAPTEUR_ENOCEAN, (int)getID(frame), timestamp, 1, getRockerSwitchEnergyBow(frame));
+	//		insertMesure(mysql, CAPTEUR_ENOCEAN, (int)getID(frame), timestamp, 2, getRockerSwitchAction2nd(frame));
+	//		insertMesure(mysql, CAPTEUR_ENOCEAN, (int)getID(frame), timestamp, 3, isRockerSwitchAction2nd(frame));
+		}
 		return oss.str();
 	} //----- End of analyseRockerSwitch_F6_02_01
 
