@@ -192,7 +192,7 @@ function serviceAddRule(req, resp) {
 	logger.info("Service add rules.");
 	writeHeaders(resp);
 
-	request = parseRequest(req, ["nom", "createsAlert", "idCapteur", "debIT", "finIT", "idActionneur", "valeur", "isActive"]);
+	request = parseRequest(req, ["nom", "createsAlert", "idCapteur", "typeMesure", "debIT", "finIT", "idActionneur", "valeur", "isActive"]);
 	// Get the response from the modelrules layer :
 	modelrules.addRule(request, function(response) {
 		// Send the stringified json to client :
