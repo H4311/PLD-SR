@@ -16,7 +16,7 @@ function fetchAlertsComet(callback) {
 function fetchAlerts(callback) {
 	function getLastAlerts() {
 		var toDate = new Date();
-		var strDate = dateToString(getLastAlerts.lastUpdate);
+		var strDate = getLastAlerts.lastUpdate.getTime();
 		var req = {
 			"from" : strDate
 		};
@@ -31,7 +31,7 @@ function fetchAlerts(callback) {
 			async:true
 		});	
 	};
-	getLastAlerts.lastUpdate = new Date(0);
+	getLastAlerts.lastUpdate = new Date();
 	setInterval(getLastAlerts,1000);
 }
 
