@@ -6,7 +6,7 @@
             <div class="accordion-group">
               <div class="accordion-heading">
                 <a class="accordion-toggle" data-toggle="collapse" data-parent="#accordion2" href="#<%= rule.id%>">
-                  <%= rule.nom %>
+                  #<%= rule.id%> - <%= rule.nom %>
                 </a>
               </div>
               <div id="<%= rule.id%>" class="accordion-body collapse">
@@ -27,9 +27,9 @@
 								if (ruleSensor.idRegle == rule.id) {
 								%>
 							<tr>
-							<td><i class="icon-ok-sign"></i>&nbsp;<span class="label"><%= ruleSensor.id %></span></td>
-							<td><span class="label"><%= ruleSensor.debutIntervalle %></span></td>
-							<td><span class="label"><%= ruleSensor.finIntervalle %></span></td>
+							<td><i class="icon-ok-sign"></i>&nbsp;<%= ruleSensor.id %></span></td>
+							<td><%= ruleSensor.debutIntervalle %></td>
+							<td><%= ruleSensor.finIntervalle %></td>
 							</tr>
 							<% 
 								}
@@ -51,9 +51,9 @@
 								if (ruleActuator.idRegle == rule.id) {
 								%>
 							<tr>
-							<td><i class="icon-ok-sign"></i>&nbsp;<span class="label"><%= ruleActuator.id %></span></td>
-							<td><span class="label"><%= ruleActuator.valeur %></span></td>
-							<td><span class="label"><%= ruleActuator.isActive %></span></td>
+							<td><i class="icon-ok-sign"></i>&nbsp;<%= ruleActuator.id %></td>
+							<td><%= ruleActuator.valeur %></td>
+							<td><%= ruleActuator.isActive %></td>
 							</tr>
 							<% 
 								}
