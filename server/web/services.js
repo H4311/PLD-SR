@@ -36,12 +36,10 @@ function writeHeaders(resp) {
 }
 
 function parseRequest(req, names) {
-	console.log(req.body);
 	request = {}
 	for (var n in names) {
 		request[names[n]] = req.param(names[n], null);
 	}
-	console.log("Request : " + JSON.stringify(request))
 	return request;
 }
 
@@ -116,15 +114,15 @@ function serviceListSensors(req, resp) {
 	
 	request = parseRequest(req, ["idPatient", "idRoom"]);
 	
-	if(request.idPatient) {
-		logger.debug("Service list sensors : id patient = " + idPatient);
+	if(request.idPatient !== null) {
+		logger.debug("Service list sensors : id patient = " + request.idPatient);
 		// Get the response from the modelsensors layer :
 		modelsensors.getSensorsListByPatient(request.idPatient, function(response) {
 			// Send the stringified json to client :
 			resp.json(response);
 		});
-	} else if(request.idRoom) {
-		logger.debug("Service list sensors : id room = " + idRoom);
+	} else if(request.idRoom !== null) {
+		logger.debug("Service list sensors : id room = " + request.idRoom);
 		// Get the response from the modelsensors layer :
 		modelsensors.getSensorsListByRoom(request.idRoom, function(response) {
 			// Send the stringified json to client :
@@ -198,7 +196,6 @@ function serviceAddRule(req, resp) {
 		// Send the stringified json to client :
 		resp.json(response);
 	});
-	
 }
 
 

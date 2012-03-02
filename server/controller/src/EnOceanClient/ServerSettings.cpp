@@ -179,7 +179,7 @@ void* ServerSettingsThread_Receive (void* param) {
 						EnOceanSensorAPI::toString(&frame, buffer);
 						bool trueActuator = true;
 #ifdef SIMULATION
-						trueActuator = server->simu->isSimulatedActuator(idDevice);
+						trueActuator = !(server->simu->isSimulatedActuator(idDevice));
 #endif
 						pthread_mutex_lock(&(server->mutex));
 						if (trueActuator) {
