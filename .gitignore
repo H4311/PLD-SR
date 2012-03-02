@@ -3,3 +3,4 @@ gThread
 *.swp
 *~
 *node_modules/
+*.log
