@@ -133,7 +133,7 @@ function setActuator(param, callback) {
 		query.t = param.type;
 		query.e = param.active ? 1 : 0;
 		query.v = param.value;
-	logger.info("Setting actuator with id = " + query.i + ", type = " + query.y + ", active = " + query.e + ", value = " + query.v);
+	logger.info("Setting actuator with id = " + query.i + ", type = " + query.t + ", active = " + query.e + ", value = " + query.v);
 		
 	// Send the query :
 	var client = connectClient();

@@ -383,9 +383,9 @@ INSERT INTO actionneurs(numeroActionneur, type ) VALUES (4288617990, 17105409);
 INSERT INTO regles (nom, createsAlert) VALUES ('Ecran On', true);
 INSERT INTO regles (nom, createsAlert) VALUES ('Ecran Off', true);
 
-INSERT INTO regleCapteur (idRegle, idCapteur, typeMesure, debutIntervalle, finIntervalle) VALUES ((SELECT id FROM regles WHERE nom = 'Ecran On'), (SELECT id FROM capteurs WHERE numeroCapteur=0x0021CBE3 AND type=0x0050201), 2, 16, 16);
+INSERT INTO regleCapteur (idRegle, idCapteur, typeMesure, debutIntervalle, finIntervalle) VALUES ((SELECT id FROM regles WHERE nom = 'Ecran On'), (SELECT id FROM capteurs WHERE numeroCapteur=0x0021CBE3 AND type=0x0050201), 2, 16, 32);
 
-INSERT INTO regleCapteur (idRegle, idCapteur, typeMesure, debutIntervalle, finIntervalle) VALUES ((SELECT id FROM regles WHERE nom = 'Ecran Off'), (SELECT id FROM capteurs WHERE numeroCapteur=0x0021CBE3 AND type=0x0050201), 2, 32, 32);
+INSERT INTO regleCapteur (idRegle, idCapteur, typeMesure, debutIntervalle, finIntervalle) VALUES ((SELECT id FROM regles WHERE nom = 'Ecran Off'), (SELECT id FROM capteurs WHERE numeroCapteur=0x0021CBE3 AND type=0x0050201), 2, 48, 64);
 
 INSERT INTO regleActionneur (idRegle, idActionneur, valeur, isActive)
 	VALUES ((SELECT id FROM regles WHERE nom = 'Ecran On'), (SELECT id FROM actionneurs WHERE numeroActionneur = 4288617990 AND type = 17105409), 0, true);

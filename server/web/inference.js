@@ -7,6 +7,8 @@ var sqlConnect = function() {
 	return sql.createClient("localhost", "rithm", "rithm", "pld");
 }
 
+var db = sqlConnect();
+
 var throwAlerts = function(regle) {
 	logger.info("Throwing alerts.");
 	var sqlRequest = "";
@@ -14,7 +16,7 @@ var throwAlerts = function(regle) {
 	sqlRequest += "FROM regles ";
 	sqlRequest += "WHERE id = " + regle;
 
-	var db = sqlConnect();
+	//var db = sqlConnect();
 	sql.query(db, sqlRequest, function(result) {
 		logger.debug("Took : " + result.took + "ms\nHits : " + result.count);
 		
@@ -28,33 +30,33 @@ var throwAlerts = function(regle) {
 				sqlRequest += "INSERT INTO alertes (time, idRegle) ";
 				sqlRequest += "VALUES (" + new Date().getTime() * 1000 + ", " + result.hits[0].id + ")";
 
-				var db = sqlConnect();
+				//var db = sqlConnect();
 				sql.query(db, sqlRequest, function(result) {
 					logger.debug("Took : " + result.took + "ms\nHits : " + result.count);
 					logger.info("Alert done");
-					sql.close(db);
+					//sql.close(db);
 				});
 				
 			}
 		}
 	
-		sql.close(db);
+		//sql.close(db);
 	});
 }
 
 var triggerActionneurs = function(result) {
 	logger.info("Triggering actuators...");
 	for(var i in result.hits) {
-	
+		console.log("false : " + result.hits[0].nbFalse);
 		if(result.hits[0].nbFalse == 0) {
 			logger.info("Règle " + result.hits[0].regle + " déclenchée");
 		
 			var sqlRequest = "";
-			sqlRequest += "SELECT numeroActionneur AS id, type AS type, isActive AS active , valeur AS value ";
+			sqlRequest += "SELECT numeroActionneur AS id, type AS type, isActive AS active , valeur AS value, (SELECT type FROM actionneurs WHERE id=RA.idActionneur) AS type ";
 			sqlRequest += "FROM regleActionneur RA INNER JOIN actionneurs A ON RA.idActionneur = A.id ";
 			sqlRequest += "WHERE idRegle = " + result.hits[0].regle;
 		
-			var db = sqlConnect();
+			//var db = sqlConnect();
 			sql.query(db, sqlRequest, function(result) {
 				logger.debug("Took : " + result.took + "ms\nHits : " + result.count);
 				
@@ -62,12 +64,12 @@ var triggerActionneurs = function(result) {
 					//Récupérer les elem de la requete pour les mettre dans param !
 					logger.info("Capteur " + result.hits[j].id + " de type " + result.hits[j].type + " est actif:" + result.hits[j].active + " de valeur " + result.hits[j].value + ".");
 			
-					admin.setActuator(result.hits[i], function(result) {
-						logger.debug("Retour de function setActuator : " + result);
+					admin.setActuator(result.hits[j], function(result) {
+						logger.debug("Retour de function setActuator : " + JSON.stringify(result));
 					});
 				}
 			
-				sql.close(db);
+				//sql.close(db);
 			});
 			
 			throwAlerts(result.hits[0].regle);
@@ -86,19 +88,19 @@ var recomputeRules = function(result) {
 		
 		var sqlRequest = "";
 		sqlRequest += "SELECT COUNT(*) nbFalse, " + result.hits[i].idRegle + " regle FROM (";
-		sqlRequest += "SELECT (r.debutIntervalle < " + subReq + " AND " + subReq + " < r.finIntervalle) AS test, r.idRegle ";
+		sqlRequest += "SELECT (r.debutIntervalle <= " + subReq + " AND " + subReq + " <= r.finIntervalle) AS test, r.idRegle ";
 		sqlRequest += "FROM regleCapteur r ";
 		sqlRequest += "WHERE idRegle = " + result.hits[i].idRegle;
 		sqlRequest += ") T WHERE T.test = 0";
 		
-		var db = sqlConnect();
+		//var db = sqlConnect();
 		sql.query(db, sqlRequest, function(result) {
 			if(result.count != 1) {
 				logger.error("[recomputeRules] E: Count différent de 1");
 			} else {
 				triggerActionneurs(result);
 			}
-			sql.close(db);
+			//sql.close(db);
 		});
 	}
 }
@@ -111,13 +113,13 @@ var boucle = function() {
 	var sqlRequest = "SELECT DISTINCT idRegle FROM regleCapteur WHERE idCapteur IN ";
 	sqlRequest += "(SELECT idCapteur FROM mesures WHERE time > " + lastUpdate + ")";
 	
-	var db = sqlConnect();
+	
 	sql.query(db, sqlRequest, function(result) {		
-		lastUpdate = new Date().getTime() * 1000;
+		lastUpdate = new Date().getTime();
 		
 		recomputeRules(result);
 		
-		sql.close(db);
+		//sql.close(db);
 	});
 }
 
