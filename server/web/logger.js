@@ -8,6 +8,7 @@ var levels = {
 };
 
 var currentLevel = getLevel(config.getProperty("logger.level"));
+var printDate = config.getProperty("logger.printDate");
 
 /* int getLevel(String strLevel)
  * Converts the String to the code that identifies the level
@@ -22,7 +23,8 @@ function getLevel(strLevel) {
 function display(strLevel, message) {
 	var level = getLevel(strLevel);
 	if(level > currentLevel) return;
-	console.log("["+strLevel+"]\t"+message);
+	var date = printDate ? "[" + new Date() + "]" : "";
+	console.log("["+strLevel+"]" + date + "\t"+message);
 }
 
 /* These functions generate different levels of logs...

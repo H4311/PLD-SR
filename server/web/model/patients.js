@@ -1,4 +1,5 @@
 var squel = require("squel");
+var logger = require("../logger");
 var sql = require("./nodesql");
 
 function sqlConnect() {
@@ -32,6 +33,7 @@ function sqlConnect() {
  * ============================================================================
  */
 function getPatients(param, callback) {
+	logger.debug("Gettings patients...");
 	
 	// Construct the SQL query :
 	var sql_req = squel.select()
@@ -54,6 +56,7 @@ function getPatients(param, callback) {
 	var db = sqlConnect();
 	sql.query(db, sql_req.toString(), function(result) {
 		// Call the record with json response :
+		logger.info("Patients gotten !");
 		callback(result);
 		sql.close(db);
 	});

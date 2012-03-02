@@ -18,6 +18,8 @@ function sqlConnect() {
  * ============================================================================
  */
 function getMurs(param, callback) {
+	logger.info("Gettings walls with id = " + param.id + "...");
+	
 	if(!param.id) {
 		logger.error("[Service murs] no id specified");
 		return;
@@ -32,6 +34,7 @@ function getMurs(param, callback) {
 	var db = sqlConnect();
 	sql.query(db, sql_req.toString(), function(result) {
 		// Call the record with json response :
+		logger.info("Wall gotten !");
 		callback(result);
 		sql.close(db);
 	});

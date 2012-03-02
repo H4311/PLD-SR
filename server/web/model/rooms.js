@@ -1,5 +1,6 @@
 var squel = require("squel");
 var sql = require("./nodesql");
+var logger = require("../logger");
 
 function sqlConnect() {
 	return sql.createClient("localhost", "rithm", "rithm", "pld");
@@ -18,7 +19,8 @@ function sqlConnect() {
  * ============================================================================
  */
 function getRooms(param, callback) {
-
+	var log = "Getting room" + (param.id != null) ? param.id : "s";
+	logger.info(log);
 	// Construct the SQL query :
 	var sql_req = squel.select()
 		.field("id")
@@ -34,6 +36,7 @@ function getRooms(param, callback) {
 	var db = sqlConnect();
 	sql.query(db, sql_req.toString(), function(result) {
 		// Call the record with json response :
+		logger.info("Rooms gotten !");
 		callback(result);
 		sql.close(db);
 	});

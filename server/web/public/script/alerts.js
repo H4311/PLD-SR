@@ -31,7 +31,7 @@ function fetchAlerts(callback) {
 			async:true
 		});	
 	};
-	getLastAlerts.lastUpdate = new Date();
+	getLastAlerts.lastUpdate = new Date(0);
 	setInterval(getLastAlerts,500);
 }
 
@@ -40,7 +40,7 @@ function displayAlerts(ul) {
 		for(var i in data.alerts) {
 			var a = data.alerts[i];
 			var notifTime = dateToString(new Date(a.time/1000));
-			$(ul).append('<li class="alert alert-error"><a class="close" data-dismiss="alert">&times;</a><i class="icon-time"></i>&nbsp;'+a.nom+' : '+ $.timeago.inWords(new Date(a.time/1000)) + '</li>');
+			$(ul).append('<li class="alert alert-error fade in"><a class="close" data-dismiss="alert">&times;</a><i class="icon-time"></i>&nbsp;'+a.nom+' : '+ $.timeago.inWords(new Date(a.time/1000)) + '</li>');
 		}
 	})
 }

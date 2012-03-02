@@ -53,6 +53,7 @@ function sqlConnect() {
  * ============================================================================
  */
 function getSensorsRecords(param, callback) {
+	logger.info("Getting sensors records (param object = " + JSON.stringify(param));
 
 	// Construct the SQL query :
 	var sql_req = squel.select()
@@ -75,6 +76,7 @@ function getSensorsRecords(param, callback) {
 				.and("time > '"+from+"'")
 			
 			if(sensor.type) {
+				var type = sensor.type;
 				sql_cond.and("typeMesure = '"+type+"'");
 			}
 			
@@ -87,7 +89,7 @@ function getSensorsRecords(param, callback) {
 		}
 	}
 	sql_req.where(sql_cond);
-	console.log(sql_req.toString());
+	logger.debug(sql_req.toString());
 	
 	// Send the query to SQL DB :
 	var db = sqlConnect();
@@ -107,6 +109,7 @@ function getSensorsRecords(param, callback) {
 			response.records[id].push(record);
 		}
 		
+		logger.info("Sensors records gotten !");
 		// Call the record with json response :
 		callback(response);
 		sql.close(db);
@@ -115,6 +118,7 @@ function getSensorsRecords(param, callback) {
 }
 
 function getSensorsList(callback) {
+	logger.info("Getting sensors list...");
 	// Construct the SQL query :
 	var sql_req = squel.select()
 		.from("capteurs");
@@ -123,12 +127,14 @@ function getSensorsList(callback) {
 	var db = sqlConnect();
 	sql.query(db, sql_req.toString(), function(result) {
 		// Call the record with json response :
+		logger.info("Sensors list gotten !");
 		callback(result);
 		sql.close(db);
 	});
 }
 
 function getSensorsListByPatient(id, callback) {	
+	logger.info("Getting sensors list by patient with id = " + id);
 	// Construct the SQL query :
 	var sql_req = squel.select()
 		.from("capteurs")
@@ -138,12 +144,14 @@ function getSensorsListByPatient(id, callback) {
 	var db = sqlConnect();
 	sql.query(db, sql_req.toString(), function(result) {
 		// Call the record with json response :
+		logger.info("Sensor lists by patient is OK !");
 		callback(result);
 		sql.close(db);
 	});
 }
 
-function getSensorsListByRoom(id, callback) {	
+function getSensorsListByRoom(id, callback) {
+	logger.info("Getting sensors list by room with id = " + id);
 	// Construct the SQL query :
 	var sql_req = squel.select()
 		.from("capteurs")
@@ -153,12 +161,14 @@ function getSensorsListByRoom(id, callback) {
 	var db = sqlConnect();
 	sql.query(db, sql_req.toString(), function(result) {
 		// Call the record with json response :
+		logger.info("Sensors list by room is OK !");
 		callback(result);
 		sql.close(db);
 	});
 }
 
 function getActuatorsList(callback) {
+	logger.info("Getting actuators list...");
 	// Construct the SQL query :
 	var sql_req = squel.select()
 		.from("actionneurs");
@@ -167,16 +177,19 @@ function getActuatorsList(callback) {
 	var db = sqlConnect();
 	sql.query(db, sql_req.toString(), function(result) {
 		// Call the record with json response :
+		logger.info("Actuators list is gotten !");
 		callback(result);
 		sql.close(db);
 	});
 }
 
 function getSensorsTypes() {
+	logger.info("Getting sensors types.");
 	return [0x0060001, 0x0050201, 0x0070205, 0x0070401, 0x0070801, 0x0070901, 0x0070A01, 0x00A0001];
 }
 
 function getRecordtypesBySensortype(sensortype) {
+	logger.info("Getting record types for sensor type " + sensortype);
 	switch(sensortype) {
 		case 0x0060001:
 			return [1];
@@ -198,6 +211,7 @@ function getRecordtypesBySensortype(sensortype) {
 }
 
 function recordtypeToString(recordtype) {
+	logger.info("Record type " + recordtype + " to string.");
 	switch(recordtype) {
 		case 1:
 			return "contact";
@@ -223,6 +237,7 @@ function recordtypeToString(recordtype) {
 }
 
 function getSensorsLabels() {
+	logger.info("Getting sensors labels.");
 	var res={};
 	getSensorsTypes().forEach(function(type) {
 		res[type]="";
