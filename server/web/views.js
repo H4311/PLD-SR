@@ -190,8 +190,7 @@ function doActuator(req, res){
 	data.id = parseInt(req.param("id", null));
 	data.type = parseInt(req.param("type", null));
 	data.value = parseFloat(req.param("value", null));
-	data.active = req.param("active", null);
-	
+	data.active = parseInt(req.param("active", null));
 
 	modeladmin.setActuator(data, function(result){
 			viewActuators(req, res);
@@ -204,11 +203,13 @@ function doActuator(req, res){
 function viewRules(req, res){
 	logger.info("Viewing rules page.");
 	modelrules.getRules(function(result){
-		
-		modelsensors.getSensorsList(function(data){
-			
-			modelsensors.getActuatorsList(function(data2){
-				res.render('rules', {title: "Règles", rest: rest, rules: result.hits, sensors: data.hits, actuators: data2.hits});
+		modelrules.getRulesSensors(function(dataRulesSensors){
+			modelrules.getRulesActuators(function(dataRulesActuators){
+				modelsensors.getSensorsList(function(dataSensors){
+					modelsensors.getActuatorsList(function(dataActuators){
+						res.render('rules', {title: "Règles", rest: rest, rules: result.hits, sensors: dataSensors.hits, actuators: dataActuators.hits, rulesSensors: dataRulesSensors.hits, rulesActuators: dataRulesActuators.hits});
+					});
+				});
 			});
 		});
 		

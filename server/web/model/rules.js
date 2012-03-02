@@ -96,7 +96,6 @@ function addRule(param, callback) {
 	
 }
 
-
 function getRules(callback) {
 	logger.info("Getting rules...");
 	// Construct the SQL query :
@@ -113,6 +112,36 @@ function getRules(callback) {
 	});
 }
 
+function getRulesSensors(callback) {
+	// Construct the SQL query :
+	var sql_req = squel.select()
+		.from("regleCapteur");
+	
+	// Send the query to SQL DB :
+	var db = sqlConnect();
+	sql.query(db, sql_req.toString(), function(result) {
+		// Call the record with json response :
+		callback(result);
+		sql.close(db);
+	});
+}
+
+function getRulesActuators(callback) {
+	// Construct the SQL query :
+	var sql_req = squel.select()
+		.from("regleActionneur");
+	
+	// Send the query to SQL DB :
+	var db = sqlConnect();
+	sql.query(db, sql_req.toString(), function(result) {
+		// Call the record with json response :
+		callback(result);
+		sql.close(db);
+	});
+}
+
 
 exports.addRule = addRule;
 exports.getRules = getRules;
+exports.getRulesSensors = getRulesSensors;
+exports.getRulesActuators = getRulesActuators;
