@@ -1,5 +1,15 @@
 <div class="hero-unit">
-<h2>Règles</h2>
+
+<div class="row">
+		<h2 class="span2">Règles</h2>
+		<div class="span2">
+			<a class="btn btn-primary" data-toggle="modal" href="#myModal">
+				Ajouter des règles
+			</a>
+		</div>
+</div>
+
+<p></p>
 
 <div class="accordion" id="accordion2">
 	<% rules.forEach(function(rule){ %>
@@ -68,14 +78,6 @@
      <% }) %>
 </div>
 
-
-<div class="row">
-		<div class="span2 offset7">
-			<a class="btn btn-primary" data-toggle="modal" href="#myModal">
-				Ajouter Règles
-			</a>
-		</div>
-	</div>
 </div>
 
 <div class="modal hide fade" id="myModal">
