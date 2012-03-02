@@ -32,12 +32,13 @@ void EnOceanActuatorMusic::setPower(float e) {
 float EnOceanActuatorMusic::update() {
 	pthread_mutex_lock(&mutex);
 	if (on) {
-		system("");
+		system("echo \"####### ON #########\"");
+		cout << "####################################################################\n";
 		pthread_mutex_unlock(&mutex);
 		return 0;
 	}
 	else {
-		system("");
+		system("echo \"------------------- OFFFFFF ----------------------\"");
 		pthread_mutex_unlock(&mutex);
 		return 0;
 	}
@@ -47,7 +48,6 @@ void EnOceanActuatorMusic::set(enocean_data_structure* frame)  {
 	pthread_mutex_lock(&mutex);
 	on = (frame->DATA_BYTE0 >> 3) & 1;
 	pthread_mutex_unlock(&mutex);
-
 }
 
 //------------------------------------------------- Static public Methods
