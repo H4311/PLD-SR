@@ -33,7 +33,7 @@
         <tr>
         <td><i class="icon-signal"></i>&nbsp;<span class="label label-info"><%= measure.name %></span>&nbsp;Capteur N°<%= measure.sensorId %></td>
         <td><span class="measure" id="measure_<%= measure.sensorId %>_<%= measure.recordType %>">0</span></td>
-        <td><a data-toggle="modal" href="#histoModal" class="histo btn btn-info" id="histo_<%= measure.sensorId %>_<%= measure.recordType %>">Voir l'historique</a></td>
+        <td><a data-toggle="modal" href="#histoModal" class="histo btn btn-info" sensorId="<%= measure.sensorId %>" recordType="<%= measure.recordType %>">Voir l'historique</a></td>
         </tr>
         <% }) %>
     </tbody>
@@ -88,9 +88,83 @@
 		<a class="close" data-dismiss="modal">×</a>
 		<h3>Historique</h3>
 	</div>
-	<div class="modal-body" id="divHisto">Chargement...</div>
+	<div class="modal-body" id="divHisto" sensorId="" recordType="">Chargement...</div>
 	<div class="modal-footer">
 		<input type="submit" class="btn btn-primary" value="Ajouter"/>
 		<a href="#" class="btn" data-dismiss="modal">Close</a>
 	</div>
 </div>
+
+
+<script type="text/javascript" src="https://www.google.com/jsapi"></script>
+<script>
+	// Load the Visualization API and the piechart package.
+
+	google.load('visualization', '1.0', {'packages':['corechart']});
+
+	// Set a callback to run when the Google Visualization API is loaded.
+	//google.setOnLoadCallback(drawChart);
+
+	function updateChart() {
+		var randomnumber = Math.floor(Math.random()*11);
+
+		var data = new google.visualization.DataTable();
+		data.addColumn('string', 'TimeSensor');
+		data.addColumn('number', 'Temperature');
+		data.addRows([
+			['T1', randomnumber+2],
+			['T2', randomnumber-6],
+			['T3', randomnumber], 
+			['T4', randomnumber],
+			['T5', randomnumber+11]
+		]);
+	}
+
+	// Instantiate and draw our chart, passing in some options.
+	$(document).ready( function() {
+
+		var chart = new google.visualization.LineChart(document.getElementById('divHisto'));
+
+		var randomnumber = Math.floor(Math.random()*11);
+		// Create the data table.
+		var data = new google.visualization.DataTable();
+		data.addColumn('number', 'TimeSensor');
+		data.addColumn('number', 'blala');
+		/*data.addRows([
+			['T1', 24],
+			['T2', 29],
+			['T3', randomnumber], 
+			['T4', 25],
+			['T5', 18]
+		]);*/
+
+		// Callback that creates and populates a data table, 
+		// instantiates the pie chart, passes in the data and
+		// draws it.
+		var drawChart = function drawChart() {
+
+			// Set chart options
+			var options = {title:'Fuck this shit, I\'m a chart',
+				width: 500,
+				height: 300,
+				vAxis: {title: "TODO:recupereType"},
+				hAxis: {title: "Time"},
+				animation:{
+					duration: 500,
+					easing: 'in'
+				},
+			};
+
+			chart.draw(data, options);
+		};
+
+		drawChart();
+
+	});
+	
+	$(".histo").click(function() {
+		$("#divHisto").attr("sensorId", $(this).attr("sensorId"));
+		$("#divHisto").attr("recordType", $(this).attr("recordType"));
+		updateChart();
+	});
+</script>

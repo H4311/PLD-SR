@@ -73,6 +73,7 @@ CREATE TABLE regleCapteur (
 	id INTEGER PRIMARY KEY AUTO_INCREMENT,
 	idRegle INTEGER,
 	idCapteur INTEGER,
+	typeMesure INTEGER,
 	debutIntervalle REAL,
 	finIntervalle REAL,
 	FOREIGN KEY (idRegle) REFERENCES regles (id),

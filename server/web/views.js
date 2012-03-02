@@ -190,7 +190,14 @@ function doActuator(req, res){
  */
 function viewRules(req, res){
 	modelrules.getRules(function(result){
-		res.render('rules', {title: "Règles", rest: rest, rules: result.hits });
+		
+		modelsensors.getSensorsList(function(data){
+			
+			modelsensors.getActuatorsList(function(data2){
+				res.render('rules', {title: "Règles", rest: rest, rules: result.hits, sensors: data.hits, actuators: data2.hits});
+			});
+		});
+		
 	});
 
 }
