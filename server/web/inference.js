@@ -80,7 +80,7 @@ var recomputeRules = function(result) {
 		//On compte le nombre de capteurs qui ne sont pas dans l'intervalle permettant de déclencher la règle
 		console.log("Test de la règle " + result.hits[i].idRegle);
 		
-		var subReq = "(SELECT mesure FROM mesures WHERE idCapteur = r.idCapteur ORDER BY time DESC LIMIT 1)";
+		var subReq = "(SELECT mesure FROM mesures WHERE idCapteur = r.idCapteur AND typeMesure = r.typeMesure ORDER BY time DESC LIMIT 1)";
 		
 		var sqlRequest = "";
 		sqlRequest += "SELECT COUNT(*) nbFalse, " + result.hits[i].idRegle + " regle FROM (";
