@@ -12,6 +12,7 @@
 //--------------------------------------------------------- System Include
 using namespace std;
 #include <iostream>
+#include <cstdlib>
 //------------------------------------------------------ Personnal Include
 #include "EnOceanActuatorMusic.h"
 #include "../Model/Room.h"
@@ -33,7 +34,7 @@ float EnOceanActuatorMusic::update() {
 	if (on) {
 		system("");
 		pthread_mutex_unlock(&mutex);
-		return coef;
+		return 0;
 	}
 	else {
 		system("");
