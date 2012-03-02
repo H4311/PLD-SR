@@ -10,24 +10,23 @@ function sqlConnect() {
  * REQUEST :
  * ============================================================================
  * {
-	"idRegle" : 12 // pour modifier une règle existante
- * 	"nom" : Règle froid
- *	"createsAlert" : 1
+ * 	"nom" : "Règle froid",
+ *	"createsAlert" : 1,
  *  
- * 	"idCapteur" : 23
- * 	"debIT" : -10
- * 	"finIT" :18
+ * 	"idCapteur" : 23,
+ * 	"typeMesure": 1,
+ * 	"debIT" : -10,
+ * 	"finIT" :18,
  * 
- * 	"idActionneur" : 34
- * 	"valeur" : 42
+ * 	"idActionneur" : 34,
+ * 	"valeur" : 42,
  * 	"isActive" : 1
- * 
- * } // TODO
+ * }
  * ============================================================================
  *
  * RESPONSE :
  * ============================================================================
- *	TODO
+ *	réponse normale avec hits
  * ============================================================================
  */
 
