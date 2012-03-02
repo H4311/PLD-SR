@@ -15,6 +15,7 @@ body {
 <script type="text/javascript">
 // ---- GLOBAL VAR
 var rest = "<%= rest %>";
+
 </script>
 <script src="http://code.jquery.com/jquery-1.7.1.js"></script>
 </head>
@@ -52,11 +53,15 @@ var rest = "<%= rest %>";
 
 <footer>&copy; Hexanome H4311 - 2012</footer>
 
+<ul id="alerts_container"></ul>
+
 </div>
 
 <script src="bootstrap/js/bootstrap.js"></script>
 <!-- TODO Add JS scripts here -->
 <script src="script/lib/kinetic-v3.7.3.min.js"></script>
+<script src="script/lib/TimeAgo/jquery.dateFormat2.js"></script>
+<script src="script/lib/TimeAgo/jquery.timeago2.js"></script>
 <script src="script/common.js"></script>
 <script src="script/color.js"></script>
 <script src="script/objects.js"></script>
@@ -66,6 +71,13 @@ var rest = "<%= rest %>";
 <script src="script/sensors.js"></script>
 <script src="script/actuators.js"></script>
 <script src="script/admin_devices.js"></script>
+
+<script type="application/x-javascript">
+		$(document).ready(function() {
+			displayAlerts('#alerts_container') ;
+
+		});
+</script>
 	
 </body>
 

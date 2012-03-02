@@ -7,6 +7,8 @@ var modelsensors = require("./model/sensors");
 var modeladmin = require("./model/admin");
 var modelrules = require("./model/rules");
 
+var logger = require("./logger");
+
 var rest = config.getProperty("security.ssl") ? "https://" : "http://";
 rest += config.getProperty("rest.url");
 
@@ -14,6 +16,7 @@ rest += config.getProperty("rest.url");
  * VIEW Index
  */
 function viewIndex(req, res) {
+	logger.debug("Viewing index.");
 	var req = {};
 	
     // Get rooms details
@@ -28,6 +31,7 @@ function viewIndex(req, res) {
  */
 function viewRoom(req, res) {
     var id = req.param("id", null);
+	logger.info("Viewing room (id = " + id + ") page.");
     var req = {"id":id};
    
     // Get rooms details
@@ -54,6 +58,7 @@ function viewRoom(req, res) {
  */
 function viewLogin(req, res) {
 	next = req.param("next", null);
+	logger.info("Viewing login page. Next is : " + next);
 	res.render('login', {title: "Login", rest: rest, next: next, error: null});
 }
 
@@ -62,6 +67,7 @@ function viewLogin(req, res) {
  */
 function viewPatient(req, res) {
 	var id = req.param("id", null);
+	logger.info("Viewing patient (id = " + id + " page");
 	var req = {"id":id};
 	
 	// Get model data
@@ -99,6 +105,7 @@ function viewPatient(req, res) {
  * VIEW Notifications
  */
 function viewNotif(req, res) {
+	logger.info("Viewing notification page");
 	//TODO: Get the last 24h notifs
 	var now = new Date();
 	var d = (now.getTime() - 3600*24*1000);
@@ -136,10 +143,12 @@ function twoDigits(nb) {
 
 
 function viewNotfound(req, res) {
+	logger.warn("View not found : " + req.url);
 	res.render('404', {title: "Page non trouvée", rest: rest});
 }
 
 function viewHelp(req, res) {
+	logger.info("Viewing help page.");
 	res.render('help', {title: "Aide", rest: rest});
 }
 
@@ -150,6 +159,7 @@ function addSensorPatient(req, res){
 	var patientId = req.param("id", null);
 	var sensorId = req.param("sensorId", null);
 	var sensorType = req.param("sensorType", null);
+	logger.info("Adding sensor page");
 	
 	var data={};
 	data.id = sensorId;
@@ -168,33 +178,38 @@ function addSensorPatient(req, res){
  * VIEW getActuatorsList
  */
 function viewActuators(req, res){
+	logger.info("Viewing actuators page.");
 		modelsensors.getActuatorsList(function(result){
 			res.render('actuators', {title: "Actionneurs", rest: rest, actuators: result.hits });
 		});
 }
 
-function doActuator(req, res){	
+function doActuator(req, res){
+	logger.info("Setting actuator page.");
 	var data={};
 	data.id = parseInt(req.param("id", null));
 	data.type = parseInt(req.param("type", null));
 	data.value = parseFloat(req.param("value", null));
-	data.active = req.param("active", null);
+	data.active = parseInt(req.param("active", null));
 
 	modeladmin.setActuator(data, function(result){
 			viewActuators(req, res);
-		});
+	});
 }
 
 /*
  * VIEW viewRules
  */
 function viewRules(req, res){
+	logger.info("Viewing rules page.");
 	modelrules.getRules(function(result){
-		
-		modelsensors.getSensorsList(function(data){
-			
-			modelsensors.getActuatorsList(function(data2){
-				res.render('rules', {title: "Règles", rest: rest, rules: result.hits, sensors: data.hits, actuators: data2.hits});
+		modelrules.getRulesSensors(function(dataRulesSensors){
+			modelrules.getRulesActuators(function(dataRulesActuators){
+				modelsensors.getSensorsList(function(dataSensors){
+					modelsensors.getActuatorsList(function(dataActuators){
+						res.render('rules', {title: "Règles", rest: rest, rules: result.hits, sensors: dataSensors.hits, actuators: dataActuators.hits, rulesSensors: dataRulesSensors.hits, rulesActuators: dataRulesActuators.hits});
+					});
+				});
 			});
 		});
 		
@@ -203,6 +218,8 @@ function viewRules(req, res){
 }
 
 function addRule(req, res){
+	logger.info("Adding rule page.");
+	
 	var idRegle = req.param("idRegle", null);
 	var nom = req.param("nom", null);
 	var createsAlert = req.param("createsAlert", null);

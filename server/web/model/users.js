@@ -1,3 +1,5 @@
+var logger = require("../logger");
+
 var credentials = {
 	arnal: "4rn4l",
 	tibal: "t!b4l",
@@ -12,6 +14,7 @@ var credentials = {
  * Could be implemented, couldn't it ?
  */
 function getCredentials() {
+	logger.info("Gettings credentials...");
 	return credentials;
 }
 

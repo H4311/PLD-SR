@@ -150,7 +150,7 @@ extern "C" {
 	void EnOceanSensorAPI::toFrame_Actuator(enocean_data_structure* frame, EnOceanSensorAPI::SensorId id, int type, bool switchOn, float value) {
 			switch (type) {
 			// Switch :
-			case 0x1050201 : { toFrame_Switch(frame, id, switchOn); break; }
+			case 0x1050201 : { toFrame_Switch(frame, id, !switchOn); break; }
 
 			// Air Cond :
 			case 0x1070201 : { toFrame_AirConditioning(frame, id, switchOn, value, -40.0, 0.0); break; }

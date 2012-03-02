@@ -42,11 +42,14 @@ curl -H 'content-type: application/json' -XPOST https://localhost:1337/rules -d 
  */
 
 function addRule(param, callback) {
+	
 	if(!param.nom) {
 		logger.warn("[Service rules] Unnamed rule");
 		callback({});
 		return;
 	}
+	logger.info("Adding rule " + param.nom + "...");
+	
 	var db = sqlConnect();
 	
 	var sql_req1 = "SELECT id FROM regles WHERE nom = '"+param.nom+"';";
@@ -64,13 +67,13 @@ function addRule(param, callback) {
 		}
 		if(param.idCapteur && param.debIT && param.finIT) {
 			//Insertion d'un règle/capteur
-			console.log("Insertion regleCapteur");
+			logger.info("Insertion regleCapteur");
 			sql_req += "INSERT INTO regleCapteur (idRegle, idCapteur, debutIntervalle, finIntervalle) ";
 			sql_req += "VALUES((SELECT id FROM regles WHERE nom='" + param.nom + "'), " + param.idCapteur + ", " + param.debIT + ", " + param.finIT + ");";
 		}
 		if(param.idActionneur && param.valeur && param.isActive) {
 			//Insertion d'un règle/actionneur
-			console.log("Insertion regleActionneur");
+			logger.info("Insertion regleActionneur");
 			sql_req += "INSERT INTO regleActionneur (idRegle, idActionneur, valeur, isActive) ";
 			sql_req += "VALUES((SELECT id FROM regles WHERE nom='" + param.nom + "'), " + param.idActionneur + ", " + param.valeur + ", " + param.isActive + ");";
 		}
@@ -83,6 +86,7 @@ function addRule(param, callback) {
 
 		sql.query(db, sql_req.toString(), function(result) {
 			// Call the record with json response :
+			logger.info("Rule added !");
 			callback(result);
 			sql.close(db);
 			
@@ -92,11 +96,40 @@ function addRule(param, callback) {
 	
 }
 
-
 function getRules(callback) {
+	logger.info("Getting rules...");
 	// Construct the SQL query :
 	var sql_req = squel.select()
 		.from("regles");
+	
+	// Send the query to SQL DB :
+	var db = sqlConnect();
+	sql.query(db, sql_req.toString(), function(result) {
+		// Call the record with json response :
+		logger.info("Rules gotten !");
+		callback(result);
+		sql.close(db);
+	});
+}
+
+function getRulesSensors(callback) {
+	// Construct the SQL query :
+	var sql_req = squel.select()
+		.from("regleCapteur");
+	
+	// Send the query to SQL DB :
+	var db = sqlConnect();
+	sql.query(db, sql_req.toString(), function(result) {
+		// Call the record with json response :
+		callback(result);
+		sql.close(db);
+	});
+}
+
+function getRulesActuators(callback) {
+	// Construct the SQL query :
+	var sql_req = squel.select()
+		.from("regleActionneur");
 	
 	// Send the query to SQL DB :
 	var db = sqlConnect();
@@ -110,3 +143,5 @@ function getRules(callback) {
 
 exports.addRule = addRule;
 exports.getRules = getRules;
+exports.getRulesSensors = getRulesSensors;
+exports.getRulesActuators = getRulesActuators;
