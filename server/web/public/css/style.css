@@ -16,7 +16,7 @@ body {
 }
 
 #alerts_container li {
-	margin: 0;
+	margin: 2px;
 }
 
 #alerts_container li:first-child {
