@@ -4,3 +4,4 @@ gThread
 *~
 *node_modules/
 *.log
+server/controller/Debug/EnOcean2

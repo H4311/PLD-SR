@@ -5,6 +5,8 @@ var config = require("./config");
 var services = require("./services");
 var views = require("./views");
 var authModule = require("./auth").authModule;
+var inference = require("./inference");
+
 var logger = require("./logger");
 
 // Catch for all exception
@@ -109,4 +111,6 @@ for (var url in viewHandler) {
 
 logger.warn("HTML Server routes activated.");
 html.listen(8080);
+
+inference.runInference();
 logger.warn("HTML Server is listening.");
