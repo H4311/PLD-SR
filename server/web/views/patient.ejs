@@ -127,9 +127,9 @@
 		if(gChartsSettings.sensorId != sensorId) return;
 		
 		var timestamp = new Date().getTime();
-		getSensorValuesByType(sensorId, function(data) {
-			if(data.records[sensorId]) {
-				var records = data.records[sensorId];
+		getSensorValuesByType(sensorId, function(result) {
+			if(result.records[sensorId]) {
+				var records = result.records[sensorId];
 				for( var i in records) {
 					var record = records[i];
 					var date = dateToString(new Date(parseInt(record.time)));
@@ -139,18 +139,19 @@
 				drawchart(chart, data);
 			}
 			
-			setInterval(function() {
+			setTimeout(function() {
 				updateChart(chart, data, sensorId, type, timestamp);
 			}, 5000);
 		}, type, lastTimestamp);
 	}
 	
-	function initChart(sensorId, type, data) {
+	function initChart(sensorId, type, result) {
+		var timestamp = new Date().getTime();
 		gChartsSettings.sensorId = sensorId;
 		$("#divHisto").html("Aucune valeur...");
-		if(data.records[sensorId]) {
+		if(result.records[sensorId]) {
 			$("#divHisto").html("Chargement...");
-			var records = data.records[sensorId];
+			var records = result.records[sensorId];
 			var chart = new google.visualization.LineChart($("#divHisto")[0]);
 			var data = new google.visualization.DataTable();
 			data.addColumn('string', 'time');
@@ -163,7 +164,7 @@
 			}
 			
 			drawchart(chart, data);
-			updateChart(chart, data, sensorId, type, new Date().getTime());
+			updateChart(chart, data, sensorId, type, timestamp);
 		}
 	}
 	
@@ -172,8 +173,8 @@
 		var type = $(this).attr("recordType");
 		
 		// Get Sensor Values from 1 hour, and init the google chart :
-		getSensorValuesByType(id, function(data) {
-			initChart(id, type, data);
+		getSensorValuesByType(id, function(result) {
+			initChart(id, type, result);
 		}, type, new Date().getTime() - 5*3600*1000);
 	});
 	

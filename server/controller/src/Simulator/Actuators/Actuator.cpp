@@ -16,6 +16,7 @@ using namespace std;
 #include "Actuator.h"
 
 #include "EnOceanActuatorAeration.h"
+#include "EnOceanActuatorMusic.h"
 #include "EnOceanActuatorAirConditioning.h"
 #include "EnOceanActuatorLight.h"
 #include "EventActuatorFire.h"
@@ -64,7 +65,12 @@ Actuator* Actuator::createActuator(int id, int type) {
 
 	// Fire :
 	case 0x2000001 : { return new EventActuatorFire(id, 1.5);}
+	
+	//Music
+	case 0x2000010 : { return new EnOceanActuatorMusic(id, 0);}
+	
 	}
+	
 
 	return NULL;
 }

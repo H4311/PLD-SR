@@ -28,6 +28,7 @@
 						<thead>
 							<tr>
 							<th>Id</th>
+							<th>Type mesure</th>
 							<th>Début intervalle</th>
 							<th>Fin intervalle</th>
 							</tr>
@@ -38,6 +39,7 @@
 								%>
 							<tr>
 							<td><i class="icon-ok-sign"></i>&nbsp;<%= ruleSensor.id %></span></td>
+							<td><%= ruleSensor.typeMesure %></td>
 							<td><%= ruleSensor.debutIntervalle %></td>
 							<td><%= ruleSensor.finIntervalle %></td>
 							</tr>
@@ -111,6 +113,15 @@
 			  <p class="help-block">(ex: 101)</p>
 				</div>
 			  </div>
+			  
+			  <div class="control-group">
+            <label class="control-label" for="select01">Type de mesure</label>
+            <div class="controls">
+              <input type="text" name="typeMesure" class="input-xlarge" id="input01"/>
+			  <p class="help-block">Ex: 2</p>
+				</div>
+			  </div>
+			  
 			  <div class="control-group">
             <label class="control-label" for="select01">Debut Intervalle</label>
             <div class="controls">

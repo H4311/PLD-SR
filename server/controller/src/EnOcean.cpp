@@ -10,6 +10,7 @@
 #include "Simulator/EnOCeanBaseSimulator.h"
 #include "Simulator/Sensors/SensorSimulatorTempHumi.h"
 #include "Simulator/Actuators/EnOceanActuatorAirConditioning.h"
+#include "Simulator/Actuators/EnOceanActuatorMusic.h"
 #include "Simulator/Actuators/EventActuatorFire.h"
 #include <iostream>
 #include "Devices/DeviceTable.h"
@@ -387,6 +388,9 @@ int main(int argc, char *argv[]) {
 	airCond.addSubject(&room118);
 	airCond.addSubject(&room115);
 	airCond.setStatus(true);
+	
+	EnOceanActuatorMusic ziq = EnOceanActuatorMusic(4288617991, 0);
+	simulator.addActuator(&ziq);
 
 	EventActuatorFire fire = EventActuatorFire(2, 5);
 	fire.addSubject(&room113);

@@ -26,6 +26,7 @@ src/EnOcean.d: ../src/EnOcean.cpp ../src/Config.h \
  ../src/Simulator/Sensors/SensorSimulator.h \
  ../src/Simulator/Actuators/EnOceanActuatorAirConditioning.h \
  ../src/Simulator/Actuators/EnOceanActuator.h \
+ ../src/Simulator/Actuators/EnOceanActuatorMusic.h \
  ../src/Simulator/Actuators/EventActuatorFire.h \
  ../src/Simulator/Actuators/../Model/Room.h \
  ../src/Simulator/Actuators/../Model/Subject.h \
@@ -95,6 +96,8 @@ src/EnOcean.d: ../src/EnOcean.cpp ../src/Config.h \
 ../src/Simulator/Actuators/EnOceanActuatorAirConditioning.h:
 
 ../src/Simulator/Actuators/EnOceanActuator.h:
+
+../src/Simulator/Actuators/EnOceanActuatorMusic.h:
 
 ../src/Simulator/Actuators/EventActuatorFire.h:
 
