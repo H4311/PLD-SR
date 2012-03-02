@@ -62,3 +62,7 @@ function twoDigits(nb) {
 	var retour = nb < 10 ? "0" + nb : "" + nb;
 	return retour;
 }
+
+jQuery(document).ready(function() {
+  jQuery("abbr.timeago").timeago();
+});

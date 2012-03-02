@@ -26,8 +26,8 @@ function twoDigits(nb) {
 <br />
 		<% for(var i in notifs.alerts) {
 			var a = notifs.alerts[i];
-			var notifTime = dateToString(new Date(a.time/1000)); %>
-			<div class="alert"><i class="icon-time"></i>&nbsp;<%= a.nom%>" : <%=notifTime %>
+			notifTime = dateToString(new Date(a.time/1000)); %>
+			<div class="alert"><i class="icon-time"></i>&nbsp;<%= a.nom%> : <%=notifTime %>
 			</div>
 		<% } %>
 </div>
