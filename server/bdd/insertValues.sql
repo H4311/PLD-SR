@@ -384,13 +384,24 @@ INSERT INTO actionneurs(numeroActionneur, type ) VALUES (4288617991, 0x2000010);
 INSERT INTO regles (nom, createsAlert) VALUES ('Ecran On', true);
 INSERT INTO regles (nom, createsAlert) VALUES ('Ecran Off', true);
 
-INSERT INTO regleCapteur (idRegle, idCapteur, typeMesure, debutIntervalle, finIntervalle) VALUES ((SELECT id FROM regles WHERE nom = 'Ecran On'), (SELECT id FROM capteurs WHERE numeroCapteur=0x0021CBE3 AND type=0x0050201), 2, 0, 16);
+INSERT INTO regles (nom, createsAlert) VALUES ('Music On', true);
+INSERT INTO regles (nom, createsAlert) VALUES ('Music Off', true);
 
+INSERT INTO regleCapteur (idRegle, idCapteur, typeMesure, debutIntervalle, finIntervalle) VALUES ((SELECT id FROM regles WHERE nom = 'Music On'), (SELECT id FROM capteurs WHERE numeroCapteur=0x0021CBE3 AND type=0x0050201), 2, 0, 16);
+INSERT INTO regleCapteur (idRegle, idCapteur, typeMesure, debutIntervalle, finIntervalle) VALUES ((SELECT id FROM regles WHERE nom = 'Music Off'), (SELECT id FROM capteurs WHERE numeroCapteur=0x0021CBE3 AND type=0x0050201), 2, 32, 48);
+
+INSERT INTO regleActionneur (idRegle, idActionneur, valeur, isActive)
+	VALUES ((SELECT id FROM regles WHERE nom = 'Music On'), (SELECT id FROM actionneurs WHERE numeroActionneur = 4288617991 AND type = 0x2000010), 0, true);
+INSERT INTO regleActionneur (idRegle, idActionneur, valeur, isActive)
+	VALUES ((SELECT id FROM regles WHERE nom = 'Music Off'), (SELECT id FROM actionneurs WHERE numeroActionneur = 4288617991 AND type = 0x2000010), 0, false);
+
+
+
+INSERT INTO regleCapteur (idRegle, idCapteur, typeMesure, debutIntervalle, finIntervalle) VALUES ((SELECT id FROM regles WHERE nom = 'Ecran On'), (SELECT id FROM capteurs WHERE numeroCapteur=0x0021CBE3 AND type=0x0050201), 2, 0, 16);
 INSERT INTO regleCapteur (idRegle, idCapteur, typeMesure, debutIntervalle, finIntervalle) VALUES ((SELECT id FROM regles WHERE nom = 'Ecran Off'), (SELECT id FROM capteurs WHERE numeroCapteur=0x0021CBE3 AND type=0x0050201), 2, 32, 48);
 
 INSERT INTO regleActionneur (idRegle, idActionneur, valeur, isActive)
 	VALUES ((SELECT id FROM regles WHERE nom = 'Ecran On'), (SELECT id FROM actionneurs WHERE numeroActionneur = 4288617990 AND type = 17105409), 0, true);
-
 INSERT INTO regleActionneur (idRegle, idActionneur, valeur, isActive)
 	VALUES ((SELECT id FROM regles WHERE nom = 'Ecran Off'), (SELECT id FROM actionneurs WHERE numeroActionneur = 4288617990 AND type = 17105409), 0, false);
 

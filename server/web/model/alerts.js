@@ -37,14 +37,14 @@ function sqlConnect() {
  */
 function getAlerts(param, callback) {
 	var from = Date.parse(param.from);
-	logger.info("Getting alerts from " + from + ".");
+	logger.info("Getting alerts from " + from*1000 + ".");
 	// retrieve des alertes déclenchées
 	var sql_req = "";
 	sql_req += "SELECT time, idRegle, (SELECT nom FROM regles WHERE id = idRegle) nom ";
 	sql_req += "FROM alertes ";
-	sql_req += "WHERE time > " + from + " ";
+	sql_req += "WHERE time > " + from*1000 + " ";
 	if(param.to) {
-		sql_req += "AND time < " + Date.parse(param.to) + " ";
+		sql_req += "AND time < " + Date.parse(param.to)*1000 + " ";
 	}
 	sql_req += "ORDER BY time DESC ";
 	
