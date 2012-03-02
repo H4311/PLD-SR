@@ -192,6 +192,9 @@ extern "C" {
 
 			// Defibrillator :
 			case 0x1070C01 : { toFrame_Defibrillator(frame, id, switchOn, value, 0.0, 10.0); break; }
+			
+			// Music :
+			case 0x2000010 : { toFrame_Music(frame, id, switchOn); break; }
 			}
 		}
 
@@ -299,6 +302,20 @@ extern "C" {
 		EnOceanSensorAPI::setID(frame, (EnOceanSensorAPI::SensorId)id);
 		float multiplyer = (float)(valMax-valMin) / 255.0;
 		frame->DATA_BYTE3 = (BYTE)((val - (float)( (multiplyer>=0)? valMin : valMax )) / multiplyer);
+		frame->DATA_BYTE0 = on?(1<<3):(0<<3);
+		EnOceanSensorAPI::setHeader(frame, EnOceanSensorAPI::ORG_4BS, false);
+		EnOceanSensorAPI::setCheckSum(frame);
+
+		return;
+	}
+
+	void  EnOceanSensorAPI::toFrame_Music(enocean_data_structure* frame, EnOceanSensorAPI::SensorId id, bool on) {
+		BYTE* byte = (BYTE*)(frame);
+		for (unsigned int i = 0; i < EnOceanSensorAPI::FRAME_SIZE/2; i++) {
+			*byte = 0;
+			byte += sizeof(BYTE);
+		}
+		EnOceanSensorAPI::setID(frame, (EnOceanSensorAPI::SensorId)id);
 		frame->DATA_BYTE0 = on?(1<<3):(0<<3);
 		EnOceanSensorAPI::setHeader(frame, EnOceanSensorAPI::ORG_4BS, false);
 		EnOceanSensorAPI::setCheckSum(frame);
