@@ -83,7 +83,7 @@ function fetchSensorsLogs(sensorsLogs, callback) {
 		
 		function callBackFinal(data) {
 			addValues(data);
-			callback(sensorLog);
+			callback(sensorsLogs);
 		}
 		
 		$.ajax({
