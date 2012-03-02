@@ -12,6 +12,7 @@
 #include "Simulator/Actuators/EnOceanActuatorAirConditioning.h"
 #include "Simulator/Actuators/EnOceanActuatorMusic.h"
 #include "Simulator/Actuators/EventActuatorFire.h"
+#include "Simulator/Actuators/EventActuatorAgony.h"
 #include <iostream>
 #include "Devices/DeviceTable.h"
 #include "Devices/EnOceanSensorAPI.h"
@@ -35,7 +36,7 @@ int main(int argc, char *argv[]) {
 	EnOCeanBaseSimulator simulator = EnOCeanBaseSimulator();
 
 	string adresseSimulatedSensor = "127.0.0.1";
-	int portSimulatedSensor = 5025;
+	int portSimulatedSensor = 5027;
 
 	// List of the simulated sensors :
 	vector<int> simulatedSensorsID;
@@ -115,7 +116,7 @@ int main(int argc, char *argv[]) {
 	simulatedSensorsID.push_back(1048672);
 	simulatedSensorsID.push_back(1048673);
 
-	simulatedSensorsID.push_back(0x00001000);
+	//simulatedSensorsID.push_back(0x00001000);
 	simulatedSensorsID.push_back(0x00001001);
 	simulatedSensorsID.push_back(0x00001002);
 	simulatedSensorsID.push_back(0x00001003);
@@ -140,6 +141,8 @@ int main(int argc, char *argv[]) {
 	simulatedSensorsID.push_back(0x00001022);
 	simulatedSensorsID.push_back(0x00001023);
 	simulatedSensorsID.push_back(0x00001024);
+	simulatedSensorsID.push_back(0x00011024);
+	simulatedSensorsID.push_back(0x00011025);
 
 
 	// Define Rooms :
@@ -392,11 +395,13 @@ int main(int argc, char *argv[]) {
 	EnOceanActuatorMusic ziq = EnOceanActuatorMusic(4288617991, 0);
 	simulator.addActuator(&ziq);
 
-	EventActuatorFire fire = EventActuatorFire(2, 5);
-	fire.addSubject(&room113);
+	EventActuatorAgony agony = EventActuatorAgony(100, 5);
+	agony.addSubject(&pat2);
+	agony.addSubject(&pat3);
+	agony.addSubject(&pat4);
 
 	simulator.addActuator(&airCond);
-	simulator.addActuator(&fire);
+
 
 
 // ----- ENOCEAN SENSORS
@@ -424,7 +429,7 @@ int main(int argc, char *argv[]) {
 	string adresseSunSpot = "127.0.0.1";
 	int portSunSpot = 7080;
 
-	table.add((EnOceanSensorAPI::SensorId)0x00005620, (EnOceanSensorAPI::EnOceanCallbackFunction)EnOceanSensorAPI::analyseSunSpot);
+	//table.add((EnOceanSensorAPI::SensorId)0x00005620, (EnOceanSensorAPI::EnOceanCallbackFunction)EnOceanSensorAPI::analyseSunSpot);
 
 
 	ServerSettings serverSettings = ServerSettings(&table, &msgToSend, &msgToSendSimulator, &simulator);
@@ -446,17 +451,22 @@ int main(int argc, char *argv[]) {
 	recepSunSpot.open(adresseSunSpot.c_str(), portSunSpot);
 	recepSunSpot.run();
 
-
-
-
-
 	enocean_data_structure* frame = new enocean_data_structure();
 	EnOceanSensorAPI::toFrame_AirConditioning(frame, 1,true,0,0,40);
 	recepSimulator.pushFrame(frame);
 
+
+	char c;
+	cin >> c;
+	EventActuatorFire fire = EventActuatorFire(2, 5);
+	fire.addSubject(&room113);
+	simulator.addActuator(&fire);
+
+
+
 	for (;;) {
 //		simulator.addSensor(&sensorSimu1);
-//		cout << "<Main> Ajout d'un capteur. Total = " << simulator.countSensors() << endl;
+//		cout << "<Main> Ajout d'un fcapteur. Total = " << simulator.countSensors() << endl;
 //		airCond.update();
 		usleep(1000000);
 	}

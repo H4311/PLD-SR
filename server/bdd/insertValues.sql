@@ -430,3 +430,5 @@ INSERT INTO alertes(time, idRegle) VALUES (1, 100);
 INSERT INTO alertes(time, idRegle) VALUES (10000000000, 101);
 INSERT INTO alertes(time, idRegle) VALUES (100000000000000, 100);
 */
+/*INSERT INTO capteurs(type, numeroCapteur, isGlobal, idSujet) VALUES (0x00A0001,0x00005620, 0, 1001);*/
+

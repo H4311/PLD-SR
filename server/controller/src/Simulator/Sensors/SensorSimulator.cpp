@@ -23,6 +23,7 @@ using namespace std;
 # include "SensorSimulatorContact.h"
 # include "SensorSimulatorSwitch.h"
 # include "SensorSimulatorSunSpot.h"
+# include "SensorSimulatorHeartRate.h"
 //-------------------------------------------------------------- Constants
 
 //----------------------------------------------------------------- PUBLIC
@@ -33,6 +34,7 @@ SensorSimulator* SensorSimulator::createSensorSimulator(int id, int type, Subjec
 	case 0x0060001 : { return new SensorSimulatorContact(id, subject); }
 	case 0x0050201 : { return new SensorSimulatorSwitch(id, subject); }
 	case 0x0070205 : { return NULL; }
+	case 0x0070A01 : {  return new SensorSimulatorHeartRate(id, subject, 0, 400); }
 	case 0x0070401 : { return new SensorSimulatorTempHumi(id, subject, 0, 40); }
 	case 0x0070801 : { return new SensorSimulatorLumAndOcc(id, subject, 0, 510, 0.0, 5.1); }
 	case 0x0070901 : { return new SensorSimulatorCO2(id, subject, 0, 2000); }
