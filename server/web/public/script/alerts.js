@@ -16,7 +16,7 @@ function fetchAlertsComet(callback) {
 function fetchAlerts(callback) {
 	function getLastAlerts() {
 		var toDate = new Date();
-		var strDate = getLastAlerts.lastUpdate.getTime();
+		var strDate = dateToString(getLastAlerts.lastUpdate)
 		var req = {
 			"from" : strDate
 		};
@@ -36,11 +36,16 @@ function fetchAlerts(callback) {
 }
 
 function displayAlerts(ul) {
+	$("#alerts_container").html("");
 	fetchAlerts(function(data) {
-		for(var i in data.alerts) {
-			var a = data.alerts[i];
-			var notifTime = dateToString(new Date(a.time/1000));
-			$(ul).append('<li class="alert alert-error fade in"><a class="close" data-dismiss="alert">&times;</a><i class="icon-time"></i>&nbsp;'+a.nom+' : '+ $.timeago.inWords(new Date(a.time/1000)) + '</li>');
+		if(data.alerts.length > 0) {
+			var str = '';
+			for(var i in data.alerts) {
+				var a = data.alerts[i];
+				var notifTime = dateToString(new Date(a.time/1000));
+				str += '<li class="alert alert-error fade in"><a class="close" data-dismiss="alert">&times;</a><i class="icon-time"></i>&nbsp;'+a.nom+' : '+ dateToString(new Date(a.time/1000)) + '</li>';
+			}
+			$("#alerts_container").html(str);
 		}
 	})
 }

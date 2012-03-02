@@ -9,7 +9,7 @@
 #include "hw.h"
 
 /* 
- * asm instructions depends on archi type (32 or 64 bits)
+ * asm instructions depends on architecture type (32 or 64 bits)
  */
 #if __x86_64__ 
 #define ARCHI64

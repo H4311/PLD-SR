@@ -101,9 +101,6 @@ int main()
 	*/
 	/*createGThread("others", others, NULL, STACK_SIZE);*/
 		
-	/* To be sure they are all well created */
-	listThreads();
-	
 	sem = malloc(sizeof(semaphore));
 	semInit(sem,0);
 	
