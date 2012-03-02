@@ -378,40 +378,32 @@ INSERT INTO capteurs(type, numeroCapteur, isGlobal, idSujet) VALUES (0x0060001,0
 INSERT INTO capteurs(type, numeroCapteur, isGlobal, idSujet) VALUES (0x0060001,0x0001B595, 1, (SELECT id FROM pld.pieces WHERE nom="Ch112"));
 INSERT INTO capteurs(type, numeroCapteur, isGlobal, idSujet) VALUES (0x0070205,0x00893378, 1, (SELECT id FROM pld.pieces WHERE nom="Ch111"));
 
+
+
 INSERT INTO actionneurs(numeroActionneur, type ) VALUES (0xff9f1e06, 17105409);
-INSERT INTO actionneurs(numeroActionneur, type ) VALUES (0xff9f1e05, 17105409);
 
+INSERT INTO capteurs(type, numeroCapteur, isGlobal, idSujet) VALUES (0x00A0001, 0x5620, 0, 1001);
+/*INSERT INTO regles (nom, createsAlert) VALUES ('Prise On', true);*/
+INSERT INTO regles (nom, createsAlert) VALUES ('Prise Off', true);
 
-INSERT INTO regles (nom, createsAlert) VALUES ('Ventilateur On', true);
-INSERT INTO regles (nom, createsAlert) VALUES ('Ventilateur Off', true);
+/*INSERT INTO regleCapteur (idRegle, idCapteur, typeMesure, debutIntervalle, finIntervalle) VALUES ((SELECT id FROM regles WHERE nom = 'Prise On'), (SELECT id FROM capteurs WHERE numeroCapteur=0x5620 AND type=0x00A0001), 5, 0, 9);*/
+INSERT INTO regleCapteur (idRegle, idCapteur, typeMesure, debutIntervalle, finIntervalle) VALUES ((SELECT id FROM regles WHERE nom = 'Prise Off'), (SELECT id FROM capteurs WHERE numeroCapteur=0x5620 AND type=0x00A0001), 5, 10, 1000);
 
-INSERT INTO regleCapteur (idRegle, idCapteur, typeMesure, debutIntervalle, finIntervalle) VALUES ((SELECT id FROM regles WHERE nom = 'Ventilateur On'), (SELECT id FROM capteurs WHERE numeroCapteur=0x0021CBE3 AND type=0x0050201), 2, 0, 16);
-INSERT INTO regleCapteur (idRegle, idCapteur, typeMesure, debutIntervalle, finIntervalle) VALUES ((SELECT id FROM regles WHERE nom = 'Ventilateur Off'), (SELECT id FROM capteurs WHERE numeroCapteur=0x0021CBE3 AND type=0x0050201), 2, 32, 48);
+/*INSERT INTO regleActionneur (idRegle, idActionneur, valeur, isActive)
+	VALUES ((SELECT id FROM regles WHERE nom = 'Prise On'), (SELECT id FROM actionneurs WHERE numeroActionneur = 0xff9f1e06 AND type = 17105409), 0, true);*/
+INSERT INTO regleActionneur (idRegle, idActionneur, valeur, isActive)
+	VALUES ((SELECT id FROM regles WHERE nom = 'Prise Off'), (SELECT id FROM actionneurs WHERE numeroActionneur = 0xff9f1e06 AND type = 17105409), 0, false);
 
-INSERT INTO regleActionneur (idRegle, idActionneur, valeur, isActive)
-	VALUES ((SELECT id FROM regles WHERE nom = 'Ventilateur On'), (SELECT id FROM actionneurs WHERE numeroActionneur = 0xff9f1e06 AND type = 17105409), 0, true);
-INSERT INTO regleActionneur (idRegle, idActionneur, valeur, isActive)
-	VALUES ((SELECT id FROM regles WHERE nom = 'Ventilateur Off'), (SELECT id FROM actionneurs WHERE numeroActionneur = 0xff9f1e06 AND type = 17105409), 0, false);
-	
-INSERT INTO regleActionneur (idRegle, idActionneur, valeur, isActive)
-	VALUES ((SELECT id FROM regles WHERE nom = 'Ventilateur On'), (SELECT id FROM actionneurs WHERE numeroActionneur = 0xff9f1e05 AND type = 17105409), 0, true);
-INSERT INTO regleActionneur (idRegle, idActionneur, valeur, isActive)
-	VALUES ((SELECT id FROM regles WHERE nom = 'Ventilateur Off'), (SELECT id FROM actionneurs WHERE numeroActionneur = 0xff9f1e05 AND type = 17105409), 0, false);
-	
-/*
 INSERT INTO actionneurs(numeroActionneur, type ) VALUES (4288617991, 0x2000010);
 
 INSERT INTO regles (nom, createsAlert) VALUES ('Music On', true);
-INSERT INTO regles (nom, createsAlert) VALUES ('Music Off', true);
 
-INSERT INTO regleCapteur (idRegle, idCapteur, typeMesure, debutIntervalle, finIntervalle) VALUES ((SELECT id FROM regles WHERE nom = 'Music On'), (SELECT id FROM capteurs WHERE numeroCapteur=0x0021CBE3 AND type=0x0050201), 2, 0, 16);
-INSERT INTO regleCapteur (idRegle, idCapteur, typeMesure, debutIntervalle, finIntervalle) VALUES ((SELECT id FROM regles WHERE nom = 'Music Off'), (SELECT id FROM capteurs WHERE numeroCapteur=0x0021CBE3 AND type=0x0050201), 2, 32, 48);
+INSERT INTO regleCapteur (idRegle, idCapteur, typeMesure, debutIntervalle, finIntervalle) VALUES ((SELECT id FROM regles WHERE nom = 'Music On'), (SELECT id FROM capteurs WHERE numeroCapteur=0x0021CBE3 AND type=0x0050201), 2, 0, 48);
 
 INSERT INTO regleActionneur (idRegle, idActionneur, valeur, isActive)
 	VALUES ((SELECT id FROM regles WHERE nom = 'Music On'), (SELECT id FROM actionneurs WHERE numeroActionneur = 4288617991 AND type = 0x2000010), 0, true);
-INSERT INTO regleActionneur (idRegle, idActionneur, valeur, isActive)
-	VALUES ((SELECT id FROM regles WHERE nom = 'Music Off'), (SELECT id FROM actionneurs WHERE numeroActionneur = 4288617991 AND type = 0x2000010), 0, false);
 
+/*
 INSERT INTO regles (nom, createsAlert) VALUES ('Lumière On', true);
 INSERT INTO regles (nom, createsAlert) VALUES ('Lumière Off', true);
 
