@@ -1,5 +1,6 @@
 var squel = require("squel");
 var sql = require("./nodesql");
+var logger = require("../logger");
 
 function sqlConnect() {
 	return sql.createClient("localhost", "rithm", "rithm", "pld");
@@ -32,7 +33,7 @@ function sqlConnect() {
  * ============================================================================
  */
 function getBondsActuators(param, callback) {
-
+	logger.debug("Getting bonds actuators...");
 	// Construct the SQL query :
 	var sql_req = squel.select()
 		.field("id")
@@ -54,6 +55,7 @@ function getBondsActuators(param, callback) {
 	var db = sqlConnect();
 	sql.query(db, sql_req.toString(), function(result) {
 		// Call the record with json response :
+		log.info("Bonds actuators gotten !");
 		callback(result);
 		sql.close(db);
 	});

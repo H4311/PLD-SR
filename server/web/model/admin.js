@@ -48,6 +48,7 @@ function addDevice(param, callback) {
 		query.i = param.id;
 		query.t = param.type;
 		query.s = param.subject;
+	logger.info("Adding device : id = " + query.i + ", type = " + query.t + ", subject = " + query.s);
 		
 	// Send the query :
 	var client = connectClient();
@@ -58,9 +59,10 @@ function addDevice(param, callback) {
 		callback(response);
 	});
 	client.on("connect", function() {
-		console.log("[addDevice] Connected to the server");
+		logger.debug("[addDevice] Connected to the server");
 		client.write(JSON.stringify(query), function() {
-			console.log("[addDevice] message sent to the server");
+			logger.debug("[addDevice] message sent to the server");
+			logger.info("Device added !");
 			// Construct json response :
 			var response = {};
 			response.status = "ok";
@@ -89,13 +91,15 @@ function removeDevice(param, callback) {
 	var query = {};
 		query.a = 2;
 		query.i = param.id;
+	logger.info("Removing device with id = " + query.i);
 		
 	// Send the query :
 	var client = connectClient();
 	client.on("connect", function() {
-		console.log("[removeDevice] Connected to the server");
+		logger.debug("[removeDevice] Connected to the server");
 		client.write(JSON.stringify(query), function() {
-			console.log("[removeDevice] message sent to the server");
+			logger.debug("[removeDevice] message sent to the server");
+			logger.info("Device removed !");
 			// Construct json response :
 			var response = {};
 			response.status = "ok";
@@ -129,6 +133,7 @@ function setActuator(param, callback) {
 		query.t = param.type;
 		query.e = param.active ? 1 : 0;
 		query.v = param.value;
+	logger.info("Setting actuator with id = " + query.i + ", type = " + query.y + ", active = " + query.e + ", value = " + query.v);
 		
 	// Send the query :
 	var client = connectClient();
@@ -139,9 +144,10 @@ function setActuator(param, callback) {
 		callback(response);
 	});
 	client.on("connect", function() {
-		console.log("[setActuator] Connected to the server");
+		logger.debug("[setActuator] Connected to the server");
 		client.write(JSON.stringify(query), function() {
-			console.log("[setActuator] message sent to the server");
+			logger.debug("[setActuator] message sent to the server");
+			logger.info("Actuator set !");
 			// Construct json response :
 			var response = {};
 			response.status = "ok";

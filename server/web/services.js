@@ -7,6 +7,8 @@ var modelmurs = require("./model/murs");
 var modelbondsActuators = require("./model/bondsActuators");
 var modelrules = require("./model/rules");
 
+var logger = require("./logger");
+
 function error(code, resp) {
 	var result = {};
 	result.error = {};
@@ -23,6 +25,7 @@ function error(code, resp) {
 			result.error.msg = "Unknow error";
 	}
 	
+	logger.error("Error function with message : " + result.error.msg);
 	var jsonResult = JSON.stringify(result);
 	resp.end(jsonResult);
 }
@@ -47,6 +50,7 @@ function parseRequest(req, names) {
  * Gets records from sensors, allows to specify an interval.
  */
 function serviceSensors(req, resp) {
+	logger.info("Service sensors.");
 	writeHeaders(resp);
 	
 	data = parseRequest(req, ["sensors"]);
@@ -62,6 +66,7 @@ function serviceSensors(req, resp) {
  * Allows to pass values to actuators.
  */
 function serviceActuators(req, resp) {
+	logger.info("Service actuators.");
 	writeHeaders(resp);
 	
 	request = parseRequest(req, ["id", "type", "active", "value"]);
@@ -106,23 +111,27 @@ OR
  * ============================================================================
  */
 function serviceListSensors(req, resp) {
+	logger.info("Service list sensors.");
 	writeHeaders(resp);
 	
 	request = parseRequest(req, ["idPatient", "idRoom"]);
 	
 	if(request.idPatient) {
+		logger.debug("Service list sensors : id patient = " + idPatient);
 		// Get the response from the modelsensors layer :
 		modelsensors.getSensorsListByPatient(request.idPatient, function(response) {
 			// Send the stringified json to client :
 			resp.json(response);
 		});
 	} else if(request.idRoom) {
+		logger.debug("Service list sensors : id room = " + idRoom);
 		// Get the response from the modelsensors layer :
 		modelsensors.getSensorsListByRoom(request.idRoom, function(response) {
 			// Send the stringified json to client :
 			resp.json(response);
 		});
 	} else {
+		logger.debug("Service list sensors : getting all sensors");
 		// Get the response from the modelsensors layer :
 		modelsensors.getSensorsList(function(response) {
 			// Send the stringified json to client :
@@ -136,6 +145,7 @@ function serviceListSensors(req, resp) {
  * Gets list of actuators.
  */
 function serviceListActuators(req, resp) {
+	logger.info("Service list actuators.");
 	writeHeaders(resp);
 	
 	// Get the response from the modelsensors layer :
@@ -150,6 +160,7 @@ function serviceListActuators(req, resp) {
  * Allows to add/remove sensors/actuators.
  */
 function serviceAdminAddDevices(req, resp) {
+	logger.info("Service admin add devices.");
 	writeHeaders(resp);
 	
 	request = parseRequest(req, ["id", "type"]);
@@ -162,6 +173,7 @@ function serviceAdminAddDevices(req, resp) {
 }
 
 function serviceAdminRemoveDevices(req, resp) {
+	logger.info("Service admin remove devices.");
 	writeHeaders(resp);
 	
 	request = parseRequest(req, ["id"]);
@@ -177,6 +189,7 @@ function serviceAdminRemoveDevices(req, resp) {
 /* SERVICE Rules
  */
 function serviceAddRule(req, resp) {
+	logger.info("Service add rules.");
 	writeHeaders(resp);
 
 	request = parseRequest(req, ["nom", "createsAlert", "idCapteur", "debIT", "finIT", "idActionneur", "valeur", "isActive"]);
@@ -194,6 +207,7 @@ function serviceAddRule(req, resp) {
  * Allows to retrieve patients data.
  */
 function servicePatients(req, resp) {
+	logger.info("Service patients.");
 	writeHeaders(resp);
 	
 	data = parseRequest(req, ["roomId", "id"]);
@@ -208,6 +222,7 @@ function servicePatients(req, resp) {
  * Allows to retrieve rooms data.
  */
 function serviceRooms(req, resp) {
+	logger.info("Service rooms.");
 	writeHeaders(resp);
 	data = parseRequest(req, ["id"]);
 	modelrooms.getRooms(data, function(result) {
@@ -220,6 +235,7 @@ function serviceRooms(req, resp) {
  * Allows to retrieve murs data.
  */
 function serviceMurs(req, resp) {
+	logger.info("Service murs.");
 	writeHeaders(resp);
 	// Parse the json DATA request
 	request = parseRequest(req, ["id"]);
@@ -239,6 +255,7 @@ function serviceMurs(req, resp) {
  * Allows to retrieve alerts from the database.
  */
 function serviceAlerts(req, resp) {
+	logger.info("Service alerts.");
 	writeHeaders(resp);
 
 	request = parseRequest(req, ["from", "to"]);
@@ -253,6 +270,7 @@ function serviceAlerts(req, resp) {
  * Allows to retrieve the connection between actuators and subjects from the database.
  */
 function serviceBondsActuators(req, resp) {
+	logger.info("Service bonds actuators.");
 	writeHeaders(resp);
 
 	// Parse the json DATA request

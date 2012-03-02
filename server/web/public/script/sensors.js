@@ -1,4 +1,4 @@
-function fetchSensorLog(idSensor, sensorLog, callback) {
+function fetchSensorLogComet(idSensor, sensorLog, callback) {
 	function getLastMeasures() {
 		var toDate = new Date();
 	
@@ -8,7 +8,6 @@ function fetchSensorLog(idSensor, sensorLog, callback) {
 				from: new Date(getLastMeasures.lastUpdate).getTime(),
 			}]	
 		};
-		console.log(Date.parse(getLastAlerts.lastUpdate));
 		getLastMeasures.lastUpdate = toDate; // Using the fact that JS functions can have attributes to store the last date.
 		return req;
 	}
@@ -26,6 +25,40 @@ function fetchSensorLog(idSensor, sensorLog, callback) {
 		callback(sensorLog);
 	}
 	createComet('sensors', 'POST', 1000, getLastMeasures, callBackFinal); // Function defined in common.js
+}
+
+function fetchSensorLog(idSensor, sensorLog, callback) {
+	function getLastMeasures() {
+		var toDate = new Date();
+		var strDate = getLastMeasures.lastUpdate.getTime();
+		var req = {
+			"from" : strDate
+		};
+		getLastMeasures.lastUpdate = toDate; // Using the fact that JS functions can have attributes to store the last date.
+		
+		function addValues(data) {
+			var records = data.records[idSensor];
+			for( var i in records) {
+				sensorLog.addMeasure(measure);
+			}
+		}
+		
+		function callBackFinal(data) {
+			addValues(data);
+			callback(sensorLog);
+		}
+		
+		$.ajax({
+			type: 'POST',
+			url: rest+'/sensors',
+			data: req,
+			success: callBackFinal,
+			dataType: 'json',
+			async:true
+		});	
+	};
+	getLastMeasures.lastUpdate = new Date(0);
+	setInterval(getLastMeasures,2000);
 }
 
 function getSensorValues(idSensor, callback, from, to) {

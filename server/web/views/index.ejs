@@ -1,6 +1,7 @@
 <script type="application/x-javascript">
 		
 		$(document).ready(function() {
+			displayAlerts('#alerts_container') ;
 			//$('header nav ul').css("width", window.innerWidth-400+"px");
 			$('#buildingContainer').css("left", (window.innerWidth*0.16)+"px");
 			var canvas = document.getElementById('scale');
@@ -9,7 +10,6 @@
 			BuildingGenerator.setStage('buildingContainer',  $('.span10').width(), window.innerHeight-330);
 
  			Initialize();
-			draw();
 			
 			$('.span2 .nav a').click(function() {
 				$('.span2 .nav li').removeClass('active');
