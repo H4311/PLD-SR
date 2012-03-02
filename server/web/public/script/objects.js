@@ -97,7 +97,7 @@ var RithmObjects = {}
 		this.sensors = new Array();
 		this.actuators = new Array();
 		this.patients = new Array();
-		this.measures = { "3" : 0, "4" : 0, "5" : 0, "7": 0};
+		this.measures = { "1": 0, "2":0, "3" : 0, "4" : 0, "5" : 0, "6":0, "7":0, "8": 0};
 		this.warning = 0;
 	};
 	
