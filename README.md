@@ -1,3 +1,15 @@
+# Long-Term Project Ghome - Code name : Rithm#
+
+## Description ##
+9-weeks long school project, dealing with system and network problematics.
+Its practical topic is the implementation of an home-automation system.
+We chose for use case the management of an hospital, and the supervising of the patients and rooms conditions.
+
+## Auteurs ##
+H4311 team
+
+---------------------------------------------------------
+
 # Projet Longue Durée GHOME #
 
 ## Description ##
